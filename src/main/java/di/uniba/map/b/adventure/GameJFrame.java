@@ -33,8 +33,7 @@ public class GameJFrame extends javax.swing.JFrame {
 
         headerJPanel = new javax.swing.JPanel();
         roomNameJLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        movesJLabel = new javax.swing.JLabel();
+        actionsJLabel = new javax.swing.JLabel();
         movesCounterJLabel = new javax.swing.JLabel();
         roomImageJLabel = new javax.swing.JLabel();
         textContainerJPanel = new javax.swing.JPanel();
@@ -52,21 +51,19 @@ public class GameJFrame extends javax.swing.JFrame {
         roomNameJLabel.setMaximumSize(new java.awt.Dimension(500, 25));
         roomNameJLabel.setMinimumSize(new java.awt.Dimension(450, 25));
         roomNameJLabel.setName(""); // NOI18N
-        roomNameJLabel.setPreferredSize(new java.awt.Dimension(450, 25));
+        roomNameJLabel.setPreferredSize(new java.awt.Dimension(450, 35));
         headerJPanel.add(roomNameJLabel);
 
-        jPanel1.setPreferredSize(new java.awt.Dimension(106, 33));
-
-        movesJLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        movesJLabel.setText("Mosse:");
-        jPanel1.add(movesJLabel);
+        actionsJLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        actionsJLabel.setText("Azioni:");
+        actionsJLabel.setPreferredSize(new java.awt.Dimension(56, 35));
+        headerJPanel.add(actionsJLabel);
+        actionsJLabel.getAccessibleContext().setAccessibleName("Azioni:");
 
         movesCounterJLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         movesCounterJLabel.setText("1");
-        movesCounterJLabel.setPreferredSize(new java.awt.Dimension(40, 25));
-        jPanel1.add(movesCounterJLabel);
-
-        headerJPanel.add(jPanel1);
+        movesCounterJLabel.setPreferredSize(new java.awt.Dimension(40, 35));
+        headerJPanel.add(movesCounterJLabel);
 
         getContentPane().add(headerJPanel, java.awt.BorderLayout.NORTH);
 
@@ -130,10 +127,9 @@ public class GameJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel actionsJLabel;
     private javax.swing.JPanel headerJPanel;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel movesCounterJLabel;
-    private javax.swing.JLabel movesJLabel;
     private javax.swing.JLabel roomImageJLabel;
     private javax.swing.JLabel roomNameJLabel;
     private javax.swing.JPanel textContainerJPanel;
