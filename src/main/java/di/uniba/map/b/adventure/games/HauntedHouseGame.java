@@ -121,30 +121,30 @@ public class HauntedHouseGame extends GameDescription {
     public void nextMove(ParserOutput p, GameJFrame gui) {
         Pair<Boolean, Boolean> pair = new Pair<>(false, false);
         boolean actionPerformed = false;
+        PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         if (p.getCommand().getType() == CommandType.NORTH) {
-            pair = moveToCardinalDirection(PlayableRoom::getNorth);
+            pair = moveToCardinalDirection(currentRoom.getNorth());
         } else if (p.getCommand().getType() == CommandType.NORTH_EAST) {
-            pair = moveToCardinalDirection(PlayableRoom::getNorthEast);
+            pair = moveToCardinalDirection(currentRoom.getNorthEast());
         } else if (p.getCommand().getType() == CommandType.NORTH_WEST) {
-            pair = moveToCardinalDirection(PlayableRoom::getNorthWest);
+            pair = moveToCardinalDirection(currentRoom.getNorthWest());
         } else if (p.getCommand().getType() == CommandType.SOUTH) {
-            pair = moveToCardinalDirection(PlayableRoom::getSouth);
+            pair = moveToCardinalDirection(currentRoom.getSouth());
         } else if (p.getCommand().getType() == CommandType.SOUTH_EAST) {
-            pair = moveToCardinalDirection(PlayableRoom::getSouthEast);
+            pair = moveToCardinalDirection(currentRoom.getSouthEast());
         } else if (p.getCommand().getType() == CommandType.SOUTH_WEST) {
-            pair = moveToCardinalDirection(PlayableRoom::getSouthWest);
+            pair = moveToCardinalDirection(currentRoom.getSouthWest());
         } else if (p.getCommand().getType() == CommandType.EAST) {
-            pair = moveToCardinalDirection(PlayableRoom::getEast);
+            pair = moveToCardinalDirection(currentRoom.getEast());
         } else if (p.getCommand().getType() == CommandType.WEST) {
-            pair = moveToCardinalDirection(PlayableRoom::getWest);
+            pair = moveToCardinalDirection(currentRoom.getWest());
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             gui.appendTextEdtOutput("Nel tuo inventario ci sono:");
             for (AdvObject obj : getInventory()) {
                 gui.appendTextEdtOutput(obj.getName());
             }
         } else if (p.getCommand().getType() == CommandType.LOOK_AT) {
-            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
             if (currentRoom.getLook() != null) {
                 gui.appendTextEdtOutput(currentRoom.getLook());
                 actionPerformed = true;
@@ -153,7 +153,6 @@ public class HauntedHouseGame extends GameDescription {
                 actionPerformed = true;
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
-            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
             if (p.getObject() != null) {
                 if (p.getObject().isPickupable()) {
                     getInventory().add(p.getObject());
@@ -176,7 +175,6 @@ public class HauntedHouseGame extends GameDescription {
              * l'oggetto contenitore.
              * Potrebbe non esssere la soluzione ottimale.
              */
-            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
             if (p.getObject() == null && p.getInvObject() == null) {
                 gui.appendTextEdtOutput("Non c'è niente da aprire qui.");
             } else {
@@ -310,35 +308,30 @@ public class HauntedHouseGame extends GameDescription {
     }
 
     private void linkRooms(List<Room> rooms) {
-        setCardinalDirections(rooms, PlayableRoom::getEastId, PlayableRoom::setEast);
-        setCardinalDirections(rooms, PlayableRoom::getWestId, PlayableRoom::setWest);
-        setCardinalDirections(rooms, PlayableRoom::getNorthId, PlayableRoom::setNorth);
-        setCardinalDirections(rooms, PlayableRoom::getSouthId, PlayableRoom::setSouth);
-        setCardinalDirections(rooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast);
-        setCardinalDirections(rooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest);
-        setCardinalDirections(rooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast);
-        setCardinalDirections(rooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest);
-        // TODO: non c'è bisogno del directionGetter
+        setRoomsDirection(rooms, PlayableRoom::getEastId, PlayableRoom::setEast, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getWestId, PlayableRoom::setWest, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getNorthId, PlayableRoom::setNorth, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getSouthId, PlayableRoom::setSouth, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast, PlayableRoom.class);
+        setRoomsDirection(rooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest, PlayableRoom.class);
+        setRoomsDirection(rooms, NonPlayableRoom::getNextRoomId, NonPlayableRoom::setNextRoom, NonPlayableRoom.class);
     }
 
-    private void setCardinalDirections(List<Room> rooms,
-            Function<PlayableRoom, Integer> directionGetter,
-            BiConsumer<PlayableRoom, Room> directionSetter) {
-
-        rooms
-                .stream()
-                .filter(PlayableRoom.class::isInstance)
-                .map(room -> (PlayableRoom) room)
-                .filter(room -> directionGetter.apply(room) > 0)
-                .forEach(room -> rooms
-                        .stream()
-                        .filter(linkedRoom -> linkedRoom.getId() == directionGetter.apply(room))
+    private <T extends Room> void setRoomsDirection(List<Room> rooms,
+            Function<T, Integer> directionIdGetter,
+            BiConsumer<T, Room> directionSetter, Class<T> clazz) {
+        rooms.stream()
+                .filter(clazz::isInstance)
+                .map(clazz::cast)
+                .filter(room -> directionIdGetter.apply(room) > 0)
+                .forEach(room -> rooms.stream()
+                        .filter(linkedRoom -> linkedRoom.getId() == directionIdGetter.apply(room))
                         .forEach(linkedRoom -> directionSetter.accept(room, linkedRoom)));
     }
 
-    private Pair<Boolean, Boolean> moveToCardinalDirection(Function<PlayableRoom, Room> directionGetter) {
-        // TODO: non c'è bisogno della function, basta passare la room
-        Room room = directionGetter.apply((PlayableRoom) getCurrentRoom());
+    private Pair<Boolean, Boolean> moveToCardinalDirection(Room room) {
         if (room != null) {
             setCurrentRoom(room);
             return new Pair<>(true, false);

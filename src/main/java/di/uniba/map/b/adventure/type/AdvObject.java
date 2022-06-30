@@ -29,9 +29,13 @@ public class AdvObject {
 
     private boolean pushable = false;
 
+    private boolean movable = false;
+
     private boolean open = false;
 
     private boolean push = false;
+
+    private boolean moved = false;
 
     public AdvObject(int id) {
         this.id = id;
@@ -147,5 +151,21 @@ public class AdvObject {
         if (id != other.id)
             return false;
         return true;
+    }
+
+    public boolean isMovable() {
+        return movable;
+    }
+
+    public void setMovable(boolean movable) {
+        this.movable = movable;
+    }
+
+    public boolean isMoved() {
+        return moved;
+    }
+
+    public void setMoved(boolean moved) {
+        this.moved = moved;
     }
 }
