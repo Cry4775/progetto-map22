@@ -9,9 +9,11 @@ import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.Room;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JLabel;
+import java.awt.Color;
 
 /**
  *
@@ -47,8 +49,23 @@ public abstract class GameDescription {
         return inventory;
     }
 
+    public void setCompassLabel(Room room, JLabel directionLbl) {
+        directionLbl.setForeground(room == null ? Color.RED : Color.GREEN);
+    }
+
+    public void setCompassLabels(GameJFrame gui) {
+        setCompassLabel(getCurrentRoom().getNorth(), gui.getLblCompassNorthText());
+        setCompassLabel(getCurrentRoom().getSouth(), gui.getLblCompassSouthText());
+        setCompassLabel(getCurrentRoom().getWest(), gui.getLblCompassWestText());
+        setCompassLabel(getCurrentRoom().getEast(), gui.getLblCompassEastText());
+        setCompassLabel(getCurrentRoom().getSouthWest(), gui.getLblCompassSouthWestText());
+        setCompassLabel(getCurrentRoom().getSouthEast(), gui.getLblCompassSouthEastText());
+        setCompassLabel(getCurrentRoom().getNorthEast(), gui.getLblCompassNorthEastText());
+        setCompassLabel(getCurrentRoom().getNorthWest(), gui.getLblCompassNorthWestText());
+    }
+
     public abstract void init() throws Exception;
 
-    public abstract void nextMove(ParserOutput p, PrintStream out);
+    public abstract void nextMove(ParserOutput p, GameJFrame gui);
 
 }

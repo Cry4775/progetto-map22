@@ -1,0 +1,10 @@
+[
+    {
+        "type": "PICK_UP",
+        "roomId": 1,
+        "objectId": 1,
+        "text": "completed",
+        "endsTheGame": true,
+        "oneTime": true
+    }
+]

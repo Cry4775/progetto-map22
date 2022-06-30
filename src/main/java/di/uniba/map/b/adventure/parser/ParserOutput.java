@@ -17,7 +17,7 @@ public class ParserOutput {
     private Command command;
 
     private AdvObject object;
-    
+
     private AdvObject invObject;
 
     public ParserOutput(Command command, AdvObject object) {

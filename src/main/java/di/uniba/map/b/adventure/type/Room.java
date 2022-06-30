@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author pierpaolo
+ * @author Pierdamiano Zagaria
  */
 public class Room {
 
@@ -22,17 +22,35 @@ public class Room {
 
     private String look;
 
+    private String imgPath;
+
     private boolean visible = true;
 
-    private Room south = null;
+    private Room south;
+    private int southId = 0;
 
-    private Room north = null;
+    private Room north;
+    private int northId = 0;
 
-    private Room east = null;
+    private Room southWest;
+    private int southWestId = 0;
 
-    private Room west = null;
-    
-    private final List<AdvObject> objects=new ArrayList<>();
+    private Room northWest;
+    private int northWestId = 0;
+
+    private Room southEast;
+    private int southEastId = 0;
+
+    private Room northEast;
+    private int northEastId = 0;
+
+    private Room east;
+    private int eastId = 0;
+
+    private Room west;
+    private int westId = 0;
+
+    private final List<AdvObject> objects = new ArrayList<>();
 
     public Room(int id) {
         this.id = id;
@@ -42,6 +60,14 @@ public class Room {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgResourcePath) {
+        this.imgPath = imgResourcePath;
     }
 
     public String getName() {
@@ -100,8 +126,84 @@ public class Room {
         this.west = west;
     }
 
+    public Room getSouthWest() {
+        return southWest;
+    }
+
+    public void setSouthWest(Room southWest) {
+        this.southWest = southWest;
+    }
+
+    public Room getNorthWest() {
+        return northWest;
+    }
+
+    public void setNorthWest(Room northWest) {
+        this.northWest = northWest;
+    }
+
+    public Room getSouthEast() {
+        return southEast;
+    }
+
+    public void setSouthEast(Room southEast) {
+        this.southEast = southEast;
+    }
+
+    public Room getNorthEast() {
+        return northEast;
+    }
+
+    public void setNorthEast(Room northEast) {
+        this.northEast = northEast;
+    }
+
+    public int getSouthWestId() {
+        return southWestId;
+    }
+
+    public int getNorthWestId() {
+        return northWestId;
+    }
+
+    public int getSouthEastId() {
+        return southEastId;
+    }
+
+    public int getNorthEastId() {
+        return northEastId;
+    }
+
+    public int getSouthId() {
+        return southId;
+    }
+
+    public int getNorthId() {
+        return northId;
+    }
+
+    public int getWestId() {
+        return westId;
+    }
+
+    public int getEastId() {
+        return eastId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public List<AdvObject> getObjects() {
         return objects;
+    }
+
+    public String getLook() {
+        return look;
+    }
+
+    public void setLook(String look) {
+        this.look = look;
     }
 
     @Override
@@ -128,13 +230,4 @@ public class Room {
         }
         return true;
     }
-
-    public String getLook() {
-        return look;
-    }
-
-    public void setLook(String look) {
-        this.look = look;
-    }
-
 }

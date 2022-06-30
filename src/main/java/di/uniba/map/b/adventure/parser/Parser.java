@@ -25,7 +25,8 @@ public class Parser {
 
     private int checkForCommand(String token, List<Command> commands) {
         for (int i = 0; i < commands.size(); i++) {
-            if (commands.get(i).getName().equals(token) || commands.get(i).getAlias().contains(token)) {
+            if (commands.get(i).getName().equals(token)
+                    || (commands.get(i).getAlias() != null && commands.get(i).getAlias().contains(token))) {
                 return i;
             }
         }
@@ -39,13 +40,18 @@ public class Parser {
             }
         }
         return -1;
+        // TODO STESSO CHECK DI COMMAND
     }
 
-    /* ATTENZIONE: il parser è implementato in modo abbastanza independete dalla lingua, ma riconosce solo 
-    * frasi semplici del tipo <azione> <oggetto> <oggetto>. Eventuali articoli o preposizioni vengono semplicemente
-    * rimossi.
+    /*
+     * ATTENZIONE: il parser è implementato in modo abbastanza independete dalla
+     * lingua, ma riconosce solo
+     * frasi semplici del tipo <azione> <oggetto> <oggetto>. Eventuali articoli o
+     * preposizioni vengono semplicemente
+     * rimossi.
      */
-    public ParserOutput parse(String command, List<Command> commands, List<AdvObject> objects, List<AdvObject> inventory) {
+    public ParserOutput parse(String command, List<Command> commands, List<AdvObject> objects,
+            List<AdvObject> inventory) {
         List<String> tokens = Utils.parseString(command, stopwords);
         if (!tokens.isEmpty()) {
             int ic = checkForCommand(tokens.get(0), commands);

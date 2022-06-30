@@ -20,7 +20,7 @@ public class AdvObject {
     private String name;
 
     private String description;
-    
+
     private Set<String> alias;
 
     private boolean openable = false;
@@ -118,38 +118,34 @@ public class AdvObject {
     public void setAlias(Set<String> alias) {
         this.alias = alias;
     }
-    
+
     public void setAlias(String[] alias) {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + this.id;
-        return hash;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-        final AdvObject other = (AdvObject) obj;
-        if (this.id != other.id) {
+        AdvObject other = (AdvObject) obj;
+        if (id != other.id)
             return false;
-        }
         return true;
     }
-
 }

@@ -1,0 +1,69 @@
+[
+    {
+        "id": 1,
+        "name": "...",
+        "description": "TestDescription",
+        "look": "TestLook",
+        "visible": true,
+        "southId": 0,
+        "northId": 0,
+        "eastId": 2,
+        "westId": 0,
+        "objects": [
+            {
+                "type": "AdvObject",
+                "id": 1,
+                "name": "batteria",
+                "description": "Un pacco di batterie, chissà se sono cariche.",
+                "alias": [
+                    "pile",
+                    "pila",
+                    "batterie"
+                ],
+                "openable": false,
+                "pickupable": true,
+                "pushable": false,
+                "open": false,
+                "push": false
+            },
+            {
+                "type": "AdvObjectContainer",
+                "list": [
+                    {
+                        "type": "AdvObject",
+                        "id": 3,
+                        "name": "qualcosa",
+                        "description": "non so",
+                        "openable": false,
+                        "pickupable": true,
+                        "pushable": false,
+                        "open": false,
+                        "push": false
+                    }
+                ],
+                "id": 2,
+                "name": "armadio",
+                "description": "Un semplice armadio.",
+                "alias": [
+                    "guardaroba",
+                    "vestiario"
+                ],
+                "openable": true,
+                "pickupable": false,
+                "pushable": false,
+                "open": false,
+                "push": false
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "TestEast",
+        "description": "TestDescriptionEast",
+        "visible": true,
+        "southId": 0,
+        "northId": 0,
+        "eastId": 0,
+        "westId": 1
+    }
+]

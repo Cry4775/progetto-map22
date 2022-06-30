@@ -1,0 +1,120 @@
+[
+	{
+		"type": "NORTH",
+		"name": "nord",
+		"alias": [
+			"n",
+			"north"
+		]
+	},
+	{
+		"type": "SOUTH",
+		"name": "sud",
+		"alias": [
+			"s",
+			"south"
+		]
+	},
+	{
+		"type": "EAST",
+		"name": "est",
+		"alias": [
+			"e",
+			"east"
+		]
+	},
+	{
+		"type": "WEST",
+		"name": "ovest",
+		"alias": [
+			"w",
+			"o",
+			"west"
+		]
+	},
+	{
+		"type": "SOUTH_WEST",
+		"name": "sudovest",
+		"alias": [
+			"so",
+			"southwest",
+			"sw"
+		]
+	},
+	{
+		"type": "SOUTH_EAST",
+		"name": "sudest",
+		"alias": [
+			"se",
+			"southeast"
+		]
+	},
+	{
+		"type": "NORTH_WEST",
+		"name": "nordovest",
+		"alias": [
+			"no",
+			"northwest",
+			"nw"
+		]
+	},
+	{
+		"type": "NORTH_EAST",
+		"name": "nordest",
+		"alias": [
+			"ne",
+			"northwest",
+			"nw"
+		]
+	},
+	{
+		"type": "INVENTORY",
+		"name": "inventario",
+		"alias": [
+			"inv",
+			"inventory"
+		]
+	},
+	{
+		"type": "LOOK_AT",
+		"name": "osserva",
+		"alias": [
+			"guarda",
+			"esamina",
+			"look"
+		]
+	},
+	{
+		"type": "PICK_UP",
+		"name": "prendi",
+		"alias": [
+			"pick",
+			"pickup"
+		]
+	},
+	{
+		"type": "OPEN",
+		"name": "apri",
+		"alias": [
+			"open"
+		]
+	},
+	{
+		"type": "PUSH",
+		"name": "spingi",
+		"alias": [
+			"push",
+			"premi",
+			"schiaccia"
+		]
+	},
+	{
+		"type": "END",
+		"name": "esci",
+		"alias": [
+			"end",
+			"chiudi",
+			"abbandona"
+		]
+	}
+]

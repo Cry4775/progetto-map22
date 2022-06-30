@@ -14,7 +14,6 @@ import java.util.Set;
  * @author pierpaolo
  */
 public class AdvObjectContainer extends AdvObject {
-
     private List<AdvObject> list = new ArrayList<>();
 
     public AdvObjectContainer(int id) {

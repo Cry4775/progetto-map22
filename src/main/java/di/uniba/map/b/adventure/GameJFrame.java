@@ -15,13 +15,17 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.html.HTMLDocument;
 
+import di.uniba.map.b.adventure.games.HauntedHouseGame;
+
 /**
  *
- * @author Pierdamiano
+ * @author Pierdamiano Zagaria
  */
 public class GameJFrame extends javax.swing.JFrame {
 
     private NoiseEffectPanel noisePanel;
+
+    private Engine engine;
 
     /**
      * Creates new form GameJFrame
@@ -29,6 +33,9 @@ public class GameJFrame extends javax.swing.JFrame {
     public GameJFrame() {
         initComponents();
         init();
+        GameDescription game = new HauntedHouseGame();
+        engine = new Engine(game, this);
+        engine.execute();
     }
 
     private void init() {
@@ -39,7 +46,7 @@ public class GameJFrame extends javax.swing.JFrame {
             lblCompassSouthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
             lblCompassEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
             lblCompassWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
-            lblCompassNorthEastImage.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
+            lblCompassNorthEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
             lblCompassNorthWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
             lblCompassSouthEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
             lblCompassSouthWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
@@ -111,8 +118,8 @@ public class GameJFrame extends javax.swing.JFrame {
         lblCompassNorthWestImage = new javax.swing.JLabel();
         lblCompassNorthWestText = new RotatedJLabel(-0.7);
         pnlCompassNorthEast = new javax.swing.JPanel();
-        lblCompassNorthEastImage = new RotatedJLabel(0.8);
-        lblCompassNorthEastText = new javax.swing.JLabel();
+        lblCompassNorthEastText = new RotatedJLabel(0.8);
+        lblCompassNorthEastImage = new javax.swing.JLabel();
         pnlCompassSouthWest = new javax.swing.JPanel();
         lblCompassSouthWestImage = new javax.swing.JLabel();
         lblCompassSouthWestText = new RotatedJLabel(-2.3);
@@ -260,15 +267,15 @@ public class GameJFrame extends javax.swing.JFrame {
 
         pnlCompassNorthEast.setLayout(new javax.swing.OverlayLayout(pnlCompassNorthEast));
 
-        lblCompassNorthEastImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblCompassNorthEastImage.setText("NE");
-        lblCompassNorthEastImage.setMaximumSize(new java.awt.Dimension(83, 83));
-        lblCompassNorthEastImage.setMinimumSize(new java.awt.Dimension(83, 83));
-        lblCompassNorthEastImage.setPreferredSize(new java.awt.Dimension(83, 83));
+        lblCompassNorthEastImage.setIcon(
+                new javax.swing.ImageIcon(getClass().getResource("/di/uniba/map/b/adventure/img/bussola_03.png"))); // NOI18N
         pnlCompassNorthEast.add(lblCompassNorthEastImage);
 
-        lblCompassNorthEastText.setIcon(
-                new javax.swing.ImageIcon(getClass().getResource("/di/uniba/map/b/adventure/img/bussola_03.png"))); // NOI18N
+        lblCompassNorthEastText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCompassNorthEastText.setText("NE");
+        lblCompassNorthEastText.setMaximumSize(new java.awt.Dimension(83, 83));
+        lblCompassNorthEastText.setMinimumSize(new java.awt.Dimension(83, 83));
+        lblCompassNorthEastText.setPreferredSize(new java.awt.Dimension(83, 83));
         pnlCompassNorthEast.add(lblCompassNorthEastText);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -364,16 +371,22 @@ public class GameJFrame extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             String txt = txtInput.getText();
             if (txt != null && !txt.isEmpty()) {
-                HTMLDocument doc = (HTMLDocument) edtOutput.getDocument();
-                try {
-                    doc.insertBeforeEnd(doc.getElement("body"), String.format("<div><br>> %s<br></div>", txt));
-                    txtInput.setText("");
-                } catch (BadLocationException | IOException e) {
-                    e.printStackTrace();
-                }
+                appendTextEdtOutput(txt);
+                txtInput.setText("");
+                engine.commandPerformed(txt);
             }
         }
     }// GEN-LAST:event_txtInputKeyPressed
+
+    public void appendTextEdtOutput(String text) {
+        HTMLDocument doc = (HTMLDocument) edtOutput.getDocument();
+        try {
+            doc.insertBeforeEnd(doc.getElement("body"), String.format("<div><br>> %s<br></div>", text));
+        } catch (BadLocationException | IOException e) {
+            e.printStackTrace();
+            // TODO FATAL
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -455,4 +468,56 @@ public class GameJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrOutput;
     private javax.swing.JTextField txtInput;
     // End of variables declaration//GEN-END:variables
+
+    public javax.swing.JEditorPane getEdtOutput() {
+        return edtOutput;
+    }
+
+    public javax.swing.JLabel getLblActionsCounter() {
+        return lblActionsCounter;
+    }
+
+    public javax.swing.JLabel getLblCompassEastText() {
+        return lblCompassEastText;
+    }
+
+    public javax.swing.JLabel getLblCompassNorthEastText() {
+        return lblCompassNorthEastText;
+    }
+
+    public javax.swing.JLabel getLblCompassNorthText() {
+        return lblCompassNorthText;
+    }
+
+    public javax.swing.JLabel getLblCompassNorthWestText() {
+        return lblCompassNorthWestText;
+    }
+
+    public javax.swing.JLabel getLblCompassSouthEastText() {
+        return lblCompassSouthEastText;
+    }
+
+    public javax.swing.JLabel getLblCompassSouthText() {
+        return lblCompassSouthText;
+    }
+
+    public javax.swing.JLabel getLblCompassSouthWestText() {
+        return lblCompassSouthWestText;
+    }
+
+    public javax.swing.JLabel getLblCompassWestText() {
+        return lblCompassWestText;
+    }
+
+    public javax.swing.JLabel getLblRoomImage() {
+        return lblRoomImage;
+    }
+
+    public javax.swing.JLabel getLblRoomName() {
+        return lblRoomName;
+    }
+
+    public javax.swing.JTextField getTxtInput() {
+        return txtInput;
+    }
 }
