@@ -61,6 +61,7 @@ public class Engine {
         game.setCompassLabels(gui);
 
         gui.appendTextEdtOutput(game.getCurrentRoom().getDescription());
+        gui.waitForEnterKey();
     }
 
     public void commandPerformed(String command) {

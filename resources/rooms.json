@@ -2,8 +2,9 @@
     {
         "id": 1,
         "name": "...",
-        "description": "TestDescription",
+        "description": "Faticosamente riprendi i sensi...il freddo pavimento sotto il tuo volto.<br><br>Cerchi di ricordare cosa ti ha condotto fino a lì: lo squillo del telefono, la tua amica Valeria che si rifaceva viva - praticamente non la sentivi da sei mesi - chiedendoti di raggiungerla nella sua futura residenza, un vecchio palazzo chiamato Villa Morgana; voleva mostrarti una cosa interessante - diceva lei - ma il tono nervoso della sua voce ti aveva messo in allarme.<br><br>Poi il viaggio, la tua auto che si fermava davanti al cancello della villa, nessuna risposta al tuo bussare; il portone era stranamente aperto. Sei entrato, preoccupato per Valeria, muovendo i tuoi passi lungo il corridoio e le stanze vicine, cercandola e chiamandola.<br><br>Di colpo tutto intorno a te ha iniziato a girare e il buio ti ha avvolto.<br><br>Ti risvegli, lasci che i tuoi occhi si abituino alla poca luce che filtra in qualche modo all'interno e ti guardi attorno. Polvere, finestre murate, pareti e mobilio in rovina. Sei sempre all'interno della Villa. Ma la Villa in qualche modo è cambiata.<br><br> [ . . . ]",
         "look": "TestLook",
+        "imgPath": "./resources/img/intro.jpg",
         "visible": true,
         "southId": 0,
         "northId": 0,

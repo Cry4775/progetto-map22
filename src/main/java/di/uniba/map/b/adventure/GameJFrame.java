@@ -180,7 +180,7 @@ public class GameJFrame extends javax.swing.JFrame {
         edtOutput.setContentType("text/html"); // NOI18N
         edtOutput.setEditorKit(new javax.swing.text.html.HTMLEditorKit());
         edtOutput.setText(
-                "<html>\n  <head>\n  </head>\n  <body id='body'; style=\"background-color: #d6d9df;  margin: 5px;\">\n    <div>\n     <span style=\"color:red\"><strong>textArea</strong></span><br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n    </div>\n  </body>\n</html>\n\n");
+                "<html>\n  <head>\n  </head>\n  <body id='body'; style=\"background-color: #d6d9df;  margin: 5px; font-family:verdana\">\n    <div>\n     <span style=\"color:red\"><strong>tèìextArea</strong></span><br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n    </div>\n  </body>\n</html>\n\n");
         scrOutput.setViewportView(edtOutput);
 
         pnlInOut.add(scrOutput, java.awt.BorderLayout.CENTER);
@@ -368,7 +368,7 @@ public class GameJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtInputKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtInputKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             String txt = txtInput.getText();
             if (txt != null && !txt.isEmpty()) {
                 appendTextEdtOutput(txt);
@@ -386,6 +386,18 @@ public class GameJFrame extends javax.swing.JFrame {
             e.printStackTrace();
             // TODO FATAL
         }
+    }
+
+    public void waitForEnterKey() {
+        txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtInput.setEditable(false);
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    txtInput.setEditable(true);
+                    txtInput.removeKeyListener(this);
+                }
+            }
+        });
     }
 
     /**

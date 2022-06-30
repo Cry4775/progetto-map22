@@ -1,10 +1,14 @@
 package di.uniba.map.b.adventure.games;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -49,7 +53,8 @@ public class HauntedHouseGame extends GameDescription {
         Type commandsType = new TypeToken<List<Command>>() {
         }.getType();
 
-        try (BufferedReader in = new BufferedReader(new FileReader("./resources/commands.json"))) {
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(new FileInputStream("./resources/commands.json"), StandardCharsets.UTF_8))) {
             List<Command> commands = gson.fromJson(in, commandsType);
 
             for (Command command : commands) {
@@ -81,7 +86,8 @@ public class HauntedHouseGame extends GameDescription {
         Type roomsType = new TypeToken<List<Room>>() {
         }.getType();
 
-        try (BufferedReader in = new BufferedReader(new FileReader("./resources/rooms.json"))) {
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(new FileInputStream("./resources/rooms.json"), StandardCharsets.UTF_8))) {
             List<Room> rooms = gson.fromJson(in, roomsType);
 
             linkRooms(rooms);
@@ -99,7 +105,8 @@ public class HauntedHouseGame extends GameDescription {
         Type objectEventsType = new TypeToken<List<ObjectEvent>>() {
         }.getType();
 
-        try (BufferedReader in = new BufferedReader(new FileReader("./resources/events.json"))) {
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(new FileInputStream("./resources/events.json"), StandardCharsets.UTF_8))) {
             return gson.fromJson(in, objectEventsType);
         }
     }
