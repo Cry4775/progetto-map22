@@ -8,6 +8,7 @@ package di.uniba.map.b.adventure;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.Command;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.Room;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,14 +55,17 @@ public abstract class GameDescription {
     }
 
     public void setCompassLabels(GameJFrame gui) {
-        setCompassLabel(getCurrentRoom().getNorth(), gui.getLblCompassNorthText());
-        setCompassLabel(getCurrentRoom().getSouth(), gui.getLblCompassSouthText());
-        setCompassLabel(getCurrentRoom().getWest(), gui.getLblCompassWestText());
-        setCompassLabel(getCurrentRoom().getEast(), gui.getLblCompassEastText());
-        setCompassLabel(getCurrentRoom().getSouthWest(), gui.getLblCompassSouthWestText());
-        setCompassLabel(getCurrentRoom().getSouthEast(), gui.getLblCompassSouthEastText());
-        setCompassLabel(getCurrentRoom().getNorthEast(), gui.getLblCompassNorthEastText());
-        setCompassLabel(getCurrentRoom().getNorthWest(), gui.getLblCompassNorthWestText());
+        if (getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
+            setCompassLabel(currentPlayableRoom.getNorth(), gui.getLblCompassNorthText());
+            setCompassLabel(currentPlayableRoom.getSouth(), gui.getLblCompassSouthText());
+            setCompassLabel(currentPlayableRoom.getWest(), gui.getLblCompassWestText());
+            setCompassLabel(currentPlayableRoom.getEast(), gui.getLblCompassEastText());
+            setCompassLabel(currentPlayableRoom.getSouthWest(), gui.getLblCompassSouthWestText());
+            setCompassLabel(currentPlayableRoom.getSouthEast(), gui.getLblCompassSouthEastText());
+            setCompassLabel(currentPlayableRoom.getNorthEast(), gui.getLblCompassNorthEastText());
+            setCompassLabel(currentPlayableRoom.getNorthWest(), gui.getLblCompassNorthWestText());
+        }
     }
 
     public abstract void init() throws Exception;

@@ -8,6 +8,7 @@ package di.uniba.map.b.adventure;
 import di.uniba.map.b.adventure.parser.Parser;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.CommandType;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 
 import java.awt.Image;
 import java.io.File;
@@ -65,15 +66,17 @@ public class Engine {
     }
 
     public void commandPerformed(String command) {
-        ParserOutput p = parser.parse(command, game.getCommands(),
-                game.getCurrentRoom().getObjects(),
-                game.getInventory());
-        if (p == null || p.getCommand() == null) {
-            gui.appendTextEdtOutput("Non capisco quello che mi vuoi dire.");
-        } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
-            gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
-        } else {
-            game.nextMove(p, gui);
+        if (game.getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
+            ParserOutput p = parser.parse(command, game.getCommands(),
+                    currentRoom.getObjects(), game.getInventory());
+            if (p == null || p.getCommand() == null) {
+                gui.appendTextEdtOutput("Non capisco quello che mi vuoi dire.");
+            } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
+                gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+            } else {
+                game.nextMove(p, gui);
+            }
         }
     }
 }

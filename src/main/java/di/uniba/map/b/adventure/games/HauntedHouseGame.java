@@ -32,7 +32,9 @@ import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.AdvObjectContainer;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
+import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.ObjectEvent;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.Room;
 
 // Se tutto viene caricato da file allora si può cancellare
@@ -68,7 +70,10 @@ public class HauntedHouseGame extends GameDescription {
                 .of(AdvObject.class)
                 .registerSubtype(AdvObjectContainer.class)
                 .registerSubtype(AdvObject.class);
-
+        RuntimeTypeAdapterFactory<Room> typeAdapterRooms = RuntimeTypeAdapterFactory
+                .of(Room.class)
+                .registerSubtype(PlayableRoom.class)
+                .registerSubtype(NonPlayableRoom.class);
         Gson gson = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
                     @Override
@@ -82,6 +87,7 @@ public class HauntedHouseGame extends GameDescription {
                     }
                 })
                 .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
+                .registerTypeAdapterFactory(typeAdapterRooms)
                 .create();
         Type roomsType = new TypeToken<List<Room>>() {
         }.getType();
@@ -117,39 +123,41 @@ public class HauntedHouseGame extends GameDescription {
         boolean actionPerformed = false;
 
         if (p.getCommand().getType() == CommandType.NORTH) {
-            pair = moveToCardinalDirection(Room::getNorth);
+            pair = moveToCardinalDirection(PlayableRoom::getNorth);
         } else if (p.getCommand().getType() == CommandType.NORTH_EAST) {
-            pair = moveToCardinalDirection(Room::getNorthEast);
+            pair = moveToCardinalDirection(PlayableRoom::getNorthEast);
         } else if (p.getCommand().getType() == CommandType.NORTH_WEST) {
-            pair = moveToCardinalDirection(Room::getNorthWest);
+            pair = moveToCardinalDirection(PlayableRoom::getNorthWest);
         } else if (p.getCommand().getType() == CommandType.SOUTH) {
-            pair = moveToCardinalDirection(Room::getSouth);
+            pair = moveToCardinalDirection(PlayableRoom::getSouth);
         } else if (p.getCommand().getType() == CommandType.SOUTH_EAST) {
-            pair = moveToCardinalDirection(Room::getSouthEast);
+            pair = moveToCardinalDirection(PlayableRoom::getSouthEast);
         } else if (p.getCommand().getType() == CommandType.SOUTH_WEST) {
-            pair = moveToCardinalDirection(Room::getSouthWest);
+            pair = moveToCardinalDirection(PlayableRoom::getSouthWest);
         } else if (p.getCommand().getType() == CommandType.EAST) {
-            pair = moveToCardinalDirection(Room::getEast);
+            pair = moveToCardinalDirection(PlayableRoom::getEast);
         } else if (p.getCommand().getType() == CommandType.WEST) {
-            pair = moveToCardinalDirection(Room::getWest);
+            pair = moveToCardinalDirection(PlayableRoom::getWest);
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             gui.appendTextEdtOutput("Nel tuo inventario ci sono:");
             for (AdvObject obj : getInventory()) {
                 gui.appendTextEdtOutput(obj.getName());
             }
         } else if (p.getCommand().getType() == CommandType.LOOK_AT) {
-            if (getCurrentRoom().getLook() != null) {
-                gui.appendTextEdtOutput(getCurrentRoom().getLook());
+            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
+            if (currentRoom.getLook() != null) {
+                gui.appendTextEdtOutput(currentRoom.getLook());
                 actionPerformed = true;
             } else {
                 gui.appendTextEdtOutput("Non c'è niente di interessante qui.");
                 actionPerformed = true;
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
+            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
             if (p.getObject() != null) {
                 if (p.getObject().isPickupable()) {
                     getInventory().add(p.getObject());
-                    getCurrentRoom().getObjects().remove(p.getObject());
+                    currentRoom.getObjects().remove(p.getObject());
                     gui.appendTextEdtOutput(String.format("Hai raccolto %s",
                             p.getObject().getName()));
                     handleEvents(p, gui);
@@ -168,6 +176,7 @@ public class HauntedHouseGame extends GameDescription {
              * l'oggetto contenitore.
              * Potrebbe non esssere la soluzione ottimale.
              */
+            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
             if (p.getObject() == null && p.getInvObject() == null) {
                 gui.appendTextEdtOutput("Non c'è niente da aprire qui.");
             } else {
@@ -182,7 +191,7 @@ public class HauntedHouseGame extends GameDescription {
                                         container.getName()));
                                 StringBuilder string = new StringBuilder();
                                 for (AdvObject obj : container.getList()) {
-                                    getCurrentRoom().getObjects().add(obj);
+                                    currentRoom.getObjects().add(obj);
                                     string.append(obj.getName() + "<br>");
                                     container.getList().remove(obj);
                                 }
@@ -301,22 +310,25 @@ public class HauntedHouseGame extends GameDescription {
     }
 
     private void linkRooms(List<Room> rooms) {
-        setCardinalDirections(rooms, Room::getEastId, Room::setEast);
-        setCardinalDirections(rooms, Room::getWestId, Room::setWest);
-        setCardinalDirections(rooms, Room::getNorthId, Room::setNorth);
-        setCardinalDirections(rooms, Room::getSouthId, Room::setSouth);
-        setCardinalDirections(rooms, Room::getNorthEastId, Room::setNorthEast);
-        setCardinalDirections(rooms, Room::getNorthWestId, Room::setNorthWest);
-        setCardinalDirections(rooms, Room::getSouthEastId, Room::setSouthEast);
-        setCardinalDirections(rooms, Room::getSouthWestId, Room::setSouthWest);
+        setCardinalDirections(rooms, PlayableRoom::getEastId, PlayableRoom::setEast);
+        setCardinalDirections(rooms, PlayableRoom::getWestId, PlayableRoom::setWest);
+        setCardinalDirections(rooms, PlayableRoom::getNorthId, PlayableRoom::setNorth);
+        setCardinalDirections(rooms, PlayableRoom::getSouthId, PlayableRoom::setSouth);
+        setCardinalDirections(rooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast);
+        setCardinalDirections(rooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest);
+        setCardinalDirections(rooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast);
+        setCardinalDirections(rooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest);
+        // TODO: non c'è bisogno del directionGetter
     }
 
     private void setCardinalDirections(List<Room> rooms,
-            Function<Room, Integer> directionGetter,
-            BiConsumer<Room, Room> directionSetter) {
+            Function<PlayableRoom, Integer> directionGetter,
+            BiConsumer<PlayableRoom, Room> directionSetter) {
 
         rooms
                 .stream()
+                .filter(PlayableRoom.class::isInstance)
+                .map(room -> (PlayableRoom) room)
                 .filter(room -> directionGetter.apply(room) > 0)
                 .forEach(room -> rooms
                         .stream()
@@ -324,8 +336,9 @@ public class HauntedHouseGame extends GameDescription {
                         .forEach(linkedRoom -> directionSetter.accept(room, linkedRoom)));
     }
 
-    private Pair<Boolean, Boolean> moveToCardinalDirection(Function<Room, Room> directionGetter) {
-        Room room = directionGetter.apply(getCurrentRoom());
+    private Pair<Boolean, Boolean> moveToCardinalDirection(Function<PlayableRoom, Room> directionGetter) {
+        // TODO: non c'è bisogno della function, basta passare la room
+        Room room = directionGetter.apply((PlayableRoom) getCurrentRoom());
         if (room != null) {
             setCurrentRoom(room);
             return new Pair<>(true, false);
