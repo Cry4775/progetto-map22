@@ -2,7 +2,7 @@ package di.uniba.map.b.adventure.type;
 
 public class NonPlayableRoom extends Room {
     private Room nextRoom;
-    private int nextRoomId;
+    private Integer nextRoomId;
 
     public NonPlayableRoom(int id, String name, String description, Room nextRoom) {
         super(id, name, description);
@@ -22,7 +22,7 @@ public class NonPlayableRoom extends Room {
         this.nextRoom = nextRoom;
     }
 
-    public int getNextRoomId() {
+    public Integer getNextRoomId() {
         return nextRoomId;
     }
 

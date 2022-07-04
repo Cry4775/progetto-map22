@@ -13,22 +13,25 @@ import java.util.Set;
  *
  * @author pierpaolo
  */
-public class AdvObjectContainer extends AdvObject {
+public class AdvItemContainer extends AdvItem {
+    private boolean openable = false;
+    private boolean open = false;
+
     private List<AdvObject> list = new ArrayList<>();
 
-    public AdvObjectContainer(int id) {
+    public AdvItemContainer(int id) {
         super(id);
     }
 
-    public AdvObjectContainer(int id, String name) {
+    public AdvItemContainer(int id, String name) {
         super(id, name);
     }
 
-    public AdvObjectContainer(int id, String name, String description) {
+    public AdvItemContainer(int id, String name, String description) {
         super(id, name, description);
     }
 
-    public AdvObjectContainer(int id, String name, String description, Set<String> alias) {
+    public AdvItemContainer(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
 
@@ -48,4 +51,19 @@ public class AdvObjectContainer extends AdvObject {
         list.remove(o);
     }
 
+    public boolean isOpenable() {
+        return openable;
+    }
+
+    public void setOpenable(boolean openable) {
+        this.openable = openable;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
 }

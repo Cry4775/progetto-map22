@@ -5,6 +5,7 @@
         "name": "...",
         "description": "Faticosamente riprendi i sensi...il freddo pavimento sotto il tuo volto.<br><br>Cerchi di ricordare cosa ti ha condotto fino a lì: lo squillo del telefono, la tua amica Valeria che si rifaceva viva - praticamente non la sentivi da sei mesi - chiedendoti di raggiungerla nella sua futura residenza, un vecchio palazzo chiamato Villa Morgana; voleva mostrarti una cosa interessante - diceva lei - ma il tono nervoso della sua voce ti aveva messo in allarme.<br><br>Poi il viaggio, la tua auto che si fermava davanti al cancello della villa, nessuna risposta al tuo bussare; il portone era stranamente aperto. Sei entrato, preoccupato per Valeria, muovendo i tuoi passi lungo il corridoio e le stanze vicine, cercandola e chiamandola.<br><br>Di colpo tutto intorno a te ha iniziato a girare e il buio ti ha avvolto.<br><br>Ti risvegli, lasci che i tuoi occhi si abituino alla poca luce che filtra in qualche modo all'interno e ti guardi attorno. Polvere, finestre murate, pareti e mobilio in rovina. Sei sempre all'interno della Villa. Ma la Villa in qualche modo è cambiata.<br><br> [ . . . ]",
         "imgPath": "./resources/img/intro.jpg",
+        "visible": true,
         "nextRoomId": 2
     },
     {
@@ -12,49 +13,34 @@
         "id": 2,
         "name": "Un piccolo salotto",
         "description": "Sei in un piccolo salotto alquanto disadorno.<br>Un divano è appoggiato ad una parete, proprio sotto una finestra murata.<br>Un arco si apre nella parete ovest.",
+        "imgPath": "./resources/img/salotto.jpg",
         "visible": true,
-        "southId": 0,
-        "northId": 0,
-        "eastId": 0,
         "westId": 3,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvFakeDoor",
                 "id": 1,
                 "name": "finestra",
                 "description": "La finestra pare inesorabilmente murata.",
-                "openable": true,
-                "pickupable": false,
-                "pushable": false,
-                "open": false,
-                "push": false
+                "openEventText": "Apri la finestra e controlli. La muratura, come sospettavi, è estremamente robusta."
             },
             {
-                "type": "AdvObjectContainer",
+                "type": "AdvItemContainer",
                 "id": 2,
-                "list": [
-                    {
-                        "type": "AdvObject",
-                        "id": 3,
-                        "name": "accendino",
-                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria.",
-                        "openable": false,
-                        "pickupable": true,
-                        "pushable": false,
-                        "open": false,
-                        "push": false
-                    }
-                ],
                 "name": "divano",
-                "description": "Un divano in pelle a tre posti, vecchio e ormai consunto. C'è un accendino d'argento.",
+                "description": "Un divano in pelle a tre posti, vecchio e ormai consunto.",
                 "alias": [
                     "divanetto"
                 ],
-                "openable": true,
-                "pickupable": false,
-                "pushable": false,
-                "open": false,
-                "push": false
+                "list": [
+                    {
+                        "type": "AdvItem",
+                        "id": 3,
+                        "name": "accendino",
+                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria.",
+                        "pickupable": true
+                    }
+                ]
             }
         ]
     },
@@ -63,25 +49,24 @@
         "id": 3,
         "name": "Corridoio",
         "description": "Questo corridoio completamente spoglio conduce da sud a nord. Un arco conduce verso est.",
+        "imgPath": "./resources/img/corridoio11.jpg",
         "visible": true,
         "southId": 4,
         "northId": 6,
-        "eastId": 2,
-        "westId": 0
+        "eastId": 2
     },
     {
         "type": "PlayableRoom",
         "id": 4,
         "name": "Ingresso",
         "description": "Il piccolo atrio in cui ti trovi è dominato dall'imponente portone, verso sud. <br>Da qui un corridoio conduce a nord, mentre a ovest puoi vedere una porta. <br>Due quadri, unico arredamento della stanza, pendono dalle pareti.",
+        "imgPath": "./resources/img/ingresso1.jpg",
         "visible": true,
-        "southId": 0,
         "northId": 3,
-        "eastId": 0,
         "westId": 5,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 4,
                 "name": "quadri",
                 "description": "Due quadri a dir poco inquietanti. <br>Quello di destra pare rappresentare una visione dell'inferno così come lo descrive Dante Alighieri, mentre l'altro è il ritratto di una donna albina.",
@@ -90,36 +75,39 @@
                 ]
             },
             {
-                "type": "AdvObject",
+                "type": "AdvFakeDoor",
                 "id": 5,
                 "name": "portone",
                 "description": "Il portone d'ingresso è estremamente robusto e evidentemente ben chiuso a chiave.",
                 "alias": [
                     "ingresso"
-                ]
+                ],
+                "openEventText": "Come sospettavi, è chiuso a chiave."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvDoor",
                 "id": 6,
                 "name": "porta",
                 "description": "La porta è chiusa.",
-                "openable": true
+                "openable": true,
+                "blockedRoomId": 5
             }
         ]
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 5,
         "name": "Vestibolo",
         "description": "Una piccola stanza dove gli ospiti possono lasciare i loro soprabiti. La porta ad est è l'unica uscita. <br>Un solo cappotto è appeso ad una parete.",
-        "visible": true,
+        "imgPath": "./resources/img/vestibolo1.jpg",
+        "visible": false,
         "eastId": 4,
         "objects": [
             {
-                "type": "AdvObjectContainer",
+                "type": "AdvItemContainer",
                 "id": 7,
                 "name": "cappotto",
-                "description": "Un elegante cappotto da donna, probabilmente quello di Valeria. <br><br>...<br><br>Fa un po' freddo... forse dovrei prenderlo.",
+                "description": "Un elegante cappotto da donna, probabilmente quello di Valeria.",
                 "alias": [
                     "giacca",
                     "giubbotto"
@@ -127,20 +115,39 @@
                 "pickupable": true,
                 "list": [
                     {
-                        "type": "AdvObject",
+                        "type": "AdvItem",
                         "id": 8,
                         "name": "lettera",
                         "description": "",
                         "pickupable": true
                     },
                     {
-                        "type": "AdvObject",
+                        "type": "AdvItemContainer",
                         "id": 9,
                         "name": "collana",
-                        "description": "Una collana in oro. Il pendente è una stella a cinque punte, e sul retro c'è un piccolo incasso circolare.",
+                        "description": "Una collana in oro.",
+                        "list": [
+                            {
+                                "type": "AdvItem",
+                                "id": 47,
+                                "name": "pendente",
+                                "description": "Un pendente a forma di stella a cinque punte, sul retro c'è un piccolo incasso circolare.",
+                                "pickupable": true
+                            }
+                        ],
                         "pickupable": true
                     }
                 ]
+            }
+        ],
+        "newRoom": {
+            "imgPath": "./resources/img/vestibolo2.jpg"
+        },
+        "events": [
+            {
+                "type": "PickupEvent",
+                "invokerObjectId": 7,
+                "updatingParentRoom": true
             }
         ]
     },
@@ -149,6 +156,7 @@
         "id": 6,
         "name": "Corridoio",
         "description": "Il corridoio procede ancora da nord a sud, mentre un'arcata si apre nella parete ovest e una porta conduce verso est.",
+        "imgPath": "./resources/img/corridoio12.jpg",
         "visible": true,
         "eastId": 7,
         "westId": 8,
@@ -156,32 +164,33 @@
         "southId": 3,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvDoor",
                 "id": 10,
                 "name": "porta",
-                "description": "La porta è aperta.",
+                "description": "La porta è chiusa.",
                 "openable": true,
-                "open": true
+                "blockedRoomId": 7
             }
         ]
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 7,
         "name": "Cucine",
         "description": "Le cucine del palazzo sono ovviamente inutilizzabili. Il degrado e l'abbandono regnano sovrani, tutto è coperto da almeno un dito di polvere. <br>Appoggiata ad una parete vedi una vecchia credenza.",
-        "visible": true,
+        "imgPath": "./resources/img/cucina1.jpg",
+        "visible": false,
         "westId": 6,
         "objects": [
             {
-                "type": "AdvObjectContainer",
+                "type": "AdvItemContainer",
                 "id": 11,
                 "name": "credenza",
-                "description": "Una grossa credenza in mogano, chiusa da due sportelli.",
+                "description": "Una grossa credenza in mogano.",
                 "openable": true,
                 "list": [
                     {
-                        "type": "AdvObject",
+                        "type": "AdvItem",
                         "id": 12,
                         "name": "ciotola",
                         "description": "Una ciotola in porcellana decorata con motivi geometrici.",
@@ -190,103 +199,98 @@
                 ]
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 13,
                 "name": "camino",
                 "description": "Un vecchio camino, ormai privo di qualsiasi utilità..."
             }
-        ]
+        ],
+        "newRoom": {
+            "imgPath": "./resources/img/cucina2.jpg"
+        }
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 8,
         "name": "Salone",
         "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest.",
+        "imgPath": "./resources/img/salone1.jpg",
         "visible": true,
         "eastId": 6,
         "southWestId": 11,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 14,
                 "name": "colonna",
                 "description": "Alta, di solida pietra e di forma ottagonale, larga almeno due metri e priva di qualsiasi asperità, occupa la parte centrale della sala. Accanto ad essa noti un grande candeliere."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 15,
                 "name": "candeliere",
                 "description": "Un ingombrante candeliere in peltro, ormai privo di candele, domina dall'alto il salone, sorretto da una corda che esce da un foro nel soffitto. <br><br>Ti pare di sentire una voce sottile e vellutata che chiama il tuo nome. Ti guardi intorno. Non vedi nessuno. Devi esserti sbagliato."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvDoor",
                 "id": 16,
                 "name": "porta",
-                "description": "La porta è chiusa.",
-                "openable": true
+                "description": "La porta è aperta.",
+                "open": true
             }
-        ]
-    },
-    {
-        "type": "PlayableRoom",
-        "id": 9,
-        "name": "Salone",
-        "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest. Il candeliere adesso pende dalla corda a non più di un metro da terra.",
-        "visible": true,
-        "eastId": 6,
-        "southWestId": 11,
-        "objects": [
-            {
-                "type": "AdvObject",
-                "id": 17,
-                "name": "colonna",
-                "description": "Alta, di solida pietra e di forma ottagonale, larga almeno due metri e priva di qualsiasi asperità, occupa la parte centrale della sala."
-            },
-            {
-                "type": "AdvObjectContainer",
-                "id": 18,
-                "name": "candeliere",
-                "description": "Il pesante candeliere in peltro adesso è alla tua portata. Al posto di una delle candele vedi una chiave.",
-                "list": [
-                    {
-                        "type": "AdvObject",
-                        "id": 19,
-                        "name": "chiave",
-                        "description": "Una chiave in ferro, coperta da un leggero strato di ruggine. Per un attimo ti è parso di sentire la musica di un pianoforte."
-                    }
-                ]
-            },
-            {
-                "type": "AdvObject",
-                "id": 20,
-                "name": "porta",
-                "description": "La porta è chiusa.",
-                "openable": true
-            }
-        ]
+        ],
+        "newRoom": {
+            "type": "PlayableRoom",
+            "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest. Il candeliere adesso pende dalla corda a non più di un metro da terra.",
+            "imgPath": "./resources/img/salone2.jpg",
+            "objects": [
+                {
+                    "type": "AdvItem",
+                    "id": 14,
+                    "name": "colonna",
+                    "description": "Alta, di solida pietra e di forma ottagonale, larga almeno due metri e priva di qualsiasi asperità, occupa la parte centrale della sala."
+                },
+                {
+                    "type": "AdvItemContainer",
+                    "id": 15,
+                    "name": "candeliere",
+                    "description": "Il pesante candeliere in peltro adesso è alla tua portata.",
+                    "list": [
+                        {
+                            "type": "AdvItem",
+                            "id": 19,
+                            "name": "chiave",
+                            "description": "Una chiave in ferro, coperta da un leggero strato di ruggine.",
+                            "pickupable": true
+                        }
+                    ]
+                }
+            ]
+        }
     },
     {
         "type": "PlayableRoom",
         "id": 10,
         "name": "Un piccolo andito",
         "description": "Questo piccolo andito, ricavato da uno degli angoli del salone ottagonale, non contiene altro se non una corda avvolta ad una grossa ruota e, collegata a questa, una leva in legno. <br>Una porta conduce a nord-est.",
+        "imgPath": "./resources/img/andito1.jpg",
         "visible": true,
         "northEastId": 8,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 21,
                 "name": "corda",
                 "description": "La corda va dalla ruota in legno ad un foro nel soffitto."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 22,
                 "name": "ruota",
                 "description": "Una larga ruota di legno, rinforzata in metallo. Attorno ad essa è avvolta una corda che proviene da un foro nel soffitto."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 23,
                 "name": "leva",
                 "description": "Una corta leva di legno che blocca la ruota."
@@ -298,6 +302,7 @@
         "id": 11,
         "name": "Ai piedi della scalinata",
         "description": "Una larga scalinata conduce da qui al piano superiore della villa. Il corridoio si apre nella parete sud.",
+        "imgPath": "./resources/img/scala.jpg",
         "visible": true,
         "southId": 6,
         "upId": 12
@@ -307,6 +312,7 @@
         "id": 12,
         "name": "Pianerottolo (1° piano)",
         "description": "Le ampie scale arrivano su di un largo pianerottolo. Da qui un corridoio conduce verso sud, dando accesso al piano più alto della villa.",
+        "imgPath": "./resources/img/pianerottolo.jpg",
         "visible": true,
         "southId": 13,
         "downId": 11
@@ -316,13 +322,14 @@
         "id": 13,
         "name": "Corridoio (1° piano)",
         "description": "Questo corridoio, scuro e maleodorante, procede verso nord e verso sud. Una porta conduce invece verso est.",
+        "imgPath": "./resources/img/corridoio2.jpg",
         "visible": true,
         "northId": 12,
         "southId": 14,
         "eastId": 17,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvDoor",
                 "id": 24,
                 "name": "porta",
                 "description": "La porta è aperta.",
@@ -335,15 +342,21 @@
         "id": 14,
         "name": "Corridoio (1° piano)",
         "description": "Il corridoio procede ancora da nord a sud, e un corridoio secondario si apre verso est. Eppure ti pare che una strana, tenue nebbia luminescente occupi i passaggi verso est e verso sud. Verso ovest vedi una porta.",
+        "imgPath": "./resources/img/vicolo1.jpg",
         "visible": true,
         "northId": 13,
         "westId": 15,
+        "southText": "Come ti avvicini alla nebbia, incontri una strana resistenza, come un invisibile muro di gomma, e non riesci a procedere.",
+        "eastText": "Come ti avvicini alla nebbia, incontri una strana resistenza, come un invisibile muro di gomma, e non riesci a procedere.",
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvDoor",
                 "id": 25,
                 "name": "porta",
-                "description": "La porta sembra essere chiusa a chiave."
+                "description": "La porta sembra essere chiusa a chiave.",
+                "locked": true,
+                "unlockedWithItemId": 19,
+                "blockedRoomId": 15
             }
         ]
     },
@@ -352,44 +365,61 @@
         "id": 15,
         "name": "Studio (1° piano)",
         "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. <br>Sopra la scrivania vedi un libro.",
-        "visible": true,
+        "imgPath": "./resources/img/studio1.jpg",
+        "visible": false,
         "northId": 16,
         "eastId": 14,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 26,
                 "name": "scrivania",
                 "description": "Una vecchia scrivania in mogano, semplice e priva di cassetti."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 27,
                 "name": "libro",
                 "description": "Un volume in ottavo dalla copertina in pelle. Sembra molto antico.",
                 "pickupable": true
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 28,
                 "name": "libreria",
                 "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota. <br>Noti che la libreria non è ben appoggiata al muro, forse è stata spostata.",
                 "movable": true
-            },
-            {
-                "type": "AdvObject",
-                "id": 29,
-                "name": "incisione",
-                "description": "L'incisione che era nascosta dalla libreria ha la forma di una stella a cinque punte.",
-                "containerForSomething": true
             }
-        ]
+        ],
+        "newRoom": {
+            "type": "MutablePlayableRoom",
+            "imgPath": "./resources/img/studio2.jpg",
+            "objects": [
+                {
+                    "type": "AdvItemContainer",
+                    "id": 29,
+                    "name": "incisione",
+                    "description": "L'incisione che era nascosta dalla libreria ha la forma di una stella a cinque punte.",
+                    "list": []
+                },
+                {
+                    "type": "AdvItem",
+                    "id": 28,
+                    "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota."
+                }
+            ],
+            "newRoom": {
+                "type": "PlayableRoom",
+                "imgPath": "./resources/img/studio3.jpg"
+            }
+        }
     },
     {
         "type": "PlayableRoom",
         "id": 16,
         "name": "Passaggio segreto (1° piano)",
         "description": "Una stretta scala a chiocciola scende verso l'oscurità, probabilmente passando attraverso la vasta colonna al centro del salone. Un'apertura verso sud porta allo studio.",
+        "imgPath": "./resources/img/passaggio.jpg",
         "visible": false,
         "southId": 15,
         "downId": 19
@@ -399,18 +429,19 @@
         "id": 17,
         "name": "Camera da letto (1° piano)",
         "description": "Una camera buia e spaziosa. In essa puoi vedere un letto ampio e elegante, un largo comò e, appeso ad una parete, un piccolo candeliere. La porta si trova verso ovest, e un passaggio si apre nella parete nord.",
+        "imgPath": "./resources/img/camera1.jpg",
         "visible": true,
         "westId": 13,
         "northId": 18,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 30,
                 "name": "letto",
                 "description": "Pensi di non aver mai visto un letto così vasto e così lussuoso. Peccato che sia ricoperto da un dito di polvere."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 31,
                 "name": "comò",
                 "alias": [
@@ -420,44 +451,56 @@
                 "movable": true
             },
             {
-                "type": "AdvObjectContainer",
+                "type": "AdvItemContainer",
                 "id": 32,
                 "name": "candeliere",
-                "description": "Un piccolo candeliere in ferro, appeso ben alto alla parete. Sul candeliere vedi una singola candela.",
-                "list": [
-                    {
-                        "type": "AdvObject",
-                        "id": 33,
-                        "name": "candela",
-                        "description": "Una semplice candela.",
-                        "pickupable": true
-                    }
-                ]
+                "description": "Un piccolo candeliere in ferro, appeso ben alto alla parete. Sul candeliere vedi una singola candela, ma è troppo in alto per prenderla."
             }
-        ]
+        ],
+        "newRoom": {
+            "type": "PlayableRoom",
+            "imgPath": "./resources/img/camera2.jpg",
+            "objects": [
+                {
+                    "type": "AdvItemContainer",
+                    "id": 32,
+                    "description": "Un piccolo candeliere in ferro.",
+                    "list": [
+                        {
+                            "type": "AdvItem",
+                            "id": 33,
+                            "name": "candela",
+                            "description": "Una semplice candela.",
+                            "pickupable": true
+                        }
+                    ]
+                }
+            ]
+        }
     },
     {
         "type": "PlayableRoom",
         "id": 18,
         "name": "Bagno (1° piano)",
         "description": "Una piccola stanza da bagno completamente in rovina. L'unico oggetto ancora riconoscibile è una vasca di ceramica. La camera si trova a sud.",
+        "imgPath": "./resources/img/bagno.jpg",
         "visible": true,
         "southId": 17,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 34,
                 "name": "lavandino",
                 "description": "Un lavandino in ceramica, sporco e pieno di crepe."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 35,
                 "name": "vasca",
                 "description": "Una vasca da bagno in ceramica. Un tempo probabilmente era costosa ed elegante, ma ora è in pessimo stato. Stranamente è ancora piena d'acqua."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 36,
                 "name": "acqua",
                 "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso.",
@@ -470,6 +513,7 @@
         "id": 19,
         "name": "Sotterranei",
         "description": "La poca luce illumina una galleria scavata nella roccia, sotto la villa, che procede tortuosamente in direzione nord-est. Una scala a chiocciola risale lungo il passaggio verticale.",
+        "imgPath": "./resources/img/tunnel.jpg",
         "visible": true,
         "isDark": true,
         "upId": 16,
@@ -480,6 +524,7 @@
         "id": 20,
         "name": "Bivio (sotterranei)",
         "description": "La galleria qui si biforca in due. La diramazione principale curva verso nord, mentre una galleria secondaria porta verso sud-est.",
+        "imgPath": "./resources/img/bivio.jpg",
         "visible": true,
         "isDark": true,
         "northId": 24,
@@ -491,17 +536,19 @@
         "id": 21,
         "name": "Di fronte ad una cella (sotterranei)",
         "description": "Il tunnel che proviene da nord-ovest, scavato nella dura roccia si ferma davanti ad una porta di metallo, verso sud.",
+        "imgPath": "./resources/img/davanti1.jpg",
         "visible": true,
         "isDark": true,
         "northWestId": 20,
         "southId": 22,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvDoor",
                 "id": 37,
                 "name": "porta",
                 "description": "La porta, che sembra molto robusta, non ha serrature ma solo un paletto che permette di aprirla e chiuderla dall'esterno. È chiusa.",
-                "openable": true
+                "openable": true,
+                "blockedRoomId": 22
             }
         ]
     },
@@ -510,6 +557,8 @@
         "id": 22,
         "name": "Cella (sotterranei)",
         "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. <br><br>Puoi vedere Valeria, incatenata ad una parete. <br><br>Appena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» <br><br>«Valeria! Finalmente ti ho trovato...»<br><br>«Non immagini che gioia vederti. Ti prego, aiutami...» <br>«Qualche ora fa una strana donna albina è entrata nella mia cella, passando attraverso la porta chiusa; ha detto che era venuta a controllare la sua nuova dimora, o qualcosa del genere. È stato terrificante.» <br><br>«Dimmi com'è successo tutto questo...» <br><br>«Fino a due giorni fa il palazzo era in condizioni perfette, poi ho trovato un anello e una collana in un bauletto in cantina, e la mattina dopo la villa era totalmente cambiata, era diventata un vecchio rudere dalle finestre murate e da cui era impossibile uscire. Poco dopo mi sono sentita mancare e mi sono risvegliata prigioniera in questa cella.»<br><br>«Ho trovato la collana, ma non so dove sia l'anello»<br><br>«È quello che ho sul dito, prendilo, potrebbe essere magico... la donna albina ha provato a togliermelo ma non ci è riuscita.»<br>«Ti prego, trova il modo di liberarmi»",
+        "imgPath": "./resources/img/cella.jpg",
+        "visible": true,
         "nextRoomId": 23
     },
     {
@@ -517,42 +566,43 @@
         "id": 23,
         "name": "Cella (sotterranei)",
         "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. La porta si trova verso nord. <br>Puoi vedere Valeria, incatenata ad una parete.",
+        "imgPath": "./resources/img/cella.jpg",
+        "visible": true,
         "northId": 21,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvPerson",
                 "id": 37,
                 "name": "valeria",
                 "description": "La ragazza è prigioniera, legata con una catena alla parete, i suoi abiti laceri e strappati. È sempre bella come te la ricordavi, ma adesso il suo volto è provato e su di esso è dipinta un'espressione che è un misto di terrore per la situazione in cui si trova e di felicità per l'averti visto.<br>Ha un anello sul dito."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItemWearable",
                 "id": 38,
                 "name": "anello",
                 "description": "Un anello d'argento. Pare sia incantato.",
-                "pickupable": true,
-                "active": false
+                "pickupable": true
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 39,
                 "name": "catene",
                 "description": "Una robusta catena, chiusa da un lucchetto altrettanto robusto, va da un gancio piantato nella solida roccia fino ad un paio di bracciali di metallo chiusi attorno ai polsi di Valeria."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 40,
                 "name": "bracciali",
                 "description": "Un paio di bracciali di metallo chiusi attorno ai polsi di Valeria."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 41,
                 "name": "gancio",
                 "description": "Un gancio piantato nella roccia a cui è collegata la catena."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 42,
                 "name": "lucchetto",
                 "description": "Un robusto lucchetto che blocca la catena."
@@ -564,14 +614,24 @@
         "id": 24,
         "name": "Caverna (sotterranei)",
         "description": "Questa caverna sembra una specie di anticamera. Forse per le grottesche formazioni di roccia che, pur naturali, sembrano avere la forma di bizzarre creature o di scene perverse. Hai l'impressione che l'origine di tutto si trovi oltre il passaggio verso nord. La galleria da cui provieni conduce verso sud.",
+        "imgPath": "./resources/img/anticamera.jpg",
+        "visible": true,
         "northId": 25,
         "southId": 20,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 43,
                 "name": "rocce",
                 "description": "Una formazione in un angolo pare rappresentare il sacrificio di una giovane."
+            },
+            {
+                "type": "AdvMagicWall",
+                "id": 50,
+                "locked": true,
+                "unlockedByWearingItemId": 38,
+                "blockedRoomId": 25,
+                "trespassingWhenLockedText": "Provi ad andare verso nord, ma i tuoi passi si fanno sempre più pesanti, e percepisci una forza maligna che ti respinge indietro, lasciandoti malfermo sulle gambe."
             }
         ]
     },
@@ -580,22 +640,24 @@
         "id": 25,
         "name": "L'antro della strega (sotterranei)",
         "description": "Una vasta caverna quasi circolare, scavata nella roccia, con solo un passaggio che conduce verso sud. E praticamente niente altro, se non un pentacolo tracciato sul suolo. Eppure il terrore è così palpabile, in questo luogo.<br>Un braciere, al centro della stanza, proietta la sua luce sulle pareti.<br>Una donna albina ti osserva, un'espressione divertita e beffarda sul suo volto.<br>In quel momento ti rendi conto che puoi vedere attraverso il suo corpo immateriale, che stai in realtà vedendo uno spettro, e senti la sua voce, come un vento gelido, dire: «Non so come tu abbia fatto, ma sei giunto fino a qua. Questo non ti sarà di alcun aiuto.»",
+        "imgPath": "./resources/img/antro.jpg",
+        "visible": false,
         "southId": 24,
         "objects": [
             {
-                "type": "AdvObject",
+                "type": "AdvPerson",
                 "id": 44,
                 "name": "strega",
                 "description": "Non è priva di una certa terribile bellezza. Osservandola ti rendi conto che puoi vederle attraverso. In un certo senso pare proiettata dal braciere, quasi fosse solo un'ombra sulla parete.<br>«Finalmente, dopo anni, secoli, la mia attesa viene ricompensata. Un giovane corpo di donna da abitare, per tornare quella che ero. Non riuscirai ad impedirmelo. Mi nutrirò del tuo spirito. Solo pochi minuti...», e la donna inizia a recitare una strana, incomprensibile litania."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 45,
                 "name": "pentacolo",
                 "description": "Una stella a cinque punte circondata da un cerchio, tracciata sul terreno."
             },
             {
-                "type": "AdvObject",
+                "type": "AdvItem",
                 "id": 46,
                 "name": "braciere",
                 "description": "Un largo braciere di bronzo, sorretto da un treppiede, in cui brucia una bella fiamma viva, che si fa sempre più intensa."
@@ -607,12 +669,16 @@
         "id": 26,
         "name": "L'antro della strega (sotterranei)",
         "description": "Come ti avvicini, lo spettro della donna si mette tra te e il braciere, ma è come se i suoi poteri non potessero farti nulla. Sorretto da un'energia che non credevi di avere, passi attraverso la donna, e rovesci l'acqua contenuta nella ciotola sul braciere, che inizia a spegnersi. La donna albina inizia a gridare, quasi assordandoti; un grido di dolore, frustrazione e disperazione. E quando la luce del braciere scompare, anch'ella e il suo urlo scompaiono.<br><br>Per un attimo tutto pare girare vorticosamente attorno a te, finchè non cadi a terra perdendo i sensi.<br><br>[ . . . ]",
+        "imgPath": "./resources/img/antro.jpg",
+        "visible": true,
         "nextRoomId": 27
     },
     {
         "type": "NonPlayableRoom",
         "id": 27,
-        "name": "L'antro della strega (sotterranei)",
-        "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***"
+        "name": "...",
+        "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***",
+        "imgPath": "./resources/img/fine.jpg",
+        "visible": true
     }
 ]

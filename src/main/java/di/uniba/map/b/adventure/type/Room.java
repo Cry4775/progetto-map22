@@ -9,6 +9,8 @@ public abstract class Room {
 
     private String imgPath;
 
+    private Boolean visible;
+
     public Room(int id, String name, String description) {
         this.id = id;
         this.name = name;
@@ -70,6 +72,14 @@ public abstract class Room {
         if (id != other.id)
             return false;
         return true;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
 }

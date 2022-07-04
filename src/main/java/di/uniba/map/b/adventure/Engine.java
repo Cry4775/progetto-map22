@@ -8,6 +8,7 @@ package di.uniba.map.b.adventure;
 import di.uniba.map.b.adventure.parser.Parser;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.CommandType;
+import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 
 import java.awt.Image;
@@ -38,7 +39,7 @@ public class Engine {
         this.gui = gui;
         try {
             this.game.init();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             System.err.println(ex);
             // TODO GUI FATAL ERROR
         }
@@ -61,7 +62,8 @@ public class Engine {
 
         game.setCompassLabels(gui);
 
-        gui.appendTextEdtOutput(game.getCurrentRoom().getDescription());
+        gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+
         gui.waitForEnterKey();
     }
 
@@ -71,12 +73,22 @@ public class Engine {
             ParserOutput p = parser.parse(command, game.getCommands(),
                     currentRoom.getObjects(), game.getInventory());
             if (p == null || p.getCommand() == null) {
-                gui.appendTextEdtOutput("Non capisco quello che mi vuoi dire.");
+                gui.appendTextEdtOutput("Non capisco quello che mi vuoi dire.", false);
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
                 gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
             } else {
                 game.nextMove(p, gui);
             }
+        } else if (game.getCurrentRoom() instanceof NonPlayableRoom) {
+            NonPlayableRoom currentRoom = (NonPlayableRoom) game.getCurrentRoom();
+            game.setCurrentRoom(currentRoom.getNextRoom());
+            gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+            // TODO estrai metodo
         }
+        gui.getLblRoomName().setText(game.getCurrentRoom().getName());
+        Image roomImg = new ImageIcon(game.getCurrentRoom().getImgPath()).getImage()
+                .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
+        gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
+        game.setCompassLabels(gui);
     }
 }

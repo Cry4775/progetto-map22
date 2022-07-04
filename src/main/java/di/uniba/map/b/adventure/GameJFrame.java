@@ -180,7 +180,7 @@ public class GameJFrame extends javax.swing.JFrame {
         edtOutput.setContentType("text/html"); // NOI18N
         edtOutput.setEditorKit(new javax.swing.text.html.HTMLEditorKit());
         edtOutput.setText(
-                "<html>\n  <head>\n  </head>\n  <body id='body'; style=\"background-color: #d6d9df;  margin: 5px; font-family:verdana\">\n    <div>\n     <span style=\"color:red\"><strong>tèìextArea</strong></span><br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n      test<br>\n    </div>\n  </body>\n</html>\n\n");
+                "<html><head></head><body id='body'; style=\"background-color: #d6d9df; margin: 5px; font-family:verdana\"><div></div></body></html>");
         scrOutput.setViewportView(edtOutput);
 
         pnlInOut.add(scrOutput, java.awt.BorderLayout.CENTER);
@@ -193,7 +193,7 @@ public class GameJFrame extends javax.swing.JFrame {
 
         txtInput.setBackground(java.awt.Color.decode("#d6d9df"));
         txtInput.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        txtInput.setText("testg");
+        txtInput.setText("");
         txtInput.setBorder(null);
         txtInput.setCaret(new CustomCaret());
         txtInput.setPreferredSize(new java.awt.Dimension(840, 25));
@@ -371,17 +371,21 @@ public class GameJFrame extends javax.swing.JFrame {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             String txt = txtInput.getText();
             if (txt != null && !txt.isEmpty()) {
-                appendTextEdtOutput(txt);
+                appendTextEdtOutput(txt, true);
                 txtInput.setText("");
                 engine.commandPerformed(txt);
             }
         }
     }// GEN-LAST:event_txtInputKeyPressed
 
-    public void appendTextEdtOutput(String text) {
+    public void appendTextEdtOutput(String text, boolean isInputText) {
         HTMLDocument doc = (HTMLDocument) edtOutput.getDocument();
         try {
-            doc.insertBeforeEnd(doc.getElement("body"), String.format("<div><br>> %s<br></div>", text));
+            if (isInputText) {
+                doc.insertBeforeEnd(doc.getElement("body"), String.format("<div><br>> %s<br></div>", text));
+            } else {
+                doc.insertBeforeEnd(doc.getElement("body"), String.format("<div><br>%s<br></div>", text));
+            }
         } catch (BadLocationException | IOException e) {
             e.printStackTrace();
             // TODO FATAL
@@ -395,6 +399,7 @@ public class GameJFrame extends javax.swing.JFrame {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
                     txtInput.setEditable(true);
                     txtInput.removeKeyListener(this);
+                    engine.commandPerformed("");
                 }
             }
         });

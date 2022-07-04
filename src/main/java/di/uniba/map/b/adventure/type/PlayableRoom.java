@@ -15,33 +15,49 @@ import java.util.List;
 public class PlayableRoom extends Room {
     private String look;
 
-    private boolean visible = true;
-
     private Room south;
-    private int southId = 0;
+    private Integer southId;
+    private String southText;
 
     private Room north;
-    private int northId = 0;
+    private Integer northId;
+    private String northText;
 
     private Room southWest;
-    private int southWestId = 0;
+    private Integer southWestId;
+    private String southWestText;
 
     private Room northWest;
-    private int northWestId = 0;
+    private Integer northWestId;
+    private String northWestText;
 
     private Room southEast;
-    private int southEastId = 0;
+    private Integer southEastId;
+    private String southEastText;
 
     private Room northEast;
-    private int northEastId = 0;
+    private Integer northEastId;
+    private String northEastText;
 
     private Room east;
-    private int eastId = 0;
+    private Integer eastId;
+    private String eastText;
 
     private Room west;
-    private int westId = 0;
+    private Integer westId;
+    private String westText;
+
+    private Room up;
+    private Integer upId;
+    private String upText;
+
+    private Room down;
+    private Integer downId;
+    private String downText;
 
     private final List<AdvObject> objects = new ArrayList<>();
+
+    private final List<AdvEvent> events = new ArrayList<>();
 
     public PlayableRoom(int id, String name, String description) {
         super(id, name, description);
@@ -49,14 +65,6 @@ public class PlayableRoom extends Room {
 
     public PlayableRoom(int id, String name, String description, String imgPath) {
         super(id, name, description, imgPath);
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
     }
 
     public Room getSouth() {
@@ -123,35 +131,35 @@ public class PlayableRoom extends Room {
         this.northEast = northEast;
     }
 
-    public int getSouthWestId() {
+    public Integer getSouthWestId() {
         return southWestId;
     }
 
-    public int getNorthWestId() {
+    public Integer getNorthWestId() {
         return northWestId;
     }
 
-    public int getSouthEastId() {
+    public Integer getSouthEastId() {
         return southEastId;
     }
 
-    public int getNorthEastId() {
+    public Integer getNorthEastId() {
         return northEastId;
     }
 
-    public int getSouthId() {
+    public Integer getSouthId() {
         return southId;
     }
 
-    public int getNorthId() {
+    public Integer getNorthId() {
         return northId;
     }
 
-    public int getWestId() {
+    public Integer getWestId() {
         return westId;
     }
 
-    public int getEastId() {
+    public Integer getEastId() {
         return eastId;
     }
 
@@ -165,5 +173,193 @@ public class PlayableRoom extends Room {
 
     public void setLook(String look) {
         this.look = look;
+    }
+
+    public Room getUp() {
+        return up;
+    }
+
+    public Integer getUpId() {
+        return upId;
+    }
+
+    public Room getDown() {
+        return down;
+    }
+
+    public Integer getDownId() {
+        return downId;
+    }
+
+    public void setUp(Room up) {
+        this.up = up;
+    }
+
+    public void setDown(Room down) {
+        this.down = down;
+    }
+
+    public void setSouthId(int southId) {
+        this.southId = southId;
+    }
+
+    public String getSouthText() {
+        return southText;
+    }
+
+    public void setSouthText(String southText) {
+        this.southText = southText;
+    }
+
+    public void setNorthId(int northId) {
+        this.northId = northId;
+    }
+
+    public String getNorthText() {
+        return northText;
+    }
+
+    public void setNorthText(String northText) {
+        this.northText = northText;
+    }
+
+    public void setSouthWestId(int southWestId) {
+        this.southWestId = southWestId;
+    }
+
+    public String getSouthWestText() {
+        return southWestText;
+    }
+
+    public void setSouthWestText(String southWestText) {
+        this.southWestText = southWestText;
+    }
+
+    public void setNorthWestId(int northWestId) {
+        this.northWestId = northWestId;
+    }
+
+    public String getNorthWestText() {
+        return northWestText;
+    }
+
+    public void setNorthWestText(String northWestText) {
+        this.northWestText = northWestText;
+    }
+
+    public void setSouthEastId(int southEastId) {
+        this.southEastId = southEastId;
+    }
+
+    public String getSouthEastText() {
+        return southEastText;
+    }
+
+    public void setSouthEastText(String southEastText) {
+        this.southEastText = southEastText;
+    }
+
+    public void setNorthEastId(int northEastId) {
+        this.northEastId = northEastId;
+    }
+
+    public String getNorthEastText() {
+        return northEastText;
+    }
+
+    public void setNorthEastText(String northEastText) {
+        this.northEastText = northEastText;
+    }
+
+    public void setEastId(int eastId) {
+        this.eastId = eastId;
+    }
+
+    public String getEastText() {
+        return eastText;
+    }
+
+    public void setEastText(String eastText) {
+        this.eastText = eastText;
+    }
+
+    public void setWestId(int westId) {
+        this.westId = westId;
+    }
+
+    public String getWestText() {
+        return westText;
+    }
+
+    public void setWestText(String westText) {
+        this.westText = westText;
+    }
+
+    public void setUpId(int upId) {
+        this.upId = upId;
+    }
+
+    public String getUpText() {
+        return upText;
+    }
+
+    public void setUpText(String upText) {
+        this.upText = upText;
+    }
+
+    public void setDownId(int downId) {
+        this.downId = downId;
+    }
+
+    public String getDownText() {
+        return downText;
+    }
+
+    public void setDownText(String downText) {
+        this.downText = downText;
+    }
+
+    public void setSouthId(Integer southId) {
+        this.southId = southId;
+    }
+
+    public void setNorthId(Integer northId) {
+        this.northId = northId;
+    }
+
+    public void setSouthWestId(Integer southWestId) {
+        this.southWestId = southWestId;
+    }
+
+    public void setNorthWestId(Integer northWestId) {
+        this.northWestId = northWestId;
+    }
+
+    public void setSouthEastId(Integer southEastId) {
+        this.southEastId = southEastId;
+    }
+
+    public void setNorthEastId(Integer northEastId) {
+        this.northEastId = northEastId;
+    }
+
+    public void setEastId(Integer eastId) {
+        this.eastId = eastId;
+    }
+
+    public void setWestId(Integer westId) {
+        this.westId = westId;
+    }
+
+    public void setUpId(Integer upId) {
+        this.upId = upId;
+    }
+
+    public void setDownId(Integer downId) {
+        this.downId = downId;
+    }
+
+    public List<AdvEvent> getEvents() {
+        return events;
     }
 }

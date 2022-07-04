@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.swing.JLabel;
 import java.awt.Color;
+import java.io.IOException;
 
 /**
  *
@@ -68,7 +69,7 @@ public abstract class GameDescription {
         }
     }
 
-    public abstract void init() throws Exception;
+    public abstract void init() throws IOException;
 
     public abstract void nextMove(ParserOutput p, GameJFrame gui);
 

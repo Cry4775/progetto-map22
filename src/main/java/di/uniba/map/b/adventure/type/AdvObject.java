@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * @author pierpaolo
  */
-public class AdvObject {
+public abstract class AdvObject {
 
     private final int id;
 
@@ -22,20 +22,6 @@ public class AdvObject {
     private String description;
 
     private Set<String> alias;
-
-    private boolean openable = false;
-
-    private boolean pickupable = true;
-
-    private boolean pushable = false;
-
-    private boolean movable = false;
-
-    private boolean open = false;
-
-    private boolean push = false;
-
-    private boolean moved = false;
 
     public AdvObject(int id) {
         this.id = id;
@@ -75,46 +61,6 @@ public class AdvObject {
         this.description = description;
     }
 
-    public boolean isOpenable() {
-        return openable;
-    }
-
-    public void setOpenable(boolean openable) {
-        this.openable = openable;
-    }
-
-    public boolean isPickupable() {
-        return pickupable;
-    }
-
-    public void setPickupable(boolean pickupable) {
-        this.pickupable = pickupable;
-    }
-
-    public boolean isPushable() {
-        return pushable;
-    }
-
-    public void setPushable(boolean pushable) {
-        this.pushable = pushable;
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
-
-    public boolean isPush() {
-        return push;
-    }
-
-    public void setPush(boolean push) {
-        this.push = push;
-    }
-
     public Set<String> getAlias() {
         return alias;
     }
@@ -151,21 +97,5 @@ public class AdvObject {
         if (id != other.id)
             return false;
         return true;
-    }
-
-    public boolean isMovable() {
-        return movable;
-    }
-
-    public void setMovable(boolean movable) {
-        this.movable = movable;
-    }
-
-    public boolean isMoved() {
-        return moved;
-    }
-
-    public void setMoved(boolean moved) {
-        this.moved = moved;
     }
 }
