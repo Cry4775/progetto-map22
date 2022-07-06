@@ -24,14 +24,14 @@ public class Parser {
         this.stopwords = stopwords;
     }
 
-    private int checkForCommand(String token, List<Command> commands) {
-        for (int i = 0; i < commands.size(); i++) {
-            if (commands.get(i).getName().equals(token)
-                    || (commands.get(i).getAlias() != null && commands.get(i).getAlias().contains(token))) {
-                return i;
+    private Command checkForCommand(String token, List<Command> commands) {
+        for (Command command : commands) {
+            if (command.getName().equals(token)
+                    || command.getAlias() != null && command.getAlias().contains(token)) {
+                return command;
             }
         }
-        return -1;
+        return null;
     }
 
     private AdvObject checkForObject(String token, List<AdvObject> objects) {
@@ -66,8 +66,8 @@ public class Parser {
             List<AdvObject> inventory) {
         List<String> tokens = Utils.parseString(command, stopwords);
         if (!tokens.isEmpty()) {
-            int ic = checkForCommand(tokens.get(0), commands);
-            if (ic > -1) {
+            Command cmd = checkForCommand(tokens.get(0), commands);
+            if (cmd != null) {
                 if (tokens.size() > 1) {
                     AdvObject objRoom = checkForObject(tokens.get(1), objects);
                     AdvObject objInv = null;
@@ -81,16 +81,16 @@ public class Parser {
                         }
                     }
                     if (objRoom != null && objInv != null) {
-                        return new ParserOutput(commands.get(ic), objRoom, objInv);
+                        return new ParserOutput(cmd, objRoom, objInv);
                     } else if (objRoom != null) {
-                        return new ParserOutput(commands.get(ic), objRoom, null);
+                        return new ParserOutput(cmd, objRoom, null);
                     } else if (objInv != null) {
-                        return new ParserOutput(commands.get(ic), null, objInv);
+                        return new ParserOutput(cmd, null, objInv);
                     } else {
-                        return new ParserOutput(commands.get(ic), null, null);
+                        return new ParserOutput(cmd, null, null);
                     }
                 } else {
-                    return new ParserOutput(commands.get(ic), null);
+                    return new ParserOutput(cmd, null);
                 }
             } else {
                 return new ParserOutput(null, null);

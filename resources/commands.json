@@ -68,6 +68,26 @@
 		]
 	},
 	{
+		"type": "UP",
+		"name": "su",
+		"alias": [
+			"sopra",
+			"superiore",
+			"up",
+			"sali"
+		]
+	},
+	{
+		"type": "DOWN",
+		"name": "giu",
+		"alias": [
+			"sotto",
+			"inferiore",
+			"down",
+			"scendi"
+		]
+	},
+	{
 		"type": "INVENTORY",
 		"name": "inventario",
 		"alias": [
@@ -106,6 +126,22 @@
 			"push",
 			"premi",
 			"schiaccia"
+		]
+	},
+	{
+		"type": "PULL",
+		"name": "tira",
+		"alias": [
+			"pull"
+		]
+	},
+	{
+		"type": "MOVE",
+		"name": "sposta",
+		"alias": [
+			"move",
+			"muovi",
+			"trascina"
 		]
 	},
 	{

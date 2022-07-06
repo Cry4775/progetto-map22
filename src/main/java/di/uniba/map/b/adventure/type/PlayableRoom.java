@@ -13,7 +13,7 @@ import java.util.List;
  * @author Pierdamiano Zagaria
  */
 public class PlayableRoom extends Room {
-    private String look;
+    private String look; // TODO implementazione
 
     private Room south;
     private Integer southId;
@@ -57,7 +57,7 @@ public class PlayableRoom extends Room {
 
     private final List<AdvObject> objects = new ArrayList<>();
 
-    private final List<AdvEvent> events = new ArrayList<>();
+    private RoomEvent event;
 
     public PlayableRoom(int id, String name, String description) {
         super(id, name, description);
@@ -359,7 +359,7 @@ public class PlayableRoom extends Room {
         this.downId = downId;
     }
 
-    public List<AdvEvent> getEvents() {
-        return events;
+    public RoomEvent getEvent() {
+        return event;
     }
 }

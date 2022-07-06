@@ -1,16 +1,33 @@
 package di.uniba.map.b.adventure.type;
 
 public abstract class AdvEvent {
-    private String text;
-    private boolean endsTheGame = false;
+    private EventType eventType;
 
-    // TODO gestire anche l'engine senza file -> costruttori/setter
+    private String text;
+
+    private boolean triggered;
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
 
     public String getText() {
         return text;
     }
 
-    public boolean isEndsTheGame() {
-        return endsTheGame;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public boolean isTriggered() {
+        return triggered;
+    }
+
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
     }
 }

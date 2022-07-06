@@ -5,8 +5,10 @@
  */
 package di.uniba.map.b.adventure.type;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,6 +24,8 @@ public abstract class AdvObject {
     private String description;
 
     private Set<String> alias;
+
+    private final List<ObjEvent> events = new ArrayList<>();
 
     public AdvObject(int id) {
         this.id = id;
@@ -97,5 +101,9 @@ public abstract class AdvObject {
         if (id != other.id)
             return false;
         return true;
+    }
+
+    public List<ObjEvent> getEvents() {
+        return events;
     }
 }

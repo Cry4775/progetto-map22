@@ -69,7 +69,7 @@
                 "type": "AdvItem",
                 "id": 4,
                 "name": "quadri",
-                "description": "Due quadri a dir poco inquietanti. <br>Quello di destra pare rappresentare una visione dell'inferno così come lo descrive Dante Alighieri, mentre l'altro è il ritratto di una donna albina.",
+                "description": "Due quadri a dir poco inquietanti. <br>Quello di sinistra pare rappresentare una visione dell'inferno così come lo descrive Dante Alighieri, mentre l'altro è il ritratto di una donna albina.",
                 "alias": [
                     "quadro"
                 ]
@@ -88,7 +88,6 @@
                 "type": "AdvDoor",
                 "id": 6,
                 "name": "porta",
-                "description": "La porta è chiusa.",
                 "openable": true,
                 "blockedRoomId": 5
             }
@@ -113,6 +112,12 @@
                     "giubbotto"
                 ],
                 "pickupable": true,
+                "events": [
+                    {
+                        "eventType": "PICK_UP",
+                        "updatingParentRoom": true
+                    }
+                ],
                 "list": [
                     {
                         "type": "AdvItem",
@@ -141,15 +146,9 @@
             }
         ],
         "newRoom": {
+            "description": "Una piccola stanza dove gli ospiti possono lasciare i loro soprabiti. La porta ad est è l'unica uscita.",
             "imgPath": "./resources/img/vestibolo2.jpg"
-        },
-        "events": [
-            {
-                "type": "PickupEvent",
-                "invokerObjectId": 7,
-                "updatingParentRoom": true
-            }
-        ]
+        }
     },
     {
         "type": "PlayableRoom",
@@ -167,7 +166,6 @@
                 "type": "AdvDoor",
                 "id": 10,
                 "name": "porta",
-                "description": "La porta è chiusa.",
                 "openable": true,
                 "blockedRoomId": 7
             }
@@ -188,6 +186,12 @@
                 "name": "credenza",
                 "description": "Una grossa credenza in mogano.",
                 "openable": true,
+                "events": [
+                    {
+                        "eventType": "OPEN_CONTAINER",
+                        "updatingParentRoom": true
+                    }
+                ],
                 "list": [
                     {
                         "type": "AdvItem",
@@ -206,6 +210,7 @@
             }
         ],
         "newRoom": {
+            "type": "PlayableRoom",
             "imgPath": "./resources/img/cucina2.jpg"
         }
     },
@@ -217,7 +222,7 @@
         "imgPath": "./resources/img/salone1.jpg",
         "visible": true,
         "eastId": 6,
-        "southWestId": 11,
+        "southWestId": 10,
         "objects": [
             {
                 "type": "AdvItem",
@@ -229,13 +234,18 @@
                 "type": "AdvItem",
                 "id": 15,
                 "name": "candeliere",
-                "description": "Un ingombrante candeliere in peltro, ormai privo di candele, domina dall'alto il salone, sorretto da una corda che esce da un foro nel soffitto. <br><br>Ti pare di sentire una voce sottile e vellutata che chiama il tuo nome. Ti guardi intorno. Non vedi nessuno. Devi esserti sbagliato."
+                "description": "Un ingombrante candeliere in peltro, ormai privo di candele, domina dall'alto il salone, sorretto da una corda che esce da un foro nel soffitto.",
+                "events": [
+                    {
+                        "eventType": "LOOK_AT",
+                        "text": "Ti pare di sentire una voce sottile e vellutata che chiama il tuo nome. Ti guardi intorno. Non vedi nessuno. Devi esserti sbagliato."
+                    }
+                ]
             },
             {
                 "type": "AdvDoor",
                 "id": 16,
                 "name": "porta",
-                "description": "La porta è aperta.",
                 "open": true
             }
         ],
@@ -293,7 +303,16 @@
                 "type": "AdvItem",
                 "id": 23,
                 "name": "leva",
-                "description": "Una corta leva di legno che blocca la ruota."
+                "description": "Una corta leva di legno che blocca la ruota.",
+                "pullable": true,
+                "events": [
+                    {
+                        "eventType": "PULL",
+                        "text": "La ruota gira per qualche secondo, e la corda si srotola. Ti pare di sentire un rumore secco provenire dal salone.",
+                        "updatingAnotherRoom": true,
+                        "updateTargetRoomId": 8
+                    }
+                ]
             }
         ]
     },
@@ -332,7 +351,6 @@
                 "type": "AdvDoor",
                 "id": 24,
                 "name": "porta",
-                "description": "La porta è aperta.",
                 "open": true
             }
         ]
@@ -353,7 +371,6 @@
                 "type": "AdvDoor",
                 "id": 25,
                 "name": "porta",
-                "description": "La porta sembra essere chiusa a chiave.",
                 "locked": true,
                 "unlockedWithItemId": 19,
                 "blockedRoomId": 15
@@ -405,6 +422,7 @@
                 {
                     "type": "AdvItem",
                     "id": 28,
+                    "name": "libreria",
                     "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota."
                 }
             ],
@@ -425,7 +443,7 @@
         "downId": 19
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 17,
         "name": "Camera da letto (1° piano)",
         "description": "Una camera buia e spaziosa. In essa puoi vedere un letto ampio e elegante, un largo comò e, appeso ad una parete, un piccolo candeliere. La porta si trova verso ovest, e un passaggio si apre nella parete nord.",
@@ -448,7 +466,14 @@
                     "comodino"
                 ],
                 "description": "Un semplice comò in robusto legno massello, privo di cassetti o altre aperture.",
-                "movable": true
+                "movable": true,
+                "events": [
+                    {
+                        "eventType": "MOVE",
+                        "text": "Sposti il candeliere proprio sotto al candeliere.",
+                        "updatingParentRoom": true
+                    }
+                ]
             },
             {
                 "type": "AdvItemContainer",
@@ -464,6 +489,7 @@
                 {
                     "type": "AdvItemContainer",
                     "id": 32,
+                    "name": "candeliere",
                     "description": "Un piccolo candeliere in ferro.",
                     "list": [
                         {
@@ -504,7 +530,13 @@
                 "id": 36,
                 "name": "acqua",
                 "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso.",
-                "pickupable": true
+                "pickupable": true,
+                "events": [
+                    {
+                        "eventType": "PICK_UP",
+                        "neededItemId": 12
+                    }
+                ]
             }
         ]
     },
@@ -546,7 +578,7 @@
                 "type": "AdvDoor",
                 "id": 37,
                 "name": "porta",
-                "description": "La porta, che sembra molto robusta, non ha serrature ma solo un paletto che permette di aprirla e chiuderla dall'esterno. È chiusa.",
+                "description": "La porta, che sembra molto robusta, non ha serrature ma solo un paletto che permette di aprirla e chiuderla dall'esterno.",
                 "openable": true,
                 "blockedRoomId": 22
             }

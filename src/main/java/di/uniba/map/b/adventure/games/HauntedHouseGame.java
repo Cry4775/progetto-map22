@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -38,11 +37,13 @@ import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.AdvPerson;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
+import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.NonPlayableRoom;
-import di.uniba.map.b.adventure.type.PickupEvent;
+import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.RoomEvent;
 
 // Se tutto viene caricato da file allora si può cancellare
 public class HauntedHouseGame extends GameDescription {
@@ -88,7 +89,8 @@ public class HauntedHouseGame extends GameDescription {
 
         RuntimeTypeAdapterFactory<AdvEvent> typeAdapterEvents = RuntimeTypeAdapterFactory
                 .of(AdvEvent.class)
-                .registerSubtype(PickupEvent.class);
+                .registerSubtype(ObjEvent.class)
+                .registerSubtype(RoomEvent.class);
 
         Gson gson = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
@@ -123,6 +125,7 @@ public class HauntedHouseGame extends GameDescription {
                     if (objRoom.getObjects() != null) {
                         for (AdvObject obj : objRoom.getObjects()) {
                             linkObjectsParent(obj);
+                            linkObjectsEventsReference(obj, rooms);
                         }
                     }
                 }
@@ -149,13 +152,42 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
+    private void linkObjectsEventsReference(AdvObject obj, List<Room> rooms) {
+        if (obj instanceof AdvItem) {
+            AdvItem item = (AdvItem) obj;
+            if (item.getEvents() != null) {
+                for (ObjEvent objEvent : item.getEvents()) {
+                    if (objEvent.getUpdateTargetRoomId() != null) {
+                        rooms.stream()
+                                .filter(MutablePlayableRoom.class::isInstance)
+                                .map(MutablePlayableRoom.class::cast)
+                                .filter(room -> objEvent.getUpdateTargetRoomId() == room.getId())
+                                .forEach(room -> objEvent.setUpdateTargetRoom(room));
+                    } else if (objEvent.getNeededItemId() != null) {
+                        rooms.stream()
+                                .filter(PlayableRoom.class::isInstance)
+                                .map(PlayableRoom.class::cast)
+                                .filter(room -> !room.getObjects().isEmpty())
+                                .forEach(room -> room.getObjects()
+                                        .stream()
+                                        .filter(AdvItem.class::isInstance)
+                                        .map(AdvItem.class::cast)
+                                        .filter(neededItem -> neededItem.getId() == objEvent.getNeededItemId())
+                                        .forEach(neededItem -> objEvent.setNeededItem(neededItem)));
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void nextMove(ParserOutput p, GameJFrame gui) {
         Triple<Boolean, Boolean, Boolean> triple = new Triple<>(false, false, false);
         boolean actionPerformed = false;
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
-        // TODO up e down e wear e put
+        // TODO wear e put
+        // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
 
         if (p.getCommand().getType() == CommandType.NORTH) {
             triple = moveToCardinalDirection(currentRoom.getNorth());
@@ -173,6 +205,10 @@ public class HauntedHouseGame extends GameDescription {
             triple = moveToCardinalDirection(currentRoom.getEast());
         } else if (p.getCommand().getType() == CommandType.WEST) {
             triple = moveToCardinalDirection(currentRoom.getWest());
+        } else if (p.getCommand().getType() == CommandType.UP) {
+            triple = moveToCardinalDirection(currentRoom.getUp());
+        } else if (p.getCommand().getType() == CommandType.DOWN) {
+            triple = moveToCardinalDirection(currentRoom.getDown());
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             if (!getInventory().isEmpty()) {
                 StringBuilder outString = new StringBuilder("Nel tuo inventario ci sono:");
@@ -185,79 +221,21 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.LOOK_AT) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                AdvObject obj = null;
-                if (p.getObject() != null) {
-                    obj = p.getObject();
-                } else if (p.getInvObject() != null) {
-                    obj = p.getInvObject();
-                }
+                AdvObject obj = getObjectFromParser(p);
 
-                if (obj.getDescription() != null) {
-                    StringBuilder outString = new StringBuilder(obj.getDescription());
-
-                    if (obj instanceof AdvItemContainer) {
-                        AdvItemContainer container = (AdvItemContainer) obj;
-                        if (!container.isOpenable()) {
-                            container.setOpen(true);
-                            if (!container.getList().isEmpty()) {
-                                outString.append("<br>Noti la presenza di: ");
-                                for (AdvObject advObject : container.getList()) {
-                                    outString.append(advObject.getName() + ",");
-                                }
-                                outString.deleteCharAt(outString.length() - 1);
-                            }
-                        }
-                    }
-
-                    gui.appendTextEdtOutput(outString.toString(), false);
-                } else {
-                    gui.appendTextEdtOutput("Nulla di particolare.", false);
-                }
+                actionPerformed = lookAt(gui, obj);
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da esaminare.", false);
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
             if (p.getObject() != null || p.getInvObject() != null) {
                 if (p.getObject() instanceof AdvItem || p.getInvObject() instanceof AdvItem) {
-                    AdvItem obj = null;
-                    if (p.getObject() != null) {
-                        obj = (AdvItem) p.getObject();
-                    } else if (p.getInvObject() != null) {
-                        obj = (AdvItem) p.getInvObject();
-                    }
+                    AdvItem item = (AdvItem) getObjectFromParser(p);
 
-                    if (obj.isPickupable()) {
-                        if (currentRoom instanceof MutablePlayableRoom) {
-                            MutablePlayableRoom currentMutableRoom = (MutablePlayableRoom) currentRoom;
-                            for (AdvEvent evt : currentRoom.getEvents()) {
-                                if (evt instanceof PickupEvent) {
-                                    PickupEvent pEvt = (PickupEvent) evt;
-                                    if (pEvt.getInvokerObjectId() == obj.getId()) {
-                                        // Execute event
-                                        if (pEvt.isUpdatingParentRoom()) {
-                                            currentMutableRoom.updateToNewRoom();
-                                        }
-
-                                        if (pEvt.getText() != null && !pEvt.getText().isEmpty()) {
-                                            gui.appendTextEdtOutput(pEvt.getText(), false);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        getInventory().add(obj);
-
-                        for (AdvObject advObject : currentRoom.getObjects()) {
-                            if (obj.getParent().equals(advObject)) {
-                                AdvItemContainer container = (AdvItemContainer) advObject;
-                                container.getList().remove(obj);
-                            }
-                        }
-
-                        gui.appendTextEdtOutput(String.format("Hai raccolto %s",
-                                obj.getName()), false);
-                        actionPerformed = true;
+                    if (item.isPickupable() && !item.isPicked()) {
+                        actionPerformed = pickUpItem(gui, item, currentRoom.getObjects());
+                    } else if (item.isPicked()) {
+                        gui.appendTextEdtOutput("L'oggetto è già nel tuo inventario.", false);
                     } else {
                         gui.appendTextEdtOutput("Non puoi raccogliere questo oggetto.", false);
                     }
@@ -267,12 +245,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.OPEN) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                AdvObject obj = null;
-                if (p.getObject() != null) {
-                    obj = p.getObject();
-                } else if (p.getInvObject() != null) {
-                    obj = p.getInvObject();
-                }
+                AdvObject obj = getObjectFromParser(p);
 
                 if (obj instanceof AdvItemContainer) {
                     AdvItemContainer container = (AdvItemContainer) obj;
@@ -292,12 +265,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.PUSH) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                AdvObject obj = null;
-                if (p.getObject() != null) {
-                    obj = p.getObject();
-                } else if (p.getInvObject() != null) {
-                    obj = p.getInvObject();
-                }
+                AdvObject obj = getObjectFromParser(p);
 
                 if (obj instanceof AdvItem) {
                     AdvItem item = (AdvItem) obj;
@@ -305,6 +273,26 @@ public class HauntedHouseGame extends GameDescription {
                 }
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da premere.", false);
+            }
+        } else if (p.getCommand().getType() == CommandType.PULL) {
+            if (p.getObject() != null || p.getInvObject() != null) {
+                if (p.getObject() instanceof AdvItem || p.getInvObject() instanceof AdvItem) {
+                    AdvItem item = (AdvItem) getObjectFromParser(p);
+
+                    actionPerformed = pullObject(item, gui);
+                }
+            } else {
+                gui.appendTextEdtOutput("Non trovo l'oggetto da tirare.", false);
+            }
+        } else if (p.getCommand().getType() == CommandType.MOVE) {
+            if (p.getObject() != null) {
+                if (p.getObject() instanceof AdvItem) {
+                    AdvItem item = (AdvItem) p.getObject();
+
+                    actionPerformed = moveItem(item, gui);
+                }
+            } else {
+                gui.appendTextEdtOutput("Non trovo l'oggetto da spostare.", false);
             }
         }
 
@@ -323,7 +311,12 @@ public class HauntedHouseGame extends GameDescription {
                         .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
                 gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
                 setCompassLabels(gui);
-                gui.appendTextEdtOutput(getCurrentRoom().getDescription(), false);
+
+                StringBuilder outString = new StringBuilder(getCurrentRoom().getDescription());
+
+                outString.append(handleRoomEvent());
+
+                gui.appendTextEdtOutput(outString.toString(), false);
 
                 actionPerformed = true;
             }
@@ -334,23 +327,215 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
+    private boolean moveItem(AdvItem item, GameJFrame gui) {
+        if (item.isMovable() && !item.isMoved()) {
+            item.setMoved(true);
+            StringBuilder outString = new StringBuilder("Hai spostato: " + item.getName());
+
+            outString.append(handleObjEvent(item, EventType.MOVE));
+
+            gui.appendTextEdtOutput(outString.toString(), false);
+
+            return true;
+        } else if (item.isMoved()) {
+            gui.appendTextEdtOutput("È stato già spostato.", false);
+            return false;
+        } else {
+            gui.appendTextEdtOutput("Non puoi spostarlo.", false);
+            return false;
+        }
+    }
+
+    private AdvObject getObjectFromParser(ParserOutput p) {
+        if (p.getObject() != null) {
+            return p.getObject();
+        } else if (p.getInvObject() != null) {
+            return p.getInvObject();
+        }
+        return null;
+    }
+
+    private boolean lookAt(GameJFrame gui, AdvObject obj) {
+        StringBuilder outString = new StringBuilder();
+
+        if (obj.getDescription() != null) {
+            outString.append(obj.getDescription());
+        }
+
+        if (obj instanceof AdvItemContainer) {
+            AdvItemContainer container = (AdvItemContainer) obj;
+            if (!container.isOpenable()) {
+                container.setOpen(true);
+                if (container.getList() != null && !container.getList().isEmpty()) {
+                    outString.append("<br>Noti la presenza di:");
+                    for (AdvObject advObject : container.getList()) {
+                        outString.append(" " + advObject.getName() + ",");
+                    }
+                    outString.deleteCharAt(outString.length() - 1);
+                }
+            }
+        } else if (obj instanceof AdvDoor) {
+            AdvDoor door = (AdvDoor) obj;
+            if (!door.isOpen()) {
+                outString.append("È chiusa.");
+            } else if (door.isLocked()) {
+                outString.append("È chiusa a chiave.");
+            } else if (door.isOpen()) {
+                outString.append("È aperta.");
+            }
+        }
+
+        if (outString.toString().isEmpty()) {
+            gui.appendTextEdtOutput("Nulla di particolare.", false);
+        } else {
+            outString.append(handleObjEvent(obj, EventType.LOOK_AT));
+
+            gui.appendTextEdtOutput(outString.toString(), false);
+        }
+
+        return true;
+    }
+
+    private boolean pickUpItem(GameJFrame gui, AdvItem obj, List<AdvObject> roomObjects) {
+        getInventory().add(obj);
+        obj.setPicked(true);
+
+        if (obj.getParent() != null) {
+            // Check if it's an obj inside something and remove it from its list
+            for (AdvObject advObject : roomObjects) {
+                if (obj.getParent().equals(advObject)) {
+                    AdvItemContainer parentContainer = (AdvItemContainer) advObject;
+                    parentContainer.getList().remove(obj);
+                    obj.setParent(null);
+                    break;
+                }
+            }
+        } else {
+            roomObjects.remove(obj);
+        }
+
+        StringBuilder outString = new StringBuilder("Hai raccolto: " + obj.getName());
+        outString.append(handleObjEvent(obj, EventType.PICK_UP));
+
+        gui.appendTextEdtOutput(outString.toString(), false);
+        return true;
+    }
+
+    private String handleRoomEvent() {
+        PlayableRoom currentRoom;
+        if (getCurrentRoom() instanceof PlayableRoom) {
+            currentRoom = (PlayableRoom) getCurrentRoom();
+            RoomEvent evt = currentRoom.getEvent();
+            if (evt != null) {
+                if (!evt.isTriggered()) {
+                    StringBuilder outString = new StringBuilder();
+
+                    if (evt.getText() != null && !evt.getText().isEmpty()) {
+                        outString.append("<br><br>" + evt.getText());
+                    }
+
+                    evt.setTriggered(true);
+
+                    return outString.toString();
+                }
+            }
+        }
+        return "";
+    }
+
+    private String handleObjEvent(AdvObject obj, EventType type) {
+        if (obj.getEvents() != null) {
+            for (ObjEvent evt : obj.getEvents()) {
+                if (evt.getEventType() == type) {
+                    if (!evt.isTriggered()) {
+                        if (evt.getNeededItem() == null) {
+                            return executeObjEvent(evt);
+                        } else {
+                            for (AdvObject invObj : getInventory()) {
+                                if (invObj.equals(obj)) {
+                                    return executeObjEvent(evt);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    private String executeObjEvent(ObjEvent evt) {
+        if (evt.isUpdatingParentRoom()) {
+            if (getCurrentRoom() instanceof MutablePlayableRoom) {
+                MutablePlayableRoom currentMutableRoom = (MutablePlayableRoom) getCurrentRoom();
+                currentMutableRoom.updateToNewRoom();
+            }
+        }
+
+        if (evt.isUpdatingAnotherRoom()) {
+            if (evt.getUpdateTargetRoom() != null) {
+                evt.getUpdateTargetRoom().updateToNewRoom();
+            }
+        }
+
+        StringBuilder outString = new StringBuilder();
+
+        if (evt.getText() != null && !evt.getText().isEmpty()) {
+            outString.append("<br><br>" + evt.getText());
+        }
+
+        evt.setTriggered(true);
+
+        return outString.toString();
+    }
+
+    private boolean pullObject(AdvItem object, GameJFrame gui) {
+        if (object.isPullable() && !object.isPulled()) {
+            object.setPulled(true);
+            StringBuilder outString = new StringBuilder("Hai tirato: " + object.getName());
+
+            outString.append(handleObjEvent(object, EventType.PULL));
+
+            gui.appendTextEdtOutput(outString.toString(), false);
+            return true;
+        } else if (object.isPulled()) {
+            gui.appendTextEdtOutput("È stato già tirato.", false);
+            return false;
+        } else {
+            gui.appendTextEdtOutput("Non puoi tirarlo.", false);
+            return false;
+        }
+    }
+
     private boolean pushObject(AdvItem object, GameJFrame gui) {
         if (object.isPushable() && !object.isPushed()) {
-            gui.appendTextEdtOutput(String.format("Hai premuto: %s",
-                    object.getName()), false);
+            object.setPushed(true);
+
+            StringBuilder outString = new StringBuilder();
+            outString.append("Hai premuto: " + object.getName());
+            outString.append(handleObjEvent(object, EventType.PUSH));
+            gui.appendTextEdtOutput(outString.toString(), false);
             return true;
+        } else if (object.isPushed()) {
+            gui.appendTextEdtOutput("È stato già premuto.", false);
+            return false;
         } else {
-            gui.appendTextEdtOutput("Non ci sono oggetti da premere qui.", false);
+            gui.appendTextEdtOutput("Non puoi premerlo.", false);
             return false;
         }
 
     }
 
     private boolean openDoor(GameJFrame gui, AdvDoor door, AdvObject key) {
+        StringBuilder outString = new StringBuilder();
         if (door.isOpenable() && !door.isOpen() && !door.isLocked()) {
             door.setOpen(true);
-            gui.appendTextEdtOutput(String.format("Hai aperto: %s",
-                    door.getName()), false);
+
+            outString.append("Hai aperto: " + door.getName());
+            outString.append(handleObjEvent(door, EventType.OPEN_UNLOCKED));
+
+            gui.appendTextEdtOutput(outString.toString(), false);
+
             return true;
         } else if (door.isLocked()) {
             if (door.getBlockedRoomId() != 0) {
@@ -358,18 +543,27 @@ public class HauntedHouseGame extends GameDescription {
                     if (key.getId() == door.getUnlockedWithItemId()) {
                         door.setLocked(false);
                         door.setOpen(true);
+
                         getRooms().stream()
                                 .filter(room -> room.getId() == door.getBlockedRoomId())
                                 .forEach(room -> room.setVisible(true));
+
                         getInventory().remove(key);
-                        gui.appendTextEdtOutput(String.format("Hai aperto: %s",
-                                door.getName()), false);
+
+                        outString.append("Hai aperto: " + door.getName());
+                        outString.append(handleObjEvent(door, EventType.OPEN_UNLOCKED));
+
+                        gui.appendTextEdtOutput(outString.toString(), false);
                         return true;
                     } else {
-                        gui.appendTextEdtOutput("Non funziona.", false);
+                        outString.append("Non funziona.");
+                        outString.append(handleObjEvent(door, EventType.OPEN_LOCKED));
+                        gui.appendTextEdtOutput(outString.toString(), false);
                     }
                 } else {
-                    gui.appendTextEdtOutput("È chiusa a chiave.", false);
+                    outString.append("È chiusa a chiave.");
+                    outString.append(handleObjEvent(door, EventType.OPEN_LOCKED));
+                    gui.appendTextEdtOutput(outString.toString(), false);
                 }
             }
         }
@@ -378,17 +572,19 @@ public class HauntedHouseGame extends GameDescription {
 
     private boolean openContainer(GameJFrame gui, AdvItemContainer container) {
         if (container.isOpenable() && !container.isOpen()) {
-            StringBuilder outString = new StringBuilder(String.format("Hai aperto: %s <br>",
-                    container.getName()));
-            if (!container.getList().isEmpty()) {
-                outString.append(String.format("%s contiene: <br>",
-                        container.getName()));
-
-                for (AdvObject obj : container.getList()) {
-                    outString.append(obj.getName() + "<br>");
-                }
-            }
             container.setOpen(true);
+            StringBuilder outString = new StringBuilder("Hai aperto: " + container.getName());
+
+            if (container.getList() != null && !container.getList().isEmpty()) {
+                outString.append(" che contiene:");
+                for (AdvObject advObject : container.getList()) {
+                    outString.append(" " + advObject.getName() + ",");
+                }
+                outString.deleteCharAt(outString.length() - 1);
+            }
+
+            outString.append(handleObjEvent(container, EventType.OPEN_CONTAINER));
+
             gui.appendTextEdtOutput(outString.toString(), false);
             return true;
         } else if (container.isOpenable() && container.isOpen()) {

@@ -8,11 +8,14 @@ public class AdvItem extends AdvObject {
 
     private AdvItemContainer parent;
 
-    private boolean pickupable = true;
+    private boolean pickupable = false;
     private boolean pushable = false;
+    private boolean pullable = false;
     private boolean movable = false;
     private boolean activable = false;
+    private boolean picked = false;
     private boolean pushed = false;
+    private boolean pulled = false;
     private boolean moved = false;
     private boolean active = false;
 
@@ -102,5 +105,29 @@ public class AdvItem extends AdvObject {
 
     public void setParent(AdvItemContainer parent) {
         this.parent = parent;
+    }
+
+    public boolean isPullable() {
+        return pullable;
+    }
+
+    public void setPullable(boolean pullable) {
+        this.pullable = pullable;
+    }
+
+    public boolean isPulled() {
+        return pulled;
+    }
+
+    public void setPulled(boolean pulled) {
+        this.pulled = pulled;
+    }
+
+    public boolean isPicked() {
+        return picked;
+    }
+
+    public void setPicked(boolean picked) {
+        this.picked = picked;
     }
 }
