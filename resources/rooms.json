@@ -194,7 +194,7 @@
                 ],
                 "list": [
                     {
-                        "type": "AdvItem",
+                        "type": "AdvItemFillable",
                         "id": 12,
                         "name": "ciotola",
                         "description": "Una ciotola in porcellana decorata con motivi geometrici.",
@@ -210,7 +210,6 @@
             }
         ],
         "newRoom": {
-            "type": "PlayableRoom",
             "imgPath": "./resources/img/cucina2.jpg"
         }
     },
@@ -250,7 +249,6 @@
             }
         ],
         "newRoom": {
-            "type": "PlayableRoom",
             "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest. Il candeliere adesso pende dalla corda a non più di un metro da terra.",
             "imgPath": "./resources/img/salone2.jpg",
             "objects": [
@@ -279,7 +277,7 @@
         }
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 10,
         "name": "Un piccolo andito",
         "description": "Questo piccolo andito, ricavato da uno degli angoli del salone ottagonale, non contiene altro se non una corda avvolta ad una grossa ruota e, collegata a questa, una leva in legno. <br>Una porta conduce a nord-est.",
@@ -310,11 +308,15 @@
                         "eventType": "PULL",
                         "text": "La ruota gira per qualche secondo, e la corda si srotola. Ti pare di sentire un rumore secco provenire dal salone.",
                         "updatingAnotherRoom": true,
+                        "updatingParentRoom": true,
                         "updateTargetRoomId": 8
                     }
                 ]
             }
-        ]
+        ],
+        "newRoom": {
+            "imgPath": "./resources/img/andito2.jpg"
+        }
     },
     {
         "type": "PlayableRoom",
@@ -378,7 +380,7 @@
         ]
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 15,
         "name": "Studio (1° piano)",
         "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. <br>Sopra la scrivania vedi un libro.",
@@ -405,19 +407,35 @@
                 "id": 28,
                 "name": "libreria",
                 "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota. <br>Noti che la libreria non è ben appoggiata al muro, forse è stata spostata.",
-                "movable": true
+                "movable": true,
+                "events": [
+                    {
+                        "eventType": "MOVE",
+                        "updatingParentRoom": true
+                    }
+                ]
             }
         ],
         "newRoom": {
-            "type": "MutablePlayableRoom",
             "imgPath": "./resources/img/studio2.jpg",
             "objects": [
                 {
-                    "type": "AdvItemContainer",
+                    "type": "AdvItemFillable",
                     "id": 29,
                     "name": "incisione",
                     "description": "L'incisione che era nascosta dalla libreria ha la forma di una stella a cinque punte.",
-                    "list": []
+                    "requirements": [
+                        {
+                            "requirementType": "INSERT",
+                            "requiredItemId": 47
+                        }
+                    ],
+                    "events": [
+                        {
+                            "eventType": "INSERT",
+                            "updatingParentRoom": true
+                        }
+                    ]
                 },
                 {
                     "type": "AdvItem",
@@ -427,7 +445,6 @@
                 }
             ],
             "newRoom": {
-                "type": "PlayableRoom",
                 "imgPath": "./resources/img/studio3.jpg"
             }
         }
@@ -483,7 +500,6 @@
             }
         ],
         "newRoom": {
-            "type": "PlayableRoom",
             "imgPath": "./resources/img/camera2.jpg",
             "objects": [
                 {
@@ -531,10 +547,11 @@
                 "name": "acqua",
                 "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso.",
                 "pickupable": true,
-                "events": [
+                "requirements": [
                     {
-                        "eventType": "PICK_UP",
-                        "neededItemId": 12
+                        "requirementType": "PICK_UP_WITH",
+                        "requiredItemId": 12,
+                        "goesIntoRequiredItem": true
                     }
                 ]
             }

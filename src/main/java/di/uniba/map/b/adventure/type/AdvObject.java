@@ -27,6 +27,8 @@ public abstract class AdvObject {
 
     private final List<ObjEvent> events = new ArrayList<>();
 
+    private final List<ObjRequirement> requirements = new ArrayList<>();
+
     public AdvObject(int id) {
         this.id = id;
     }
@@ -105,5 +107,33 @@ public abstract class AdvObject {
 
     public List<ObjEvent> getEvents() {
         return events;
+    }
+
+    public ObjEvent getEvent(EventType type) {
+        if (getEvents() != null) {
+            for (ObjEvent evt : getEvents()) {
+                if (evt.getEventType() == type) {
+                    if (!evt.isTriggered()) {
+                        return evt;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<ObjRequirement> getRequirements() {
+        return requirements;
+    }
+
+    public ObjRequirement getRequirement(RequirementType type) {
+        if (getRequirements() != null) {
+            for (ObjRequirement rqmt : getRequirements()) {
+                if (rqmt.getRequirementType() == type) {
+                    return rqmt;
+                }
+            }
+        }
+        return null;
     }
 }

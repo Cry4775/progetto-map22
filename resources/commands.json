@@ -145,6 +145,14 @@
 		]
 	},
 	{
+		"type": "INSERT",
+		"name": "inserisci",
+		"alias": [
+			"insert",
+			"metti"
+		]
+	},
+	{
 		"type": "END",
 		"name": "esci",
 		"alias": [

@@ -76,9 +76,9 @@ public class Parser {
                     }
                     if (objRoom == null) {
                         objInv = checkForObject(tokens.get(1), inventory);
-                        if (objInv == null && tokens.size() > 2) {
-                            objInv = checkForObject(tokens.get(2), inventory);
-                        }
+                    }
+                    if (objInv == null && tokens.size() > 2) {
+                        objInv = checkForObject(tokens.get(2), inventory);
                     }
                     if (objRoom != null && objInv != null) {
                         return new ParserOutput(cmd, objRoom, objInv);

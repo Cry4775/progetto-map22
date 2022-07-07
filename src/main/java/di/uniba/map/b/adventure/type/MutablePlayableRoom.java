@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MutablePlayableRoom extends PlayableRoom {
 
-    private PlayableRoom newRoom;
+    private MutablePlayableRoom newRoom;
 
     public MutablePlayableRoom(int id, String name, String description) {
         super(id, name, description);
@@ -18,11 +18,11 @@ public class MutablePlayableRoom extends PlayableRoom {
         super(id, name, description, imgPath);
     }
 
-    public PlayableRoom getNewRoom() {
+    public MutablePlayableRoom getNewRoom() {
         return newRoom;
     }
 
-    public void setNewRoom(PlayableRoom newRoom) {
+    public void setNewRoom(MutablePlayableRoom newRoom) {
         this.newRoom = newRoom;
     }
 

@@ -8,16 +8,17 @@ public class AdvItem extends AdvObject {
 
     private AdvItemContainer parent;
 
-    private boolean pickupable = false;
-    private boolean pushable = false;
-    private boolean pullable = false;
-    private boolean movable = false;
-    private boolean activable = false;
-    private boolean picked = false;
-    private boolean pushed = false;
-    private boolean pulled = false;
-    private boolean moved = false;
-    private boolean active = false;
+    private boolean pickupable;
+    private boolean pushable;
+    private boolean pullable;
+    private boolean movable;
+    private boolean activable;
+
+    private boolean picked;
+    private boolean pushed;
+    private boolean pulled;
+    private boolean moved;
+    private boolean active;
 
     public AdvItem(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);

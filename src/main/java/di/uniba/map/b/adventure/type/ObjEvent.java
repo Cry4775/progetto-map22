@@ -7,9 +7,6 @@ public class ObjEvent extends AdvEvent {
 
     private boolean updatingParentRoom;
 
-    private AdvItem neededItem;
-    private Integer neededItemId;
-
     public boolean isUpdatingAnotherRoom() {
         return updatingAnotherRoom;
     }
@@ -40,21 +37,5 @@ public class ObjEvent extends AdvEvent {
 
     public void setUpdatingParentRoom(boolean updatingParentRoom) {
         this.updatingParentRoom = updatingParentRoom;
-    }
-
-    public AdvItem getNeededItem() {
-        return neededItem;
-    }
-
-    public void setNeededItem(AdvItem neededItem) {
-        this.neededItem = neededItem;
-    }
-
-    public Integer getNeededItemId() {
-        return neededItemId;
-    }
-
-    public void setNeededItemId(Integer neededItemId) {
-        this.neededItemId = neededItemId;
     }
 }
