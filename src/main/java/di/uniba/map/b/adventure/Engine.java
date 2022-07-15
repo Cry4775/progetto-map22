@@ -83,6 +83,7 @@ public class Engine {
             NonPlayableRoom currentRoom = (NonPlayableRoom) game.getCurrentRoom();
             game.setCurrentRoom(currentRoom.getNextRoom());
             gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+            gui.waitForEnterKey();
             // TODO estrai metodo
         }
         gui.getLblRoomName().setText(game.getCurrentRoom().getName());

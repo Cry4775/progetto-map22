@@ -198,7 +198,8 @@
                         "id": 12,
                         "name": "ciotola",
                         "description": "Una ciotola in porcellana decorata con motivi geometrici.",
-                        "pickupable": true
+                        "pickupable": true,
+                        "filledWithItemId": 36
                     }
                 ]
             },
@@ -424,12 +425,7 @@
                     "id": 29,
                     "name": "incisione",
                     "description": "L'incisione che era nascosta dalla libreria ha la forma di una stella a cinque punte.",
-                    "requirements": [
-                        {
-                            "requirementType": "INSERT",
-                            "requiredItemId": 47
-                        }
-                    ],
+                    "filledWithItemId": 47,
                     "events": [
                         {
                             "eventType": "INSERT",
@@ -547,13 +543,7 @@
                 "name": "acqua",
                 "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso.",
                 "pickupable": true,
-                "requirements": [
-                    {
-                        "requirementType": "PICK_UP_WITH",
-                        "requiredItemId": 12,
-                        "goesIntoRequiredItem": true
-                    }
-                ]
+                "pickupableWithFillableItem": true
             }
         ]
     },

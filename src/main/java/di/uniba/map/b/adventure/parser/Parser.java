@@ -7,6 +7,7 @@ package di.uniba.map.b.adventure.parser;
 
 import di.uniba.map.b.adventure.Utils;
 import di.uniba.map.b.adventure.type.AdvItemContainer;
+import di.uniba.map.b.adventure.type.AdvItemFillable;
 import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.Command;
 import java.util.List;
@@ -35,18 +36,30 @@ public class Parser {
     }
 
     private AdvObject checkForObject(String token, List<AdvObject> objects) {
-        for (int i = 0; i < objects.size(); i++) {
-            if (objects.get(i).getName().equals(token)
-                    || (objects.get(i).getAlias() != null && objects.get(i).getAlias().contains(token))) {
-                return objects.get(i);
-            } else if (objects.get(i) instanceof AdvItemContainer) {
-                AdvItemContainer container = (AdvItemContainer) objects.get(i);
+        if (objects != null) {
+            for (int i = 0; i < objects.size(); i++) {
+                if (objects.get(i).getName().equals(token)
+                        || (objects.get(i).getAlias() != null && objects.get(i).getAlias().contains(token))) {
+                    return objects.get(i);
+                } else if (objects.get(i) instanceof AdvItemContainer) {
+                    AdvItemContainer container = (AdvItemContainer) objects.get(i);
 
-                if (container.isOpen()) {
-                    for (AdvObject obj : container.getList()) {
-                        if (obj.getName().equals(token)
-                                || (obj.getAlias() != null && obj.getAlias().contains(token))) {
-                            return obj;
+                    if (container.isOpen()) {
+                        for (AdvObject obj : container.getList()) {
+                            if (obj.getName().equals(token)
+                                    || (obj.getAlias() != null && obj.getAlias().contains(token))) {
+                                return obj;
+                            }
+                        }
+                    }
+                } else if (objects.get(i) instanceof AdvItemFillable) {
+                    AdvItemFillable fillable = (AdvItemFillable) objects.get(i);
+
+                    if (fillable.isFilled()) {
+                        if (fillable.getFilledWithItem().getName().equals(token)
+                                || fillable.getFilledWithItem().getAlias() != null
+                                        && fillable.getFilledWithItem().getAlias().contains(token)) {
+                            return fillable.getFilledWithItem();
                         }
                     }
                 }

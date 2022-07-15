@@ -5,7 +5,8 @@ import java.util.Set;
 public class AdvItemFillable extends AdvItem {
     private boolean filled;
 
-    private AdvObject filledWith;
+    private AdvItem filledWithItem;
+    private Integer filledWithItemId;
 
     public AdvItemFillable(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
@@ -31,11 +32,19 @@ public class AdvItemFillable extends AdvItem {
         this.filled = filled;
     }
 
-    public AdvObject getFilledWith() {
-        return filledWith;
+    public AdvItem getFilledWithItem() {
+        return filledWithItem;
     }
 
-    public void setFilledWith(AdvObject filledWith) {
-        this.filledWith = filledWith;
+    public void setFilledWithItem(AdvItem filledWithItem) {
+        this.filledWithItem = filledWithItem;
+    }
+
+    public Integer getFilledWithItemId() {
+        return filledWithItemId;
+    }
+
+    public void setFilledWithItemId(Integer filledWithItemId) {
+        this.filledWithItemId = filledWithItemId;
     }
 }

@@ -6,7 +6,9 @@ public class AdvItem extends AdvObject {
 
     private String inventoryDescription;
 
-    private AdvItemContainer parent;
+    private AdvItem parent;
+
+    private boolean pickupableWithFillableItem;
 
     private boolean pickupable;
     private boolean pushable;
@@ -100,11 +102,11 @@ public class AdvItem extends AdvObject {
         this.inventoryDescription = inventoryDescription;
     }
 
-    public AdvItemContainer getParent() {
+    public AdvItem getParent() {
         return parent;
     }
 
-    public void setParent(AdvItemContainer parent) {
+    public void setParent(AdvItem parent) {
         this.parent = parent;
     }
 
@@ -130,5 +132,13 @@ public class AdvItem extends AdvObject {
 
     public void setPicked(boolean picked) {
         this.picked = picked;
+    }
+
+    public boolean isPickupableWithFillableItem() {
+        return pickupableWithFillableItem;
+    }
+
+    public void setPickupableWithFillableItem(boolean pickupableWithFillableItem) {
+        this.pickupableWithFillableItem = pickupableWithFillableItem;
     }
 }
