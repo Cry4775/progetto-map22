@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author pierpaolo
  */
 public abstract class AdvObject {
@@ -24,6 +23,8 @@ public abstract class AdvObject {
     private String description;
 
     private Set<String> alias;
+
+    private boolean mustDestroyFromInv = false;
 
     private final List<ObjEvent> events = new ArrayList<>();
 
@@ -118,5 +119,13 @@ public abstract class AdvObject {
             }
         }
         return null;
+    }
+
+    public boolean isMustDestroyFromInv() {
+        return mustDestroyFromInv;
+    }
+
+    public void setMustDestroyFromInv(boolean mustDestroyFromInv) {
+        this.mustDestroyFromInv = mustDestroyFromInv;
     }
 }

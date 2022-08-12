@@ -2,23 +2,23 @@ package di.uniba.map.b.adventure.type;
 
 import java.util.Set;
 
-public class AdvFakeDoor extends AdvObject {
+public class AdvDoorBlocked extends AdvObject {
 
     private String openEventText;
 
-    public AdvFakeDoor(int id, String name, String description, Set<String> alias) {
+    public AdvDoorBlocked(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
 
-    public AdvFakeDoor(int id) {
+    public AdvDoorBlocked(int id) {
         super(id);
     }
 
-    public AdvFakeDoor(int id, String name) {
+    public AdvDoorBlocked(int id, String name) {
         super(id, name);
     }
 
-    public AdvFakeDoor(int id, String name, String description) {
+    public AdvDoorBlocked(int id, String name, String description) {
         super(id, name, description);
     }
 

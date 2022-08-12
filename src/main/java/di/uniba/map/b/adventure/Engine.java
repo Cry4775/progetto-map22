@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package di.uniba.map.b.adventure;
 
@@ -20,9 +19,8 @@ import javax.swing.ImageIcon;
 import java.awt.event.WindowEvent;
 
 /**
- * ATTENZIONE: l'Engine è molto spartano, in realtà demanda la logica alla
- * classe che implementa GameDescription e si occupa di gestire I/O sul
- * terminale.
+ * ATTENZIONE: l'Engine è molto spartano, in realtà demanda la logica alla classe che implementa
+ * GameDescription e si occupa di gestire I/O sul terminale.
  *
  * @author pierpaolo
  */
@@ -64,14 +62,16 @@ public class Engine {
 
         gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
 
-        gui.waitForEnterKey();
+        if (game.getCurrentRoom() instanceof NonPlayableRoom) {
+            gui.waitForEnterKey();
+        }
     }
 
     public void commandPerformed(String command) {
         if (game.getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
-            ParserOutput p = parser.parse(command, game.getCommands(),
-                    currentRoom.getObjects(), game.getInventory());
+            ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
+                    game.getInventory());
             if (p == null || p.getCommand() == null) {
                 gui.appendTextEdtOutput("Non capisco quello che mi vuoi dire.", false);
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
@@ -83,7 +83,6 @@ public class Engine {
             NonPlayableRoom currentRoom = (NonPlayableRoom) game.getCurrentRoom();
             game.setCurrentRoom(currentRoom.getNextRoom());
             gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
-            gui.waitForEnterKey();
             // TODO estrai metodo
         }
         gui.getLblRoomName().setText(game.getCurrentRoom().getName());
@@ -91,5 +90,9 @@ public class Engine {
                 .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
         gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
         game.setCompassLabels(gui);
+
+        if (game.getCurrentRoom() instanceof NonPlayableRoom) {
+            gui.waitForEnterKey();
+        }
     }
 }

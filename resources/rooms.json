@@ -18,14 +18,14 @@
         "westId": 3,
         "objects": [
             {
-                "type": "AdvFakeDoor",
+                "type": "AdvDoorBlocked",
                 "id": 1,
                 "name": "finestra",
                 "description": "La finestra pare inesorabilmente murata.",
                 "openEventText": "Apri la finestra e controlli. La muratura, come sospettavi, è estremamente robusta."
             },
             {
-                "type": "AdvItemContainer",
+                "type": "AdvContainer",
                 "id": 2,
                 "name": "divano",
                 "description": "Un divano in pelle a tre posti, vecchio e ormai consunto.",
@@ -75,7 +75,7 @@
                 ]
             },
             {
-                "type": "AdvFakeDoor",
+                "type": "AdvDoorBlocked",
                 "id": 5,
                 "name": "portone",
                 "description": "Il portone d'ingresso è estremamente robusto e evidentemente ben chiuso a chiave.",
@@ -85,10 +85,9 @@
                 "openEventText": "Come sospettavi, è chiuso a chiave."
             },
             {
-                "type": "AdvDoor",
+                "type": "AdvDoorOpenable",
                 "id": 6,
                 "name": "porta",
-                "openable": true,
                 "blockedRoomId": 5
             }
         ]
@@ -103,7 +102,7 @@
         "eastId": 4,
         "objects": [
             {
-                "type": "AdvItemContainer",
+                "type": "AdvContainer",
                 "id": 7,
                 "name": "cappotto",
                 "description": "Un elegante cappotto da donna, probabilmente quello di Valeria.",
@@ -127,7 +126,7 @@
                         "pickupable": true
                     },
                     {
-                        "type": "AdvItemContainer",
+                        "type": "AdvContainer",
                         "id": 9,
                         "name": "collana",
                         "description": "Una collana in oro.",
@@ -163,10 +162,9 @@
         "southId": 3,
         "objects": [
             {
-                "type": "AdvDoor",
+                "type": "AdvDoorOpenable",
                 "id": 10,
                 "name": "porta",
-                "openable": true,
                 "blockedRoomId": 7
             }
         ]
@@ -181,11 +179,10 @@
         "westId": 6,
         "objects": [
             {
-                "type": "AdvItemContainer",
+                "type": "AdvContainerOpenable",
                 "id": 11,
                 "name": "credenza",
                 "description": "Una grossa credenza in mogano.",
-                "openable": true,
                 "events": [
                     {
                         "eventType": "OPEN_CONTAINER",
@@ -243,10 +240,11 @@
                 ]
             },
             {
-                "type": "AdvDoor",
+                "type": "AdvDoorOpenable",
                 "id": 16,
                 "name": "porta",
-                "open": true
+                "open": true,
+                "blockedRoomId": 10
             }
         ],
         "newRoom": {
@@ -260,7 +258,7 @@
                     "description": "Alta, di solida pietra e di forma ottagonale, larga almeno due metri e priva di qualsiasi asperità, occupa la parte centrale della sala."
                 },
                 {
-                    "type": "AdvItemContainer",
+                    "type": "AdvContainer",
                     "id": 15,
                     "name": "candeliere",
                     "description": "Il pesante candeliere in peltro adesso è alla tua portata.",
@@ -351,10 +349,11 @@
         "eastId": 17,
         "objects": [
             {
-                "type": "AdvDoor",
+                "type": "AdvDoorOpenable",
                 "id": 24,
                 "name": "porta",
-                "open": true
+                "open": true,
+                "blockedRoomId": 15
             }
         ]
     },
@@ -371,7 +370,7 @@
         "eastText": "Come ti avvicini alla nebbia, incontri una strana resistenza, come un invisibile muro di gomma, e non riesci a procedere.",
         "objects": [
             {
-                "type": "AdvDoor",
+                "type": "AdvDoorOpenable",
                 "id": 25,
                 "name": "porta",
                 "locked": true,
@@ -412,7 +411,8 @@
                 "events": [
                     {
                         "eventType": "MOVE",
-                        "updatingParentRoom": true
+                        "updatingParentRoom": true,
+                        "text": "Hai spostato la libreria e trovato un'incisione nel muro!"
                     }
                 ]
             }
@@ -489,7 +489,7 @@
                 ]
             },
             {
-                "type": "AdvItemContainer",
+                "type": "AdvContainer",
                 "id": 32,
                 "name": "candeliere",
                 "description": "Un piccolo candeliere in ferro, appeso ben alto alla parete. Sul candeliere vedi una singola candela, ma è troppo in alto per prenderla."
@@ -499,7 +499,7 @@
             "imgPath": "./resources/img/camera2.jpg",
             "objects": [
                 {
-                    "type": "AdvItemContainer",
+                    "type": "AdvContainer",
                     "id": 32,
                     "name": "candeliere",
                     "description": "Un piccolo candeliere in ferro.",
@@ -582,11 +582,10 @@
         "southId": 22,
         "objects": [
             {
-                "type": "AdvDoor",
+                "type": "AdvDoorOpenable",
                 "id": 37,
                 "name": "porta",
                 "description": "La porta, che sembra molto robusta, non ha serrature ma solo un paletto che permette di aprirla e chiuderla dall'esterno.",
-                "openable": true,
                 "blockedRoomId": 22
             }
         ]

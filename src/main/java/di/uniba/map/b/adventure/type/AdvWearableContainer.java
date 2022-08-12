@@ -2,23 +2,23 @@ package di.uniba.map.b.adventure.type;
 
 import java.util.Set;
 
-public class AdvItemWearable extends AdvItem implements IWearable {
+public class AdvWearableContainer extends AbstractContainer implements IWearable {
 
     private boolean worn = false;
 
-    public AdvItemWearable(int id) {
+    public AdvWearableContainer(int id) {
         super(id);
     }
 
-    public AdvItemWearable(int id, String name) {
+    public AdvWearableContainer(int id, String name) {
         super(id, name);
     }
 
-    public AdvItemWearable(int id, String name, String description) {
+    public AdvWearableContainer(int id, String name, String description) {
         super(id, name, description);
     }
 
-    public AdvItemWearable(int id, String name, String description, Set<String> alias) {
+    public AdvWearableContainer(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
 

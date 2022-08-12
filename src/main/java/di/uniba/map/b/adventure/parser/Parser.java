@@ -1,12 +1,11 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package di.uniba.map.b.adventure.parser;
 
 import di.uniba.map.b.adventure.Utils;
-import di.uniba.map.b.adventure.type.AdvItemContainer;
+import di.uniba.map.b.adventure.type.AbstractContainer;
 import di.uniba.map.b.adventure.type.AdvItemFillable;
 import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.Command;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author pierpaolo
  */
 public class Parser {
@@ -39,12 +37,13 @@ public class Parser {
         if (objects != null) {
             for (int i = 0; i < objects.size(); i++) {
                 if (objects.get(i).getName().equals(token)
-                        || (objects.get(i).getAlias() != null && objects.get(i).getAlias().contains(token))) {
+                        || (objects.get(i).getAlias() != null
+                                && objects.get(i).getAlias().contains(token))) {
                     return objects.get(i);
-                } else if (objects.get(i) instanceof AdvItemContainer) {
-                    AdvItemContainer container = (AdvItemContainer) objects.get(i);
+                } else if (objects.get(i) instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) objects.get(i);
 
-                    if (container.isOpen()) {
+                    if (container.isContentRevealed()) {
                         for (AdvObject obj : container.getList()) {
                             if (obj.getName().equals(token)
                                     || (obj.getAlias() != null && obj.getAlias().contains(token))) {
@@ -58,7 +57,8 @@ public class Parser {
                     if (fillable.isFilled()) {
                         if (fillable.getFilledWithItem().getName().equals(token)
                                 || fillable.getFilledWithItem().getAlias() != null
-                                        && fillable.getFilledWithItem().getAlias().contains(token)) {
+                                        && fillable.getFilledWithItem().getAlias()
+                                                .contains(token)) {
                             return fillable.getFilledWithItem();
                         }
                     }
@@ -69,11 +69,9 @@ public class Parser {
     }
 
     /*
-     * ATTENZIONE: il parser è implementato in modo abbastanza independete dalla
-     * lingua, ma riconosce solo
-     * frasi semplici del tipo <azione> <oggetto> <oggetto>. Eventuali articoli o
-     * preposizioni vengono semplicemente
-     * rimossi.
+     * ATTENZIONE: il parser è implementato in modo abbastanza independete dalla lingua, ma
+     * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
+     * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
     public ParserOutput parse(String command, List<Command> commands, List<AdvObject> objects,
             List<AdvObject> inventory) {
@@ -92,7 +90,11 @@ public class Parser {
                     }
                     if (objInv == null && tokens.size() > 2) {
                         objInv = checkForObject(tokens.get(2), inventory);
+                        if (objInv == null) {
+                            objInv = checkForObject(tokens.get(1), inventory);
+                        }
                     }
+
                     if (objRoom != null && objInv != null) {
                         return new ParserOutput(cmd, objRoom, objInv);
                     } else if (objRoom != null) {

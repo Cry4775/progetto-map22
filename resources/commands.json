@@ -160,5 +160,13 @@
 			"chiudi",
 			"abbandona"
 		]
+	},
+	{
+		"type": "WEAR",
+		"name": "indossa",
+		"alias": [
+			"vesti",
+			"wear"
+		]
 	}
 ]
