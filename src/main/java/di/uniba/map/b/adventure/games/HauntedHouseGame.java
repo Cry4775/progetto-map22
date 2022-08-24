@@ -39,6 +39,9 @@ import di.uniba.map.b.adventure.type.AdvItemFillable;
 import di.uniba.map.b.adventure.type.AdvItemWearable;
 import di.uniba.map.b.adventure.type.AdvMagicWall;
 import di.uniba.map.b.adventure.type.AdvObject;
+import di.uniba.map.b.adventure.type.AdvObjectMovable;
+import di.uniba.map.b.adventure.type.AdvObjectPullable;
+import di.uniba.map.b.adventure.type.AdvObjectPushable;
 import di.uniba.map.b.adventure.type.AdvPerson;
 import di.uniba.map.b.adventure.type.AdvWearableContainer;
 import di.uniba.map.b.adventure.type.Command;
@@ -323,8 +326,10 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof IOpenable) {
                     IOpenable openableObj = (IOpenable) obj;
                     AdvObject key = p.getInvObject();
+
                     StringBuilder outString = new StringBuilder();
                     actionPerformed = openableObj.open(outString, key);
+
                     gui.appendTextEdtOutput(outString.toString(), false);
                 } else if (obj instanceof AdvDoorBlocked) {
                     AdvDoorBlocked fakeDoor = (AdvDoorBlocked) obj;
@@ -336,32 +341,52 @@ public class HauntedHouseGame extends GameDescription {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da aprire.", false);
             }
         } else if (p.getCommand().getType() == CommandType.PUSH) {
-            if (p.getObject() != null || p.getInvObject() != null) {
+            if (p.getObject() != null) {
                 AdvObject obj = getObjectFromParser(p);
 
-                if (obj instanceof AdvItem) {
-                    AdvItem item = (AdvItem) obj;
-                    pushObject(item, gui);
+                if (obj instanceof AdvObjectPushable) {
+                    AdvObjectPushable pushableObj = (AdvObjectPushable) obj;
+
+                    StringBuilder outString = new StringBuilder();
+                    actionPerformed = pushableObj.push(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
+                } else {
+                    gui.appendTextEdtOutput("Non puoi premere " + obj.getName(), false);
                 }
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da premere.", false);
             }
         } else if (p.getCommand().getType() == CommandType.PULL) {
-            if (p.getObject() != null || p.getInvObject() != null) {
-                if (p.getObject() instanceof AdvItem || p.getInvObject() instanceof AdvItem) {
-                    AdvItem item = (AdvItem) getObjectFromParser(p);
+            if (p.getObject() != null) {
+                AdvObject obj = getObjectFromParser(p);
 
-                    actionPerformed = pullObject(item, gui);
+                if (obj instanceof AdvObjectPullable) {
+                    AdvObjectPullable pullableObj = (AdvObjectPullable) obj;
+
+                    StringBuilder outString = new StringBuilder();
+                    actionPerformed = pullableObj.pull(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
+                } else {
+                    gui.appendTextEdtOutput("Non puoi tirare " + obj.getName(), false);
                 }
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da tirare.", false);
             }
         } else if (p.getCommand().getType() == CommandType.MOVE) {
             if (p.getObject() != null) {
-                if (p.getObject() instanceof AdvItem) {
-                    AdvItem item = (AdvItem) p.getObject();
+                AdvObject obj = getObjectFromParser(p);
+                if (obj instanceof AdvObjectMovable) {
+                    AdvObjectMovable movableObj = (AdvObjectMovable) obj;
 
-                    actionPerformed = moveItem(item, gui);
+                    StringBuilder outString = new StringBuilder();
+                    actionPerformed = movableObj.move(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
+                } else {
+                    // TODO possibile polish con regex sugli articoli
+                    gui.appendTextEdtOutput("Non puoi spostare " + obj.getName(), false);
                 }
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da spostare.", false);
@@ -472,25 +497,6 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
-    private boolean moveItem(AdvItem item, GameJFrame gui) {
-        if (item.isMovable() && !item.isMoved()) {
-            item.setMoved(true);
-            StringBuilder outString = new StringBuilder("Hai spostato: " + item.getName());
-
-            outString.append(handleObjEvent(item.getEvent(EventType.MOVE)));
-
-            gui.appendTextEdtOutput(outString.toString(), false);
-
-            return true;
-        } else if (item.isMoved()) {
-            gui.appendTextEdtOutput("È stato già spostato.", false);
-            return false;
-        } else {
-            gui.appendTextEdtOutput("Non puoi spostarlo.", false);
-            return false;
-        }
-    }
-
     private AdvObject getObjectFromParser(ParserOutput p) {
         if (p.getObject() != null) {
             return p.getObject();
@@ -514,9 +520,11 @@ public class HauntedHouseGame extends GameDescription {
                     outString.append("É chiuso.");
                 } else {
                     outString.append(container.revealContent());
+                    return true;
                 }
             } else {
                 outString.append(container.revealContent());
+                return true;
             }
 
         } else if (obj instanceof AdvDoorOpenable) {
@@ -545,7 +553,7 @@ public class HauntedHouseGame extends GameDescription {
             gui.appendTextEdtOutput(outString.toString(), false);
         }
 
-        return true;
+        return false;
     }
 
     private boolean pickUpItem(GameJFrame gui, AdvItem item, List<AdvObject> roomObjects) {
@@ -590,8 +598,8 @@ public class HauntedHouseGame extends GameDescription {
 
         StringBuilder outString = new StringBuilder("Hai raccolto: " + item.getName());
         outString.append(handleObjEvent(item.getEvent(EventType.PICK_UP)));
-
         gui.appendTextEdtOutput(outString.toString(), false);
+
         return true;
     }
 
@@ -643,43 +651,6 @@ public class HauntedHouseGame extends GameDescription {
             return outString.toString();
         }
         return "";
-    }
-
-    private boolean pullObject(AdvItem object, GameJFrame gui) {
-        if (object.isPullable() && !object.isPulled()) {
-            object.setPulled(true);
-            StringBuilder outString = new StringBuilder("Hai tirato: " + object.getName());
-
-            outString.append(handleObjEvent(object.getEvent(EventType.PULL)));
-
-            gui.appendTextEdtOutput(outString.toString(), false);
-            return true;
-        } else if (object.isPulled()) {
-            gui.appendTextEdtOutput("È stato già tirato.", false);
-            return false;
-        } else {
-            gui.appendTextEdtOutput("Non puoi tirarlo.", false);
-            return false;
-        }
-    }
-
-    private boolean pushObject(AdvItem object, GameJFrame gui) {
-        if (object.isPushable() && !object.isPushed()) {
-            object.setPushed(true);
-
-            StringBuilder outString = new StringBuilder();
-            outString.append("Hai premuto: " + object.getName());
-            outString.append(handleObjEvent(object.getEvent(EventType.PUSH)));
-            gui.appendTextEdtOutput(outString.toString(), false);
-            return true;
-        } else if (object.isPushed()) {
-            gui.appendTextEdtOutput("È stato già premuto.", false);
-            return false;
-        } else {
-            gui.appendTextEdtOutput("Non puoi premerlo.", false);
-            return false;
-        }
-
     }
 
     private void linkRooms(List<Room> rooms) {
