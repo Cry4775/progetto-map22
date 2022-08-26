@@ -54,7 +54,7 @@ public class AdvSocket extends AbstractContainer {
         if (!itemInside) {
             if (eligibleItem.equals(obj)) {
                 itemInside = true;
-                ((AdvItem) obj).setParent(this);
+                obj.setParent(this);
                 inventory.remove(obj);
 
                 this.add(obj);

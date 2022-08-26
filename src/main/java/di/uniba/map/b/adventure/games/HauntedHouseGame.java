@@ -1,5 +1,6 @@
 package di.uniba.map.b.adventure.games;
 
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,42 +13,37 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import javax.swing.ImageIcon;
-
-import java.awt.Image;
-
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
 import di.uniba.map.b.adventure.GameDescription;
 import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.RuntimeTypeAdapterFactory;
 import di.uniba.map.b.adventure.Triple;
 import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.AdvDoorOpenable;
-import di.uniba.map.b.adventure.type.AdvEvent;
-import di.uniba.map.b.adventure.type.AdvItem;
 import di.uniba.map.b.adventure.type.AbstractContainer;
 import di.uniba.map.b.adventure.type.AdvContainer;
 import di.uniba.map.b.adventure.type.AdvContainerOpenable;
 import di.uniba.map.b.adventure.type.AdvDoorBlocked;
+import di.uniba.map.b.adventure.type.AdvDoorOpenable;
+import di.uniba.map.b.adventure.type.AdvEvent;
+import di.uniba.map.b.adventure.type.AdvItem;
 import di.uniba.map.b.adventure.type.AdvItemFillable;
 import di.uniba.map.b.adventure.type.AdvItemWearable;
 import di.uniba.map.b.adventure.type.AdvMagicWall;
 import di.uniba.map.b.adventure.type.AdvObject;
-import di.uniba.map.b.adventure.type.AdvObjectMovable;
-import di.uniba.map.b.adventure.type.AdvObjectPullable;
-import di.uniba.map.b.adventure.type.AdvObjectPushable;
 import di.uniba.map.b.adventure.type.AdvPerson;
 import di.uniba.map.b.adventure.type.AdvWearableContainer;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.IMovable;
 import di.uniba.map.b.adventure.type.IOpenable;
+import di.uniba.map.b.adventure.type.IPullable;
+import di.uniba.map.b.adventure.type.IPushable;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
@@ -56,6 +52,9 @@ import di.uniba.map.b.adventure.type.Room;
 import di.uniba.map.b.adventure.type.RoomEvent;
 
 // Se tutto viene caricato da file allora si può cancellare
+
+// TODO il database puó essere usato come lista di tutti gli oggetti, poi dal json si imposta tutto
+// tramite id
 public class HauntedHouseGame extends GameDescription {
 
     @Override
@@ -302,19 +301,19 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                if (p.getObject() instanceof AdvItem || p.getInvObject() instanceof AdvItem) {
-                    AdvItem item = (AdvItem) getObjectFromParser(p);
+                AdvObject obj = getObjectFromParser(p);
+                if (obj.isPickupable() || obj.isPickupableWithFillable()) {
+                    if (!obj.isPicked()) {
+                        StringBuilder outString = new StringBuilder();
+                        actionPerformed =
+                                obj.pickup(outString, getInventory(), currentRoom.getObjects());
 
-                    if (item.isPickupable() && !item.isPicked()) {
-                        actionPerformed = pickUpItem(gui, item, currentRoom.getObjects());
-                    } else if (item.getParent() != null
-                            && item.getParent() instanceof AdvItemFillable) {
-                        gui.appendTextEdtOutput("Non puoi riprendertelo.", false);
-                    } else if (item.isPicked()) {
-                        gui.appendTextEdtOutput("L'oggetto è già nel tuo inventario.", false);
+                        gui.appendTextEdtOutput(outString.toString(), false);
                     } else {
-                        gui.appendTextEdtOutput("Non puoi raccogliere questo oggetto.", false);
+                        gui.appendTextEdtOutput("L'oggetto è già nel tuo inventario.", false);
                     }
+                } else {
+                    gui.appendTextEdtOutput("Non puoi raccogliere questo oggetto.", false);
                 }
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da raccogliere.", false);
@@ -344,8 +343,8 @@ public class HauntedHouseGame extends GameDescription {
             if (p.getObject() != null) {
                 AdvObject obj = getObjectFromParser(p);
 
-                if (obj instanceof AdvObjectPushable) {
-                    AdvObjectPushable pushableObj = (AdvObjectPushable) obj;
+                if (obj instanceof IPushable) {
+                    IPushable pushableObj = (IPushable) obj;
 
                     StringBuilder outString = new StringBuilder();
                     actionPerformed = pushableObj.push(outString);
@@ -361,8 +360,8 @@ public class HauntedHouseGame extends GameDescription {
             if (p.getObject() != null) {
                 AdvObject obj = getObjectFromParser(p);
 
-                if (obj instanceof AdvObjectPullable) {
-                    AdvObjectPullable pullableObj = (AdvObjectPullable) obj;
+                if (obj instanceof IPullable) {
+                    IPullable pullableObj = (IPullable) obj;
 
                     StringBuilder outString = new StringBuilder();
                     actionPerformed = pullableObj.pull(outString);
@@ -377,8 +376,9 @@ public class HauntedHouseGame extends GameDescription {
         } else if (p.getCommand().getType() == CommandType.MOVE) {
             if (p.getObject() != null) {
                 AdvObject obj = getObjectFromParser(p);
-                if (obj instanceof AdvObjectMovable) {
-                    AdvObjectMovable movableObj = (AdvObjectMovable) obj;
+
+                if (obj instanceof IMovable) {
+                    IMovable movableObj = (IMovable) obj;
 
                     StringBuilder outString = new StringBuilder();
                     actionPerformed = movableObj.move(outString);
@@ -509,11 +509,9 @@ public class HauntedHouseGame extends GameDescription {
                     outString.append("É chiuso.");
                 } else {
                     outString.append(container.revealContent());
-                    // TODO return true;
                 }
             } else {
                 outString.append(container.revealContent());
-                // return true;
             }
 
         } else if (obj instanceof AdvDoorOpenable) {
@@ -540,56 +538,11 @@ public class HauntedHouseGame extends GameDescription {
             outString.append(handleObjEvent(obj.getEvent(EventType.LOOK_AT)));
 
             gui.appendTextEdtOutput(outString.toString(), false);
+
+            return true;
         }
 
         return false;
-    }
-
-    private boolean pickUpItem(GameJFrame gui, AdvItem item, List<AdvObject> roomObjects) {
-        if (item.isPickupableWithFillableItem()) {
-            if (!item.isPicked()) {
-                boolean canProceed = false;
-                for (AdvObject invObject : getInventory()) {
-                    if (invObject instanceof AdvItemFillable) {
-                        AdvItemFillable invFillable = (AdvItemFillable) invObject;
-                        if (invFillable.getEligibleItem().equals(item)) {
-                            invFillable.setFilled(true);
-                            canProceed = true;
-                            break;
-                        }
-                    }
-                }
-                if (!canProceed) {
-                    gui.appendTextEdtOutput("Non puoi prenderlo senza lo strumento adatto.", false);
-                    return false;
-                }
-            } else {
-                gui.appendTextEdtOutput("L'hai già preso.", false);
-                return false;
-            }
-        } else if (item.getParent() != null && item.getParent() instanceof AdvItemFillable) {
-            gui.appendTextEdtOutput("Non puoi riprendertelo.", false);
-        } else {
-            getInventory().add(item);
-        }
-
-        item.setPicked(true);
-
-        if (item.getParent() != null) {
-            // Check if it's an obj inside something and remove it from its list
-
-            AbstractContainer parentContainer = (AbstractContainer) item.getParent();
-            parentContainer.getList().remove(item);
-            item.setParent(null);
-        } else {
-            roomObjects.remove(item);
-        }
-
-        StringBuilder outString = new StringBuilder("Hai raccolto: " + item.getName());
-        outString.append(handleObjEvent(item.getEvent(EventType.PICK_UP)));
-        gui.appendTextEdtOutput(outString.toString(), false);
-
-        return true;
     }
 
     private String handleRoomEvent() {

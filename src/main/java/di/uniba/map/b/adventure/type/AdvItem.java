@@ -1,19 +1,13 @@
 package di.uniba.map.b.adventure.type;
 
-import java.util.List;
 import java.util.Set;
 
-public class AdvItem extends AdvObject implements IPickupable {
+public class AdvItem extends AdvObject {
 
     private String inventoryDescription;
 
-    private AdvItem parent;
-
-    private boolean pickupableWithFillableItem;
-
     private boolean activable;
 
-    private boolean picked; // TODO forse eliminare e fare un sistema che controlli l'inv
     private boolean active;
 
     public AdvItem(int id, String name, String description, Set<String> alias) {
@@ -54,35 +48,5 @@ public class AdvItem extends AdvObject implements IPickupable {
 
     public void setInventoryDescription(String inventoryDescription) {
         this.inventoryDescription = inventoryDescription;
-    }
-
-    public AdvItem getParent() {
-        return parent;
-    }
-
-    public void setParent(AdvItem parent) {
-        this.parent = parent;
-    }
-
-    public boolean isPicked() {
-        return picked;
-    }
-
-    public void setPicked(boolean picked) {
-        this.picked = picked;
-    }
-
-    public boolean isPickupableWithFillableItem() {
-        return pickupableWithFillableItem;
-    }
-
-    public void setPickupableWithFillableItem(boolean pickupableWithFillableItem) {
-        this.pickupableWithFillableItem = pickupableWithFillableItem;
-    }
-
-    @Override
-    public boolean pickUp(StringBuilder outString, List<AdvObject> inventory) {
-        // TODO Auto-generated method stub
-        return false;
     }
 }

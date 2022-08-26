@@ -5,5 +5,9 @@ public interface IFillable {
 
     public void setFilled(boolean value);
 
-    public boolean fill(StringBuilder outString);
+    public AdvObject getEligibleItem();
+
+    public void setEligibleItem(AdvObject item);
+
+    public boolean fill(AdvObject obj);
 }

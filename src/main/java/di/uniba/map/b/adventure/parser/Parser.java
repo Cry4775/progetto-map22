@@ -6,9 +6,9 @@ package di.uniba.map.b.adventure.parser;
 
 import di.uniba.map.b.adventure.Utils;
 import di.uniba.map.b.adventure.type.AbstractContainer;
-import di.uniba.map.b.adventure.type.AdvItemFillable;
 import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.Command;
+import di.uniba.map.b.adventure.type.IFillable;
 import java.util.List;
 import java.util.Set;
 
@@ -51,15 +51,15 @@ public class Parser {
                             }
                         }
                     }
-                } else if (objects.get(i) instanceof AdvItemFillable) {
-                    AdvItemFillable fillable = (AdvItemFillable) objects.get(i);
+                } else if (objects.get(i) instanceof IFillable) {
+                    IFillable fillable = (IFillable) objects.get(i);
 
                     if (fillable.isFilled()) {
-                        if (fillable.getFilledWithItem().getName().equals(token)
-                                || fillable.getFilledWithItem().getAlias() != null
-                                        && fillable.getFilledWithItem().getAlias()
+                        if (fillable.getEligibleItem().getName().equals(token)
+                                || fillable.getEligibleItem().getAlias() != null
+                                        && fillable.getEligibleItem().getAlias()
                                                 .contains(token)) {
-                            return fillable.getFilledWithItem();
+                            return fillable.getEligibleItem();
                         }
                     }
                 }

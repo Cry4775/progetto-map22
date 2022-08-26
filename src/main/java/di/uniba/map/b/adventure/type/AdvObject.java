@@ -26,6 +26,14 @@ public abstract class AdvObject {
 
     private boolean mustDestroyFromInv = false;
 
+    private boolean pickupable = false;
+
+    private boolean pickupableWithFillable = false;
+
+    private boolean picked = false; // TODO forse c'é un modo migliore
+
+    private AdvObject parent;
+
     private final List<ObjEvent> events = new ArrayList<>();
 
     public AdvObject(int id) {
@@ -127,5 +135,78 @@ public abstract class AdvObject {
 
     public void setMustDestroyFromInv(boolean mustDestroyFromInv) {
         this.mustDestroyFromInv = mustDestroyFromInv;
+    }
+
+    public AdvObject getParent() {
+        return parent;
+    }
+
+    public void setParent(AdvObject parent) {
+        this.parent = parent;
+    }
+
+    public boolean isPickupable() {
+        return pickupable;
+    }
+
+    public void setPickupable(boolean pickupable) {
+        this.pickupable = pickupable;
+    }
+
+    public boolean isPickupableWithFillable() {
+        return pickupableWithFillable;
+    }
+
+    public void setPickupableWithFillable(boolean pickupableWithFillable) {
+        this.pickupableWithFillable = pickupableWithFillable;
+    }
+
+    public boolean isPicked() {
+        return picked;
+    }
+
+    public void setPicked(boolean picked) {
+        this.picked = picked;
+    }
+
+    public boolean pickup(StringBuilder outString, List<AdvObject> inventory,
+            List<AdvObject> roomObjects) {
+        if (pickupableWithFillable) {
+            boolean canProceed = false;
+            for (AdvObject invObject : inventory) {
+                if (invObject instanceof IFillable) {
+                    IFillable invFillable = (IFillable) invObject;
+
+                    canProceed = invFillable.fill(this);
+
+                    if (canProceed) {
+                        break;
+                    }
+                }
+            }
+            if (!canProceed) {
+                outString.append("Non puoi prenderlo senza lo strumento adatto.");
+                return false;
+            }
+        } else if (parent != null && parent instanceof AdvItemFillable) {
+            outString.append("Non puoi.");
+            return false;
+        } else {
+            picked = true;
+            inventory.add(this);
+
+            // Check if it's an obj inside something and remove it from its list
+            if (parent != null) {
+                AbstractContainer parentContainer = (AbstractContainer) parent;
+                parentContainer.getList().remove(this);
+                parent = null;
+            } else {
+                roomObjects.remove(this);
+            }
+
+            outString.append("Hai raccolto: " + name);
+            // outString.append(handleObjEvent(item.getEvent(EventType.PICK_UP)));
+        }
+        return true;
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractContainer extends AdvItem {
+public abstract class AbstractContainer extends AdvObject {
 
     protected boolean contentRevealed = false;
 
@@ -66,7 +66,7 @@ public abstract class AbstractContainer extends AdvItem {
     }
 
     public boolean insert(StringBuilder outString, AdvObject obj, List<AdvObject> inventory) {
-        ((AdvItem) obj).setParent(this);
+        obj.setParent(this);
         inventory.remove(obj);
 
         this.add(obj);

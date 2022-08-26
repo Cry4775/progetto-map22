@@ -6,7 +6,7 @@ public class AdvItemFillable extends AdvItem implements IFillable {
 
     private boolean filled;
 
-    private AdvItem eligibleItem;
+    private AdvObject eligibleItem;
     private Integer eligibleItemId;
 
     public AdvItemFillable(int id, String name, String description, Set<String> alias) {
@@ -33,11 +33,11 @@ public class AdvItemFillable extends AdvItem implements IFillable {
         filled = value;
     }
 
-    public AdvItem getEligibleItem() {
+    public AdvObject getEligibleItem() {
         return eligibleItem;
     }
 
-    public void setEligibleItem(AdvItem eligibleItem) {
+    public void setEligibleItem(AdvObject eligibleItem) {
         this.eligibleItem = eligibleItem;
     }
 
@@ -50,9 +50,13 @@ public class AdvItemFillable extends AdvItem implements IFillable {
     }
 
     @Override
-    public boolean fill(StringBuilder outString) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean fill(AdvObject obj) {
+        if (eligibleItem.equals(obj)) {
+            filled = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
