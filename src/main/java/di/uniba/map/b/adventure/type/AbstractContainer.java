@@ -6,7 +6,7 @@ import java.util.Set;
 
 public abstract class AbstractContainer extends AdvItem {
 
-    private boolean contentRevealed = false;
+    protected boolean contentRevealed = false;
 
     private List<AdvObject> list = new ArrayList<>();
 
@@ -63,5 +63,17 @@ public abstract class AbstractContainer extends AdvItem {
             return outString;
         }
         return new StringBuilder();
+    }
+
+    public boolean insert(StringBuilder outString, AdvObject obj, List<AdvObject> inventory) {
+        ((AdvItem) obj).setParent(this);
+        inventory.remove(obj);
+
+        this.add(obj);
+
+        outString.append("Hai lasciato: " + obj.getName());
+        // outString.append(handleObjEvent(obj.getEvent(EventType.INSERT)));
+
+        return true;
     }
 }

@@ -1,8 +1,9 @@
 package di.uniba.map.b.adventure.type;
 
+import java.util.List;
 import java.util.Set;
 
-public class AdvItem extends AdvObject {
+public class AdvItem extends AdvObject implements IPickupable {
 
     private String inventoryDescription;
 
@@ -10,16 +11,9 @@ public class AdvItem extends AdvObject {
 
     private boolean pickupableWithFillableItem;
 
-    private boolean pickupable;
-    private boolean pushable;
-    private boolean pullable;
-    private boolean movable;
     private boolean activable;
 
-    private boolean picked;
-    private boolean pushed;
-    private boolean pulled;
-    private boolean moved;
+    private boolean picked; // TODO forse eliminare e fare un sistema che controlli l'inv
     private boolean active;
 
     public AdvItem(int id, String name, String description, Set<String> alias) {
@@ -36,46 +30,6 @@ public class AdvItem extends AdvObject {
 
     public AdvItem(int id, String name, String description) {
         super(id, name, description);
-    }
-
-    public boolean isPickupable() {
-        return pickupable;
-    }
-
-    public void setPickupable(boolean pickupable) {
-        this.pickupable = pickupable;
-    }
-
-    public boolean isPushable() {
-        return pushable;
-    }
-
-    public void setPushable(boolean pushable) {
-        this.pushable = pushable;
-    }
-
-    public boolean isMovable() {
-        return movable;
-    }
-
-    public void setMovable(boolean movable) {
-        this.movable = movable;
-    }
-
-    public boolean isPushed() {
-        return pushed;
-    }
-
-    public void setPushed(boolean push) {
-        this.pushed = push;
-    }
-
-    public boolean isMoved() {
-        return moved;
-    }
-
-    public void setMoved(boolean moved) {
-        this.moved = moved;
     }
 
     public boolean isActivable() {
@@ -110,22 +64,6 @@ public class AdvItem extends AdvObject {
         this.parent = parent;
     }
 
-    public boolean isPullable() {
-        return pullable;
-    }
-
-    public void setPullable(boolean pullable) {
-        this.pullable = pullable;
-    }
-
-    public boolean isPulled() {
-        return pulled;
-    }
-
-    public void setPulled(boolean pulled) {
-        this.pulled = pulled;
-    }
-
     public boolean isPicked() {
         return picked;
     }
@@ -140,5 +78,11 @@ public class AdvItem extends AdvObject {
 
     public void setPickupableWithFillableItem(boolean pickupableWithFillableItem) {
         this.pickupableWithFillableItem = pickupableWithFillableItem;
+    }
+
+    @Override
+    public boolean pickUp(StringBuilder outString, List<AdvObject> inventory) {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

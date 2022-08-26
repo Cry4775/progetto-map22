@@ -196,7 +196,7 @@
                         "name": "ciotola",
                         "description": "Una ciotola in porcellana decorata con motivi geometrici.",
                         "pickupable": true,
-                        "filledWithItemId": 36
+                        "eligibleItemId": 36
                     }
                 ]
             },
@@ -297,11 +297,10 @@
                 "description": "Una larga ruota di legno, rinforzata in metallo. Attorno ad essa è avvolta una corda che proviene da un foro nel soffitto."
             },
             {
-                "type": "AdvItem",
+                "type": "AdvObjectPullable",
                 "id": 23,
                 "name": "leva",
                 "description": "Una corta leva di legno che blocca la ruota.",
-                "pullable": true,
                 "events": [
                     {
                         "eventType": "PULL",
@@ -403,11 +402,10 @@
                 "pickupable": true
             },
             {
-                "type": "AdvItem",
+                "type": "AdvObjectMovable",
                 "id": 28,
                 "name": "libreria",
                 "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota. <br>Noti che la libreria non è ben appoggiata al muro, forse è stata spostata.",
-                "movable": true,
                 "events": [
                     {
                         "eventType": "MOVE",
@@ -421,11 +419,11 @@
             "imgPath": "./resources/img/studio2.jpg",
             "objects": [
                 {
-                    "type": "AdvItemFillable",
+                    "type": "AdvSocket",
                     "id": 29,
                     "name": "incisione",
                     "description": "L'incisione che era nascosta dalla libreria ha la forma di una stella a cinque punte.",
-                    "filledWithItemId": 47,
+                    "eligibleItemId": 47,
                     "events": [
                         {
                             "eventType": "INSERT",
@@ -472,14 +470,13 @@
                 "description": "Pensi di non aver mai visto un letto così vasto e così lussuoso. Peccato che sia ricoperto da un dito di polvere."
             },
             {
-                "type": "AdvItem",
+                "type": "AdvObjectMovable",
                 "id": 31,
                 "name": "comò",
                 "alias": [
                     "comodino"
                 ],
                 "description": "Un semplice comò in robusto legno massello, privo di cassetti o altre aperture.",
-                "movable": true,
                 "events": [
                     {
                         "eventType": "MOVE",

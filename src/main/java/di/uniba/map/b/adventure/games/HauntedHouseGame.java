@@ -202,11 +202,11 @@ public class HauntedHouseGame extends GameDescription {
     }
 
     private void linkItemFillablesReference(AdvItemFillable obj, List<AdvObject> objects) {
-        if (obj.getFilledWithItemId() != null) {
+        if (obj.getEligibleItemId() != null) {
             objects.stream()
                     .filter(AdvItem.class::isInstance).map(AdvItem.class::cast)
-                    .filter(reqItem -> reqItem.getId() == obj.getFilledWithItemId())
-                    .forEach(reqItem -> obj.setFilledWithItem(reqItem));
+                    .filter(reqItem -> reqItem.getId() == obj.getEligibleItemId())
+                    .forEach(reqItem -> obj.setEligibleItem(reqItem));
         }
     }
 
@@ -393,34 +393,23 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.INSERT) {
             if (p.getObject() != null && p.getInvObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AdvObject obj = p.getObject();
                 AdvObject invObj = p.getInvObject();
 
-                if (obj instanceof AdvItemFillable) {
-                    AdvItemFillable fillableObj = (AdvItemFillable) obj;
-                    if (!fillableObj.isFilled()) {
-                        if (fillableObj.getFilledWithItem().equals(invObj)) {
-                            fillableObj.setFilledWithItem((AdvItem) invObj);
-                            fillableObj.setFilled(true);
-                            ((AdvItem) invObj).setParent(fillableObj);
-                            getInventory().remove(invObj);
+                if (obj instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) obj;
 
-                            StringBuilder outString =
-                                    new StringBuilder("Hai inserito: " + invObj.getName());
-                            outString.append(handleObjEvent(obj.getEvent(EventType.INSERT)));
+                    StringBuilder outString = new StringBuilder();
+                    actionPerformed = container.insert(outString, invObj, getInventory());
 
-                            gui.appendTextEdtOutput(outString.toString(), false);
-                        } else {
-                            gui.appendTextEdtOutput("Non puoi inserirci questo oggetto.", false);
-                        }
-                    } else {
-                        gui.appendTextEdtOutput("Non puoi inserirci altri oggetti.", false);
-                    }
+                    gui.appendTextEdtOutput(outString.toString(), false);
                 }
-            } else if (p.getObject() == null) {
+            } else if (p.getObject() == null && p.getInvObject() != null) {
                 gui.appendTextEdtOutput("Non trovo l'oggetto in cui inserire.", false);
-            } else {
+            } else if (p.getInvObject() == null && p.getObject() != null) {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da inserire.", false);
+            } else {
+                gui.appendTextEdtOutput("Non ho capito cosa devo fare.", false);
             }
         } else if (p.getCommand().getType() == CommandType.WEAR) {
             StringBuilder outString = new StringBuilder();
@@ -520,11 +509,11 @@ public class HauntedHouseGame extends GameDescription {
                     outString.append("É chiuso.");
                 } else {
                     outString.append(container.revealContent());
-                    return true;
+                    // TODO return true;
                 }
             } else {
                 outString.append(container.revealContent());
-                return true;
+                // return true;
             }
 
         } else if (obj instanceof AdvDoorOpenable) {
@@ -539,7 +528,7 @@ public class HauntedHouseGame extends GameDescription {
         } else if (obj instanceof AdvItemFillable) {
             AdvItemFillable fillable = (AdvItemFillable) obj;
             if (fillable.isFilled()) {
-                outString.append("<br>Contiene: " + fillable.getFilledWithItem().getName());
+                outString.append("<br>Contiene: " + fillable.getEligibleItem().getName());
             } else {
                 outString.append("<br>È vuoto.");
             }
@@ -563,7 +552,7 @@ public class HauntedHouseGame extends GameDescription {
                 for (AdvObject invObject : getInventory()) {
                     if (invObject instanceof AdvItemFillable) {
                         AdvItemFillable invFillable = (AdvItemFillable) invObject;
-                        if (invFillable.getFilledWithItem().equals(item)) {
+                        if (invFillable.getEligibleItem().equals(item)) {
                             invFillable.setFilled(true);
                             canProceed = true;
                             break;

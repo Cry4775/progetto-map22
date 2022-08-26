@@ -2,11 +2,12 @@ package di.uniba.map.b.adventure.type;
 
 import java.util.Set;
 
-public class AdvItemFillable extends AdvItem {
+public class AdvItemFillable extends AdvItem implements IFillable {
+
     private boolean filled;
 
-    private AdvItem filledWithItem;
-    private Integer filledWithItemId;
+    private AdvItem eligibleItem;
+    private Integer eligibleItemId;
 
     public AdvItemFillable(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
@@ -28,23 +29,30 @@ public class AdvItemFillable extends AdvItem {
         return filled;
     }
 
-    public void setFilled(boolean filled) {
-        this.filled = filled;
+    public void setFilled(boolean value) {
+        filled = value;
     }
 
-    public AdvItem getFilledWithItem() {
-        return filledWithItem;
+    public AdvItem getEligibleItem() {
+        return eligibleItem;
     }
 
-    public void setFilledWithItem(AdvItem filledWithItem) {
-        this.filledWithItem = filledWithItem;
+    public void setEligibleItem(AdvItem eligibleItem) {
+        this.eligibleItem = eligibleItem;
     }
 
-    public Integer getFilledWithItemId() {
-        return filledWithItemId;
+    public Integer getEligibleItemId() {
+        return eligibleItemId;
     }
 
-    public void setFilledWithItemId(Integer filledWithItemId) {
-        this.filledWithItemId = filledWithItemId;
+    public void setEligibleItemId(Integer eligibleItemId) {
+        this.eligibleItemId = eligibleItemId;
     }
+
+    @Override
+    public boolean fill(StringBuilder outString) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
