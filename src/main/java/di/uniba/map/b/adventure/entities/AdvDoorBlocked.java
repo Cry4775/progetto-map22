@@ -2,7 +2,7 @@ package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
 
-public class AdvDoorBlocked extends AdvObject {
+public class AdvDoorBlocked extends AbstractEntity {
 
     private String openEventText;
 

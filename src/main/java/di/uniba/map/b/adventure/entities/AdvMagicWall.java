@@ -2,7 +2,7 @@ package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
 
-public class AdvMagicWall extends AdvObject {
+public class AdvMagicWall extends AbstractEntity {
 
     private boolean locked = true;
     private int unlockedByWearingItemId = 0;

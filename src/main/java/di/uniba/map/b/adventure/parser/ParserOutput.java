@@ -5,7 +5,7 @@
  */
 package di.uniba.map.b.adventure.parser;
 
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.type.Command;
 
 /**
@@ -15,16 +15,16 @@ public class ParserOutput {
 
     private Command command;
 
-    private AdvObject object;
+    private AbstractEntity object;
 
-    private AdvObject invObject;
+    private AbstractEntity invObject;
 
-    public ParserOutput(Command command, AdvObject object) {
+    public ParserOutput(Command command, AbstractEntity object) {
         this.command = command;
         this.object = object;
     }
 
-    public ParserOutput(Command command, AdvObject object, AdvObject invObejct) {
+    public ParserOutput(Command command, AbstractEntity object, AbstractEntity invObejct) {
         this.command = command;
         this.object = object;
         this.invObject = invObejct;
@@ -38,19 +38,19 @@ public class ParserOutput {
         this.command = command;
     }
 
-    public AdvObject getObject() {
+    public AbstractEntity getObject() {
         return object;
     }
 
-    public void setObject(AdvObject object) {
+    public void setObject(AbstractEntity object) {
         this.object = object;
     }
 
-    public AdvObject getInvObject() {
+    public AbstractEntity getInvObject() {
         return invObject;
     }
 
-    public void setInvObject(AdvObject invObject) {
+    public void setInvObject(AbstractEntity invObject) {
         this.invObject = invObject;
     }
 

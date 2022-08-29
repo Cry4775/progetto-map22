@@ -6,8 +6,9 @@
 package di.uniba.map.b.adventure.entities.container;
 
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IOpenable;
+import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvChest extends AbstractContainer implements IOpenable {
     private boolean open = false;
@@ -39,14 +40,14 @@ public class AdvChest extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public boolean open(StringBuilder outString, AdvObject key) {
+    public boolean open(StringBuilder outString, AbstractEntity key) {
         if (!open) {
             open = true;
             outString.append("Hai aperto: " + getName());
 
             outString.append(revealContent());
 
-            // outString.append(handleObjEvent(getEvent(EventType.OPEN_CONTAINER)));
+            outString.append(processEvent(EventType.OPEN_CONTAINER));
 
             return true;
         } else if (open) {

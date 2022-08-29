@@ -5,7 +5,7 @@
 package di.uniba.map.b.adventure.parser;
 
 import di.uniba.map.b.adventure.Utils;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.Command;
@@ -33,7 +33,7 @@ public class Parser {
         return null;
     }
 
-    private AdvObject checkForObject(String token, List<AdvObject> objects) {
+    private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
         if (objects != null) {
             for (int i = 0; i < objects.size(); i++) {
                 if (objects.get(i).getName().equals(token)
@@ -44,7 +44,7 @@ public class Parser {
                     AbstractContainer container = (AbstractContainer) objects.get(i);
 
                     if (container.isContentRevealed()) {
-                        for (AdvObject obj : container.getList()) {
+                        for (AbstractEntity obj : container.getList()) {
                             if (obj.getName().equals(token)
                                     || (obj.getAlias() != null && obj.getAlias().contains(token))) {
                                 return obj;
@@ -73,15 +73,15 @@ public class Parser {
      * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
-    public ParserOutput parse(String command, List<Command> commands, List<AdvObject> objects,
-            List<AdvObject> inventory) {
+    public ParserOutput parse(String command, List<Command> commands, List<AbstractEntity> objects,
+            List<AbstractEntity> inventory) {
         List<String> tokens = Utils.parseString(command, stopwords);
         if (!tokens.isEmpty()) {
             Command cmd = checkForCommand(tokens.get(0), commands);
             if (cmd != null) {
                 if (tokens.size() > 1) {
-                    AdvObject objRoom = checkForObject(tokens.get(1), objects);
-                    AdvObject objInv = null;
+                    AbstractEntity objRoom = checkForObject(tokens.get(1), objects);
+                    AbstractEntity objInv = null;
                     if (objRoom == null && tokens.size() > 2) {
                         objRoom = checkForObject(tokens.get(2), objects);
                     }

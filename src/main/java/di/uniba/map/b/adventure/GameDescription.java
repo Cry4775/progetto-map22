@@ -5,7 +5,7 @@
  */
 package di.uniba.map.b.adventure;
 
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.PlayableRoom;
@@ -26,7 +26,7 @@ public abstract class GameDescription {
 
     private final List<Command> commands = new ArrayList<>();
 
-    private final List<AdvObject> inventory = new ArrayList<>();
+    private final List<AbstractEntity> inventory = new ArrayList<>();
 
     private Room currentRoom;
 
@@ -46,7 +46,7 @@ public abstract class GameDescription {
         this.currentRoom = currentRoom;
     }
 
-    public List<AdvObject> getInventory() {
+    public List<AbstractEntity> getInventory() {
         return inventory;
     }
 

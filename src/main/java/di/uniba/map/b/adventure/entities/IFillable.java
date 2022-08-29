@@ -5,9 +5,9 @@ public interface IFillable {
 
     public void setFilled(boolean value);
 
-    public AdvObject getEligibleItem();
+    public AbstractEntity getEligibleItem();
 
-    public void setEligibleItem(AdvObject item);
+    public void setEligibleItem(AbstractEntity item);
 
-    public boolean fill(AdvObject obj);
+    public boolean fill(AbstractEntity obj);
 }

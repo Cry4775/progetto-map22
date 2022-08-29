@@ -2,15 +2,15 @@ package di.uniba.map.b.adventure.entities.container;
 
 import java.util.List;
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
-import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvSocket extends AbstractContainer {
 
     private boolean itemInside = false;
 
-    private AdvItem eligibleItem;
-    private int eligibleItemId;
+    private AbstractEntity eligibleItem;
+    private Integer eligibleItemId;
 
     public AdvSocket(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
@@ -36,15 +36,15 @@ public class AdvSocket extends AbstractContainer {
         this.itemInside = itemInside;
     }
 
-    public AdvItem getEligibleItem() {
+    public AbstractEntity getEligibleItem() {
         return eligibleItem;
     }
 
-    public void setEligibleItem(AdvItem eligibleItem) {
+    public void setEligibleItem(AbstractEntity eligibleItem) {
         this.eligibleItem = eligibleItem;
     }
 
-    public int getEligibleItemId() {
+    public Integer getEligibleItemId() {
         return eligibleItemId;
     }
 
@@ -52,7 +52,8 @@ public class AdvSocket extends AbstractContainer {
         this.eligibleItemId = eligibleItemId;
     }
 
-    public boolean insert(StringBuilder outString, AdvObject obj, List<AdvObject> inventory) {
+    public boolean insert(StringBuilder outString, AbstractEntity obj,
+            List<AbstractEntity> inventory) {
         if (!itemInside) {
             if (eligibleItem.equals(obj)) {
                 itemInside = true;
@@ -62,7 +63,7 @@ public class AdvSocket extends AbstractContainer {
                 this.add(obj);
 
                 outString.append("Hai inserito: " + obj.getName());
-                // outString.append(handleObjEvent(obj.getEvent(EventType.INSERT)));
+                outString.append(processEvent(EventType.INSERT));
 
                 return true;
             } else {

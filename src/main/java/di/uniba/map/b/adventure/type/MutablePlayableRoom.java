@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 
 public class MutablePlayableRoom extends PlayableRoom {
 
@@ -33,27 +33,27 @@ public class MutablePlayableRoom extends PlayableRoom {
                 if (f.get(newRoom) != null
                         && !f.getName().equals("id")) {
                     if (f.get(newRoom) instanceof ArrayList<?>) {
-                        Iterator<AdvObject> it = getObjects().iterator();
-                        List<AdvObject> tempList = new ArrayList<>();
+                        Iterator<AbstractEntity> it = getObjects().iterator();
+                        List<AbstractEntity> tempList = new ArrayList<>();
                         while (it.hasNext()) {
-                            AdvObject obj = it.next();
+                            AbstractEntity obj = it.next();
 
                             Iterator<?> newIt = ((List<?>) f.get(newRoom)).iterator();
                             while (newIt.hasNext()) {
                                 Object newRoomObj = newIt.next();
 
-                                if (newRoomObj instanceof AdvObject) {
-                                    if (((AdvObject) newRoomObj).getId() == obj.getId()) {
+                                if (newRoomObj instanceof AbstractEntity) {
+                                    if (((AbstractEntity) newRoomObj).getId() == obj.getId()) {
                                         it.remove();
-                                        tempList.add((AdvObject) newRoomObj);
+                                        tempList.add((AbstractEntity) newRoomObj);
                                         newIt.remove();
                                     }
                                 }
                             }
                         }
                         for (Object newRoomObj : (List<?>) f.get(newRoom)) {
-                            if (newRoomObj instanceof AdvObject) {
-                                tempList.add((AdvObject) newRoomObj);
+                            if (newRoomObj instanceof AbstractEntity) {
+                                tempList.add((AbstractEntity) newRoomObj);
                             }
                         }
                         getObjects().addAll(tempList);

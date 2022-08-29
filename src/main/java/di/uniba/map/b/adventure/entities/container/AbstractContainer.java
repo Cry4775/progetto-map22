@@ -3,13 +3,14 @@ package di.uniba.map.b.adventure.entities.container;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.type.EventType;
 
-public abstract class AbstractContainer extends AdvObject {
+public abstract class AbstractContainer extends AbstractEntity {
 
     protected boolean contentRevealed = false;
 
-    private List<AdvObject> list = new ArrayList<>();
+    private List<AbstractEntity> list = new ArrayList<>();
 
     public AbstractContainer(int id) {
         super(id);
@@ -27,19 +28,19 @@ public abstract class AbstractContainer extends AdvObject {
         super(id, name, description, alias);
     }
 
-    public List<AdvObject> getList() {
+    public List<AbstractEntity> getList() {
         return list;
     }
 
-    public void setList(List<AdvObject> list) {
+    public void setList(List<AbstractEntity> list) {
         this.list = list;
     }
 
-    public void add(AdvObject o) {
+    public void add(AbstractEntity o) {
         list.add(o);
     }
 
-    public void remove(AdvObject o) {
+    public void remove(AbstractEntity o) {
         list.remove(o);
     }
 
@@ -55,7 +56,7 @@ public abstract class AbstractContainer extends AdvObject {
         if (getList() != null && !getList().isEmpty()) {
             StringBuilder outString = new StringBuilder("<br>Ci trovi:");
 
-            for (AdvObject advObject : getList()) {
+            for (AbstractEntity advObject : getList()) {
                 outString.append(" " + advObject.getName() + ",");
             }
 
@@ -66,14 +67,15 @@ public abstract class AbstractContainer extends AdvObject {
         return new StringBuilder();
     }
 
-    public boolean insert(StringBuilder outString, AdvObject obj, List<AdvObject> inventory) {
+    public boolean insert(StringBuilder outString, AbstractEntity obj,
+            List<AbstractEntity> inventory) {
         obj.setParent(this);
         inventory.remove(obj);
 
         this.add(obj);
 
         outString.append("Hai lasciato: " + obj.getName());
-        // outString.append(handleObjEvent(obj.getEvent(EventType.INSERT)));
+        outString.append(processEvent(EventType.INSERT));
 
         return true;
     }

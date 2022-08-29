@@ -2,17 +2,14 @@ package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.List;
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.type.EventType;
 
-public class AdvItem extends AdvObject implements IPickupable {
+public class AdvItem extends AbstractEntity implements IPickupable {
 
     private String inventoryDescription;
-
-    private boolean pickupable = false;
-
-    private boolean pickupableWithFillable = false;
 
     private boolean pickedUp = false; // TODO forse c'é un modo migliore
 
@@ -60,22 +57,6 @@ public class AdvItem extends AdvObject implements IPickupable {
         this.inventoryDescription = inventoryDescription;
     }
 
-    public boolean isPickupable() {
-        return pickupable;
-    }
-
-    public void setPickupable(boolean pickupable) {
-        this.pickupable = pickupable;
-    }
-
-    public boolean isPickupableWithFillable() {
-        return pickupableWithFillable;
-    }
-
-    public void setPickupableWithFillable(boolean pickupableWithFillable) {
-        this.pickupableWithFillable = pickupableWithFillable;
-    }
-
     public boolean isPickedUp() {
         return pickedUp;
     }
@@ -85,8 +66,8 @@ public class AdvItem extends AdvObject implements IPickupable {
     }
 
     @Override
-    public boolean pickup(StringBuilder outString, List<AdvObject> inventory,
-            List<AdvObject> roomObjects) {
+    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
+            List<AbstractEntity> roomObjects) {
         if (!pickedUp) {
             pickedUp = true;
             inventory.add(this);
@@ -101,7 +82,7 @@ public class AdvItem extends AdvObject implements IPickupable {
             }
 
             outString.append("Hai raccolto: " + getName());
-            // outString.append(handleObjEvent(item.getEvent(EventType.PICK_UP)));
+            outString.append(processEvent(EventType.PICK_UP));
             return true;
         } else {
             outString.append("É giá nel tuo inventario.");

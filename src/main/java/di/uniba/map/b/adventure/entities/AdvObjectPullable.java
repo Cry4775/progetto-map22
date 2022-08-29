@@ -1,8 +1,9 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.type.EventType;
 
-public class AdvObjectPullable extends AdvObject implements IPullable {
+public class AdvObjectPullable extends AbstractEntity implements IPullable {
 
     private boolean pulled = false;
 
@@ -38,9 +39,7 @@ public class AdvObjectPullable extends AdvObject implements IPullable {
             pulled = true;
 
             outString.append("Hai tirato: " + getName());
-
-            // TODO tutti questi handleobjevent
-            // outString.append(handleObjEvent(getEvent(EventType.PULL)));
+            outString.append(processEvent(EventType.PULL));
 
             return true;
         } else {

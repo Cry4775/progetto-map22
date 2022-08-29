@@ -25,8 +25,9 @@ import di.uniba.map.b.adventure.RuntimeTypeAdapterFactory;
 import di.uniba.map.b.adventure.Triple;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
+import di.uniba.map.b.adventure.entities.AdvFixedObject;
 import di.uniba.map.b.adventure.entities.AdvMagicWall;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvObjectMovable;
 import di.uniba.map.b.adventure.entities.AdvObjectPullable;
 import di.uniba.map.b.adventure.entities.AdvObjectPushable;
@@ -44,12 +45,12 @@ import di.uniba.map.b.adventure.entities.container.AdvSocket;
 import di.uniba.map.b.adventure.entities.container.pickupable.AdvWearableContainer;
 import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
+import di.uniba.map.b.adventure.entities.pickupable.AdvFluid;
 import di.uniba.map.b.adventure.entities.pickupable.AdvWearableItem;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AdvEvent;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
-import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
@@ -85,9 +86,10 @@ public class HauntedHouseGame extends GameDescription {
     }
 
     private void loadRooms() throws FileNotFoundException, IOException {
-        RuntimeTypeAdapterFactory<AdvObject> typeAdapterObjects =
+        RuntimeTypeAdapterFactory<AbstractEntity> typeAdapterObjects =
                 RuntimeTypeAdapterFactory
-                        .of(AdvObject.class)
+                        .of(AbstractEntity.class)
+                        .registerSubtype(AdvFixedObject.class)
                         .registerSubtype(AdvItem.class)
                         .registerSubtype(AbstractContainer.class)
                         .registerSubtype(AdvContainer.class)
@@ -102,6 +104,7 @@ public class HauntedHouseGame extends GameDescription {
                         .registerSubtype(AdvObjectMovable.class)
                         .registerSubtype(AdvObjectPullable.class)
                         .registerSubtype(AdvObjectPushable.class)
+                        .registerSubtype(AdvFluid.class)
                         .registerSubtype(AdvPerson.class);
 
         RuntimeTypeAdapterFactory<Room> typeAdapterRooms = RuntimeTypeAdapterFactory
@@ -144,15 +147,17 @@ public class HauntedHouseGame extends GameDescription {
                 getRooms().add(room);
             }
 
-            List<AdvObject> objects = listAllObjects();
+            List<AbstractEntity> objects = listAllObjects();
 
-            for (AdvObject advObject : objects) {
+            for (AbstractEntity advObject : objects) {
                 linkObjectsParent(advObject);
                 linkObjectsEventsReference(advObject, getRooms());
                 linkDoorsBlockedRoom(advObject, getRooms());
 
                 if (advObject instanceof AdvFillableItem) {
                     linkItemFillablesReference((AdvFillableItem) advObject, objects);
+                } else if (advObject instanceof AdvSocket) {
+                    linkAdvSocketReference((AdvSocket) advObject, objects);
                 }
             }
 
@@ -160,8 +165,8 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
-    private List<AdvObject> listAllObjects() {
-        List<AdvObject> objects = new ArrayList<>();
+    private List<AbstractEntity> listAllObjects() {
+        List<AbstractEntity> objects = new ArrayList<>();
 
         List<PlayableRoom> rooms =
                 new ArrayList<>(getRooms().stream()
@@ -195,13 +200,13 @@ public class HauntedHouseGame extends GameDescription {
         rooms.addAll(tempRooms);
     }
 
-    private void unpackContainerObj(List<AdvObject> objects) {
-        List<AdvObject> tempObjects = new ArrayList<>();
-        for (AdvObject obj : objects) {
+    private void unpackContainerObj(List<AbstractEntity> objects) {
+        List<AbstractEntity> tempObjects = new ArrayList<>();
+        for (AbstractEntity obj : objects) {
             if (obj instanceof AbstractContainer) {
                 AbstractContainer container = (AbstractContainer) obj;
                 if (container.getList() != null) {
-                    List<AdvObject> copyContainer = new ArrayList<>(container.getList());
+                    List<AbstractEntity> copyContainer = new ArrayList<>(container.getList());
                     unpackContainerObj(copyContainer);
                     tempObjects.addAll(copyContainer);
                 }
@@ -210,7 +215,7 @@ public class HauntedHouseGame extends GameDescription {
         objects.addAll(tempObjects);
     }
 
-    private void linkItemFillablesReference(AdvFillableItem obj, List<AdvObject> objects) {
+    private void linkItemFillablesReference(AdvFillableItem obj, List<AbstractEntity> objects) {
         if (obj.getEligibleItemId() != null) {
             objects.stream()
                     .filter(AdvItem.class::isInstance).map(AdvItem.class::cast)
@@ -219,22 +224,27 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
-    private void linkObjectsParent(AdvObject obj) {
+    private void linkAdvSocketReference(AdvSocket obj, List<AbstractEntity> objects) {
+        if (obj.getEligibleItemId() != null) {
+            objects.stream()
+                    .filter(reqItem -> reqItem.getId() == obj.getEligibleItemId())
+                    .forEach(reqItem -> obj.setEligibleItem(reqItem));
+        }
+    }
+
+    private void linkObjectsParent(AbstractEntity obj) {
         if (obj instanceof AbstractContainer) {
             AbstractContainer container = (AbstractContainer) obj;
             if (container.getList() != null) {
-                for (AdvObject itemUncasted : container.getList()) {
-                    if (itemUncasted instanceof AdvItem) {
-                        AdvItem item = (AdvItem) itemUncasted;
-                        item.setParent(container);
-                        linkObjectsParent(item);
-                    }
+                for (AbstractEntity item : container.getList()) {
+                    item.setParent(container);
+                    linkObjectsParent(item);
                 }
             }
         }
     }
 
-    private void linkDoorsBlockedRoom(AdvObject obj, List<Room> rooms) {
+    private void linkDoorsBlockedRoom(AbstractEntity obj, List<Room> rooms) {
         if (obj instanceof AdvDoorOpenable) {
             AdvDoorOpenable door = (AdvDoorOpenable) obj;
 
@@ -248,7 +258,7 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
-    private void linkObjectsEventsReference(AdvObject obj, List<Room> rooms) {
+    private void linkObjectsEventsReference(AbstractEntity obj, List<Room> rooms) {
         if (obj.getEvents() != null) {
             for (ObjEvent objEvent : obj.getEvents()) {
                 if (objEvent.getUpdateTargetRoomId() != null) {
@@ -258,8 +268,41 @@ public class HauntedHouseGame extends GameDescription {
                             .filter(room -> objEvent.getUpdateTargetRoomId() == room.getId())
                             .forEach(room -> objEvent.setUpdateTargetRoom(room));
                 }
+
+                if (objEvent.isUpdatingParentRoom()) {
+                    rooms.stream()
+                            .filter(MutablePlayableRoom.class::isInstance)
+                            .map(MutablePlayableRoom.class::cast)
+                            .filter(room -> room.getObjects().contains(obj))
+                            .forEach(room -> objEvent.setParentRoom(room));
+
+                    if (objEvent.getParentRoom() == null) {
+                        rooms.stream()
+                                .filter(MutablePlayableRoom.class::isInstance)
+                                .map(MutablePlayableRoom.class::cast)
+                                .filter(room -> room.getNewRoom() != null)
+                                .filter(room -> linkParentRoomEvt(obj, room, objEvent))
+                                .forEach(room -> objEvent.setParentRoom(room));
+                    }
+                }
             }
         }
+    }
+
+    private boolean linkParentRoomEvt(AbstractEntity obj, MutablePlayableRoom room,
+            ObjEvent objEvent) {
+        if (objEvent.getParentRoom() == null) {
+            MutablePlayableRoom nextRoom = room.getNewRoom();
+            if (nextRoom != null) {
+                if (nextRoom.getObjects() != null
+                        && nextRoom.getObjects().contains(obj)) {
+                    return true;
+                } else {
+                    linkParentRoomEvt(obj, nextRoom, objEvent);
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -294,7 +337,7 @@ public class HauntedHouseGame extends GameDescription {
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             if (!getInventory().isEmpty()) {
                 StringBuilder outString = new StringBuilder("Nel tuo inventario ci sono:");
-                for (AdvObject obj : getInventory()) {
+                for (AbstractEntity obj : getInventory()) {
                     outString.append("<br> - " + obj.getName());
                 }
                 gui.appendTextEdtOutput(outString.toString(), false);
@@ -303,7 +346,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.LOOK_AT) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AbstractEntity obj = getObjectFromParser(p);
 
                 actionPerformed = lookAt(gui, obj);
             } else {
@@ -311,7 +354,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AbstractEntity obj = getObjectFromParser(p);
                 if (obj instanceof IPickupable) {
                     IPickupable pickupableObj = (IPickupable) obj;
 
@@ -329,11 +372,11 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.OPEN) {
             if (p.getObject() != null || p.getInvObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AbstractEntity obj = getObjectFromParser(p);
 
                 if (obj instanceof IOpenable) {
                     IOpenable openableObj = (IOpenable) obj;
-                    AdvObject key = p.getInvObject();
+                    AbstractEntity key = p.getInvObject();
 
                     StringBuilder outString = new StringBuilder();
                     actionPerformed = openableObj.open(outString, key);
@@ -350,7 +393,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.PUSH) {
             if (p.getObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AbstractEntity obj = getObjectFromParser(p);
 
                 if (obj instanceof IPushable) {
                     IPushable pushableObj = (IPushable) obj;
@@ -367,7 +410,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.PULL) {
             if (p.getObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AbstractEntity obj = getObjectFromParser(p);
 
                 if (obj instanceof IPullable) {
                     IPullable pullableObj = (IPullable) obj;
@@ -384,7 +427,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.MOVE) {
             if (p.getObject() != null) {
-                AdvObject obj = getObjectFromParser(p);
+                AbstractEntity obj = getObjectFromParser(p);
 
                 if (obj instanceof IMovable) {
                     IMovable movableObj = (IMovable) obj;
@@ -401,8 +444,8 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.INSERT) {
             if (p.getObject() != null && p.getInvObject() != null) {
-                AdvObject obj = p.getObject();
-                AdvObject invObj = p.getInvObject();
+                AbstractEntity obj = p.getObject();
+                AbstractEntity invObj = p.getInvObject();
 
                 if (obj instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj;
@@ -421,7 +464,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.WEAR) {
             if (p.getObject() != null) {
-                AdvObject obj = p.getObject();
+                AbstractEntity obj = p.getObject();
 
                 if (obj instanceof IWearable) {
                     gui.appendTextEdtOutput("Devi prima prenderlo per poterlo indossare.", false);
@@ -429,7 +472,7 @@ public class HauntedHouseGame extends GameDescription {
                     gui.appendTextEdtOutput("Non puoi indossarlo.", false);
                 }
             } else if (p.getInvObject() != null) {
-                AdvObject invObj = p.getInvObject();
+                AbstractEntity invObj = p.getInvObject();
 
                 if (invObj instanceof IWearable) {
                     IWearable wearable = (IWearable) invObj;
@@ -481,15 +524,11 @@ public class HauntedHouseGame extends GameDescription {
                 }
             }
 
-            for (AdvObject obj : getInventory()) {
-                if (obj.isMustDestroyFromInv()) {
-                    getInventory().remove(obj);
-                }
-            }
+            getInventory().removeIf(obj -> obj.isMustDestroyFromInv());
         }
     }
 
-    private AdvObject getObjectFromParser(ParserOutput p) {
+    private AbstractEntity getObjectFromParser(ParserOutput p) {
         if (p.getObject() != null) {
             return p.getObject();
         } else if (p.getInvObject() != null) {
@@ -498,7 +537,7 @@ public class HauntedHouseGame extends GameDescription {
         return null;
     }
 
-    private boolean lookAt(GameJFrame gui, AdvObject obj) {
+    private boolean lookAt(GameJFrame gui, AbstractEntity obj) {
         StringBuilder outString = new StringBuilder();
 
         if (obj.getDescription() != null) {
@@ -538,7 +577,7 @@ public class HauntedHouseGame extends GameDescription {
         if (outString.toString().isEmpty()) {
             gui.appendTextEdtOutput("Nulla di particolare.", false);
         } else {
-            outString.append(handleObjEvent(obj.getEvent(EventType.LOOK_AT)));
+            // TODO outString.append(handleObjEvent(obj.getEvent(EventType.LOOK_AT)));
 
             gui.appendTextEdtOutput(outString.toString(), false);
 
@@ -566,34 +605,6 @@ public class HauntedHouseGame extends GameDescription {
                     return outString.toString();
                 }
             }
-        }
-        return "";
-    }
-
-    private String handleObjEvent(ObjEvent evt) {
-        if (evt != null) {
-            if (evt.isUpdatingParentRoom()) {
-                if (getCurrentRoom() instanceof MutablePlayableRoom) {
-                    MutablePlayableRoom currentMutableRoom = (MutablePlayableRoom) getCurrentRoom();
-                    currentMutableRoom.updateToNewRoom();
-                }
-            }
-
-            if (evt.isUpdatingAnotherRoom()) {
-                if (evt.getUpdateTargetRoom() != null) {
-                    evt.getUpdateTargetRoom().updateToNewRoom();
-                }
-            }
-
-            StringBuilder outString = new StringBuilder();
-
-            if (evt.getText() != null && !evt.getText().isEmpty()) {
-                outString.append("<br><br>" + evt.getText());
-            }
-
-            evt.setTriggered(true);
-
-            return outString.toString();
         }
         return "";
     }
@@ -636,7 +647,7 @@ public class HauntedHouseGame extends GameDescription {
         if (room != null) {
             PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
             if (currentRoom.getObjects() != null) {
-                for (AdvObject obj : currentRoom.getObjects()) {
+                for (AbstractEntity obj : currentRoom.getObjects()) {
                     if (obj instanceof AdvDoorOpenable) {
                         AdvDoorOpenable door = (AdvDoorOpenable) obj;
                         if (door.getBlockedRoomId() == room.getId() && door.isOpen()) {

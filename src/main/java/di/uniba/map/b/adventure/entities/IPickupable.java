@@ -7,6 +7,6 @@ public interface IPickupable {
 
     public void setPickedUp(boolean value);
 
-    public boolean pickup(StringBuilder outString, List<AdvObject> inventory,
-            List<AdvObject> roomObjects);
+    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
+            List<AbstractEntity> roomObjects);
 }

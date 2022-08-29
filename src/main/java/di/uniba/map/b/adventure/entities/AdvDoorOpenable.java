@@ -1,9 +1,10 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.Room;
 
-public class AdvDoorOpenable extends AdvObject implements IOpenable {
+public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
 
     private boolean open = false;
     private boolean locked = false;
@@ -60,13 +61,12 @@ public class AdvDoorOpenable extends AdvObject implements IOpenable {
     }
 
     @Override
-    public boolean open(StringBuilder outString, AdvObject key) {
+    public boolean open(StringBuilder outString, AbstractEntity key) {
         if (!open && !locked) {
             open = true;
 
             outString.append("Hai aperto: " + getName());
-            // outString.append(handleObjEvent(getEvent(EventType.OPEN_UNLOCKED)));
-            // TODO handleOBjEvent
+            outString.append(processEvent(EventType.OPEN_UNLOCKED));
 
             return true;
         } else if (locked) {
@@ -81,16 +81,16 @@ public class AdvDoorOpenable extends AdvObject implements IOpenable {
                         key.setMustDestroyFromInv(true);
 
                         outString.append("Hai aperto: " + getName());
-                        // outString.append(handleObjEvent(getEvent(EventType.OPEN_UNLOCKED)));
+                        outString.append(processEvent(EventType.OPEN_UNLOCKED));
 
                         return true;
                     } else {
                         outString.append("Non funziona.");
-                        // outString.append(handleObjEvent(getEvent(EventType.OPEN_LOCKED)));
+                        outString.append(processEvent(EventType.OPEN_LOCKED));
                     }
                 } else {
                     outString.append("È chiusa a chiave.");
-                    // outString.append(handleObjEvent(door.getEvent(EventType.OPEN_LOCKED)));
+                    outString.append(processEvent(EventType.OPEN_LOCKED));
                 }
             }
         }

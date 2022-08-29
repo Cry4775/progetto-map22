@@ -6,6 +6,15 @@ public class ObjEvent extends AdvEvent {
     private MutablePlayableRoom updateTargetRoom;
 
     private boolean updatingParentRoom;
+    private MutablePlayableRoom parentRoom;
+
+    public MutablePlayableRoom getParentRoom() {
+        return parentRoom;
+    }
+
+    public void setParentRoom(MutablePlayableRoom parentRoom) {
+        this.parentRoom = parentRoom;
+    }
 
     public boolean isUpdatingAnotherRoom() {
         return updatingAnotherRoom;

@@ -7,7 +7,7 @@ package di.uniba.map.b.adventure.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 
 /**
  * @author Pierdamiano Zagaria
@@ -45,7 +45,7 @@ public class PlayableRoom extends Room {
     private Room down;
     private Integer downId;
 
-    private final List<AdvObject> objects = new ArrayList<>();
+    private final List<AbstractEntity> objects = new ArrayList<>();
 
     private RoomEvent event;
 
@@ -153,7 +153,7 @@ public class PlayableRoom extends Room {
         return eastId;
     }
 
-    public List<AdvObject> getObjects() {
+    public List<AbstractEntity> getObjects() {
         return objects;
     }
 

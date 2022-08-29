@@ -2,6 +2,7 @@ package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.IWearable;
+import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvWearableItem extends AdvItem implements IWearable {
 
@@ -39,6 +40,7 @@ public class AdvWearableItem extends AdvItem implements IWearable {
             worn = true;
 
             outString.append("Hai indossato: " + getName());
+            outString.append(processEvent(EventType.WEAR));
 
             return true;
         } else {

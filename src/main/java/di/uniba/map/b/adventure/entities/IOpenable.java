@@ -5,5 +5,5 @@ public interface IOpenable {
 
     public void setOpen(boolean value);
 
-    public boolean open(StringBuilder outString, AdvObject key);
+    public boolean open(StringBuilder outString, AbstractEntity key);
 }

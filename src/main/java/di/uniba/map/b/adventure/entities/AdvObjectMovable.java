@@ -1,8 +1,9 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.type.EventType;
 
-public class AdvObjectMovable extends AdvObject implements IMovable {
+public class AdvObjectMovable extends AbstractEntity implements IMovable {
 
     private boolean moved = false;
 
@@ -37,8 +38,7 @@ public class AdvObjectMovable extends AdvObject implements IMovable {
         if (!moved) {
             moved = true;
             outString.append("Hai spostato: " + getName());
-
-            // outString.append(handleObjEvent(getEvent(EventType.MOVE)));
+            outString.append(processEvent(EventType.MOVE));
 
             return true;
         } else {

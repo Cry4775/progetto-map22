@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package di.uniba.map.b.adventure.entities;
 
 import java.util.ArrayList;
@@ -13,10 +8,7 @@ import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.ObjEvent;
 
-/**
- * @author pierpaolo
- */
-public abstract class AdvObject {
+public abstract class AbstractEntity {
 
     private final int id;
 
@@ -28,26 +20,26 @@ public abstract class AdvObject {
 
     private boolean mustDestroyFromInv = false;
 
-    private AdvObject parent;
+    private AbstractEntity parent;
 
     private final List<ObjEvent> events = new ArrayList<>();
 
-    public AdvObject(int id) {
+    public AbstractEntity(int id) {
         this.id = id;
     }
 
-    public AdvObject(int id, String name) {
+    public AbstractEntity(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public AdvObject(int id, String name, String description) {
+    public AbstractEntity(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public AdvObject(int id, String name, String description, Set<String> alias) {
+    public AbstractEntity(int id, String name, String description, Set<String> alias) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -102,7 +94,7 @@ public abstract class AdvObject {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AdvObject other = (AdvObject) obj;
+        AbstractEntity other = (AbstractEntity) obj;
         if (id != other.id)
             return false;
         return true;
@@ -125,6 +117,29 @@ public abstract class AdvObject {
         return null;
     }
 
+    public StringBuilder processEvent(EventType eventType) {
+        ObjEvent evt = getEvent(eventType);
+
+        if (evt != null) {
+            if (evt.isUpdatingParentRoom()) {
+                evt.getParentRoom().updateToNewRoom();
+            }
+
+            if (evt.isUpdatingAnotherRoom()) {
+                if (evt.getUpdateTargetRoom() != null) {
+                    evt.getUpdateTargetRoom().updateToNewRoom();
+                }
+            }
+
+            evt.setTriggered(true);
+
+            if (evt.getText() != null && !evt.getText().isEmpty()) {
+                return new StringBuilder("<br><br>" + evt.getText());
+            }
+        }
+        return new StringBuilder();
+    }
+
     public boolean isMustDestroyFromInv() {
         return mustDestroyFromInv;
     }
@@ -133,11 +148,11 @@ public abstract class AdvObject {
         this.mustDestroyFromInv = mustDestroyFromInv;
     }
 
-    public AdvObject getParent() {
+    public AbstractEntity getParent() {
         return parent;
     }
 
-    public void setParent(AdvObject parent) {
+    public void setParent(AbstractEntity parent) {
         this.parent = parent;
     }
 

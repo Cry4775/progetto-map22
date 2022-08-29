@@ -2,7 +2,7 @@ package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
 
-public class AdvPerson extends AdvObject {
+public class AdvPerson extends AbstractEntity {
 
     public AdvPerson(int id) {
         super(id);

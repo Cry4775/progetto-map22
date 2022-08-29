@@ -2,9 +2,10 @@ package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.List;
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
+import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvFluid extends AdvItem implements IFluid {
 
@@ -25,8 +26,8 @@ public class AdvFluid extends AdvItem implements IFluid {
     }
 
     @Override
-    public boolean pickup(StringBuilder outString, List<AdvObject> inventory,
-            List<AdvObject> roomObjects) {
+    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
+            List<AbstractEntity> roomObjects) {
         if (getParent() != null && getParent() instanceof IFillable) {
             outString.append("Non puoi riprenderti il fluido dal contenitore.");
             return false;
@@ -34,7 +35,7 @@ public class AdvFluid extends AdvItem implements IFluid {
 
         boolean canProceed = false;
 
-        for (AdvObject invObject : inventory) {
+        for (AbstractEntity invObject : inventory) {
             if (invObject instanceof IFillable) {
                 IFillable invFillable = (IFillable) invObject;
 
@@ -42,6 +43,7 @@ public class AdvFluid extends AdvItem implements IFluid {
 
                 if (canProceed) {
                     outString.append("Hai riempito: " + invObject.getName());
+                    outString.append(processEvent(EventType.PICK_UP));
                     return true;
                 }
             }

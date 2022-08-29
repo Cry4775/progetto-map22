@@ -3,31 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package di.uniba.map.b.adventure.entities;
+package di.uniba.map.b.adventure.type;
 
 import java.util.ArrayList;
 import java.util.List;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 
 /**
  * @author pierpaolo
  */
 public class Inventory {
 
-    private List<AdvObject> list = new ArrayList<>();
+    private List<AbstractEntity> list = new ArrayList<>();
 
-    public List<AdvObject> getList() {
+    public List<AbstractEntity> getList() {
         return list;
     }
 
-    public void setList(List<AdvObject> list) {
+    public void setList(List<AbstractEntity> list) {
         this.list = list;
     }
 
-    public void add(AdvObject o) {
+    public void add(AbstractEntity o) {
         list.add(o);
     }
 
-    public void remove(AdvObject o) {
+    public void remove(AbstractEntity o) {
         list.remove(o);
     }
 }

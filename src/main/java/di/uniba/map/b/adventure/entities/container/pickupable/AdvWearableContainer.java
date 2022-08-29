@@ -2,9 +2,10 @@ package di.uniba.map.b.adventure.entities.container.pickupable;
 
 import java.util.List;
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvWearableContainer extends AbstractContainer implements IWearable {
 
@@ -38,20 +39,6 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
     }
 
     @Override
-    public boolean wear(StringBuilder outString) {
-        if (!worn) {
-            worn = true;
-
-            outString.append("Hai indossato: " + getName());
-
-            return true;
-        } else {
-            outString.append("L'hai giá indossato.");
-            return false;
-        }
-    }
-
-    @Override
     public boolean isPickedUp() {
         return pickedUp;
     }
@@ -62,8 +49,23 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
     }
 
     @Override
-    public boolean pickup(StringBuilder outString, List<AdvObject> inventory,
-            List<AdvObject> roomObjects) {
+    public boolean wear(StringBuilder outString) {
+        if (!worn) {
+            worn = true;
+
+            outString.append("Hai indossato: " + getName());
+            outString.append(processEvent(EventType.WEAR));
+
+            return true;
+        } else {
+            outString.append("L'hai giá indossato.");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
+            List<AbstractEntity> roomObjects) {
         pickedUp = true;
         inventory.add(this);
 
@@ -77,7 +79,7 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
         }
 
         outString.append("Hai raccolto: " + getName());
-        // outString.append(handleObjEvent(item.getEvent(EventType.PICK_UP)));
+        outString.append(processEvent(EventType.PICK_UP));
 
         return true;
     }

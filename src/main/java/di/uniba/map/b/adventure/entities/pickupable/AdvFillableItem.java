@@ -1,14 +1,14 @@
 package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.Set;
-import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 
 public class AdvFillableItem extends AdvItem implements IFillable {
 
     private boolean filled;
 
-    private AdvObject eligibleItem;
+    private AbstractEntity eligibleItem;
     private Integer eligibleItemId;
 
     public AdvFillableItem(int id, String name, String description, Set<String> alias) {
@@ -35,11 +35,11 @@ public class AdvFillableItem extends AdvItem implements IFillable {
         filled = value;
     }
 
-    public AdvObject getEligibleItem() {
+    public AbstractEntity getEligibleItem() {
         return eligibleItem;
     }
 
-    public void setEligibleItem(AdvObject eligibleItem) {
+    public void setEligibleItem(AbstractEntity eligibleItem) {
         this.eligibleItem = eligibleItem;
     }
 
@@ -52,9 +52,10 @@ public class AdvFillableItem extends AdvItem implements IFillable {
     }
 
     @Override
-    public boolean fill(AdvObject obj) {
+    public boolean fill(AbstractEntity obj) {
         if (eligibleItem.equals(obj)) {
             filled = true;
+            // TODO distinzione tra riempi e prendi
             return true;
         } else {
             return false;

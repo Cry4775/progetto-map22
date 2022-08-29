@@ -1,10 +1,11 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.type.EventType;
 
 // TODO genera gli equals per tutti gli object
 
-public class AdvObjectPushable extends AdvObject implements IPushable {
+public class AdvObjectPushable extends AbstractEntity implements IPushable {
 
     private boolean pushed = false;
 
@@ -40,7 +41,7 @@ public class AdvObjectPushable extends AdvObject implements IPushable {
             pushed = true;
 
             outString.append("Hai premuto: " + getName());
-            // outString.append(handleObjEvent(object.getEvent(EventType.PUSH)));
+            outString.append(processEvent(EventType.PUSH));
 
             return true;
         } else {
