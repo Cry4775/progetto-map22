@@ -3,26 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities.container;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.IOpenable;
 
-public class AdvContainerOpenable extends AbstractContainer implements IOpenable {
+public class AdvChest extends AbstractContainer implements IOpenable {
     private boolean open = false;
 
-    public AdvContainerOpenable(int id) {
+    public AdvChest(int id) {
         super(id);
     }
 
-    public AdvContainerOpenable(int id, String name) {
+    public AdvChest(int id, String name) {
         super(id, name);
     }
 
-    public AdvContainerOpenable(int id, String name, String description) {
+    public AdvChest(int id, String name, String description) {
         super(id, name, description);
     }
 
-    public AdvContainerOpenable(int id, String name, String description, Set<String> alias) {
+    public AdvChest(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
 

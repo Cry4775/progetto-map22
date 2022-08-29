@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities.container;
 
 import java.util.Set;
 

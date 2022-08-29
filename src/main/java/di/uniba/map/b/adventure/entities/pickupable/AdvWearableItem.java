@@ -1,24 +1,25 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.entities.IWearable;
 
-public class AdvItemWearable extends AdvItem implements IWearable {
+public class AdvWearableItem extends AdvItem implements IWearable {
 
     private boolean worn = false;
 
-    public AdvItemWearable(int id) {
+    public AdvWearableItem(int id) {
         super(id);
     }
 
-    public AdvItemWearable(int id, String name) {
+    public AdvWearableItem(int id, String name) {
         super(id, name);
     }
 
-    public AdvItemWearable(int id, String name, String description) {
+    public AdvWearableItem(int id, String name, String description) {
         super(id, name, description);
     }
 
-    public AdvItemWearable(int id, String name, String description, Set<String> alias) {
+    public AdvWearableItem(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
 

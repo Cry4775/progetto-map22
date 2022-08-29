@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities;
 
 public interface IMovable {
     public boolean isMoved();

@@ -9,7 +9,6 @@ import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.PlayableRoom;
-
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;

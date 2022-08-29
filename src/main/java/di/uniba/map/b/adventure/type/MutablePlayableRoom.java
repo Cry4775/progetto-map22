@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import di.uniba.map.b.adventure.entities.AdvObject;
 
 public class MutablePlayableRoom extends PlayableRoom {
 

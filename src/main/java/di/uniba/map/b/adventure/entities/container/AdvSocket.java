@@ -1,7 +1,9 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities.container;
 
 import java.util.List;
 import java.util.Set;
+import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 
 public class AdvSocket extends AbstractContainer {
 

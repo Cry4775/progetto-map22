@@ -1,6 +1,6 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities;
 
-public interface IWearable {
+public interface IWearable extends IPickupable {
     public boolean isWorn();
 
     public void setWorn(boolean value);

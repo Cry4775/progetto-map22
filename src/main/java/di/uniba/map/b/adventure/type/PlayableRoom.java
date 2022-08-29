@@ -7,9 +7,9 @@ package di.uniba.map.b.adventure.type;
 
 import java.util.ArrayList;
 import java.util.List;
+import di.uniba.map.b.adventure.entities.AdvObject;
 
 /**
- *
  * @author Pierdamiano Zagaria
  */
 public class PlayableRoom extends Room {

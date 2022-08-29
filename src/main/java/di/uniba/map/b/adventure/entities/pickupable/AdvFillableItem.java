@@ -1,27 +1,29 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.IFillable;
 
-public class AdvItemFillable extends AdvItem implements IFillable {
+public class AdvFillableItem extends AdvItem implements IFillable {
 
     private boolean filled;
 
     private AdvObject eligibleItem;
     private Integer eligibleItemId;
 
-    public AdvItemFillable(int id, String name, String description, Set<String> alias) {
+    public AdvFillableItem(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
 
-    public AdvItemFillable(int id) {
+    public AdvFillableItem(int id) {
         super(id);
     }
 
-    public AdvItemFillable(int id, String name) {
+    public AdvFillableItem(int id, String name) {
         super(id, name);
     }
 
-    public AdvItemFillable(int id, String name, String description) {
+    public AdvFillableItem(int id, String name, String description) {
         super(id, name, description);
     }
 

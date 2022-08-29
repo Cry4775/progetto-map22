@@ -1,6 +1,7 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvDoorOpenable extends AdvObject implements IOpenable {
 

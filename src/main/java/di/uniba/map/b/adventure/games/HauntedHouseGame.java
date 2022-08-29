@@ -23,28 +23,33 @@ import di.uniba.map.b.adventure.GameDescription;
 import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.RuntimeTypeAdapterFactory;
 import di.uniba.map.b.adventure.Triple;
+import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
+import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
+import di.uniba.map.b.adventure.entities.AdvMagicWall;
+import di.uniba.map.b.adventure.entities.AdvObject;
+import di.uniba.map.b.adventure.entities.AdvObjectMovable;
+import di.uniba.map.b.adventure.entities.AdvObjectPullable;
+import di.uniba.map.b.adventure.entities.AdvObjectPushable;
+import di.uniba.map.b.adventure.entities.AdvPerson;
+import di.uniba.map.b.adventure.entities.IMovable;
+import di.uniba.map.b.adventure.entities.IOpenable;
+import di.uniba.map.b.adventure.entities.IPickupable;
+import di.uniba.map.b.adventure.entities.IPullable;
+import di.uniba.map.b.adventure.entities.IPushable;
+import di.uniba.map.b.adventure.entities.IWearable;
+import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.entities.container.AdvChest;
+import di.uniba.map.b.adventure.entities.container.AdvContainer;
+import di.uniba.map.b.adventure.entities.container.AdvSocket;
+import di.uniba.map.b.adventure.entities.container.pickupable.AdvWearableContainer;
+import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
+import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
+import di.uniba.map.b.adventure.entities.pickupable.AdvWearableItem;
 import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.AbstractContainer;
-import di.uniba.map.b.adventure.type.AdvContainer;
-import di.uniba.map.b.adventure.type.AdvContainerOpenable;
-import di.uniba.map.b.adventure.type.AdvDoorBlocked;
-import di.uniba.map.b.adventure.type.AdvDoorOpenable;
 import di.uniba.map.b.adventure.type.AdvEvent;
-import di.uniba.map.b.adventure.type.AdvItem;
-import di.uniba.map.b.adventure.type.AdvItemFillable;
-import di.uniba.map.b.adventure.type.AdvItemWearable;
-import di.uniba.map.b.adventure.type.AdvMagicWall;
-import di.uniba.map.b.adventure.type.AdvObject;
-import di.uniba.map.b.adventure.type.AdvPerson;
-import di.uniba.map.b.adventure.type.AdvWearableContainer;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.IMovable;
-import di.uniba.map.b.adventure.type.IOpenable;
-import di.uniba.map.b.adventure.type.IPullable;
-import di.uniba.map.b.adventure.type.IPushable;
-import di.uniba.map.b.adventure.type.IWearable;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
@@ -87,12 +92,16 @@ public class HauntedHouseGame extends GameDescription {
                         .registerSubtype(AbstractContainer.class)
                         .registerSubtype(AdvContainer.class)
                         .registerSubtype(AdvWearableContainer.class)
-                        .registerSubtype(AdvContainerOpenable.class)
+                        .registerSubtype(AdvChest.class)
+                        .registerSubtype(AdvSocket.class)
                         .registerSubtype(AdvDoorBlocked.class)
                         .registerSubtype(AdvDoorOpenable.class)
                         .registerSubtype(AdvMagicWall.class)
-                        .registerSubtype(AdvItemWearable.class)
-                        .registerSubtype(AdvItemFillable.class)
+                        .registerSubtype(AdvWearableItem.class)
+                        .registerSubtype(AdvFillableItem.class)
+                        .registerSubtype(AdvObjectMovable.class)
+                        .registerSubtype(AdvObjectPullable.class)
+                        .registerSubtype(AdvObjectPushable.class)
                         .registerSubtype(AdvPerson.class);
 
         RuntimeTypeAdapterFactory<Room> typeAdapterRooms = RuntimeTypeAdapterFactory
@@ -142,8 +151,8 @@ public class HauntedHouseGame extends GameDescription {
                 linkObjectsEventsReference(advObject, getRooms());
                 linkDoorsBlockedRoom(advObject, getRooms());
 
-                if (advObject instanceof AdvItemFillable) {
-                    linkItemFillablesReference((AdvItemFillable) advObject, objects);
+                if (advObject instanceof AdvFillableItem) {
+                    linkItemFillablesReference((AdvFillableItem) advObject, objects);
                 }
             }
 
@@ -201,7 +210,7 @@ public class HauntedHouseGame extends GameDescription {
         objects.addAll(tempObjects);
     }
 
-    private void linkItemFillablesReference(AdvItemFillable obj, List<AdvObject> objects) {
+    private void linkItemFillablesReference(AdvFillableItem obj, List<AdvObject> objects) {
         if (obj.getEligibleItemId() != null) {
             objects.stream()
                     .filter(AdvItem.class::isInstance).map(AdvItem.class::cast)
@@ -303,16 +312,15 @@ public class HauntedHouseGame extends GameDescription {
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
             if (p.getObject() != null || p.getInvObject() != null) {
                 AdvObject obj = getObjectFromParser(p);
-                if (obj.isPickupable() || obj.isPickupableWithFillable()) {
-                    if (!obj.isPicked()) {
-                        StringBuilder outString = new StringBuilder();
-                        actionPerformed =
-                                obj.pickup(outString, getInventory(), currentRoom.getObjects());
+                if (obj instanceof IPickupable) {
+                    IPickupable pickupableObj = (IPickupable) obj;
 
-                        gui.appendTextEdtOutput(outString.toString(), false);
-                    } else {
-                        gui.appendTextEdtOutput("L'oggetto è già nel tuo inventario.", false);
-                    }
+                    StringBuilder outString = new StringBuilder();
+                    actionPerformed =
+                            pickupableObj.pickup(outString, getInventory(),
+                                    currentRoom.getObjects());
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
                     gui.appendTextEdtOutput("Non puoi raccogliere questo oggetto.", false);
                 }
@@ -518,8 +526,8 @@ public class HauntedHouseGame extends GameDescription {
             } else if (door.isOpen()) {
                 outString.append("È aperta.");
             }
-        } else if (obj instanceof AdvItemFillable) {
-            AdvItemFillable fillable = (AdvItemFillable) obj;
+        } else if (obj instanceof AdvFillableItem) {
+            AdvFillableItem fillable = (AdvFillableItem) obj;
             if (fillable.isFilled()) {
                 outString.append("<br>Contiene: " + fillable.getEligibleItem().getName());
             } else {

@@ -5,8 +5,8 @@
  */
 package di.uniba.map.b.adventure;
 
+import di.uniba.map.b.adventure.entities.AdvObject;
 import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.AdvObject;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.Room;
@@ -18,7 +18,6 @@ import java.awt.Color;
 import java.io.IOException;
 
 /**
- *
  * @author pierpaolo
  */
 public abstract class GameDescription {
