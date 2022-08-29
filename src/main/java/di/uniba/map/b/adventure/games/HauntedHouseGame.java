@@ -44,6 +44,7 @@ import di.uniba.map.b.adventure.type.IMovable;
 import di.uniba.map.b.adventure.type.IOpenable;
 import di.uniba.map.b.adventure.type.IPullable;
 import di.uniba.map.b.adventure.type.IPushable;
+import di.uniba.map.b.adventure.type.IWearable;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.NonPlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
@@ -385,7 +386,6 @@ public class HauntedHouseGame extends GameDescription {
 
                     gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    // TODO possibile polish con regex sugli articoli
                     gui.appendTextEdtOutput("Non puoi spostare " + obj.getName(), false);
                 }
             } else {
@@ -412,35 +412,30 @@ public class HauntedHouseGame extends GameDescription {
                 gui.appendTextEdtOutput("Non ho capito cosa devo fare.", false);
             }
         } else if (p.getCommand().getType() == CommandType.WEAR) {
-            StringBuilder outString = new StringBuilder();
-
             if (p.getObject() != null) {
                 AdvObject obj = p.getObject();
 
-                if (obj instanceof AdvItemWearable) {
-                    outString.append("Devi prima prenderlo per poterlo indossare.");
+                if (obj instanceof IWearable) {
+                    gui.appendTextEdtOutput("Devi prima prenderlo per poterlo indossare.", false);
                 } else {
-                    outString.append("Non puoi indossarlo.");
+                    gui.appendTextEdtOutput("Non puoi indossarlo.", false);
                 }
             } else if (p.getInvObject() != null) {
                 AdvObject invObj = p.getInvObject();
 
-                if (invObj instanceof AdvItemWearable) {
-                    AdvItemWearable wearable = (AdvItemWearable) invObj;
-                    if (!wearable.isWorn()) {
-                        wearable.setWorn(true);
+                if (invObj instanceof IWearable) {
+                    IWearable wearable = (IWearable) invObj;
+                    StringBuilder outString = new StringBuilder();
 
-                        outString.append("Hai indossato: ");
-                        outString.append(wearable.getName());
-                    }
+                    wearable.wear(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    outString.append("Non puoi indossarlo.");
+                    gui.appendTextEdtOutput("Non puoi indossarlo.", false);
                 }
             } else {
-                outString.append("Non trovo l'oggetto da indossare.");
+                gui.appendTextEdtOutput("Non trovo l'oggetto da indossare.", false);
             }
-
-            gui.appendTextEdtOutput(outString.toString(), false);
         }
 
         if (triple.getFirst() || triple.getSecond() || triple.getThird()) {

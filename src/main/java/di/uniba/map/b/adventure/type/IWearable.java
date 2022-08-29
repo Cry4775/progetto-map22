@@ -4,4 +4,6 @@ public interface IWearable {
     public boolean isWorn();
 
     public void setWorn(boolean value);
+
+    public boolean wear(StringBuilder outString);
 }
