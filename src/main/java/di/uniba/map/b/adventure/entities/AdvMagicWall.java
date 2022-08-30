@@ -1,5 +1,6 @@
 package di.uniba.map.b.adventure.entities;
 
+import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.Room;
@@ -37,6 +38,22 @@ public class AdvMagicWall extends AbstractEntity {
 
     public AdvMagicWall(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public void processRequirements(List<AbstractEntity> inventory) {
+        if (locked && unlockedByWearingItemId != 0) {
+            for (AbstractEntity obj : inventory) {
+                if (obj.getId() == unlockedByWearingItemId) {
+                    if (obj instanceof IWearable) {
+                        IWearable wearable = (IWearable) obj;
+                        if (wearable.isWorn()) {
+                            locked = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public boolean isDirectionBlocked(CommandType direction, Room nextRoom) {

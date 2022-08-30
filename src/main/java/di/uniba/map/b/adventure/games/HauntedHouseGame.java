@@ -312,6 +312,7 @@ public class HauntedHouseGame extends GameDescription {
 
                 if (obj instanceof AdvMagicWall) {
                     AdvMagicWall wall = (AdvMagicWall) obj;
+                    wall.processRequirements(getInventory());
                     if (wall.isDirectionBlocked(direction, nextRoom)) {
                         return wall;
                     }
