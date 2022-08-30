@@ -5,5 +5,11 @@ public interface IOpenable {
 
     public void setOpen(boolean value);
 
+    public boolean isLocked();
+
+    public void setLocked(boolean value);
+
+    public int getUnlockedWithItemId();
+
     public boolean open(StringBuilder outString, AbstractEntity key);
 }

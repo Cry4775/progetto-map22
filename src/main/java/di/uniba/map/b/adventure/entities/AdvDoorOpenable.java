@@ -36,6 +36,7 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
         this.open = open;
     }
 
+    @Override
     public int getUnlockedWithItemId() {
         return unlockedWithItemId;
     }
@@ -52,10 +53,12 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
         this.blockedRoomId = blockedRoomId;
     }
 
+    @Override
     public boolean isLocked() {
         return locked;
     }
 
+    @Override
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
@@ -93,6 +96,8 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
                     outString.append(processEvent(EventType.OPEN_LOCKED));
                 }
             }
+        } else if (open) {
+            outString.append("É giá aperta.");
         }
         return false;
     }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.ObjEvent;
 
@@ -154,6 +155,47 @@ public abstract class AbstractEntity {
 
     public void setParent(AbstractEntity parent) {
         this.parent = parent;
+    }
+
+    public StringBuilder getLookMessage() {
+        StringBuilder outString = new StringBuilder();
+
+        if (description != null) {
+            outString.append(description);
+        }
+
+        if (this instanceof IOpenable) {
+            IOpenable openableObj = (IOpenable) this;
+            if (openableObj.isLocked()) {
+                outString.append("È chiuso a chiave.");
+            } else if (!openableObj.isOpen()) {
+                outString.append("È chiuso.");
+            } else if (openableObj.isOpen()) {
+                outString.append("È aperto.");
+                if (openableObj instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) openableObj;
+                    outString.append(container.revealContent());
+                }
+            }
+        } else if (this instanceof AbstractContainer) {
+            AbstractContainer container = (AbstractContainer) this;
+            outString.append(container.revealContent());
+        } else if (this instanceof IFillable) {
+            IFillable fillable = (IFillable) this;
+            if (fillable.isFilled()) {
+                outString.append("<br>É pieno di: " + fillable.getEligibleItem().getName());
+            } else {
+                outString.append("<br>È vuoto.");
+            }
+        }
+
+        if (outString.toString().isEmpty()) {
+            outString.append("Nulla di particolare.");
+        } else {
+            outString.append(processEvent(EventType.LOOK_AT));
+        }
+
+        return outString;
     }
 
 }

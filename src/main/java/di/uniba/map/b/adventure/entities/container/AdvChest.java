@@ -12,6 +12,9 @@ import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvChest extends AbstractContainer implements IOpenable {
     private boolean open = false;
+    private boolean locked = false;
+
+    private int unlockedWithItemId;
 
     public AdvChest(int id) {
         super(id);
@@ -56,5 +59,18 @@ public class AdvChest extends AbstractContainer implements IOpenable {
             outString.append(revealContent());
         }
         return false;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    @Override
+    public int getUnlockedWithItemId() {
+        return unlockedWithItemId;
     }
 }

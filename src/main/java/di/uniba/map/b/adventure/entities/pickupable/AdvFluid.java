@@ -28,7 +28,7 @@ public class AdvFluid extends AdvItem implements IFluid {
     @Override
     public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
             List<AbstractEntity> roomObjects) {
-        if (getParent() != null && getParent() instanceof IFillable) {
+        if (isPickedUp()) {
             outString.append("Non puoi riprenderti il fluido dal contenitore.");
             return false;
         }

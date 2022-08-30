@@ -11,6 +11,7 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
 
     private boolean worn = false;
     private boolean pickedUp = false;
+    private int maxSlots;
 
     public AdvWearableContainer(int id) {
         super(id);
@@ -26,6 +27,14 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
 
     public AdvWearableContainer(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
+    }
+
+    public int getMaxSlots() {
+        return maxSlots;
+    }
+
+    public void setMaxSlots(int maxSlots) {
+        this.maxSlots = maxSlots;
     }
 
     @Override
@@ -82,6 +91,25 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
         outString.append(processEvent(EventType.PICK_UP));
 
         return true;
+    }
+
+    @Override
+    public boolean insert(StringBuilder outString, AbstractEntity obj,
+            List<AbstractEntity> inventory) {
+        if (getList().size() < maxSlots) {
+            obj.setParent(this);
+            inventory.remove(obj);
+
+            this.add(obj);
+
+            outString.append("Hai lasciato: " + obj.getName());
+            outString.append(processEvent(EventType.INSERT));
+
+            return true;
+        } else {
+            outString.append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
+            return false;
+        }
     }
 
 }

@@ -348,7 +348,7 @@ public class HauntedHouseGame extends GameDescription {
             if (p.getObject() != null || p.getInvObject() != null) {
                 AbstractEntity obj = getObjectFromParser(p);
 
-                actionPerformed = lookAt(gui, obj);
+                gui.appendTextEdtOutput(obj.getLookMessage().toString(), false);
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da esaminare.", false);
             }
@@ -535,56 +535,6 @@ public class HauntedHouseGame extends GameDescription {
             return p.getInvObject();
         }
         return null;
-    }
-
-    private boolean lookAt(GameJFrame gui, AbstractEntity obj) {
-        StringBuilder outString = new StringBuilder();
-
-        if (obj.getDescription() != null) {
-            outString.append(obj.getDescription());
-        }
-
-        if (obj instanceof AbstractContainer) {
-            AbstractContainer container = (AbstractContainer) obj;
-            if (obj instanceof IOpenable) {
-                if (!((IOpenable) obj).isOpen()) {
-                    outString.append("É chiuso.");
-                } else {
-                    outString.append(container.revealContent());
-                }
-            } else {
-                outString.append(container.revealContent());
-            }
-
-        } else if (obj instanceof AdvDoorOpenable) {
-            AdvDoorOpenable door = (AdvDoorOpenable) obj;
-            if (!door.isOpen()) {
-                outString.append("È chiusa.");
-            } else if (door.isLocked()) {
-                outString.append("È chiusa a chiave.");
-            } else if (door.isOpen()) {
-                outString.append("È aperta.");
-            }
-        } else if (obj instanceof AdvFillableItem) {
-            AdvFillableItem fillable = (AdvFillableItem) obj;
-            if (fillable.isFilled()) {
-                outString.append("<br>Contiene: " + fillable.getEligibleItem().getName());
-            } else {
-                outString.append("<br>È vuoto.");
-            }
-        }
-
-        if (outString.toString().isEmpty()) {
-            gui.appendTextEdtOutput("Nulla di particolare.", false);
-        } else {
-            // TODO outString.append(handleObjEvent(obj.getEvent(EventType.LOOK_AT)));
-
-            gui.appendTextEdtOutput(outString.toString(), false);
-
-            return true;
-        }
-
-        return false;
     }
 
     private String handleRoomEvent() {
