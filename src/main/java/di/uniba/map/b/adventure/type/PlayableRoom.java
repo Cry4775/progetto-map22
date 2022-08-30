@@ -13,8 +13,6 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
  * @author Pierdamiano Zagaria
  */
 public class PlayableRoom extends Room {
-    private String look; // TODO implementazione
-
     private Room south;
     private Integer southId;
 
@@ -155,14 +153,6 @@ public class PlayableRoom extends Room {
 
     public List<AbstractEntity> getObjects() {
         return objects;
-    }
-
-    public String getLook() {
-        return look;
-    }
-
-    public void setLook(String look) {
-        this.look = look;
     }
 
     public Room getUp() {

@@ -305,6 +305,22 @@ public class HauntedHouseGame extends GameDescription {
         return false;
     }
 
+    private AdvMagicWall getMagicWall(PlayableRoom currentRoom, CommandType direction,
+            Room nextRoom) {
+        if (currentRoom.getObjects() != null) {
+            for (AbstractEntity obj : currentRoom.getObjects()) {
+
+                if (obj instanceof AdvMagicWall) {
+                    AdvMagicWall wall = (AdvMagicWall) obj;
+                    if (wall.isDirectionBlocked(direction, nextRoom)) {
+                        return wall;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void nextMove(ParserOutput p, GameJFrame gui) {
         Triple<Boolean, Boolean, Boolean> triple = new Triple<>(false, false, false);
@@ -315,25 +331,81 @@ public class HauntedHouseGame extends GameDescription {
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
 
         if (p.getCommand().getType() == CommandType.NORTH) {
-            triple = moveToCardinalDirection(currentRoom.getNorth());
+            AdvMagicWall wall =
+                    getMagicWall(currentRoom, CommandType.NORTH, currentRoom.getNorth());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getNorth());
+            }
         } else if (p.getCommand().getType() == CommandType.NORTH_EAST) {
-            triple = moveToCardinalDirection(currentRoom.getNorthEast());
+            AdvMagicWall wall =
+                    getMagicWall(currentRoom, CommandType.NORTH_EAST, currentRoom.getNorthEast());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getNorthEast());
+            }
         } else if (p.getCommand().getType() == CommandType.NORTH_WEST) {
-            triple = moveToCardinalDirection(currentRoom.getNorthWest());
+            AdvMagicWall wall =
+                    getMagicWall(currentRoom, CommandType.NORTH_WEST, currentRoom.getNorthWest());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getNorthWest());
+            }
         } else if (p.getCommand().getType() == CommandType.SOUTH) {
-            triple = moveToCardinalDirection(currentRoom.getSouth());
+            AdvMagicWall wall =
+                    getMagicWall(currentRoom, CommandType.SOUTH, currentRoom.getSouth());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getSouth());
+            }
         } else if (p.getCommand().getType() == CommandType.SOUTH_EAST) {
-            triple = moveToCardinalDirection(currentRoom.getSouthEast());
+            AdvMagicWall wall =
+                    getMagicWall(currentRoom, CommandType.SOUTH_EAST, currentRoom.getSouthEast());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getSouthEast());
+            }
         } else if (p.getCommand().getType() == CommandType.SOUTH_WEST) {
-            triple = moveToCardinalDirection(currentRoom.getSouthWest());
+            AdvMagicWall wall =
+                    getMagicWall(currentRoom, CommandType.SOUTH_WEST, currentRoom.getSouthWest());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getSouthWest());
+            }
         } else if (p.getCommand().getType() == CommandType.EAST) {
-            triple = moveToCardinalDirection(currentRoom.getEast());
+            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.EAST, currentRoom.getEast());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getEast());
+            }
         } else if (p.getCommand().getType() == CommandType.WEST) {
-            triple = moveToCardinalDirection(currentRoom.getWest());
+            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.WEST, currentRoom.getWest());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getWest());
+            }
         } else if (p.getCommand().getType() == CommandType.UP) {
-            triple = moveToCardinalDirection(currentRoom.getUp());
+            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.UP, currentRoom.getUp());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getUp());
+            }
         } else if (p.getCommand().getType() == CommandType.DOWN) {
-            triple = moveToCardinalDirection(currentRoom.getDown());
+            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.DOWN, currentRoom.getDown());
+            if (wall != null) {
+                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+            } else {
+                triple = moveToCardinalDirection(currentRoom.getDown());
+            }
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             if (!getInventory().isEmpty()) {
                 StringBuilder outString = new StringBuilder("Nel tuo inventario ci sono:");
@@ -594,8 +666,10 @@ public class HauntedHouseGame extends GameDescription {
     }
 
     private Triple<Boolean, Boolean, Boolean> moveToCardinalDirection(Room room) {
+        PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
+
         if (room != null) {
-            PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
+
             if (currentRoom.getObjects() != null) {
                 for (AbstractEntity obj : currentRoom.getObjects()) {
                     if (obj instanceof AdvDoorOpenable) {
@@ -605,7 +679,8 @@ public class HauntedHouseGame extends GameDescription {
                             return new Triple<>(true, false, false);
                         } else if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
                             return new Triple<>(false, false, true);
-                        } else if (door.getBlockedRoomId() == room.getId() && !room.isVisible()) {
+                        } else if (door.getBlockedRoomId() == room.getId()
+                                && !room.isVisible()) {
                             return new Triple<>(false, true, false);
                         }
                     }

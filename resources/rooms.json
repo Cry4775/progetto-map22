@@ -367,8 +367,6 @@
         "visible": true,
         "northId": 13,
         "westId": 15,
-        "southText": "Come ti avvicini alla nebbia, incontri una strana resistenza, come un invisibile muro di gomma, e non riesci a procedere.",
-        "eastText": "Come ti avvicini alla nebbia, incontri una strana resistenza, come un invisibile muro di gomma, e non riesci a procedere.",
         "objects": [
             {
                 "type": "AdvDoorOpenable",
@@ -377,6 +375,15 @@
                 "locked": true,
                 "unlockedWithItemId": 19,
                 "blockedRoomId": 15
+            },
+            {
+                "type": "AdvMagicWall",
+                "id": 60,
+                "name": "nebbia",
+                "locked": true,
+                "southBlocked": true,
+                "eastBlocked": true,
+                "trespassingWhenLockedText": "Come ti avvicini alla nebbia, incontri una strana resistenza, come un invisibile muro di gomma, e non riesci a procedere."
             }
         ]
     },
