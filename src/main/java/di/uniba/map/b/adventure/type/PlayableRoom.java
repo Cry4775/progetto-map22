@@ -47,12 +47,22 @@ public class PlayableRoom extends Room {
 
     private RoomEvent event;
 
+    private boolean dark = false;
+
     public PlayableRoom(int id, String name, String description) {
         super(id, name, description);
     }
 
     public PlayableRoom(int id, String name, String description, String imgPath) {
         super(id, name, description, imgPath);
+    }
+
+    public boolean isDark() {
+        return dark;
+    }
+
+    public void setDark(boolean dark) {
+        this.dark = dark;
     }
 
     public Room getSouth() {

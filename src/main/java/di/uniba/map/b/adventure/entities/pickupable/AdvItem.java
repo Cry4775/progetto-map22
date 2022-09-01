@@ -13,10 +13,6 @@ public class AdvItem extends AbstractEntity implements IPickupable {
 
     private boolean pickedUp = false; // TODO forse c'é un modo migliore
 
-    private boolean activable;
-
-    private boolean active;
-
     public AdvItem(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
     }
@@ -31,22 +27,6 @@ public class AdvItem extends AbstractEntity implements IPickupable {
 
     public AdvItem(int id, String name, String description) {
         super(id, name, description);
-    }
-
-    public boolean isActivable() {
-        return activable;
-    }
-
-    public void setActivable(boolean activable) {
-        this.activable = activable;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getInventoryDescription() {

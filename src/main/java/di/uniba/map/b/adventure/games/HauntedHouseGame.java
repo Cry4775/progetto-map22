@@ -1,6 +1,5 @@
 package di.uniba.map.b.adventure.games;
 
-import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.swing.ImageIcon;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -23,11 +21,11 @@ import di.uniba.map.b.adventure.GameDescription;
 import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.RuntimeTypeAdapterFactory;
 import di.uniba.map.b.adventure.Triple;
+import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
 import di.uniba.map.b.adventure.entities.AdvFixedObject;
 import di.uniba.map.b.adventure.entities.AdvMagicWall;
-import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvObjectMovable;
 import di.uniba.map.b.adventure.entities.AdvObjectPullable;
 import di.uniba.map.b.adventure.entities.AdvObjectPushable;
@@ -37,15 +35,17 @@ import di.uniba.map.b.adventure.entities.IOpenable;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.IPullable;
 import di.uniba.map.b.adventure.entities.IPushable;
+import di.uniba.map.b.adventure.entities.ISwitch;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.entities.container.AdvChest;
 import di.uniba.map.b.adventure.entities.container.AdvContainer;
 import di.uniba.map.b.adventure.entities.container.AdvSocket;
 import di.uniba.map.b.adventure.entities.container.pickupable.AdvWearableContainer;
-import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
 import di.uniba.map.b.adventure.entities.pickupable.AdvFluid;
+import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
+import di.uniba.map.b.adventure.entities.pickupable.AdvLightSource;
 import di.uniba.map.b.adventure.entities.pickupable.AdvWearableItem;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AdvEvent;
@@ -101,6 +101,7 @@ public class HauntedHouseGame extends GameDescription {
                         .registerSubtype(AdvMagicWall.class)
                         .registerSubtype(AdvWearableItem.class)
                         .registerSubtype(AdvFillableItem.class)
+                        .registerSubtype(AdvLightSource.class)
                         .registerSubtype(AdvObjectMovable.class)
                         .registerSubtype(AdvObjectPullable.class)
                         .registerSubtype(AdvObjectPushable.class)
@@ -158,6 +159,8 @@ public class HauntedHouseGame extends GameDescription {
                     linkItemFillablesReference((AdvFillableItem) advObject, objects);
                 } else if (advObject instanceof AdvSocket) {
                     linkAdvSocketReference((AdvSocket) advObject, objects);
+                } else if (advObject instanceof AdvLightSource) {
+                    linkLightSourceReference((AdvLightSource) advObject, objects);
                 }
             }
 
@@ -229,6 +232,14 @@ public class HauntedHouseGame extends GameDescription {
             objects.stream()
                     .filter(reqItem -> reqItem.getId() == obj.getEligibleItemId())
                     .forEach(reqItem -> obj.setEligibleItem(reqItem));
+        }
+    }
+
+    private void linkLightSourceReference(AdvLightSource obj, List<AbstractEntity> objects) {
+        if (obj.getRequiredItemId() != null) {
+            objects.stream()
+                    .filter(reqItem -> reqItem.getId() == obj.getRequiredItemId())
+                    .forEach(reqItem -> obj.setRequiredItem(reqItem));
         }
     }
 
@@ -551,7 +562,7 @@ public class HauntedHouseGame extends GameDescription {
                     IWearable wearable = (IWearable) invObj;
                     StringBuilder outString = new StringBuilder();
 
-                    wearable.wear(outString);
+                    actionPerformed = wearable.wear(outString);
 
                     gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
@@ -560,6 +571,40 @@ public class HauntedHouseGame extends GameDescription {
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da indossare.", false);
             }
+        } else if (p.getCommand().getType() == CommandType.TURN_ON) {
+            AbstractEntity obj = getObjectFromParser(p);
+
+            if (obj != null) {
+                if (obj instanceof ISwitch) {
+                    ISwitch switchObj = (ISwitch) obj;
+                    StringBuilder outString = new StringBuilder();
+
+                    actionPerformed = switchObj.turnOn(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
+                } else {
+                    gui.appendTextEdtOutput("Non puoi accenderlo.", false);
+                }
+            } else {
+                gui.appendTextEdtOutput("Non trovo l'oggetto da accendere.", false);
+            }
+        } else if (p.getCommand().getType() == CommandType.TURN_OFF) {
+            AbstractEntity obj = getObjectFromParser(p);
+
+            if (obj != null) {
+                if (obj instanceof ISwitch) {
+                    ISwitch switchObj = (ISwitch) obj;
+                    StringBuilder outString = new StringBuilder();
+
+                    actionPerformed = switchObj.turnOff(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
+                } else {
+                    gui.appendTextEdtOutput("Non puoi spegnerlo.", false);
+                }
+            } else {
+                gui.appendTextEdtOutput("Non trovo l'oggetto da spegnere.", false);
+            }
         }
 
         if (triple.getFirst() || triple.getSecond() || triple.getThird()) {
@@ -567,24 +612,21 @@ public class HauntedHouseGame extends GameDescription {
             boolean noRoom = triple.getSecond();
             boolean roomBlockedByDoor = triple.getThird();
             if (noRoom) {
-                gui.appendTextEdtOutput("Da quella parte non si può andare.", false);
+                if (currentRoom.isDark()) {
+                    gui.appendTextEdtOutput("Meglio non avventurarsi nel buio.", false);
+                } else {
+                    gui.appendTextEdtOutput("Da quella parte non si può andare.", false);
+                }
             } else if (roomBlockedByDoor) {
                 gui.appendTextEdtOutput("La porta è chiusa.", false);
             } else if (move) {
-                gui.getLblRoomName().setText(getCurrentRoom().getName());
-
-                Image roomImg = new ImageIcon(getCurrentRoom().getImgPath()).getImage()
-                        .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
-                gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
-                setCompassLabels(gui);
+                actionPerformed = true;
 
                 StringBuilder outString = new StringBuilder(getCurrentRoom().getDescription());
-
                 outString.append(handleRoomEvent());
 
                 gui.appendTextEdtOutput(outString.toString(), false);
 
-                actionPerformed = true;
             }
         }
         if (actionPerformed) {
@@ -598,7 +640,9 @@ public class HauntedHouseGame extends GameDescription {
             }
 
             getInventory().removeIf(obj -> obj.isMustDestroyFromInv());
+
         }
+
     }
 
     private AbstractEntity getObjectFromParser(ParserOutput p) {
@@ -669,27 +713,40 @@ public class HauntedHouseGame extends GameDescription {
     private Triple<Boolean, Boolean, Boolean> moveToCardinalDirection(Room room) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
-        if (room != null) {
+        if (!currentRoom.isDark()) {
+            if (room != null) {
 
-            if (currentRoom.getObjects() != null) {
-                for (AbstractEntity obj : currentRoom.getObjects()) {
-                    if (obj instanceof AdvDoorOpenable) {
-                        AdvDoorOpenable door = (AdvDoorOpenable) obj;
-                        if (door.getBlockedRoomId() == room.getId() && door.isOpen()) {
-                            setCurrentRoom(room);
-                            return new Triple<>(true, false, false);
-                        } else if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
-                            return new Triple<>(false, false, true);
-                        } else if (door.getBlockedRoomId() == room.getId()
-                                && !room.isVisible()) {
-                            return new Triple<>(false, true, false);
+                if (currentRoom.getObjects() != null) {
+                    for (AbstractEntity obj : currentRoom.getObjects()) {
+                        if (obj instanceof AdvDoorOpenable) {
+                            AdvDoorOpenable door = (AdvDoorOpenable) obj;
+                            if (door.getBlockedRoomId() == room.getId() && door.isOpen()) {
+                                setPreviousRoom(currentRoom);
+                                setCurrentRoom(room);
+                                return new Triple<>(true, false, false);
+                            } else if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
+                                return new Triple<>(false, false, true);
+                            } else if (door.getBlockedRoomId() == room.getId()
+                                    && !room.isVisible()) {
+                                return new Triple<>(false, true, false);
+                            }
                         }
                     }
                 }
+                setPreviousRoom(currentRoom);
+                setCurrentRoom(room);
+                return new Triple<>(true, false, false);
+            } else {
+                return new Triple<>(false, true, false);
             }
-            setCurrentRoom(room);
-            return new Triple<>(true, false, false);
         } else {
+            if (room != null) {
+                if (room.equals(getPreviousRoom())) {
+                    setPreviousRoom(currentRoom);
+                    setCurrentRoom(room);
+                    return new Triple<>(true, false, false);
+                }
+            }
             return new Triple<>(false, true, false);
         }
     }

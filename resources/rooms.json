@@ -513,10 +513,11 @@
                     "description": "Un piccolo candeliere in ferro.",
                     "list": [
                         {
-                            "type": "AdvItem",
+                            "type": "AdvLightSource",
                             "id": 33,
                             "name": "candela",
-                            "description": "Una semplice candela."
+                            "description": "Una semplice candela.",
+                            "requiredItemId": 3
                         }
                     ]
                 }
@@ -559,7 +560,7 @@
         "description": "La poca luce illumina una galleria scavata nella roccia, sotto la villa, che procede tortuosamente in direzione nord-est. Una scala a chiocciola risale lungo il passaggio verticale.",
         "imgPath": "./resources/img/tunnel.jpg",
         "visible": true,
-        "isDark": true,
+        "dark": true,
         "upId": 16,
         "northEastId": 20
     },
@@ -591,7 +592,13 @@
                 "id": 37,
                 "name": "porta",
                 "description": "La porta, che sembra molto robusta, non ha serrature ma solo un paletto che permette di aprirla e chiuderla dall'esterno.",
-                "blockedRoomId": 22
+                "blockedRoomId": 22,
+                "events": [
+                    {
+                        "eventType": "OPEN_UNLOCKED",
+                        "updatingParentRoom": true
+                    }
+                ]
             }
         ]
     },

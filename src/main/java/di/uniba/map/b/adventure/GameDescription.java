@@ -30,6 +30,16 @@ public abstract class GameDescription {
 
     private Room currentRoom;
 
+    private Room previousRoom;
+
+    public Room getPreviousRoom() {
+        return previousRoom;
+    }
+
+    public void setPreviousRoom(Room previousRoom) {
+        this.previousRoom = previousRoom;
+    }
+
     public List<Room> getRooms() {
         return rooms;
     }
@@ -54,17 +64,58 @@ public abstract class GameDescription {
         directionLbl.setForeground(room == null ? Color.RED : Color.GREEN);
     }
 
+    private void clearCompassLabels(GameJFrame gui) {
+        setCompassLabel(null, gui.getLblCompassNorthText());
+        setCompassLabel(null, gui.getLblCompassSouthText());
+        setCompassLabel(null, gui.getLblCompassWestText());
+        setCompassLabel(null, gui.getLblCompassEastText());
+        setCompassLabel(null, gui.getLblCompassSouthWestText());
+        setCompassLabel(null, gui.getLblCompassSouthEastText());
+        setCompassLabel(null, gui.getLblCompassNorthEastText());
+        setCompassLabel(null, gui.getLblCompassNorthWestText());
+    }
+
     public void setCompassLabels(GameJFrame gui) {
         if (getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
-            setCompassLabel(currentPlayableRoom.getNorth(), gui.getLblCompassNorthText());
-            setCompassLabel(currentPlayableRoom.getSouth(), gui.getLblCompassSouthText());
-            setCompassLabel(currentPlayableRoom.getWest(), gui.getLblCompassWestText());
-            setCompassLabel(currentPlayableRoom.getEast(), gui.getLblCompassEastText());
-            setCompassLabel(currentPlayableRoom.getSouthWest(), gui.getLblCompassSouthWestText());
-            setCompassLabel(currentPlayableRoom.getSouthEast(), gui.getLblCompassSouthEastText());
-            setCompassLabel(currentPlayableRoom.getNorthEast(), gui.getLblCompassNorthEastText());
-            setCompassLabel(currentPlayableRoom.getNorthWest(), gui.getLblCompassNorthWestText());
+            if (!currentPlayableRoom.isDark()) {
+                setCompassLabel(currentPlayableRoom.getNorth(), gui.getLblCompassNorthText());
+                setCompassLabel(currentPlayableRoom.getSouth(), gui.getLblCompassSouthText());
+                setCompassLabel(currentPlayableRoom.getWest(), gui.getLblCompassWestText());
+                setCompassLabel(currentPlayableRoom.getEast(), gui.getLblCompassEastText());
+                setCompassLabel(currentPlayableRoom.getSouthWest(),
+                        gui.getLblCompassSouthWestText());
+                setCompassLabel(currentPlayableRoom.getSouthEast(),
+                        gui.getLblCompassSouthEastText());
+                setCompassLabel(currentPlayableRoom.getNorthEast(),
+                        gui.getLblCompassNorthEastText());
+                setCompassLabel(currentPlayableRoom.getNorthWest(),
+                        gui.getLblCompassNorthWestText());
+            } else {
+                clearCompassLabels(gui);
+
+                if (previousRoom.equals(currentPlayableRoom.getSouth())) {
+                    setCompassLabel(currentPlayableRoom.getSouth(), gui.getLblCompassSouthText());
+                } else if (previousRoom.equals(currentPlayableRoom.getNorth())) {
+                    setCompassLabel(currentPlayableRoom.getNorth(), gui.getLblCompassNorthText());
+                } else if (previousRoom.equals(currentPlayableRoom.getEast())) {
+                    setCompassLabel(currentPlayableRoom.getEast(), gui.getLblCompassEastText());
+                } else if (previousRoom.equals(currentPlayableRoom.getWest())) {
+                    setCompassLabel(currentPlayableRoom.getWest(), gui.getLblCompassWestText());
+                } else if (previousRoom.equals(currentPlayableRoom.getNorthWest())) {
+                    setCompassLabel(currentPlayableRoom.getNorthWest(),
+                            gui.getLblCompassNorthWestText());
+                } else if (previousRoom.equals(currentPlayableRoom.getNorthEast())) {
+                    setCompassLabel(currentPlayableRoom.getNorthEast(),
+                            gui.getLblCompassNorthEastText());
+                } else if (previousRoom.equals(currentPlayableRoom.getSouthWest())) {
+                    setCompassLabel(currentPlayableRoom.getSouthWest(),
+                            gui.getLblCompassSouthWestText());
+                } else if (previousRoom.equals(currentPlayableRoom.getSouthEast())) {
+                    setCompassLabel(currentPlayableRoom.getSouthEast(),
+                            gui.getLblCompassSouthEastText());
+                }
+            }
         }
     }
 

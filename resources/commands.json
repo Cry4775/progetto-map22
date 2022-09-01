@@ -168,5 +168,19 @@
 			"vesti",
 			"wear"
 		]
+	},
+	{
+		"type": "TURN_ON",
+		"name": "accendi",
+		"alias": [
+			"light"
+		]
+	},
+	{
+		"type": "TURN_OFF",
+		"name": "spegni",
+		"alias": [
+			"spengi"
+		]
 	}
 ]
