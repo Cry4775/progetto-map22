@@ -36,6 +36,16 @@ public class AdvObjectMovable extends AbstractEntity implements IMovable {
     @Override
     public boolean move(StringBuilder outString) {
         if (!moved) {
+
+            if (getRequiredWearedItemsToInteract() != null) {
+                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                    if (!wearable.isWorn()) {
+                        outString.append(getFailedInteractionMessage());
+                        return false;
+                    }
+                }
+            }
+
             moved = true;
             outString.append("Hai spostato: " + getName());
             outString.append(processEvent(EventType.MOVE));

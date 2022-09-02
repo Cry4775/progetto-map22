@@ -182,5 +182,23 @@
 		"alias": [
 			"spengi"
 		]
+	},
+	{
+		"type": "TALK_TO",
+		"name": "parla",
+		"alias": [
+			"talk",
+			"speak",
+			"conversa"
+		]
+	},
+	{
+		"type": "POUR",
+		"name": "versa",
+		"alias": [
+			"butta",
+			"pour",
+			"throw"
+		]
 	}
 ]

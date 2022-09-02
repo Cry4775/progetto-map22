@@ -24,22 +24,26 @@ import di.uniba.map.b.adventure.Triple;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
+import di.uniba.map.b.adventure.entities.AdvFire;
 import di.uniba.map.b.adventure.entities.AdvFixedObject;
 import di.uniba.map.b.adventure.entities.AdvMagicWall;
 import di.uniba.map.b.adventure.entities.AdvObjectMovable;
 import di.uniba.map.b.adventure.entities.AdvObjectPullable;
 import di.uniba.map.b.adventure.entities.AdvObjectPushable;
 import di.uniba.map.b.adventure.entities.AdvPerson;
+import di.uniba.map.b.adventure.entities.IFluid;
 import di.uniba.map.b.adventure.entities.IMovable;
 import di.uniba.map.b.adventure.entities.IOpenable;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.IPullable;
 import di.uniba.map.b.adventure.entities.IPushable;
 import di.uniba.map.b.adventure.entities.ISwitch;
+import di.uniba.map.b.adventure.entities.ITalkable;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.entities.container.AdvChest;
 import di.uniba.map.b.adventure.entities.container.AdvContainer;
+import di.uniba.map.b.adventure.entities.container.AdvFluidContainer;
 import di.uniba.map.b.adventure.entities.container.AdvSocket;
 import di.uniba.map.b.adventure.entities.container.pickupable.AdvWearableContainer;
 import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
@@ -105,6 +109,7 @@ public class HauntedHouseGame extends GameDescription {
                         .registerSubtype(AdvObjectMovable.class)
                         .registerSubtype(AdvObjectPullable.class)
                         .registerSubtype(AdvObjectPushable.class)
+                        .registerSubtype(AdvFire.class)
                         .registerSubtype(AdvFluid.class)
                         .registerSubtype(AdvPerson.class);
 
@@ -152,6 +157,21 @@ public class HauntedHouseGame extends GameDescription {
 
             for (AbstractEntity advObject : objects) {
                 linkObjectsParent(advObject);
+
+                if (advObject.getRequiredWearedItemsIdToInteract() != null) {
+                    if (!advObject.getRequiredWearedItemsIdToInteract().isEmpty()) {
+                        advObject.setRequiredWearedItemsToInteract(new ArrayList<>());
+
+                        for (Integer objId : advObject.getRequiredWearedItemsIdToInteract()) {
+                            objects.stream()
+                                    .filter(IWearable.class::isInstance)
+                                    .filter(reqItem -> reqItem.getId() == objId)
+                                    .forEach(reqItem -> advObject.getRequiredWearedItemsToInteract()
+                                            .add((IWearable) reqItem));
+                        }
+                    }
+                }
+
                 linkObjectsEventsReference(advObject, getRooms());
                 linkDoorsBlockedRoom(advObject, getRooms());
 
@@ -590,6 +610,7 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.TURN_OFF) {
             AbstractEntity obj = getObjectFromParser(p);
+            AbstractEntity invObj = p.getInvObject();
 
             if (obj != null) {
                 if (obj instanceof ISwitch) {
@@ -599,11 +620,71 @@ public class HauntedHouseGame extends GameDescription {
                     actionPerformed = switchObj.turnOff(outString);
 
                     gui.appendTextEdtOutput(outString.toString(), false);
+                } else if (obj instanceof AdvFire) {
+                    AdvFire fire = (AdvFire) obj;
+                    StringBuilder outString = new StringBuilder();
+
+                    if (invObj instanceof IFluid) {
+                        fire.extinguish(outString);
+                        gui.appendTextEdtOutput(outString.toString(), false);
+                    } else if (invObj != null) {
+                        gui.appendTextEdtOutput("Non puoi spegnerlo con quello. ", false);
+                    } else {
+                        gui.appendTextEdtOutput("Non puoi spegnerlo senza qualcosa di adatto.",
+                                false);
+                    }
                 } else {
                     gui.appendTextEdtOutput("Non puoi spegnerlo.", false);
                 }
             } else {
                 gui.appendTextEdtOutput("Non trovo l'oggetto da spegnere.", false);
+            }
+        } else if (p.getCommand().getType() == CommandType.TALK_TO) {
+            AbstractEntity obj = p.getObject();
+
+            if (obj != null) {
+                if (obj instanceof ITalkable) {
+                    ITalkable talkableObj = (ITalkable) obj;
+                    StringBuilder outString = new StringBuilder();
+
+                    actionPerformed = talkableObj.talk(outString);
+
+                    gui.appendTextEdtOutput(outString.toString(), false);
+                } else {
+                    gui.appendTextEdtOutput("Non puoi parlarci.", false);
+                }
+            } else {
+                gui.appendTextEdtOutput("Non trovo con chi parlare.", false);
+            }
+        } else if (p.getCommand().getType() == CommandType.POUR) {
+            AbstractEntity obj = p.getObject();
+            AbstractEntity invObj = p.getInvObject();
+
+            if (invObj != null) {
+                if (invObj instanceof IFluid) {
+                    if (obj != null) {
+                        if (obj instanceof AdvFire) {
+                            IFluid fluid = (IFluid) invObj;
+                            AdvFire fire = (AdvFire) obj;
+
+                            StringBuilder outString = new StringBuilder();
+                            actionPerformed = fire.extinguish(outString);
+
+                            gui.appendTextEdtOutput(outString.toString(), false);
+                        } else if (obj instanceof AdvFluidContainer) {
+                            // TODO
+                        } else {
+                            gui.appendTextEdtOutput("Non puoi versarci il liquido.", false);
+                        }
+                    } else {
+                        gui.appendTextEdtOutput("Non trovo dove versare il liquido.", false);
+                    }
+                } else {
+                    gui.appendTextEdtOutput("Non posso versare qualcosa che non sia liquido.",
+                            false);
+                }
+            } else {
+                gui.appendTextEdtOutput("Non trovo cosa versare.", false);
             }
         }
 

@@ -36,7 +36,8 @@ public class Parser {
     private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
         if (objects != null) {
             for (int i = 0; i < objects.size(); i++) {
-                if (objects.get(i).getName().equals(token)
+                if ((objects.get(i).getName() != null
+                        && objects.get(i).getName().equals(token))
                         || (objects.get(i).getAlias() != null
                                 && objects.get(i).getAlias().contains(token))) {
                     return objects.get(i);

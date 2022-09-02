@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.ObjEvent;
 
@@ -23,7 +24,21 @@ public abstract class AbstractEntity {
 
     private AbstractEntity parent;
 
-    private final List<ObjEvent> events = new ArrayList<>();
+    private List<ObjEvent> events = new ArrayList<>();
+
+    private List<Integer> requiredWearedItemsIdToInteract = new ArrayList<>();
+
+    private List<IWearable> requiredWearedItemsToInteract = new ArrayList<>();
+
+    private String failedInteractionMessage;
+
+    public String getFailedInteractionMessage() {
+        return failedInteractionMessage;
+    }
+
+    public void setFailedInteractionMessage(String failedInteractionMessage) {
+        this.failedInteractionMessage = failedInteractionMessage;
+    }
 
     public AbstractEntity(int id) {
         this.id = id;
@@ -132,6 +147,10 @@ public abstract class AbstractEntity {
                 }
             }
 
+            if (evt.getTeleportsPlayerToRoom() != null) {
+
+            }
+
             evt.setTriggered(true);
 
             if (evt.getText() != null && !evt.getText().isEmpty()) {
@@ -155,6 +174,14 @@ public abstract class AbstractEntity {
 
     public void setParent(AbstractEntity parent) {
         this.parent = parent;
+    }
+
+    public List<Integer> getRequiredWearedItemsIdToInteract() {
+        return requiredWearedItemsIdToInteract;
+    }
+
+    public List<IWearable> getRequiredWearedItemsToInteract() {
+        return requiredWearedItemsToInteract;
     }
 
     public StringBuilder getLookMessage() {
@@ -196,6 +223,18 @@ public abstract class AbstractEntity {
         }
 
         return outString;
+    }
+
+    public void setEvents(List<ObjEvent> events) {
+        this.events = events;
+    }
+
+    public void setRequiredWearedItemsIdToInteract(List<Integer> requiredWearedItemsIdToInteract) {
+        this.requiredWearedItemsIdToInteract = requiredWearedItemsIdToInteract;
+    }
+
+    public void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
+        this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
 }

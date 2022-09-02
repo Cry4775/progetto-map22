@@ -577,7 +577,7 @@
         "southWestId": 19
     },
     {
-        "type": "PlayableRoom",
+        "type": "MutablePlayableRoom",
         "id": 21,
         "name": "Di fronte ad una cella (sotterranei)",
         "description": "Il tunnel che proviene da nord-ovest, scavato nella dura roccia si ferma davanti ad una porta di metallo, verso sud.",
@@ -600,13 +600,16 @@
                     }
                 ]
             }
-        ]
+        ],
+        "newRoom": {
+            "imgPath": "./resources/img/davanti2.jpg"
+        }
     },
     {
         "type": "NonPlayableRoom",
         "id": 22,
         "name": "Cella (sotterranei)",
-        "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. <br><br>Puoi vedere Valeria, incatenata ad una parete. <br><br>Appena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» <br><br>«Valeria! Finalmente ti ho trovato...»<br><br>«Non immagini che gioia vederti. Ti prego, aiutami...» <br>«Qualche ora fa una strana donna albina è entrata nella mia cella, passando attraverso la porta chiusa; ha detto che era venuta a controllare la sua nuova dimora, o qualcosa del genere. È stato terrificante.» <br><br>«Dimmi com'è successo tutto questo...» <br><br>«Fino a due giorni fa il palazzo era in condizioni perfette, poi ho trovato un anello e una collana in un bauletto in cantina, e la mattina dopo la villa era totalmente cambiata, era diventata un vecchio rudere dalle finestre murate e da cui era impossibile uscire. Poco dopo mi sono sentita mancare e mi sono risvegliata prigioniera in questa cella.»<br><br>«Ho trovato la collana, ma non so dove sia l'anello»<br><br>«È quello che ho sul dito, prendilo, potrebbe essere magico... la donna albina ha provato a togliermelo ma non ci è riuscita.»<br>«Ti prego, trova il modo di liberarmi»",
+        "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. <br><br>Puoi vedere Valeria, incatenata ad una parete. <br><br>Appena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» <br><br>[ ... ] ",
         "imgPath": "./resources/img/cella.jpg",
         "visible": true,
         "nextRoomId": 23
@@ -624,7 +627,13 @@
                 "type": "AdvPerson",
                 "id": 37,
                 "name": "valeria",
-                "description": "La ragazza è prigioniera, legata con una catena alla parete, i suoi abiti laceri e strappati. È sempre bella come te la ricordavi, ma adesso il suo volto è provato e su di esso è dipinta un'espressione che è un misto di terrore per la situazione in cui si trova e di felicità per l'averti visto.<br>Ha un anello sul dito."
+                "description": "La ragazza è prigioniera, legata con una catena alla parete, i suoi abiti laceri e strappati. È sempre bella come te la ricordavi, ma adesso il suo volto è provato e su di esso è dipinta un'espressione che è un misto di terrore per la situazione in cui si trova e di felicità per l'averti visto.",
+                "phrases": [
+                    "«Valeria! Finalmente ti ho trovato...»<br><br>«Non immagini che gioia vederti. Ti prego, aiutami...Qualche ora fa una strana donna albina è entrata nella mia cella, passando attraverso la porta chiusa; ha detto che era venuta a controllare la sua nuova dimora, o qualcosa del genere. È stato terrificante.» ",
+                    "«Dimmi com'è successo tutto questo...» <br><br>«Fino a due giorni fa il palazzo era in condizioni perfette, poi ho trovato un anello e una collana in un bauletto in cantina, e la mattina dopo la villa era totalmente cambiata, era diventata un vecchio rudere dalle finestre murate e da cui era impossibile uscire. Poco dopo mi sono sentita mancare e mi sono risvegliata prigioniera in questa cella.»",
+                    "«Ho trovato la collana, ma non so dove sia l'anello...»<br><br>«È quello che ho sul dito, prendilo, potrebbe essere magico... la donna albina ha provato a togliermelo ma non ci è riuscita... Ti prego, trova il modo di liberarmi»",
+                    "«Trova il modo di liberarmi...»"
+                ]
             },
             {
                 "type": "AdvWearableItem",
@@ -697,7 +706,13 @@
                 "type": "AdvPerson",
                 "id": 44,
                 "name": "strega",
-                "description": "Non è priva di una certa terribile bellezza. Osservandola ti rendi conto che puoi vederle attraverso. In un certo senso pare proiettata dal braciere, quasi fosse solo un'ombra sulla parete.<br>«Finalmente, dopo anni, secoli, la mia attesa viene ricompensata. Un giovane corpo di donna da abitare, per tornare quella che ero. Non riuscirai ad impedirmelo. Mi nutrirò del tuo spirito. Solo pochi minuti...», e la donna inizia a recitare una strana, incomprensibile litania."
+                "description": "Non è priva di una certa terribile bellezza. Osservandola ti rendi conto che puoi vederle attraverso. In un certo senso pare proiettata dal braciere, quasi fosse solo un'ombra sulla parete.",
+                "events": [
+                    {
+                        "eventType": "LOOK_AT",
+                        "text": "«Finalmente, dopo anni, secoli, la mia attesa viene ricompensata. Un giovane corpo di donna da abitare, per tornare quella che ero. Non riuscirai ad impedirmelo. Mi nutrirò del tuo spirito. Solo pochi minuti...», e la donna inizia a recitare una strana, incomprensibile litania."
+                    }
+                ]
             },
             {
                 "type": "AdvFixedObject",
@@ -706,10 +721,27 @@
                 "description": "Una stella a cinque punte circondata da un cerchio, tracciata sul terreno."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "AdvFire",
                 "id": 46,
                 "name": "braciere",
-                "description": "Un largo braciere di bronzo, sorretto da un treppiede, in cui brucia una bella fiamma viva, che si fa sempre più intensa."
+                "alias": [
+                    "fuoco",
+                    "fiamme",
+                    "fiamma"
+                ],
+                "description": "Un largo braciere di bronzo, sorretto da un treppiede, in cui brucia una bella fiamma viva, che si fa sempre più intensa.",
+                "requiredWearedItemsIdToInteract": [
+                    38,
+                    9
+                ],
+                "failedInteractionMessage": "Come fai per avvicinarti, lo spettro della donna si mette tra te e il braciere, e senti come un'onda di malvagità che ti respinge violentemente indietro.",
+                "lit": true,
+                "events": [
+                    {
+                        "eventType": "EXTINGUISH",
+                        "teleportsPlayerToRoomId": 26
+                    }
+                ]
             }
         ]
     },

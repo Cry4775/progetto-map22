@@ -4,6 +4,16 @@ public class NonPlayableRoom extends Room {
     private Room nextRoom;
     private Integer nextRoomId;
 
+    private boolean finalRoom = false;
+
+    public boolean isFinalRoom() {
+        return finalRoom;
+    }
+
+    public void setFinalRoom(boolean finalRoom) {
+        this.finalRoom = finalRoom;
+    }
+
     public NonPlayableRoom(int id, String name, String description, Room nextRoom) {
         super(id, name, description);
         this.nextRoom = nextRoom;

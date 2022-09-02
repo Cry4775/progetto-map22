@@ -56,4 +56,10 @@ public class AdvFluid extends AdvItem implements IFluid {
         return false;
     }
 
+    @Override
+    public boolean pourOn(StringBuilder outString, AbstractEntity target) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

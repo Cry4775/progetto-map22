@@ -8,6 +8,9 @@ public class ObjEvent extends AdvEvent {
     private boolean updatingParentRoom;
     private MutablePlayableRoom parentRoom;
 
+    private Integer teleportsPlayerToRoomId;
+    private Room teleportsPlayerToRoom;
+
     public MutablePlayableRoom getParentRoom() {
         return parentRoom;
     }
@@ -46,5 +49,21 @@ public class ObjEvent extends AdvEvent {
 
     public void setUpdatingParentRoom(boolean updatingParentRoom) {
         this.updatingParentRoom = updatingParentRoom;
+    }
+
+    public Integer getTeleportsPlayerToRoomId() {
+        return teleportsPlayerToRoomId;
+    }
+
+    public void setTeleportsPlayerToRoomId(Integer teleportsPlayerToRoomId) {
+        this.teleportsPlayerToRoomId = teleportsPlayerToRoomId;
+    }
+
+    public Room getTeleportsPlayerToRoom() {
+        return teleportsPlayerToRoom;
+    }
+
+    public void setTeleportsPlayerToRoom(Room teleportsPlayerToRoom) {
+        this.teleportsPlayerToRoom = teleportsPlayerToRoom;
     }
 }

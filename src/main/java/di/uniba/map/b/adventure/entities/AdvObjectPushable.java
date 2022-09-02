@@ -38,6 +38,15 @@ public class AdvObjectPushable extends AbstractEntity implements IPushable {
     @Override
     public boolean push(StringBuilder outString) {
         if (!pushed) {
+            if (getRequiredWearedItemsToInteract() != null) {
+                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                    if (!wearable.isWorn()) {
+                        outString.append(getFailedInteractionMessage());
+                        return false;
+                    }
+                }
+            }
+
             pushed = true;
 
             outString.append("Hai premuto: " + getName());

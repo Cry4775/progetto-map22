@@ -82,8 +82,17 @@ public class Engine {
             }
         } else if (game.getCurrentRoom() instanceof NonPlayableRoom) {
             NonPlayableRoom currentRoom = (NonPlayableRoom) game.getCurrentRoom();
-            game.setCurrentRoom(currentRoom.getNextRoom());
-            gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+
+            if (!currentRoom.isFinalRoom()) {
+                if (currentRoom.getNextRoom() != null) {
+                    game.setCurrentRoom(currentRoom.getNextRoom());
+                    gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+                } else {
+                    // TODO errore
+                }
+            } else {
+                gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+            }
         }
 
         if (game.getCurrentRoom() instanceof PlayableRoom) {

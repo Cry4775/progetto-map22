@@ -36,6 +36,16 @@ public class AdvObjectPullable extends AbstractEntity implements IPullable {
     @Override
     public boolean pull(StringBuilder outString) {
         if (!pulled) {
+
+            if (getRequiredWearedItemsToInteract() != null) {
+                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                    if (!wearable.isWorn()) {
+                        outString.append(getFailedInteractionMessage());
+                        return false;
+                    }
+                }
+            }
+
             pulled = true;
 
             outString.append("Hai tirato: " + getName());
