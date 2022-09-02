@@ -5,6 +5,7 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvItem extends AbstractEntity implements IPickupable {
@@ -46,8 +47,12 @@ public class AdvItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
+    public StringBuilder pickup(Status status,
+            List<AbstractEntity> inventory,
             List<AbstractEntity> roomObjects) {
+
+        StringBuilder outString = new StringBuilder();
+
         if (!pickedUp) {
             pickedUp = true;
             inventory.add(this);
@@ -63,10 +68,12 @@ public class AdvItem extends AbstractEntity implements IPickupable {
 
             outString.append("Hai raccolto: " + getName());
             outString.append(processEvent(EventType.PICK_UP));
-            return true;
+
+            status.setActionPerformed(true);
         } else {
             outString.append("É giá nel tuo inventario.");
-            return false;
         }
+
+        return outString;
     }
 }

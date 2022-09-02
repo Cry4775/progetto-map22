@@ -6,6 +6,7 @@
 package di.uniba.map.b.adventure;
 
 import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.PlayableRoom;
@@ -31,6 +32,12 @@ public abstract class GameDescription {
     private Room currentRoom;
 
     private Room previousRoom;
+
+    private Status status = new Status();
+
+    public Status getStatus() {
+        return status;
+    }
 
     public Room getPreviousRoom() {
         return previousRoom;
