@@ -448,129 +448,117 @@ public class HauntedHouseGame extends GameDescription {
             } else {
                 outString.append("Il tuo inventario è vuoto.");
             }
-        } else if (p.getCommand().getType() == CommandType.LOOK_AT) {
-            if (p.getObject() != null || p.getInvObject() != null) {
-                AbstractEntity obj = getObjectFromParser(p);
+        }
 
+        AbstractEntity roomObj = p.getObject();
+        AbstractEntity invObj = p.getInvObject();
+
+        if (p.getCommand().getType() == CommandType.LOOK_AT) {
+            AbstractEntity obj = getObjectFromParser(p);
+
+            if (obj != null) {
                 outString.append(obj.getLookMessage());
-
             } else {
-                outString.append("Non trovo l'oggetto da esaminare.");
+                outString.append("Non trovo cosa esaminare.");
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
-            if (p.getObject() != null || p.getInvObject() != null) {
-                AbstractEntity obj = getObjectFromParser(p);
+            AbstractEntity obj = getObjectFromParser(p);
+
+            if (obj != null) {
                 if (obj instanceof IPickupable) {
-                    IPickupable pickupableObj = (IPickupable) obj;
+                    IPickupable pickupObj = (IPickupable) obj;
 
-                    outString
-                            .append(pickupableObj.pickup(getInventory(), currentRoom.getObjects()));
-
+                    outString.append(pickupObj.pickup(getInventory(), currentRoom.getObjects()));
                 } else {
                     outString.append("Non puoi raccogliere questo oggetto.");
                 }
             } else {
-                outString.append("Non trovo l'oggetto da raccogliere.");
+                outString.append("Non trovo cosa raccogliere.");
             }
         } else if (p.getCommand().getType() == CommandType.OPEN) {
-            if (p.getObject() != null || p.getInvObject() != null) {
-                AbstractEntity obj = getObjectFromParser(p);
+            AbstractEntity obj = getObjectFromParser(p);
 
+            if (obj != null) {
                 if (obj instanceof IOpenable) {
                     IOpenable openableObj = (IOpenable) obj;
-                    AbstractEntity key = p.getInvObject();
 
-                    outString.append(openableObj.open(key));
-
+                    outString.append(openableObj.open(invObj));
                 } else if (obj instanceof AdvDoorBlocked) {
                     AdvDoorBlocked fakeDoor = (AdvDoorBlocked) obj;
+
                     outString.append(fakeDoor.getOpenEventText());
                 } else {
                     outString.append("Non puoi aprire " + obj.getName());
                 }
             } else {
-                outString.append("Non trovo l'oggetto da aprire.");
+                outString.append("Non trovo cosa aprire.");
             }
         } else if (p.getCommand().getType() == CommandType.PUSH) {
-            if (p.getObject() != null) {
-                AbstractEntity obj = getObjectFromParser(p);
+            AbstractEntity obj = getObjectFromParser(p);
 
+            if (obj != null) {
                 if (obj instanceof IPushable) {
                     IPushable pushableObj = (IPushable) obj;
 
                     outString.append(pushableObj.push());
-
                 } else {
                     outString.append("Non puoi premere " + obj.getName());
                 }
             } else {
-                outString.append("Non trovo l'oggetto da premere.");
+                outString.append("Non trovo cosa premere.");
             }
         } else if (p.getCommand().getType() == CommandType.PULL) {
-            if (p.getObject() != null) {
-                AbstractEntity obj = getObjectFromParser(p);
+            AbstractEntity obj = getObjectFromParser(p);
 
+            if (obj != null) {
                 if (obj instanceof IPullable) {
                     IPullable pullableObj = (IPullable) obj;
 
                     outString.append(pullableObj.pull());
-
                 } else {
                     outString.append("Non puoi tirare " + obj.getName());
                 }
             } else {
-                outString.append("Non trovo l'oggetto da tirare.");
+                outString.append("Non trovo cosa tirare.");
             }
         } else if (p.getCommand().getType() == CommandType.MOVE) {
-            if (p.getObject() != null) {
-                AbstractEntity obj = getObjectFromParser(p);
-
-                if (obj instanceof IMovable) {
-                    IMovable movableObj = (IMovable) obj;
+            if (roomObj != null) {
+                if (roomObj instanceof IMovable) {
+                    IMovable movableObj = (IMovable) roomObj;
 
                     outString.append(movableObj.move());
-
                 } else {
-                    outString.append("Non puoi spostare " + obj.getName());
+                    outString.append("Non puoi spostare " + roomObj.getName());
                 }
             } else {
                 outString.append("Non trovo l'oggetto da spostare.");
             }
         } else if (p.getCommand().getType() == CommandType.INSERT) {
-            if (p.getObject() != null && p.getInvObject() != null) {
-                AbstractEntity obj = p.getObject();
-                AbstractEntity invObj = p.getInvObject();
-
-                if (obj instanceof AbstractContainer) {
-                    AbstractContainer container = (AbstractContainer) obj;
+            if (roomObj != null && invObj != null) {
+                if (roomObj instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) roomObj;
 
                     outString.append(container.insert(invObj, getInventory()));
-
                 }
-            } else if (p.getObject() == null && p.getInvObject() != null) {
-                outString.append("Non trovo l'oggetto in cui inserire.");
-            } else if (p.getInvObject() == null && p.getObject() != null) {
-                outString.append("Non trovo l'oggetto da inserire.");
+            } else if (roomObj == null && invObj != null) {
+                outString.append("Non ho capito dove inserire.");
+            } else if (roomObj != null && invObj == null) {
+                outString.append("Non ho capito cosa inserire.");
             } else {
                 outString.append("Non ho capito cosa devo fare.");
             }
         } else if (p.getCommand().getType() == CommandType.WEAR) {
-            if (p.getObject() != null) {
-                AbstractEntity obj = p.getObject();
-
-                if (obj instanceof IWearable) {
+            if (roomObj != null) {
+                if (roomObj instanceof IWearable) {
                     outString.append("Devi prima prenderlo per poterlo indossare.");
                 } else {
                     outString.append("Non puoi indossarlo.");
                 }
-            } else if (p.getInvObject() != null) {
-                AbstractEntity invObj = p.getInvObject();
-
+            } else if (invObj != null) {
                 if (invObj instanceof IWearable) {
                     IWearable wearable = (IWearable) invObj;
 
                     outString.append(wearable.wear());
-
                 } else {
                     outString.append("Non puoi indossarlo.");
                 }
@@ -585,7 +573,6 @@ public class HauntedHouseGame extends GameDescription {
                     ISwitch switchObj = (ISwitch) obj;
 
                     outString.append(switchObj.turnOn());
-
                 } else {
                     outString.append("Non puoi accenderlo.");
                 }
@@ -594,20 +581,17 @@ public class HauntedHouseGame extends GameDescription {
             }
         } else if (p.getCommand().getType() == CommandType.TURN_OFF) {
             AbstractEntity obj = getObjectFromParser(p);
-            AbstractEntity invObj = p.getInvObject();
 
             if (obj != null) {
                 if (obj instanceof ISwitch) {
                     ISwitch switchObj = (ISwitch) obj;
 
                     outString.append(switchObj.turnOff());
-
                 } else if (obj instanceof AdvFire) {
                     AdvFire fire = (AdvFire) obj;
 
                     if (invObj instanceof IFluid) {
                         outString.append(fire.extinguish());
-
                     } else if (invObj != null) {
                         outString.append("Non puoi spegnerlo con quello. ");
                     } else {
@@ -620,14 +604,11 @@ public class HauntedHouseGame extends GameDescription {
                 outString.append("Non trovo l'oggetto da spegnere.");
             }
         } else if (p.getCommand().getType() == CommandType.TALK_TO) {
-            AbstractEntity obj = p.getObject();
-
-            if (obj != null) {
-                if (obj instanceof ITalkable) {
-                    ITalkable talkableObj = (ITalkable) obj;
+            if (roomObj != null) {
+                if (roomObj instanceof ITalkable) {
+                    ITalkable talkableObj = (ITalkable) roomObj;
 
                     outString.append(talkableObj.talk());
-
                 } else {
                     outString.append("Non puoi parlarci.");
                 }
@@ -635,19 +616,15 @@ public class HauntedHouseGame extends GameDescription {
                 outString.append("Non trovo con chi parlare.");
             }
         } else if (p.getCommand().getType() == CommandType.POUR) {
-            AbstractEntity obj = p.getObject();
-            AbstractEntity invObj = p.getInvObject();
-
             if (invObj != null) {
                 if (invObj instanceof IFluid) {
-                    if (obj != null) {
-                        if (obj instanceof AdvFire) {
+                    if (roomObj != null) {
+                        if (roomObj instanceof AdvFire) {
                             IFluid fluid = (IFluid) invObj;
-                            AdvFire fire = (AdvFire) obj;
+                            AdvFire fire = (AdvFire) roomObj;
 
                             outString.append(fire.extinguish());
-
-                        } else if (obj instanceof AdvFluidContainer) {
+                        } else if (roomObj instanceof AdvFluidContainer) {
                             // TODO
                         } else {
                             outString.append("Non puoi versarci il liquido.");

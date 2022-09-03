@@ -5,7 +5,6 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
-import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvFluid extends AdvItem implements IFluid {

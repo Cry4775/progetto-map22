@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public abstract class AbstractContainer extends AbstractEntity {

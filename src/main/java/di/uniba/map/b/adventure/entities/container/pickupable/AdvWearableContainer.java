@@ -5,7 +5,6 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
-import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvWearableContainer extends AbstractContainer implements IWearable {

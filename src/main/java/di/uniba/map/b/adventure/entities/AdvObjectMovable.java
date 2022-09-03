@@ -1,7 +1,6 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
-import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvObjectMovable extends AbstractEntity implements IMovable {
