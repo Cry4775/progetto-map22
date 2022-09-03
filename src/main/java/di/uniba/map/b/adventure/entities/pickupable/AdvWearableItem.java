@@ -35,18 +35,20 @@ public class AdvWearableItem extends AdvItem implements IWearable {
     }
 
     @Override
-    public boolean wear(StringBuilder outString) {
+    public StringBuilder wear() {
+        StringBuilder outString = new StringBuilder();
+
         if (!worn) {
             worn = true;
 
             outString.append("Hai indossato: " + getName());
             outString.append(processEvent(EventType.WEAR));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("L'hai giá indossato.");
-            return false;
         }
+        return outString;
     }
 
 }

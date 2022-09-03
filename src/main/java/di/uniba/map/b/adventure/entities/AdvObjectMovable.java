@@ -1,6 +1,7 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvObjectMovable extends AbstractEntity implements IMovable {
@@ -34,14 +35,16 @@ public class AdvObjectMovable extends AbstractEntity implements IMovable {
     }
 
     @Override
-    public boolean move(StringBuilder outString) {
+    public StringBuilder move() {
+        StringBuilder outString = new StringBuilder();
+
         if (!moved) {
 
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         outString.append(getFailedInteractionMessage());
-                        return false;
+                        return outString;
                     }
                 }
             }
@@ -50,11 +53,11 @@ public class AdvObjectMovable extends AbstractEntity implements IMovable {
             outString.append("Hai spostato: " + getName());
             outString.append(processEvent(EventType.MOVE));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("È stato già spostato.");
-            return false;
         }
+        return outString;
     }
 
 }

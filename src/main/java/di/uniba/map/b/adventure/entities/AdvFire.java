@@ -31,7 +31,9 @@ public class AdvFire extends AbstractEntity {
         super(id, name, description);
     }
 
-    public boolean extinguish(StringBuilder outString) {
+    public StringBuilder extinguish() {
+        StringBuilder outString = new StringBuilder();
+
         if (lit) {
 
             if (getRequiredWearedItemsToInteract() != null) {
@@ -39,7 +41,7 @@ public class AdvFire extends AbstractEntity {
                     if (!wearable.isWorn()) {
                         outString.append(getFailedInteractionMessage()); // TODO check per null e
                                                                          // default message
-                        return false;
+                        return outString;
                     }
                 }
             }
@@ -48,11 +50,12 @@ public class AdvFire extends AbstractEntity {
 
             outString.append(processEvent(EventType.EXTINGUISH));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("Non ci sono piú fiamme.");
-            return false;
         }
+
+        return outString;
     }
 
 }

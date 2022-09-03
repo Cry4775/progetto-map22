@@ -47,9 +47,7 @@ public class AdvItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public StringBuilder pickup(Status status,
-            List<AbstractEntity> inventory,
-            List<AbstractEntity> roomObjects) {
+    public StringBuilder pickup(List<AbstractEntity> inventory, List<AbstractEntity> roomObjects) {
 
         StringBuilder outString = new StringBuilder();
 
@@ -69,7 +67,7 @@ public class AdvItem extends AbstractEntity implements IPickupable {
             outString.append("Hai raccolto: " + getName());
             outString.append(processEvent(EventType.PICK_UP));
 
-            status.setActionPerformed(true);
+            setActionPerformed(true);
         } else {
             outString.append("É giá nel tuo inventario.");
         }

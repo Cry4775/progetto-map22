@@ -1,6 +1,7 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 // TODO genera gli equals per tutti gli object
@@ -36,13 +37,15 @@ public class AdvObjectPushable extends AbstractEntity implements IPushable {
     }
 
     @Override
-    public boolean push(StringBuilder outString) {
+    public StringBuilder push() {
+        StringBuilder outString = new StringBuilder();
+
         if (!pushed) {
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         outString.append(getFailedInteractionMessage());
-                        return false;
+                        return outString;
                     }
                 }
             }
@@ -52,11 +55,11 @@ public class AdvObjectPushable extends AbstractEntity implements IPushable {
             outString.append("Hai premuto: " + getName());
             outString.append(processEvent(EventType.PUSH));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("È stato già premuto.");
-            return false;
         }
+        return outString;
     }
 
 }

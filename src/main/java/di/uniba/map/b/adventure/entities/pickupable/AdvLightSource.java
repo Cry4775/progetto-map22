@@ -54,27 +54,33 @@ public class AdvLightSource extends AdvItem implements ILightSource {
     }
 
     @Override
-    public boolean turnOn(StringBuilder outString) {
+    public StringBuilder turnOn() {
+        StringBuilder outString = new StringBuilder();
+
         if (!lighted) {
             lighted = true;
             outString.append("Hai acceso: " + getName());
-            return true;
+
+            setActionPerformed(true);
         } else {
             outString.append(getName() + " é giá acceso.");
-            return false;
         }
+        return outString;
     }
 
     @Override
-    public boolean turnOff(StringBuilder outString) {
+    public StringBuilder turnOff() {
+        StringBuilder outString = new StringBuilder();
+
         if (lighted) {
             lighted = false;
             outString.append("Hai spento: " + getName());
-            return true;
+
+            setActionPerformed(true);
         } else {
             outString.append(getName() + " é giá spento.");
-            return false;
         }
+        return outString;
     }
 
 }

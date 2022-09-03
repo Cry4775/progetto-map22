@@ -20,7 +20,6 @@ import com.google.gson.reflect.TypeToken;
 import di.uniba.map.b.adventure.GameDescription;
 import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.RuntimeTypeAdapterFactory;
-import di.uniba.map.b.adventure.Triple;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
@@ -358,104 +357,105 @@ public class HauntedHouseGame extends GameDescription {
 
     @Override
     public void nextMove(ParserOutput p, GameJFrame gui) {
+        getStatus().reset();
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
-        // TODO wear e put
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
 
         if (p.getCommand().getType() == CommandType.NORTH) {
             AdvMagicWall wall =
                     getMagicWall(currentRoom, CommandType.NORTH, currentRoom.getNorth());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getNorth());
+                moveTo(currentRoom.getNorth());
             }
         } else if (p.getCommand().getType() == CommandType.NORTH_EAST) {
             AdvMagicWall wall =
                     getMagicWall(currentRoom, CommandType.NORTH_EAST, currentRoom.getNorthEast());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getNorthEast());
+                moveTo(currentRoom.getNorthEast());
             }
         } else if (p.getCommand().getType() == CommandType.NORTH_WEST) {
             AdvMagicWall wall =
                     getMagicWall(currentRoom, CommandType.NORTH_WEST, currentRoom.getNorthWest());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getNorthWest());
+                moveTo(currentRoom.getNorthWest());
             }
         } else if (p.getCommand().getType() == CommandType.SOUTH) {
             AdvMagicWall wall =
                     getMagicWall(currentRoom, CommandType.SOUTH, currentRoom.getSouth());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getSouth());
+                moveTo(currentRoom.getSouth());
             }
         } else if (p.getCommand().getType() == CommandType.SOUTH_EAST) {
             AdvMagicWall wall =
                     getMagicWall(currentRoom, CommandType.SOUTH_EAST, currentRoom.getSouthEast());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getSouthEast());
+                moveTo(currentRoom.getSouthEast());
             }
         } else if (p.getCommand().getType() == CommandType.SOUTH_WEST) {
             AdvMagicWall wall =
                     getMagicWall(currentRoom, CommandType.SOUTH_WEST, currentRoom.getSouthWest());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getSouthWest());
+                moveTo(currentRoom.getSouthWest());
             }
         } else if (p.getCommand().getType() == CommandType.EAST) {
             AdvMagicWall wall = getMagicWall(currentRoom, CommandType.EAST, currentRoom.getEast());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getEast());
+                moveTo(currentRoom.getEast());
             }
         } else if (p.getCommand().getType() == CommandType.WEST) {
             AdvMagicWall wall = getMagicWall(currentRoom, CommandType.WEST, currentRoom.getWest());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getWest());
+                moveTo(currentRoom.getWest());
             }
         } else if (p.getCommand().getType() == CommandType.UP) {
             AdvMagicWall wall = getMagicWall(currentRoom, CommandType.UP, currentRoom.getUp());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getUp());
+                moveTo(currentRoom.getUp());
             }
         } else if (p.getCommand().getType() == CommandType.DOWN) {
             AdvMagicWall wall = getMagicWall(currentRoom, CommandType.DOWN, currentRoom.getDown());
             if (wall != null) {
-                gui.appendTextEdtOutput(wall.getTrespassingWhenLockedText(), false);
+                outString.append(wall.getTrespassingWhenLockedText());
             } else {
-                moveToCardinalDirection(getStatus(), currentRoom.getDown());
+                moveTo(currentRoom.getDown());
             }
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             if (!getInventory().isEmpty()) {
-                StringBuilder outString = new StringBuilder("Nel tuo inventario ci sono:");
+                outString.append("Nel tuo inventario ci sono:");
+
                 for (AbstractEntity obj : getInventory()) {
                     outString.append("<br> - " + obj.getName());
                 }
-                gui.appendTextEdtOutput(outString.toString(), false);
             } else {
-                gui.appendTextEdtOutput("Il tuo inventario è vuoto.", false);
+                outString.append("Il tuo inventario è vuoto.");
             }
         } else if (p.getCommand().getType() == CommandType.LOOK_AT) {
             if (p.getObject() != null || p.getInvObject() != null) {
                 AbstractEntity obj = getObjectFromParser(p);
 
-                gui.appendTextEdtOutput(obj.getLookMessage().toString(), false);
+                outString.append(obj.getLookMessage());
+
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da esaminare.", false);
+                outString.append("Non trovo l'oggetto da esaminare.");
             }
         } else if (p.getCommand().getType() == CommandType.PICK_UP) {
             if (p.getObject() != null || p.getInvObject() != null) {
@@ -463,18 +463,14 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof IPickupable) {
                     IPickupable pickupableObj = (IPickupable) obj;
 
-                    outString.append(
-                            pickupableObj.pickup(
-                                    getStatus(),
-                                    getInventory(),
-                                    currentRoom.getObjects()));
+                    outString
+                            .append(pickupableObj.pickup(getInventory(), currentRoom.getObjects()));
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi raccogliere questo oggetto.", false);
+                    outString.append("Non puoi raccogliere questo oggetto.");
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da raccogliere.", false);
+                outString.append("Non trovo l'oggetto da raccogliere.");
             }
         } else if (p.getCommand().getType() == CommandType.OPEN) {
             if (p.getObject() != null || p.getInvObject() != null) {
@@ -484,18 +480,16 @@ public class HauntedHouseGame extends GameDescription {
                     IOpenable openableObj = (IOpenable) obj;
                     AbstractEntity key = p.getInvObject();
 
-                    StringBuilder outString = new StringBuilder();
-                    actionPerformed = openableObj.open(outString, key);
+                    outString.append(openableObj.open(key));
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else if (obj instanceof AdvDoorBlocked) {
                     AdvDoorBlocked fakeDoor = (AdvDoorBlocked) obj;
-                    gui.appendTextEdtOutput(fakeDoor.getOpenEventText(), false);
+                    outString.append(fakeDoor.getOpenEventText());
                 } else {
-                    gui.appendTextEdtOutput("Non puoi aprire " + obj.getName(), false);
+                    outString.append("Non puoi aprire " + obj.getName());
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da aprire.", false);
+                outString.append("Non trovo l'oggetto da aprire.");
             }
         } else if (p.getCommand().getType() == CommandType.PUSH) {
             if (p.getObject() != null) {
@@ -504,15 +498,13 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof IPushable) {
                     IPushable pushableObj = (IPushable) obj;
 
-                    StringBuilder outString = new StringBuilder();
-                    actionPerformed = pushableObj.push(outString);
+                    outString.append(pushableObj.push());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi premere " + obj.getName(), false);
+                    outString.append("Non puoi premere " + obj.getName());
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da premere.", false);
+                outString.append("Non trovo l'oggetto da premere.");
             }
         } else if (p.getCommand().getType() == CommandType.PULL) {
             if (p.getObject() != null) {
@@ -521,15 +513,13 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof IPullable) {
                     IPullable pullableObj = (IPullable) obj;
 
-                    StringBuilder outString = new StringBuilder();
-                    actionPerformed = pullableObj.pull(outString);
+                    outString.append(pullableObj.pull());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi tirare " + obj.getName(), false);
+                    outString.append("Non puoi tirare " + obj.getName());
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da tirare.", false);
+                outString.append("Non trovo l'oggetto da tirare.");
             }
         } else if (p.getCommand().getType() == CommandType.MOVE) {
             if (p.getObject() != null) {
@@ -538,15 +528,13 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof IMovable) {
                     IMovable movableObj = (IMovable) obj;
 
-                    StringBuilder outString = new StringBuilder();
-                    actionPerformed = movableObj.move(outString);
+                    outString.append(movableObj.move());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi spostare " + obj.getName(), false);
+                    outString.append("Non puoi spostare " + obj.getName());
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da spostare.", false);
+                outString.append("Non trovo l'oggetto da spostare.");
             }
         } else if (p.getCommand().getType() == CommandType.INSERT) {
             if (p.getObject() != null && p.getInvObject() != null) {
@@ -556,42 +544,38 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj;
 
-                    StringBuilder outString = new StringBuilder();
-                    actionPerformed = container.insert(outString, invObj, getInventory());
+                    outString.append(container.insert(invObj, getInventory()));
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 }
             } else if (p.getObject() == null && p.getInvObject() != null) {
-                gui.appendTextEdtOutput("Non trovo l'oggetto in cui inserire.", false);
+                outString.append("Non trovo l'oggetto in cui inserire.");
             } else if (p.getInvObject() == null && p.getObject() != null) {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da inserire.", false);
+                outString.append("Non trovo l'oggetto da inserire.");
             } else {
-                gui.appendTextEdtOutput("Non ho capito cosa devo fare.", false);
+                outString.append("Non ho capito cosa devo fare.");
             }
         } else if (p.getCommand().getType() == CommandType.WEAR) {
             if (p.getObject() != null) {
                 AbstractEntity obj = p.getObject();
 
                 if (obj instanceof IWearable) {
-                    gui.appendTextEdtOutput("Devi prima prenderlo per poterlo indossare.", false);
+                    outString.append("Devi prima prenderlo per poterlo indossare.");
                 } else {
-                    gui.appendTextEdtOutput("Non puoi indossarlo.", false);
+                    outString.append("Non puoi indossarlo.");
                 }
             } else if (p.getInvObject() != null) {
                 AbstractEntity invObj = p.getInvObject();
 
                 if (invObj instanceof IWearable) {
                     IWearable wearable = (IWearable) invObj;
-                    StringBuilder outString = new StringBuilder();
 
-                    actionPerformed = wearable.wear(outString);
+                    outString.append(wearable.wear());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi indossarlo.", false);
+                    outString.append("Non puoi indossarlo.");
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da indossare.", false);
+                outString.append("Non trovo l'oggetto da indossare.");
             }
         } else if (p.getCommand().getType() == CommandType.TURN_ON) {
             AbstractEntity obj = getObjectFromParser(p);
@@ -599,16 +583,14 @@ public class HauntedHouseGame extends GameDescription {
             if (obj != null) {
                 if (obj instanceof ISwitch) {
                     ISwitch switchObj = (ISwitch) obj;
-                    StringBuilder outString = new StringBuilder();
 
-                    actionPerformed = switchObj.turnOn(outString);
+                    outString.append(switchObj.turnOn());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi accenderlo.", false);
+                    outString.append("Non puoi accenderlo.");
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da accendere.", false);
+                outString.append("Non trovo l'oggetto da accendere.");
             }
         } else if (p.getCommand().getType() == CommandType.TURN_OFF) {
             AbstractEntity obj = getObjectFromParser(p);
@@ -617,29 +599,25 @@ public class HauntedHouseGame extends GameDescription {
             if (obj != null) {
                 if (obj instanceof ISwitch) {
                     ISwitch switchObj = (ISwitch) obj;
-                    StringBuilder outString = new StringBuilder();
 
-                    actionPerformed = switchObj.turnOff(outString);
+                    outString.append(switchObj.turnOff());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else if (obj instanceof AdvFire) {
                     AdvFire fire = (AdvFire) obj;
-                    StringBuilder outString = new StringBuilder();
 
                     if (invObj instanceof IFluid) {
-                        fire.extinguish(outString);
-                        gui.appendTextEdtOutput(outString.toString(), false);
+                        outString.append(fire.extinguish());
+
                     } else if (invObj != null) {
-                        gui.appendTextEdtOutput("Non puoi spegnerlo con quello. ", false);
+                        outString.append("Non puoi spegnerlo con quello. ");
                     } else {
-                        gui.appendTextEdtOutput("Non puoi spegnerlo senza qualcosa di adatto.",
-                                false);
+                        outString.append("Non puoi spegnerlo senza qualcosa di adatto.");
                     }
                 } else {
-                    gui.appendTextEdtOutput("Non puoi spegnerlo.", false);
+                    outString.append("Non puoi spegnerlo.");
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo l'oggetto da spegnere.", false);
+                outString.append("Non trovo l'oggetto da spegnere.");
             }
         } else if (p.getCommand().getType() == CommandType.TALK_TO) {
             AbstractEntity obj = p.getObject();
@@ -647,16 +625,14 @@ public class HauntedHouseGame extends GameDescription {
             if (obj != null) {
                 if (obj instanceof ITalkable) {
                     ITalkable talkableObj = (ITalkable) obj;
-                    StringBuilder outString = new StringBuilder();
 
-                    actionPerformed = talkableObj.talk(outString);
+                    outString.append(talkableObj.talk());
 
-                    gui.appendTextEdtOutput(outString.toString(), false);
                 } else {
-                    gui.appendTextEdtOutput("Non puoi parlarci.", false);
+                    outString.append("Non puoi parlarci.");
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo con chi parlare.", false);
+                outString.append("Non trovo con chi parlare.");
             }
         } else if (p.getCommand().getType() == CommandType.POUR) {
             AbstractEntity obj = p.getObject();
@@ -669,50 +645,38 @@ public class HauntedHouseGame extends GameDescription {
                             IFluid fluid = (IFluid) invObj;
                             AdvFire fire = (AdvFire) obj;
 
-                            StringBuilder outString = new StringBuilder();
-                            actionPerformed = fire.extinguish(outString);
+                            outString.append(fire.extinguish());
 
-                            gui.appendTextEdtOutput(outString.toString(), false);
                         } else if (obj instanceof AdvFluidContainer) {
                             // TODO
                         } else {
-                            gui.appendTextEdtOutput("Non puoi versarci il liquido.", false);
+                            outString.append("Non puoi versarci il liquido.");
                         }
                     } else {
-                        gui.appendTextEdtOutput("Non trovo dove versare il liquido.", false);
+                        outString.append("Non trovo dove versare il liquido.");
                     }
                 } else {
-                    gui.appendTextEdtOutput("Non posso versare qualcosa che non sia liquido.",
-                            false);
+                    outString.append("Non posso versare qualcosa che non sia liquido.");
                 }
             } else {
-                gui.appendTextEdtOutput("Non trovo cosa versare.", false);
+                outString.append("Non trovo cosa versare.");
             }
         }
 
-        if (triple.getFirst() || triple.getSecond() || triple.getThird()) {
-            boolean move = triple.getFirst();
-            boolean noRoom = triple.getSecond();
-            boolean roomBlockedByDoor = triple.getThird();
-            if (noRoom) {
-                if (currentRoom.isDark()) {
-                    gui.appendTextEdtOutput("Meglio non avventurarsi nel buio.", false);
-                } else {
-                    gui.appendTextEdtOutput("Da quella parte non si può andare.", false);
-                }
-            } else if (roomBlockedByDoor) {
-                gui.appendTextEdtOutput("La porta è chiusa.", false);
-            } else if (move) {
-                actionPerformed = true;
-
-                StringBuilder outString = new StringBuilder(getCurrentRoom().getDescription());
+        if (getStatus().isMovementAttempt()) {
+            if (currentRoom.isDark()) {
+                outString.append("Meglio non avventurarsi nel buio.");
+            } else if (getStatus().isRoomBlockedByDoor()) {
+                outString.append("La porta é chiusa.");
+            } else if (getStatus().isPositionChanged()) {
+                outString.append(getCurrentRoom().getDescription());
                 outString.append(handleRoomEvent());
-
-                gui.appendTextEdtOutput(outString.toString(), false);
-
+            } else {
+                outString.append("Da quella parte non si puó andare.");
             }
         }
-        if (actionPerformed) {
+
+        if (isActionPerformed(p)) {
             String[] strings = gui.getLblActions().getText().split(".*: ");
             for (String string : strings) {
                 if (string.matches("[0-9]+")) {
@@ -723,9 +687,23 @@ public class HauntedHouseGame extends GameDescription {
             }
 
             getInventory().removeIf(obj -> obj.isMustDestroyFromInv());
-
         }
 
+        gui.appendTextEdtOutput(outString.toString(), false);
+    }
+
+    private boolean isActionPerformed(ParserOutput p) {
+        if (getStatus().isMovementAttempt() && getStatus().isPositionChanged()) {
+            return true;
+        } else if (p.getObject() != null && p.getObject().isActionPerformed()) {
+            p.getObject().setActionPerformed(false);
+            return true;
+        } else if (p.getInvObject() != null && p.getInvObject().isActionPerformed()) {
+            p.getInvObject().setActionPerformed(false);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private AbstractEntity getObjectFromParser(ParserOutput p) {
@@ -793,7 +771,7 @@ public class HauntedHouseGame extends GameDescription {
                         .forEach(linkedRoom -> directionSetter.accept(room, linkedRoom)));
     }
 
-    private void moveToCardinalDirection(Status status, Room room) {
+    private void moveTo(Room room) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         if (!currentRoom.isDark()) {
@@ -806,14 +784,14 @@ public class HauntedHouseGame extends GameDescription {
                             if (door.getBlockedRoomId() == room.getId() && door.isOpen()) {
                                 setPreviousRoom(currentRoom);
                                 setCurrentRoom(room);
-                                status.setPositionChanged(true);
+                                getStatus().setPositionChanged(true);
                                 return;
                             } else if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
-                                status.setPositionChanged(false, true);
+                                getStatus().setPositionChanged(false, true);
                                 return;
                             } else if (door.getBlockedRoomId() == room.getId()
                                     && !room.isVisible()) {
-                                status.setPositionChanged(false);
+                                getStatus().setPositionChanged(false);
                                 return;
                             }
                         }
@@ -821,10 +799,10 @@ public class HauntedHouseGame extends GameDescription {
                 }
                 setPreviousRoom(currentRoom);
                 setCurrentRoom(room);
-                status.setPositionChanged(true);
+                getStatus().setPositionChanged(true);
                 return;
             } else {
-                status.setPositionChanged(false);
+                getStatus().setPositionChanged(false);
                 return;
             }
         } else {
@@ -832,11 +810,11 @@ public class HauntedHouseGame extends GameDescription {
                 if (room.equals(getPreviousRoom())) {
                     setPreviousRoom(currentRoom);
                     setCurrentRoom(room);
-                    status.setPositionChanged(true);
+                    getStatus().setPositionChanged(true);
                     return;
                 }
             } else {
-                status.setPositionChanged(false);
+                getStatus().setPositionChanged(false);
             }
         }
     }

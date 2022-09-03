@@ -1,6 +1,7 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.Room;
 
@@ -64,14 +65,16 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public boolean open(StringBuilder outString, AbstractEntity key) {
+    public StringBuilder open(AbstractEntity key) {
+        StringBuilder outString = new StringBuilder();
+
         if (!open && !locked) {
             open = true;
 
             outString.append("Hai aperto: " + getName());
             outString.append(processEvent(EventType.OPEN_UNLOCKED));
 
-            return true;
+            setActionPerformed(true);
         } else if (locked) {
             if (blockedRoom != null) {
                 if (key != null) {
@@ -86,7 +89,7 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
                         outString.append("Hai aperto: " + getName());
                         outString.append(processEvent(EventType.OPEN_UNLOCKED));
 
-                        return true;
+                        setActionPerformed(true);
                     } else {
                         outString.append("Non funziona.");
                         outString.append(processEvent(EventType.OPEN_LOCKED));
@@ -99,7 +102,8 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
         } else if (open) {
             outString.append("É giá aperta.");
         }
-        return false;
+
+        return outString;
     }
 
     public Room getBlockedRoom() {

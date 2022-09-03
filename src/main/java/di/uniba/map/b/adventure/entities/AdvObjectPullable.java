@@ -1,6 +1,7 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.Set;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvObjectPullable extends AbstractEntity implements IPullable {
@@ -34,14 +35,16 @@ public class AdvObjectPullable extends AbstractEntity implements IPullable {
     }
 
     @Override
-    public boolean pull(StringBuilder outString) {
+    public StringBuilder pull() {
+        StringBuilder outString = new StringBuilder();
+
         if (!pulled) {
 
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         outString.append(getFailedInteractionMessage());
-                        return false;
+                        return outString;
                     }
                 }
             }
@@ -51,11 +54,11 @@ public class AdvObjectPullable extends AbstractEntity implements IPullable {
             outString.append("Hai tirato: " + getName());
             outString.append(processEvent(EventType.PULL));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("È stato già tirato.");
-            return false;
         }
+        return outString;
     }
 
 }

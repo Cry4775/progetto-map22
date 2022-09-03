@@ -3,7 +3,6 @@ package di.uniba.map.b.adventure.games;
 import di.uniba.map.b.adventure.type.Room;
 
 public class Status {
-    private boolean actionPerformed = false;
     private boolean movementAttempt = false;
     private boolean positionChanged = false;
     private boolean roomBlockedByDoor = false;
@@ -12,7 +11,6 @@ public class Status {
     private Room warpDestination;
 
     public void reset() {
-        actionPerformed = false;
         movementAttempt = false;
         positionChanged = false;
         roomBlockedByDoor = false;
@@ -20,20 +18,12 @@ public class Status {
         warpDestination = null;
     }
 
-    public boolean isroomBlockedByDoor() {
+    public boolean isRoomBlockedByDoor() {
         return roomBlockedByDoor;
     }
 
-    public void setroomBlockedByDoor(boolean roomBlockedByDoor) {
+    public void setRoomBlockedByDoor(boolean roomBlockedByDoor) {
         this.roomBlockedByDoor = roomBlockedByDoor;
-    }
-
-    public boolean isActionPerformed() {
-        return actionPerformed;
-    }
-
-    public void setActionPerformed(boolean actionPerformed) {
-        this.actionPerformed = actionPerformed;
     }
 
     public boolean isMovementAttempt() {
@@ -53,12 +43,10 @@ public class Status {
             this.movementAttempt = true;
             this.positionChanged = true;
             this.roomBlockedByDoor = false;
-            this.actionPerformed = true;
         } else {
             this.movementAttempt = true;
             this.positionChanged = false;
             this.roomBlockedByDoor = false;
-            this.actionPerformed = false;
         }
     }
 

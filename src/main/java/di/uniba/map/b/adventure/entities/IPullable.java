@@ -5,5 +5,5 @@ public interface IPullable {
 
     public void setPulled(boolean value);
 
-    public boolean pull(StringBuilder outString);
+    public StringBuilder pull();
 }

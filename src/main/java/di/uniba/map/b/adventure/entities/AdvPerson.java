@@ -25,7 +25,9 @@ public class AdvPerson extends AbstractEntity implements ITalkable {
     }
 
     @Override
-    public boolean talk(StringBuilder outString) {
+    public StringBuilder talk() {
+        StringBuilder outString = new StringBuilder();
+
         if (phrases != null) {
             if (!phrases.isEmpty()) {
                 if (phrases.size() > 1) {
@@ -40,6 +42,7 @@ public class AdvPerson extends AbstractEntity implements ITalkable {
             outString.append("...");
         }
 
-        return true;
+        setActionPerformed(true);
+        return outString;
     }
 }

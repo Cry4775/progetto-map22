@@ -5,5 +5,5 @@ public interface IMovable {
 
     public void setMoved(boolean value);
 
-    public boolean move(StringBuilder outString);
+    public StringBuilder move();
 }

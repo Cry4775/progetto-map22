@@ -5,7 +5,7 @@ public interface ISwitch {
 
     public void setOn(boolean value);
 
-    public boolean turnOn(StringBuilder outString);
+    public StringBuilder turnOn();
 
-    public boolean turnOff(StringBuilder outString);
+    public StringBuilder turnOff();
 }

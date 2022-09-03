@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
-import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.ObjEvent;
 
@@ -31,6 +30,16 @@ public abstract class AbstractEntity {
     private List<IWearable> requiredWearedItemsToInteract = new ArrayList<>();
 
     private String failedInteractionMessage;
+
+    private boolean actionPerformed;
+
+    public boolean isActionPerformed() {
+        return actionPerformed;
+    }
+
+    public void setActionPerformed(boolean actionPerformed) {
+        this.actionPerformed = actionPerformed;
+    }
 
     public String getFailedInteractionMessage() {
         return failedInteractionMessage;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public abstract class AbstractContainer extends AbstractEntity {
@@ -67,8 +68,10 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public boolean insert(StringBuilder outString, AbstractEntity obj,
+    public StringBuilder insert(AbstractEntity obj,
             List<AbstractEntity> inventory) {
+        StringBuilder outString = new StringBuilder();
+
         obj.setParent(this);
         inventory.remove(obj);
 
@@ -77,6 +80,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         outString.append("Hai lasciato: " + obj.getName());
         outString.append(processEvent(EventType.INSERT));
 
-        return true;
+        setActionPerformed(true);
+        return outString;
     }
 }

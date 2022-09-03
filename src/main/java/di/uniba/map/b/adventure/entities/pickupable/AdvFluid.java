@@ -5,6 +5,7 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvFluid extends AdvItem implements IFluid {
@@ -26,11 +27,12 @@ public class AdvFluid extends AdvItem implements IFluid {
     }
 
     @Override
-    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
-            List<AbstractEntity> roomObjects) {
+    public StringBuilder pickup(List<AbstractEntity> inventory, List<AbstractEntity> roomObjects) {
+        StringBuilder outString = new StringBuilder();
+
         if (isPickedUp()) {
             outString.append("Non puoi riprenderti il fluido dal contenitore.");
-            return false;
+            return outString;
         }
 
         boolean canProceed = false;
@@ -44,7 +46,7 @@ public class AdvFluid extends AdvItem implements IFluid {
                 if (canProceed) {
                     outString.append("Hai riempito: " + invObject.getName());
                     outString.append(processEvent(EventType.PICK_UP));
-                    return true;
+                    setActionPerformed(true);
                 }
             }
         }
@@ -53,7 +55,7 @@ public class AdvFluid extends AdvItem implements IFluid {
             outString.append("Non puoi prenderlo senza lo strumento adatto.");
         }
 
-        return false;
+        return outString;
     }
 
     @Override

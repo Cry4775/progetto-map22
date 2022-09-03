@@ -5,5 +5,5 @@ public interface IWearable extends IPickupable {
 
     public void setWorn(boolean value);
 
-    public boolean wear(StringBuilder outString);
+    public StringBuilder wear();
 }

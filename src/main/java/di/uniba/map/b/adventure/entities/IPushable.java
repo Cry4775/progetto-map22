@@ -5,5 +5,5 @@ public interface IPushable {
 
     public void setPushed(boolean value);
 
-    public boolean push(StringBuilder outString);
+    public StringBuilder push();
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvWearableContainer extends AbstractContainer implements IWearable {
@@ -58,23 +59,27 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
     }
 
     @Override
-    public boolean wear(StringBuilder outString) {
+    public StringBuilder wear() {
+        StringBuilder outString = new StringBuilder();
+
         if (!worn) {
             worn = true;
 
             outString.append("Hai indossato: " + getName());
             outString.append(processEvent(EventType.WEAR));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("L'hai giá indossato.");
-            return false;
         }
+        return outString;
     }
 
     @Override
-    public boolean pickup(StringBuilder outString, List<AbstractEntity> inventory,
+    public StringBuilder pickup(List<AbstractEntity> inventory,
             List<AbstractEntity> roomObjects) {
+        StringBuilder outString = new StringBuilder();
+
         pickedUp = true;
         inventory.add(this);
 
@@ -90,12 +95,14 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
         outString.append("Hai raccolto: " + getName());
         outString.append(processEvent(EventType.PICK_UP));
 
-        return true;
+        setActionPerformed(true);
+        return outString;
     }
 
     @Override
-    public boolean insert(StringBuilder outString, AbstractEntity obj,
-            List<AbstractEntity> inventory) {
+    public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
+        StringBuilder outString = new StringBuilder();
+
         if (getList().size() < maxSlots) {
             obj.setParent(this);
             inventory.remove(obj);
@@ -105,11 +112,11 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
             outString.append("Hai lasciato: " + obj.getName());
             outString.append(processEvent(EventType.INSERT));
 
-            return true;
+            setActionPerformed(true);
         } else {
             outString.append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
-            return false;
         }
+        return outString;
     }
 
 }
