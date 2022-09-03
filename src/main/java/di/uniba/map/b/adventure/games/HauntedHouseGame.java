@@ -357,7 +357,6 @@ public class HauntedHouseGame extends GameDescription {
 
     @Override
     public void nextMove(ParserOutput p, GameJFrame gui) {
-        getStatus().reset();
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
@@ -667,6 +666,9 @@ public class HauntedHouseGame extends GameDescription {
         }
 
         gui.appendTextEdtOutput(outString.toString(), false);
+
+        outString.setLength(0);
+        getStatus().reset();
     }
 
     private boolean isActionPerformed(ParserOutput p) {
