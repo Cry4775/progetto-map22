@@ -8,7 +8,7 @@ import di.uniba.map.b.adventure.type.Room;
 public class AdvMagicWall extends AbstractEntity {
 
     private boolean locked = true;
-    private int unlockedByWearingItemId = 0;
+    private int unlockedByWearingItemId = 0; // TODO reference?
     private int blockedRoomId = 0;
 
     private boolean northBlocked = false;
@@ -203,6 +203,11 @@ public class AdvMagicWall extends AbstractEntity {
 
     public void setDownBlocked(boolean downBlocked) {
         this.downBlocked = downBlocked;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 
 }

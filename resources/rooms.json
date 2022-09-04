@@ -37,7 +37,13 @@
                         "type": "AdvItem",
                         "id": 3,
                         "name": "accendino",
-                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria."
+                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria.",
+                        "events": [
+                            {
+                                "eventType": "PICK_UP",
+                                "teleportsPlayerToRoomId": 26
+                            }
+                        ]
                     }
                 ]
             }
@@ -394,7 +400,6 @@
         "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. <br>Sopra la scrivania vedi un libro.",
         "imgPath": "./resources/img/studio1.jpg",
         "visible": false,
-        "northId": 16,
         "eastId": 14,
         "objects": [
             {
@@ -449,7 +454,8 @@
                 }
             ],
             "newRoom": {
-                "imgPath": "./resources/img/studio3.jpg"
+                "imgPath": "./resources/img/studio3.jpg",
+                "northId": 16
             }
         }
     },
@@ -540,16 +546,19 @@
                 "description": "Un lavandino in ceramica, sporco e pieno di crepe."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "AdvContainer",
                 "id": 35,
                 "name": "vasca",
-                "description": "Una vasca da bagno in ceramica. Un tempo probabilmente era costosa ed elegante, ma ora è in pessimo stato. Stranamente è ancora piena d'acqua."
-            },
-            {
-                "type": "AdvFluid",
-                "id": 36,
-                "name": "acqua",
-                "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso."
+                "description": "Una vasca da bagno in ceramica. Un tempo probabilmente era costosa ed elegante, ma ora è in pessimo stato. Stranamente è ancora piena d'acqua.",
+                "forFluids": true,
+                "list": [
+                    {
+                        "type": "AdvFluid",
+                        "id": 36,
+                        "name": "acqua",
+                        "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso."
+                    }
+                ]
             }
         ]
     },

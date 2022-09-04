@@ -3,7 +3,9 @@ package di.uniba.map.b.adventure.entities.container;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvSocket extends AbstractContainer {
 
@@ -73,6 +75,16 @@ public class AdvSocket extends AbstractContainer {
             outString.append("Non puoi inserirci altri oggetti.");
         }
         return false;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        if (eligibleItemId != null) {
+            objects.stream()
+                    .filter(AdvItem.class::isInstance)
+                    .filter(reqItem -> reqItem.getId() == eligibleItemId)
+                    .forEach(reqItem -> setEligibleItem(reqItem));
+        }
     }
 
 }

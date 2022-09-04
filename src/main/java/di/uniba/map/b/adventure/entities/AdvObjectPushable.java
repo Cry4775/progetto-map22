@@ -1,7 +1,9 @@
 package di.uniba.map.b.adventure.entities;
 
+import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.Room;
 
 // TODO genera gli equals per tutti gli object
 
@@ -59,6 +61,11 @@ public class AdvObjectPushable extends AbstractEntity implements IPushable {
             outString.append("È stato già premuto.");
         }
         return outString;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 
 }

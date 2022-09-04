@@ -5,6 +5,7 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
+import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
 
 public class AdvFluid extends AdvItem implements IFluid {
@@ -47,7 +48,15 @@ public class AdvFluid extends AdvItem implements IFluid {
                     outString.append(processEvent(EventType.PICK_UP));
 
                     setActionPerformed(true);
-                    roomObjects.remove(this);
+
+                    if (getParent() != null) {
+                        AbstractContainer parentContainer = (AbstractContainer) getParent();
+                        parentContainer.getList().remove(this);
+                        setParent(invObject);
+                    } else {
+                        roomObjects.remove(this);
+                    }
+
                     setPickedUp(true);
                     break;
                 }

@@ -1,7 +1,9 @@
 package di.uniba.map.b.adventure.entities;
 
+import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvObjectMovable extends AbstractEntity implements IMovable {
 
@@ -57,6 +59,11 @@ public class AdvObjectMovable extends AbstractEntity implements IMovable {
             outString.append("È stato già spostato.");
         }
         return outString;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 
 }

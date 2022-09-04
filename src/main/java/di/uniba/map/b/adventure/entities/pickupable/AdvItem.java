@@ -6,6 +6,7 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvItem extends AbstractEntity implements IPickupable {
 
@@ -72,5 +73,10 @@ public class AdvItem extends AbstractEntity implements IPickupable {
         }
 
         return outString;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 }

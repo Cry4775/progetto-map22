@@ -8,7 +8,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -148,7 +151,7 @@ public class HauntedHouseGame extends GameDescription {
                 new FileInputStream("./resources/rooms.json"), StandardCharsets.UTF_8))) {
             List<Room> rooms = gson.fromJson(in, roomsType);
 
-            linkRooms(rooms);
+            linkRooms(unpackRooms(rooms));
 
             for (Room room : rooms) {
                 getRooms().add(room);
@@ -156,138 +159,96 @@ public class HauntedHouseGame extends GameDescription {
 
             List<AbstractEntity> objects = listAllObjects();
 
-            for (AbstractEntity advObject : objects) {
-                linkObjectsParent(advObject);
+            for (AbstractEntity obj : objects) {
+                if (obj.getRequiredWearedItemsIdToInteract() != null) {
+                    if (!obj.getRequiredWearedItemsIdToInteract().isEmpty()) {
+                        obj.setRequiredWearedItemsToInteract(new ArrayList<>());
 
-                if (advObject.getRequiredWearedItemsIdToInteract() != null) {
-                    if (!advObject.getRequiredWearedItemsIdToInteract().isEmpty()) {
-                        advObject.setRequiredWearedItemsToInteract(new ArrayList<>());
-
-                        for (Integer objId : advObject.getRequiredWearedItemsIdToInteract()) {
+                        for (Integer objId : obj.getRequiredWearedItemsIdToInteract()) {
                             objects.stream()
                                     .filter(IWearable.class::isInstance)
                                     .filter(reqItem -> reqItem.getId() == objId)
-                                    .forEach(reqItem -> advObject.getRequiredWearedItemsToInteract()
+                                    .forEach(reqItem -> obj.getRequiredWearedItemsToInteract()
                                             .add((IWearable) reqItem));
                         }
                     }
                 }
 
-                linkObjectsEventsReference(advObject, getRooms());
-                linkDoorsBlockedRoom(advObject, getRooms());
+                obj.processReferences(objects, rooms);
 
-                if (advObject instanceof AdvFillableItem) {
-                    linkItemFillablesReference((AdvFillableItem) advObject, objects);
-                } else if (advObject instanceof AdvSocket) {
-                    linkAdvSocketReference((AdvSocket) advObject, objects);
-                } else if (advObject instanceof AdvLightSource) {
-                    linkLightSourceReference((AdvLightSource) advObject, objects);
-                }
+                linkObjectsEventsReference(obj, getRooms());
             }
 
             setCurrentRoom(rooms.get(0));
         }
     }
 
+    private List<Room> unpackRooms(List<Room> rooms) {
+        List<Room> result = new ArrayList<>();
+
+        for (Room room : rooms) {
+            result.addAll(unpackRoom(room));
+        }
+
+        return result;
+    }
+
+    private List<Room> unpackRoom(Room room) {
+        List<Room> result = new ArrayList<>();
+
+        if (room instanceof MutablePlayableRoom) {
+            MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+
+            if (mRoom.getNewRoom() != null) {
+                result.addAll(unpackRoom(mRoom.getNewRoom()));
+            }
+        }
+
+        result.add(room);
+        return result;
+    }
+
     private List<AbstractEntity> listAllObjects() {
         List<AbstractEntity> objects = new ArrayList<>();
 
-        List<PlayableRoom> rooms =
-                new ArrayList<>(getRooms().stream()
-                        .filter(PlayableRoom.class::isInstance)
-                        .map(PlayableRoom.class::cast)
-                        .collect(Collectors.toList()));
-        unpackMutableRooms(rooms);
-        for (PlayableRoom room : rooms) {
-            if (room.getObjects() != null) {
-                objects.addAll(room.getObjects());
+        for (Room room : unpackRooms(getRooms())) {
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+
+                if (pRoom.getObjects() != null) {
+                    objects.addAll(pRoom.getObjects());
+                }
             }
         }
-
-        unpackContainerObj(objects);
+        objects.addAll(unpackContainers(objects));
         return objects;
     }
 
-    private void unpackMutableRooms(List<PlayableRoom> rooms) {
-        List<PlayableRoom> tempRooms = new ArrayList<>();
-        for (PlayableRoom room : rooms) {
-            if (room instanceof MutablePlayableRoom) {
-                MutablePlayableRoom mutableRoom = (MutablePlayableRoom) room;
-                if (mutableRoom.getNewRoom() != null) {
-                    tempRooms.add(mutableRoom.getNewRoom());
-                    List<PlayableRoom> newRooms = new ArrayList<>();
-                    newRooms.add(mutableRoom.getNewRoom());
-                    unpackMutableRooms(newRooms);
-                }
-            }
-        }
-        rooms.addAll(tempRooms);
-    }
+    private List<AbstractEntity> unpackContainers(List<AbstractEntity> objects) {
+        List<AbstractEntity> result = new ArrayList<>();
 
-    private void unpackContainerObj(List<AbstractEntity> objects) {
-        List<AbstractEntity> tempObjects = new ArrayList<>();
         for (AbstractEntity obj : objects) {
             if (obj instanceof AbstractContainer) {
                 AbstractContainer container = (AbstractContainer) obj;
-                if (container.getList() != null) {
-                    List<AbstractEntity> copyContainer = new ArrayList<>(container.getList());
-                    unpackContainerObj(copyContainer);
-                    tempObjects.addAll(copyContainer);
+
+                result.addAll(unpackContainer(container));
+            }
+        }
+        return result;
+    }
+
+    private List<AbstractEntity> unpackContainer(AbstractContainer container) {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        if (container.getList() != null) {
+            for (AbstractEntity obj : container.getList()) {
+                if (obj instanceof AbstractContainer) {
+                    result.addAll(unpackContainer((AbstractContainer) obj));
                 }
+                result.add(obj);
             }
         }
-        objects.addAll(tempObjects);
-    }
-
-    private void linkItemFillablesReference(AdvFillableItem obj, List<AbstractEntity> objects) {
-        if (obj.getEligibleItemId() != null) {
-            objects.stream()
-                    .filter(AdvItem.class::isInstance).map(AdvItem.class::cast)
-                    .filter(reqItem -> reqItem.getId() == obj.getEligibleItemId())
-                    .forEach(reqItem -> obj.setEligibleItem(reqItem));
-        }
-    }
-
-    private void linkAdvSocketReference(AdvSocket obj, List<AbstractEntity> objects) {
-        if (obj.getEligibleItemId() != null) {
-            objects.stream()
-                    .filter(reqItem -> reqItem.getId() == obj.getEligibleItemId())
-                    .forEach(reqItem -> obj.setEligibleItem(reqItem));
-        }
-    }
-
-    private void linkLightSourceReference(AdvLightSource obj, List<AbstractEntity> objects) {
-        if (obj.getRequiredItemId() != null) {
-            objects.stream()
-                    .filter(reqItem -> reqItem.getId() == obj.getRequiredItemId())
-                    .forEach(reqItem -> obj.setRequiredItem(reqItem));
-        }
-    }
-
-    private void linkObjectsParent(AbstractEntity obj) {
-        if (obj instanceof AbstractContainer) {
-            AbstractContainer container = (AbstractContainer) obj;
-            if (container.getList() != null) {
-                for (AbstractEntity item : container.getList()) {
-                    item.setParent(container);
-                    linkObjectsParent(item);
-                }
-            }
-        }
-    }
-
-    private void linkDoorsBlockedRoom(AbstractEntity obj, List<Room> rooms) {
-        if (obj instanceof AdvDoorOpenable) {
-            AdvDoorOpenable door = (AdvDoorOpenable) obj;
-
-            if (door.getBlockedRoomId() != 0) {
-                rooms.stream()
-                        .filter(Room.class::isInstance)
-                        .map(Room.class::cast)
-                        .filter(room -> door.getBlockedRoomId() == room.getId())
-                        .forEach(room -> door.setBlockedRoom(room));
-            }
-        }
+        return result;
     }
 
     private void linkObjectsEventsReference(AbstractEntity obj, List<Room> rooms) {
@@ -316,6 +277,12 @@ public class HauntedHouseGame extends GameDescription {
                                 .filter(room -> linkParentRoomEvt(obj, room, objEvent))
                                 .forEach(room -> objEvent.setParentRoom(room));
                     }
+                }
+
+                if (objEvent.getTeleportsPlayerToRoomId() != null) {
+                    rooms.stream()
+                            .filter(room -> objEvent.getTeleportsPlayerToRoomId() == room.getId())
+                            .forEach(room -> objEvent.setTeleportsPlayerToRoom(room));
                 }
             }
         }
@@ -668,6 +635,47 @@ public class HauntedHouseGame extends GameDescription {
             getInventory().removeIf(obj -> obj.isMustDestroyFromInv());
         }
 
+        if (roomObj != null) {
+            if (roomObj.getEvents() != null) {
+                Iterator<ObjEvent> it = roomObj.getEvents().iterator();
+
+                while (it.hasNext()) {
+                    ObjEvent evt = it.next();
+
+                    if (evt.isTriggered()) {
+                        if (evt.getTeleportsPlayerToRoom() != null) {
+                            getStatus().setWarp(true);
+                            getStatus().setWarpDestination(evt.getTeleportsPlayerToRoom());
+                        }
+                        it.remove();
+                    }
+                }
+            }
+        } else if (invObj != null) {
+            if (invObj.getEvents() != null) {
+                Iterator<ObjEvent> it = invObj.getEvents().iterator();
+
+                while (it.hasNext()) {
+                    ObjEvent evt = it.next();
+
+                    if (evt.isTriggered()) {
+                        if (evt.getTeleportsPlayerToRoom() != null) {
+                            getStatus().setWarp(true);
+                            getStatus().setWarpDestination(evt.getTeleportsPlayerToRoom());
+                        }
+                        it.remove();
+                    }
+                }
+            }
+        }
+
+        if (getStatus().isWarp()) {
+            setPreviousRoom(getCurrentRoom());
+            setCurrentRoom(getStatus().getWarpDestination());
+            outString.append("<br><br>" + getCurrentRoom().getDescription());
+            outString.append(handleRoomEvent());
+        }
+
         gui.appendTextEdtOutput(outString.toString(), false);
 
         outString.setLength(0);
@@ -746,7 +754,9 @@ public class HauntedHouseGame extends GameDescription {
     private <T extends Room> void setRoomsDirection(List<Room> rooms,
             Function<T, Integer> directionIdGetter, BiConsumer<T, Room> directionSetter,
             Class<T> clazz) {
-        rooms.stream().filter(clazz::isInstance).map(clazz::cast)
+        rooms.stream()
+                .filter(clazz::isInstance)
+                .map(clazz::cast)
                 .filter(room -> directionIdGetter.apply(room) != null)
                 .forEach(room -> rooms.stream()
                         .filter(linkedRoom -> linkedRoom.getId() == directionIdGetter.apply(room))

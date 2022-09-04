@@ -1,8 +1,10 @@
 package di.uniba.map.b.adventure.entities.pickupable;
 
+import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.ILightSource;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvLightSource extends AdvItem implements ILightSource {
 
@@ -81,6 +83,18 @@ public class AdvLightSource extends AdvItem implements ILightSource {
             outString.append(getName() + " é giá spento.");
         }
         return outString;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        if (requiredItemId != null) {
+            objects.stream()
+                    .filter(AdvItem.class::isInstance)
+                    .filter(reqItem -> reqItem.getId() == requiredItemId)
+                    .forEach(reqItem -> setRequiredItem(reqItem));
+        }
+
+        processEventReferences(objects, rooms);
     }
 
 }

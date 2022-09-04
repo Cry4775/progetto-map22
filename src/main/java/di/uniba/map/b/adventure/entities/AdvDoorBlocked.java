@@ -1,10 +1,12 @@
 package di.uniba.map.b.adventure.entities;
 
+import java.util.List;
 import java.util.Set;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvDoorBlocked extends AbstractEntity {
 
-    private String openEventText;
+    private String openEventText; // TODO porting a evento
 
     public AdvDoorBlocked(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
@@ -28,6 +30,11 @@ public class AdvDoorBlocked extends AbstractEntity {
 
     public void setOpenEventText(String openEventText) {
         this.openEventText = openEventText;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 
 }

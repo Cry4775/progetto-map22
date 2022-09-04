@@ -6,7 +6,9 @@ import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
+import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.Room;
 
 public abstract class AbstractContainer extends AbstractEntity {
 
@@ -106,6 +108,7 @@ public abstract class AbstractContainer extends AbstractEntity {
             if (!forFluids) {
                 obj.setParent(this);
                 inventory.remove(obj);
+                ((IPickupable) obj).setPickedUp(false);
 
                 this.add(obj);
 
@@ -119,5 +122,17 @@ public abstract class AbstractContainer extends AbstractEntity {
         }
 
         return outString;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        if (getList() != null) {
+            for (AbstractEntity item : getList()) {
+                item.setParent(this);
+                item.processReferences(objects, rooms);
+            }
+        }
+
+        processEventReferences(objects, rooms);
     }
 }

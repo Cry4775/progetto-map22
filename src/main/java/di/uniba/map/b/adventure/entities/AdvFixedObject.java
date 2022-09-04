@@ -1,6 +1,8 @@
 package di.uniba.map.b.adventure.entities;
 
+import java.util.List;
 import java.util.Set;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvFixedObject extends AbstractEntity {
 
@@ -18,6 +20,11 @@ public class AdvFixedObject extends AbstractEntity {
 
     public AdvFixedObject(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 
 }

@@ -1,8 +1,10 @@
 package di.uniba.map.b.adventure.entities.pickupable;
 
+import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvFillableItem extends AdvItem implements IFillable {
 
@@ -55,12 +57,20 @@ public class AdvFillableItem extends AdvItem implements IFillable {
     public boolean fill(AbstractEntity obj) {
         if (eligibleItem.equals(obj)) {
             filled = true;
-
-            obj.setParent(this);
             // TODO distinzione tra riempi e prendi
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        if (eligibleItemId != null) {
+            objects.stream()
+                    .filter(AdvItem.class::isInstance)
+                    .filter(reqItem -> reqItem.getId() == eligibleItemId)
+                    .forEach(reqItem -> setEligibleItem(reqItem));
         }
     }
 

@@ -1,8 +1,10 @@
 package di.uniba.map.b.adventure.entities;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import di.uniba.map.b.adventure.type.Room;
 
 public class AdvPerson extends AbstractEntity implements ITalkable {
 
@@ -44,5 +46,10 @@ public class AdvPerson extends AbstractEntity implements ITalkable {
 
         setActionPerformed(true);
         return outString;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        processEventReferences(objects, rooms);
     }
 }

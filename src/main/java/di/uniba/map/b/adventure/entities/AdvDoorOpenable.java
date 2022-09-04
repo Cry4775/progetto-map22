@@ -1,5 +1,6 @@
 package di.uniba.map.b.adventure.entities;
 
+import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.Room;
@@ -111,5 +112,16 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
 
     public void setBlockedRoom(Room blockedRoom) {
         this.blockedRoom = blockedRoom;
+    }
+
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        if (blockedRoomId != 0) {
+            rooms.stream()
+                    .filter(room -> blockedRoomId == room.getId())
+                    .forEach(room -> blockedRoom = room);
+        }
+
+        processEventReferences(objects, rooms);
     }
 }

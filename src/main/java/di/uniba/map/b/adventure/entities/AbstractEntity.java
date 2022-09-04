@@ -5,9 +5,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
+import di.uniba.map.b.adventure.type.Room;
 
 public abstract class AbstractEntity {
 
@@ -125,6 +129,95 @@ public abstract class AbstractEntity {
         return true;
     }
 
+    public abstract void processReferences(List<AbstractEntity> objects, List<Room> rooms);
+
+    public class Recursive<I> {
+        public I func;
+    }
+
+    public void processEventReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        if (events != null) {
+            for (ObjEvent evt : events) {
+                for (Room room : rooms) {
+                    boolean targetRoomDone = false;
+                    boolean parentRoomDone = false;
+                    boolean teleportRoomDone = false;
+
+                    if (room instanceof MutablePlayableRoom) {
+                        MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+
+                        if (!targetRoomDone) {
+                            if (evt.getUpdateTargetRoomId() != null) {
+                                if (evt.getUpdateTargetRoomId() == room.getId()) {
+                                    evt.setUpdateTargetRoom(mRoom);
+                                    targetRoomDone = true;
+                                }
+                            } else {
+                                targetRoomDone = true;
+                            }
+                        }
+
+                        if (!parentRoomDone) {
+                            if (evt.isUpdatingParentRoom()) {
+                                if (mRoom.getObjects().contains(this)) {
+                                    evt.setParentRoom(mRoom);
+                                    parentRoomDone = true;
+                                }
+
+                                if (evt.getParentRoom() == null) {
+                                    Recursive<BiFunction<MutablePlayableRoom, ObjEvent, Boolean>> recursive =
+                                            new Recursive<>();
+
+                                    recursive.func = (_room, objEvt) -> {
+                                        if (objEvt.getParentRoom() == null) {
+                                            MutablePlayableRoom nextRoom = _room.getNewRoom();
+                                            boolean found = false;
+
+                                            if (nextRoom != null) {
+                                                if (nextRoom.getObjects() != null
+                                                        && nextRoom.getObjects().contains(this)) {
+                                                    found = true;
+                                                } else {
+                                                    found = recursive.func.apply(_room, objEvt);
+                                                }
+                                            }
+                                            return found;
+                                        }
+                                        return false;
+                                    };
+
+                                    if (mRoom.getNewRoom() != null) {
+                                        if (recursive.func.apply(mRoom, evt)) {
+                                            evt.setParentRoom(mRoom);
+                                            parentRoomDone = true;
+                                        }
+                                    }
+                                }
+                            } else {
+                                parentRoomDone = true;
+                            }
+                        }
+                    }
+
+                    if (!teleportRoomDone) {
+                        if (evt.getTeleportsPlayerToRoomId() != null) {
+                            if (evt.getTeleportsPlayerToRoomId() == room.getId()) {
+                                evt.setTeleportsPlayerToRoom(room);
+                                teleportRoomDone = true;
+                            }
+                        } else {
+                            teleportRoomDone = true;
+                        }
+                    }
+
+                    if (targetRoomDone && parentRoomDone && teleportRoomDone) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     public List<ObjEvent> getEvents() {
         return events;
     }
@@ -154,10 +247,6 @@ public abstract class AbstractEntity {
                 if (evt.getUpdateTargetRoom() != null) {
                     evt.getUpdateTargetRoom().updateToNewRoom();
                 }
-            }
-
-            if (evt.getTeleportsPlayerToRoom() != null) {
-
             }
 
             evt.setTriggered(true);
