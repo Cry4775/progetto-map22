@@ -76,11 +76,9 @@ public class AdvFire extends AbstractEntity {
             }
 
             lit = false;
-
             liquid.delete();
 
             outString.append(processEvent(EventType.EXTINGUISH));
-
             setActionPerformed(true);
         } else {
             outString.append("Non ci sono piú fiamme.");

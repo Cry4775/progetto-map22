@@ -123,6 +123,8 @@ public abstract class GameDescription {
                             gui.getLblCompassSouthEastText());
                 }
             }
+        } else {
+            clearCompassLabels(gui);
         }
     }
 

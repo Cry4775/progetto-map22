@@ -126,11 +126,13 @@ public abstract class AbstractContainer extends AbstractEntity {
 
     @Override
     public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
-        if (getList() != null) {
-            for (AbstractEntity item : getList()) {
+        if (list != null) {
+            for (AbstractEntity item : list) {
                 item.setParent(this);
                 item.processReferences(objects, rooms);
             }
+        } else {
+            list = new ArrayList<>();
         }
 
         processEventReferences(objects, rooms);

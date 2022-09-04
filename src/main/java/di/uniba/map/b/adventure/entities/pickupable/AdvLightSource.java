@@ -87,14 +87,14 @@ public class AdvLightSource extends AdvItem implements ILightSource {
 
     @Override
     public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        super.processReferences(objects, rooms);
+
         if (requiredItemId != null) {
             objects.stream()
                     .filter(AdvItem.class::isInstance)
                     .filter(reqItem -> reqItem.getId() == requiredItemId)
                     .forEach(reqItem -> setRequiredItem(reqItem));
         }
-
-        processEventReferences(objects, rooms);
     }
 
 }

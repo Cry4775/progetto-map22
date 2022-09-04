@@ -37,13 +37,7 @@
                         "type": "AdvItem",
                         "id": 3,
                         "name": "accendino",
-                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria.",
-                        "events": [
-                            {
-                                "eventType": "PICK_UP",
-                                "teleportsPlayerToRoomId": 26
-                            }
-                        ]
+                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria."
                     }
                 ]
             }
@@ -769,6 +763,7 @@
         "name": "...",
         "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***",
         "imgPath": "./resources/img/fine.jpg",
-        "visible": true
+        "visible": true,
+        "isFinalRoom": true
     }
 ]

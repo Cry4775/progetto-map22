@@ -178,7 +178,7 @@ public abstract class AbstractEntity {
                                                         && nextRoom.getObjects().contains(this)) {
                                                     found = true;
                                                 } else {
-                                                    found = recursive.func.apply(_room, objEvt);
+                                                    found = recursive.func.apply(nextRoom, objEvt);
                                                 }
                                             }
                                             return found;

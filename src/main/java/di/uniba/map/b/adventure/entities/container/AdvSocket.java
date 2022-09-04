@@ -79,6 +79,8 @@ public class AdvSocket extends AbstractContainer {
 
     @Override
     public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        super.processReferences(objects, rooms);
+
         if (eligibleItemId != null) {
             objects.stream()
                     .filter(AdvItem.class::isInstance)

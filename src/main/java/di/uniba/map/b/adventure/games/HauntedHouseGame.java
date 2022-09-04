@@ -160,20 +160,6 @@ public class HauntedHouseGame extends GameDescription {
             List<AbstractEntity> objects = listAllObjects();
 
             for (AbstractEntity obj : objects) {
-                if (obj.getRequiredWearedItemsIdToInteract() != null) {
-                    if (!obj.getRequiredWearedItemsIdToInteract().isEmpty()) {
-                        obj.setRequiredWearedItemsToInteract(new ArrayList<>());
-
-                        for (Integer objId : obj.getRequiredWearedItemsIdToInteract()) {
-                            objects.stream()
-                                    .filter(IWearable.class::isInstance)
-                                    .filter(reqItem -> reqItem.getId() == objId)
-                                    .forEach(reqItem -> obj.getRequiredWearedItemsToInteract()
-                                            .add((IWearable) reqItem));
-                        }
-                    }
-                }
-
                 obj.processReferences(objects, rooms);
             }
 
@@ -354,6 +340,11 @@ public class HauntedHouseGame extends GameDescription {
 
                 for (AbstractEntity obj : getInventory()) {
                     outString.append("<br> - " + obj.getName());
+                    if (obj instanceof IWearable) {
+                        IWearable wearable = (IWearable) obj;
+
+                        outString.append(wearable.isWorn() ? " (INDOSSATO)" : "");
+                    }
                 }
             } else {
                 outString.append("Il tuo inventario è vuoto.");
@@ -554,19 +545,6 @@ public class HauntedHouseGame extends GameDescription {
             }
         }
 
-        if (getStatus().isMovementAttempt()) {
-            if (currentRoom.isDark()) {
-                outString.append("Meglio non avventurarsi nel buio.");
-            } else if (getStatus().isRoomBlockedByDoor()) {
-                outString.append("La porta é chiusa.");
-            } else if (getStatus().isPositionChanged()) {
-                outString.append(getCurrentRoom().getDescription());
-                outString.append(handleRoomEvent());
-            } else {
-                outString.append("Da quella parte non si puó andare.");
-            }
-        }
-
         if (isActionPerformed(p)) {
             String[] strings = gui.getLblActions().getText().split(".*: ");
             for (String string : strings) {
@@ -580,51 +558,57 @@ public class HauntedHouseGame extends GameDescription {
             getInventory().removeIf(obj -> obj.isMustDestroyFromInv());
         }
 
-        if (roomObj != null) {
-            if (roomObj.getEvents() != null) {
-                Iterator<ObjEvent> it = roomObj.getEvents().iterator();
+        processTriggeredEvents(roomObj);
+        processTriggeredEvents(invObj);
 
-                while (it.hasNext()) {
-                    ObjEvent evt = it.next();
-
-                    if (evt.isTriggered()) {
-                        if (evt.getTeleportsPlayerToRoom() != null) {
-                            getStatus().setWarp(true);
-                            getStatus().setWarpDestination(evt.getTeleportsPlayerToRoom());
-                        }
-                        it.remove();
-                    }
-                }
-            }
-        } else if (invObj != null) {
-            if (invObj.getEvents() != null) {
-                Iterator<ObjEvent> it = invObj.getEvents().iterator();
-
-                while (it.hasNext()) {
-                    ObjEvent evt = it.next();
-
-                    if (evt.isTriggered()) {
-                        if (evt.getTeleportsPlayerToRoom() != null) {
-                            getStatus().setWarp(true);
-                            getStatus().setWarpDestination(evt.getTeleportsPlayerToRoom());
-                        }
-                        it.remove();
-                    }
-                }
+        if (getStatus().isMovementAttempt()) {
+            if (currentRoom.isDark()) {
+                outString.append("Meglio non avventurarsi nel buio.");
+            } else if (getStatus().isRoomBlockedByDoor()) {
+                outString.append("La porta é chiusa.");
+            } else if (getStatus().isPositionChanged()) {
+                outString.append(getCurrentRoom().getDescription());
+                outString.append(handleRoomEvent());
+            } else {
+                outString.append("Da quella parte non si puó andare.");
             }
         }
 
         if (getStatus().isWarp()) {
             setPreviousRoom(getCurrentRoom());
             setCurrentRoom(getStatus().getWarpDestination());
-            outString.append("<br><br>" + getCurrentRoom().getDescription());
+
+            outString.append(outString.length() > 0 ? "<br><br>" : "");
+            outString.append(getCurrentRoom().getDescription());
             outString.append(handleRoomEvent());
         }
 
-        gui.appendTextEdtOutput(outString.toString(), false);
+        if (outString.length() > 0) {
+            gui.appendTextEdtOutput(outString.toString(), false);
+        }
 
         outString.setLength(0);
         getStatus().reset();
+    }
+
+    private void processTriggeredEvents(AbstractEntity obj) {
+        if (obj != null) {
+            if (obj.getEvents() != null) {
+                Iterator<ObjEvent> it = obj.getEvents().iterator();
+
+                while (it.hasNext()) {
+                    ObjEvent evt = it.next();
+
+                    if (evt.isTriggered()) {
+                        if (evt.getTeleportsPlayerToRoom() != null) {
+                            getStatus().setWarp(true);
+                            getStatus().setWarpDestination(evt.getTeleportsPlayerToRoom());
+                        }
+                        it.remove();
+                    }
+                }
+            }
+        }
     }
 
     private boolean isActionPerformed(ParserOutput p) {

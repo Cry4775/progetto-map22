@@ -66,6 +66,8 @@ public class AdvFillableItem extends AdvItem implements IFillable {
 
     @Override
     public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+        super.processReferences(objects, rooms);
+
         if (eligibleItemId != null) {
             objects.stream()
                     .filter(AdvItem.class::isInstance)

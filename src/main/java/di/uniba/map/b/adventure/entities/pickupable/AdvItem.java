@@ -10,9 +10,9 @@ import di.uniba.map.b.adventure.type.Room;
 
 public class AdvItem extends AbstractEntity implements IPickupable {
 
-    private String inventoryDescription;
+    private String inventoryDescription; // TODO implementare
 
-    private boolean pickedUp = false; // TODO forse c'é un modo migliore
+    private boolean pickedUp = false;
 
     public AdvItem(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
