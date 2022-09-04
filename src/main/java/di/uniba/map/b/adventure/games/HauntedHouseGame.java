@@ -175,8 +175,6 @@ public class HauntedHouseGame extends GameDescription {
                 }
 
                 obj.processReferences(objects, rooms);
-
-                linkObjectsEventsReference(obj, getRooms());
             }
 
             setCurrentRoom(rooms.get(0));
@@ -249,59 +247,6 @@ public class HauntedHouseGame extends GameDescription {
             }
         }
         return result;
-    }
-
-    private void linkObjectsEventsReference(AbstractEntity obj, List<Room> rooms) {
-        if (obj.getEvents() != null) {
-            for (ObjEvent objEvent : obj.getEvents()) {
-                if (objEvent.getUpdateTargetRoomId() != null) {
-                    rooms.stream()
-                            .filter(MutablePlayableRoom.class::isInstance)
-                            .map(MutablePlayableRoom.class::cast)
-                            .filter(room -> objEvent.getUpdateTargetRoomId() == room.getId())
-                            .forEach(room -> objEvent.setUpdateTargetRoom(room));
-                }
-
-                if (objEvent.isUpdatingParentRoom()) {
-                    rooms.stream()
-                            .filter(MutablePlayableRoom.class::isInstance)
-                            .map(MutablePlayableRoom.class::cast)
-                            .filter(room -> room.getObjects().contains(obj))
-                            .forEach(room -> objEvent.setParentRoom(room));
-
-                    if (objEvent.getParentRoom() == null) {
-                        rooms.stream()
-                                .filter(MutablePlayableRoom.class::isInstance)
-                                .map(MutablePlayableRoom.class::cast)
-                                .filter(room -> room.getNewRoom() != null)
-                                .filter(room -> linkParentRoomEvt(obj, room, objEvent))
-                                .forEach(room -> objEvent.setParentRoom(room));
-                    }
-                }
-
-                if (objEvent.getTeleportsPlayerToRoomId() != null) {
-                    rooms.stream()
-                            .filter(room -> objEvent.getTeleportsPlayerToRoomId() == room.getId())
-                            .forEach(room -> objEvent.setTeleportsPlayerToRoom(room));
-                }
-            }
-        }
-    }
-
-    private boolean linkParentRoomEvt(AbstractEntity obj, MutablePlayableRoom room,
-            ObjEvent objEvent) {
-        if (objEvent.getParentRoom() == null) {
-            MutablePlayableRoom nextRoom = room.getNewRoom();
-            if (nextRoom != null) {
-                if (nextRoom.getObjects() != null
-                        && nextRoom.getObjects().contains(obj)) {
-                    return true;
-                } else {
-                    linkParentRoomEvt(obj, nextRoom, objEvent);
-                }
-            }
-        }
-        return false;
     }
 
     private AdvMagicWall getMagicWall(PlayableRoom currentRoom, CommandType direction,

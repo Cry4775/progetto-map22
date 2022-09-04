@@ -14,7 +14,7 @@ public class AdvChest extends AbstractContainer implements IOpenable {
     private boolean open = false;
     private boolean locked = false;
 
-    private int unlockedWithItemId;
+    private int unlockedWithItemId; // TODO reference?
 
     public AdvChest(int id) {
         super(id);

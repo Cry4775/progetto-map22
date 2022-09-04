@@ -216,6 +216,23 @@ public abstract class AbstractEntity {
                 }
             }
         }
+
+        if (requiredWearedItemsIdToInteract != null) {
+            if (!requiredWearedItemsIdToInteract.isEmpty()) {
+                requiredWearedItemsToInteract = new ArrayList<>();
+
+                for (Integer objId : requiredWearedItemsIdToInteract) {
+                    for (AbstractEntity obj : objects) {
+                        if (obj instanceof IWearable) {
+                            if (obj.getId() == objId) {
+                                requiredWearedItemsToInteract.add((IWearable) obj);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public List<ObjEvent> getEvents() {
