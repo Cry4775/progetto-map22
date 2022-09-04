@@ -55,6 +55,8 @@ public class AdvFillableItem extends AdvItem implements IFillable {
     public boolean fill(AbstractEntity obj) {
         if (eligibleItem.equals(obj)) {
             filled = true;
+
+            obj.setParent(this);
             // TODO distinzione tra riempi e prendi
             return true;
         } else {

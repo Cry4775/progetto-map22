@@ -58,4 +58,33 @@ public class AdvFire extends AbstractEntity {
         return outString;
     }
 
+    public StringBuilder extinguish(IFluid liquid) {
+        StringBuilder outString = new StringBuilder();
+
+        if (lit) {
+
+            if (getRequiredWearedItemsToInteract() != null) {
+                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                    if (!wearable.isWorn()) {
+                        outString.append(getFailedInteractionMessage()); // TODO check per null e
+                                                                         // default message
+                        return outString;
+                    }
+                }
+            }
+
+            lit = false;
+
+            liquid.delete();
+
+            outString.append(processEvent(EventType.EXTINGUISH));
+
+            setActionPerformed(true);
+        } else {
+            outString.append("Non ci sono piú fiamme.");
+        }
+
+        return outString;
+    }
+
 }

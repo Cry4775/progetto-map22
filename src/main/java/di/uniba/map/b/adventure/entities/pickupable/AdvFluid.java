@@ -30,7 +30,7 @@ public class AdvFluid extends AdvItem implements IFluid {
         StringBuilder outString = new StringBuilder();
 
         if (isPickedUp()) {
-            outString.append("Non puoi riprenderti il fluido dal contenitore.");
+            outString.append("É giá nel tuo inventario.");
             return outString;
         }
 
@@ -45,7 +45,11 @@ public class AdvFluid extends AdvItem implements IFluid {
                 if (canProceed) {
                     outString.append("Hai riempito: " + invObject.getName());
                     outString.append(processEvent(EventType.PICK_UP));
+
                     setActionPerformed(true);
+                    roomObjects.remove(this);
+                    setPickedUp(true);
+                    break;
                 }
             }
         }
@@ -58,9 +62,13 @@ public class AdvFluid extends AdvItem implements IFluid {
     }
 
     @Override
-    public boolean pourOn(StringBuilder outString, AbstractEntity target) {
-        // TODO Auto-generated method stub
-        return false;
+    public void delete() {
+        if (getParent() instanceof IFillable) {
+            IFillable container = (IFillable) getParent();
+
+            container.setFilled(false);
+            setParent(null);
+        }
     }
 
 }

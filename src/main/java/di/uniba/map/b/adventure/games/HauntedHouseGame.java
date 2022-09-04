@@ -42,7 +42,6 @@ import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.entities.container.AdvChest;
 import di.uniba.map.b.adventure.entities.container.AdvContainer;
-import di.uniba.map.b.adventure.entities.container.AdvFluidContainer;
 import di.uniba.map.b.adventure.entities.container.AdvSocket;
 import di.uniba.map.b.adventure.entities.container.pickupable.AdvWearableContainer;
 import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
@@ -590,7 +589,9 @@ public class HauntedHouseGame extends GameDescription {
                     AdvFire fire = (AdvFire) obj;
 
                     if (invObj instanceof IFluid) {
-                        outString.append(fire.extinguish());
+                        IFluid fluid = (IFluid) invObj;
+
+                        outString.append(fire.extinguish(fluid));
                     } else if (invObj != null) {
                         outString.append("Non puoi spegnerlo con quello. ");
                     } else {
@@ -622,9 +623,11 @@ public class HauntedHouseGame extends GameDescription {
                             IFluid fluid = (IFluid) invObj;
                             AdvFire fire = (AdvFire) roomObj;
 
-                            outString.append(fire.extinguish());
-                        } else if (roomObj instanceof AdvFluidContainer) {
-                            // TODO
+                            outString.append(fire.extinguish(fluid));
+                        } else if (roomObj instanceof AbstractContainer) {
+                            AbstractContainer container = (AbstractContainer) roomObj;
+
+                            outString.append(container.insert(invObj, getInventory()));
                         } else {
                             outString.append("Non puoi versarci il liquido.");
                         }

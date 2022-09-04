@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.entities.IFillable;
+import di.uniba.map.b.adventure.entities.IFluid;
 import di.uniba.map.b.adventure.type.EventType;
 
 public abstract class AbstractContainer extends AbstractEntity {
@@ -11,6 +13,16 @@ public abstract class AbstractContainer extends AbstractEntity {
     protected boolean contentRevealed = false;
 
     private List<AbstractEntity> list = new ArrayList<>();
+
+    private boolean forFluids;
+
+    public void setForFluids(boolean forFluids) {
+        this.forFluids = forFluids;
+    }
+
+    public boolean isForFluids() {
+        return forFluids;
+    }
 
     public AbstractContainer(int id) {
         super(id);
@@ -67,19 +79,45 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public StringBuilder insert(AbstractEntity obj,
-            List<AbstractEntity> inventory) {
+    public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
         StringBuilder outString = new StringBuilder();
 
-        obj.setParent(this);
-        inventory.remove(obj);
+        if (obj instanceof IFluid) {
+            if (forFluids) {
+                IFluid fluid = (IFluid) obj;
 
-        this.add(obj);
+                if (obj.getParent() instanceof IFillable) {
+                    IFillable fluidContainer = (IFillable) obj.getParent();
 
-        outString.append("Hai lasciato: " + obj.getName());
-        outString.append(processEvent(EventType.INSERT));
+                    fluidContainer.setFilled(false);
+                    obj.setParent(this);
+                    fluid.setPickedUp(false);
+                    this.add(obj);
 
-        setActionPerformed(true);
+                    outString.append("Hai versato: " + obj.getName());
+                    outString.append(processEvent(EventType.INSERT));
+
+                    setActionPerformed(true);
+                }
+            } else {
+                outString.append("Non puoi versare liquidi qui.");
+            }
+        } else {
+            if (!forFluids) {
+                obj.setParent(this);
+                inventory.remove(obj);
+
+                this.add(obj);
+
+                outString.append("Hai lasciato: " + obj.getName());
+                outString.append(processEvent(EventType.INSERT));
+
+                setActionPerformed(true);
+            } else {
+                outString.append("Non puoi lasciare oggetti qui.");
+            }
+        }
+
         return outString;
     }
 }
