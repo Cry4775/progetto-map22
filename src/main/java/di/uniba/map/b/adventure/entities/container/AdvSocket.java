@@ -54,10 +54,18 @@ public class AdvSocket extends AbstractContainer {
         this.eligibleItemId = eligibleItemId;
     }
 
-    public boolean insert(StringBuilder outString, AbstractEntity obj,
-            List<AbstractEntity> inventory) {
+    @Override
+    public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
+        StringBuilder outString = new StringBuilder();
+
         if (!itemInside) {
             if (eligibleItem.equals(obj)) {
+                if (obj.getParent() instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) obj.getParent();
+
+                    container.remove(obj);
+                }
+
                 itemInside = true;
                 obj.setParent(this);
                 inventory.remove(obj);
@@ -66,15 +74,13 @@ public class AdvSocket extends AbstractContainer {
 
                 outString.append("Hai inserito: " + obj.getName());
                 outString.append(processEvent(EventType.INSERT));
-
-                return true;
             } else {
                 outString.append("Non puoi inserirci questo oggetto.");
             }
         } else {
             outString.append("Non puoi inserirci altri oggetti.");
         }
-        return false;
+        return outString;
     }
 
     @Override

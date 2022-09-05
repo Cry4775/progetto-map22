@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
@@ -253,6 +252,8 @@ public abstract class AbstractEntity {
     }
 
     public StringBuilder processEvent(EventType eventType) {
+        StringBuilder outString = new StringBuilder();
+
         ObjEvent evt = getEvent(eventType);
 
         if (evt != null) {
@@ -260,19 +261,17 @@ public abstract class AbstractEntity {
                 evt.getParentRoom().updateToNewRoom();
             }
 
-            if (evt.isUpdatingAnotherRoom()) {
-                if (evt.getUpdateTargetRoom() != null) {
-                    evt.getUpdateTargetRoom().updateToNewRoom();
-                }
+            if (evt.getUpdateTargetRoom() != null) {
+                evt.getUpdateTargetRoom().updateToNewRoom();
             }
 
             evt.setTriggered(true);
 
             if (evt.getText() != null && !evt.getText().isEmpty()) {
-                return new StringBuilder("<br><br>" + evt.getText());
+                outString.append("<br><br>" + evt.getText());
             }
         }
-        return new StringBuilder();
+        return outString;
     }
 
     public boolean isMustDestroyFromInv() {

@@ -65,11 +65,28 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
             worn = true;
 
             outString.append("Hai indossato: " + getName());
-            outString.append(processEvent(EventType.WEAR));
+            outString.append(processEvent(EventType.UNWEAR));
 
             setActionPerformed(true);
         } else {
             outString.append("L'hai giá indossato.");
+        }
+        return outString;
+    }
+
+    @Override
+    public StringBuilder unwear() {
+        StringBuilder outString = new StringBuilder();
+
+        if (worn) {
+            worn = false;
+
+            outString.append("Hai tolto: " + getName());
+            outString.append(processEvent(EventType.UNWEAR));
+
+            setActionPerformed(true);
+        } else {
+            outString.append("Non ce l'hai addosso.");
         }
         return outString;
     }

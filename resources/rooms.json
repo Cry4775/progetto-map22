@@ -37,7 +37,13 @@
                         "type": "AdvItem",
                         "id": 3,
                         "name": "accendino",
-                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria."
+                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria.",
+                        "events": [
+                            {
+                                "eventType": "PICK_UP",
+                                "teleportsPlayerToRoomId": 26
+                            }
+                        ]
                     }
                 ]
             }
@@ -605,7 +611,10 @@
             }
         ],
         "newRoom": {
-            "imgPath": "./resources/img/davanti2.jpg"
+            "imgPath": "./resources/img/davanti2.jpg",
+            "newRoom": {
+                "southId": 23
+            }
         }
     },
     {
@@ -636,6 +645,13 @@
                     "«Dimmi com'è successo tutto questo...» <br><br>«Fino a due giorni fa il palazzo era in condizioni perfette, poi ho trovato un anello e una collana in un bauletto in cantina, e la mattina dopo la villa era totalmente cambiata, era diventata un vecchio rudere dalle finestre murate e da cui era impossibile uscire. Poco dopo mi sono sentita mancare e mi sono risvegliata prigioniera in questa cella.»",
                     "«Ho trovato la collana, ma non so dove sia l'anello...»<br><br>«È quello che ho sul dito, prendilo, potrebbe essere magico... la donna albina ha provato a togliermelo ma non ci è riuscita... Ti prego, trova il modo di liberarmi»",
                     "«Trova il modo di liberarmi...»"
+                ],
+                "events": [
+                    {
+                        "eventType": "TALK_WITH",
+                        "updatingAnotherRoom": true,
+                        "updateTargetRoomId": 21
+                    }
                 ]
             },
             {
@@ -764,6 +780,6 @@
         "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***",
         "imgPath": "./resources/img/fine.jpg",
         "visible": true,
-        "isFinalRoom": true
+        "finalRoom": true
     }
 ]

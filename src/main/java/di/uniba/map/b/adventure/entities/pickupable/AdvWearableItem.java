@@ -51,4 +51,20 @@ public class AdvWearableItem extends AdvItem implements IWearable {
         return outString;
     }
 
+    @Override
+    public StringBuilder unwear() {
+        StringBuilder outString = new StringBuilder();
+
+        if (worn) {
+            worn = false;
+
+            outString.append("Hai tolto: " + getName());
+            outString.append(processEvent(EventType.WEAR));
+
+            setActionPerformed(true);
+        } else {
+            outString.append("Non ce l'hai addosso.");
+        }
+        return outString;
+    }
 }

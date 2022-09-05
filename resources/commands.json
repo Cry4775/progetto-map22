@@ -200,5 +200,14 @@
 			"pour",
 			"throw"
 		]
+	},
+	{
+		"type": "UNWEAR",
+		"name": "togli",
+		"alias": [
+			"togliti",
+			"unwear",
+			"unequip"
+		]
 	}
 ]

@@ -8,13 +8,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -466,6 +463,20 @@ public class HauntedHouseGame extends GameDescription {
             } else {
                 outString.append("Non trovo l'oggetto da indossare.");
             }
+        } else if (p.getCommand().getType() == CommandType.UNWEAR) {
+            if (roomObj != null) {
+                outString.append("Non posso togliermi qualcosa che non ho addosso.");
+            } else if (invObj != null) {
+                if (invObj instanceof IWearable) {
+                    IWearable wearable = (IWearable) invObj;
+
+                    outString.append(wearable.unwear());
+                } else {
+                    outString.append("Non puoi farlo.");
+                }
+            } else {
+                outString.append("Non trovo l'oggetto da togliere.");
+            }
         } else if (p.getCommand().getType() == CommandType.TURN_ON) {
             AbstractEntity obj = getObjectFromParser(p);
 
@@ -562,7 +573,7 @@ public class HauntedHouseGame extends GameDescription {
         processTriggeredEvents(invObj);
 
         if (getStatus().isMovementAttempt()) {
-            if (currentRoom.isDark()) {
+            if (currentRoom.isDark() && !getStatus().isPositionChanged()) {
                 outString.append("Meglio non avventurarsi nel buio.");
             } else if (getStatus().isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");

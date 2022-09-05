@@ -60,10 +60,21 @@ public class AdvLightSource extends AdvItem implements ILightSource {
         StringBuilder outString = new StringBuilder();
 
         if (!lighted) {
-            lighted = true;
-            outString.append("Hai acceso: " + getName());
 
-            setActionPerformed(true);
+            if (requiredItem != null && requiredItem.isPickedUp()) {
+
+                lighted = true;
+                outString.append("Hai acceso: " + getName());
+
+                setActionPerformed(true);
+            } else if (requiredItem != null && !requiredItem.isPickedUp()) {
+                outString.append("Non puoi farlo senza lo strumento adatto.");
+            } else {
+                lighted = true;
+                outString.append("Hai acceso: " + getName());
+
+                setActionPerformed(true);
+            }
         } else {
             outString.append(getName() + " é giá acceso.");
         }

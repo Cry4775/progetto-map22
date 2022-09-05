@@ -7,6 +7,7 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
 import di.uniba.map.b.adventure.entities.IPickupable;
+import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.Room;
 
@@ -106,6 +107,21 @@ public abstract class AbstractContainer extends AbstractEntity {
             }
         } else {
             if (!forFluids) {
+                if (obj.getParent() instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) obj.getParent();
+
+                    container.remove(obj);
+                }
+
+                if (obj instanceof IWearable) {
+                    IWearable wearable = (IWearable) obj;
+
+                    if (wearable.isWorn()) {
+                        outString.append("Devi prima toglierlo di dosso.");
+                        return outString;
+                    }
+                }
+
                 obj.setParent(this);
                 inventory.remove(obj);
                 ((IPickupable) obj).setPickedUp(false);

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.Room;
 
 public class AdvPerson extends AbstractEntity implements ITalkable {
@@ -44,6 +45,7 @@ public class AdvPerson extends AbstractEntity implements ITalkable {
             outString.append("...");
         }
 
+        outString.append(processEvent(EventType.TALK_WITH));
         setActionPerformed(true);
         return outString;
     }
