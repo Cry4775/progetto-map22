@@ -37,13 +37,7 @@
                         "type": "AdvItem",
                         "id": 3,
                         "name": "accendino",
-                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria.",
-                        "events": [
-                            {
-                                "eventType": "PICK_UP",
-                                "teleportsPlayerToRoomId": 26
-                            }
-                        ]
+                        "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria."
                     }
                 ]
             }
@@ -497,7 +491,7 @@
                 "events": [
                     {
                         "eventType": "MOVE",
-                        "text": "Sposti il candeliere proprio sotto al candeliere. Ora riesci a raggiungerlo!",
+                        "text": "Sposti il comó proprio sotto al candeliere. Ora riesci a raggiungerlo!",
                         "updatingParentRoom": true
                     }
                 ]

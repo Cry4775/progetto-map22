@@ -577,7 +577,9 @@ public class HauntedHouseGame extends GameDescription {
                 outString.append("Meglio non avventurarsi nel buio.");
             } else if (getStatus().isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");
-            } else if (getStatus().isPositionChanged()) {
+            } else if (getStatus().isPositionChanged() && currentRoom.isDark()) {
+                outString.append("È completamente buio, e non riesci a vedere niente.");
+            } else if (getStatus().isPositionChanged() && !currentRoom.isDark()) {
                 outString.append(getCurrentRoom().getDescription());
                 outString.append(handleRoomEvent());
             } else {
