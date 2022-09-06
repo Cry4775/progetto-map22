@@ -119,7 +119,20 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
     public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
         StringBuilder outString = new StringBuilder();
 
+        if (maxSlots == 0) {
+            maxSlots = 999;
+        }
+
         if (getList().size() < maxSlots) {
+            if (obj instanceof IWearable) {
+                IWearable wearable = (IWearable) obj;
+
+                if (wearable.isWorn()) {
+                    outString.append("Devi prima toglierlo di dosso.");
+                    return outString;
+                }
+            }
+
             obj.setParent(this);
             inventory.remove(obj);
 

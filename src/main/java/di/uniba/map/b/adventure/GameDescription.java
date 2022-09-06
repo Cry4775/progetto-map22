@@ -6,6 +6,7 @@
 package di.uniba.map.b.adventure;
 
 import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
 import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.Command;
@@ -68,7 +69,30 @@ public abstract class GameDescription {
     }
 
     public void setCompassLabel(Room room, JLabel directionLbl) {
-        directionLbl.setForeground(room == null ? Color.RED : Color.GREEN);
+        if (room != null) {
+            if (room.equals(previousRoom)) {
+                directionLbl.setForeground(Color.BLUE);
+            } else {
+                directionLbl.setForeground(Color.GREEN);
+            }
+
+            if (getCurrentRoom() instanceof PlayableRoom) {
+                PlayableRoom playableRoom = (PlayableRoom) getCurrentRoom();
+                if (playableRoom.getObjects() != null) {
+                    for (AbstractEntity obj : playableRoom.getObjects()) {
+                        if (obj instanceof AdvDoorOpenable) {
+                            AdvDoorOpenable door = (AdvDoorOpenable) obj;
+                            if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
+                                directionLbl.setForeground(Color.ORANGE);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            directionLbl.setForeground(Color.RED);
+        }
     }
 
     private void clearCompassLabels(GameJFrame gui) {

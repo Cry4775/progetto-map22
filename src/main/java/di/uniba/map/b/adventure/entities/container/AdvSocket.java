@@ -3,6 +3,7 @@ package di.uniba.map.b.adventure.entities.container;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.Room;
@@ -60,6 +61,15 @@ public class AdvSocket extends AbstractContainer {
 
         if (!itemInside) {
             if (eligibleItem.equals(obj)) {
+                if (obj instanceof IWearable) {
+                    IWearable wearable = (IWearable) obj;
+
+                    if (wearable.isWorn()) {
+                        outString.append("Devi prima toglierlo di dosso.");
+                        return outString;
+                    }
+                }
+
                 if (obj.getParent() instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj.getParent();
 
