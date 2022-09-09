@@ -36,6 +36,7 @@ import di.uniba.map.b.adventure.entities.IOpenable;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.IPullable;
 import di.uniba.map.b.adventure.entities.IPushable;
+import di.uniba.map.b.adventure.entities.IReadable;
 import di.uniba.map.b.adventure.entities.ISwitch;
 import di.uniba.map.b.adventure.entities.ITalkable;
 import di.uniba.map.b.adventure.entities.IWearable;
@@ -48,6 +49,7 @@ import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
 import di.uniba.map.b.adventure.entities.pickupable.AdvFluid;
 import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.entities.pickupable.AdvLightSource;
+import di.uniba.map.b.adventure.entities.pickupable.AdvReadable;
 import di.uniba.map.b.adventure.entities.pickupable.AdvWearableItem;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AdvEvent;
@@ -106,6 +108,7 @@ public class HauntedHouseGame extends GameDescription {
                         .registerSubtype(AdvMagicWall.class)
                         .registerSubtype(AdvWearableItem.class)
                         .registerSubtype(AdvFillableItem.class)
+                        .registerSubtype(AdvReadable.class)
                         .registerSubtype(AdvLightSource.class)
                         .registerSubtype(AdvObjectMovable.class)
                         .registerSubtype(AdvObjectPullable.class)
@@ -553,6 +556,20 @@ public class HauntedHouseGame extends GameDescription {
                 }
             } else {
                 outString.append("Non trovo cosa versare.");
+            }
+        } else if (p.getCommand().getType() == CommandType.READ) {
+            AbstractEntity obj = getObjectFromParser(p);
+
+            if (obj != null) {
+                if (obj instanceof IReadable) {
+                    IReadable readableObj = (IReadable) obj;
+
+                    outString.append(readableObj.read());
+                } else {
+                    outString.append("Non posso leggerlo.");
+                }
+            } else {
+                outString.append("Non trovo cosa leggere.");
             }
         }
 

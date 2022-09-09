@@ -209,5 +209,12 @@
 			"unwear",
 			"unequip"
 		]
+	},
+	{
+		"type": "READ",
+		"name": "leggi",
+		"alias": [
+			"read"
+		]
 	}
 ]

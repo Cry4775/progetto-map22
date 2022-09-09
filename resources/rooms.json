@@ -126,10 +126,11 @@
                 ],
                 "list": [
                     {
-                        "type": "AdvItem",
+                        "type": "AdvReadable",
                         "id": 8,
                         "name": "lettera",
-                        "description": "«Non so se mai qualcuno leggerà queste note, ma se dovesse accadere, vi prego, fuggite. Se ho ben tenuto conto del tempo oggi è il sesto giorno del mese di Aprile dell'anno 1911, e da tre giorni sono rinchiuso in questo luogo dannato. Non avessi mai aperto quel passaggio murato nelle cantine, anche se esso sembrava nascondere solo vecchie stanze e caverne oscure e vuote. Poco dopo l'apertura del passaggio, la preziosa e antica villa che avevo acquistato si è trasformata in un decrepito maniero dalle finestre murate, da cui pare impossibile uscire. Adesso proverò a ridiscendere nei sotterranei, anche se il passaggio per le cantine pare scomparso. Sono sicuro che, là sotto, qualcosa vive... Lasciate questo luogo prima che sia troppo tardi, se potete.» <br>La firma è illeggibile."
+                        "description": "Una lettera sgualcita.",
+                        "readText": "«Non so se mai qualcuno leggerà queste note, ma se dovesse accadere, vi prego, fuggite. Se ho ben tenuto conto del tempo oggi è il sesto giorno del mese di Aprile dell'anno 1911, e da tre giorni sono rinchiuso in questo luogo dannato. Non avessi mai aperto quel passaggio murato nelle cantine, anche se esso sembrava nascondere solo vecchie stanze e caverne oscure e vuote. Poco dopo l'apertura del passaggio, la preziosa e antica villa che avevo acquistato si è trasformata in un decrepito maniero dalle finestre murate, da cui pare impossibile uscire. Adesso proverò a ridiscendere nei sotterranei, anche se il passaggio per le cantine pare scomparso. Sono sicuro che, là sotto, qualcosa vive... Lasciate questo luogo prima che sia troppo tardi, se potete.» <br><br>La firma è illeggibile."
                     },
                     {
                         "type": "AdvWearableContainer",
@@ -403,10 +404,11 @@
                 "description": "Una vecchia scrivania in mogano, semplice e priva di cassetti."
             },
             {
-                "type": "AdvItem",
+                "type": "AdvReadable",
                 "id": 27,
                 "name": "libro",
-                "description": "Un volume in ottavo dalla copertina in pelle. Sembra molto antico."
+                "description": "Un volume in ottavo dalla copertina in pelle. Sembra molto antico.",
+                "readText": "Sembra una raccolta di leggende di questa zona, buone soltanto per essere lette ai bambini. Sfogliando il libro trovi però il riferimento ad una strega che viveva da queste parti un paio di secoli fa. Era incredibilmente malvagia, e si faceva chiamare come la strega dell'isola di Avalon, Morgana.<br>Si macchiò di delitti e nefandezze d'ogni genere, finchè la sua discepola prediletta le si rivoltò contro. Grazie alle arti che aveva appreso dalla strega, la giovane creò due oggetti, due gioielli, che la aiutarono ad affrontare colei che era stata la sua maestra. La strega fu così sconfitta e giustiziata, ed il suo spirito imprigionato nel sottosuolo.<br><br>Ti chiedi come mai questo sia l'unico libro qui presente, e cosa ci sia di vero in questa storia."
             },
             {
                 "type": "AdvObjectMovable",
