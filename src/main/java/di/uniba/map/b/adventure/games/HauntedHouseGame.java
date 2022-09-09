@@ -740,10 +740,6 @@ public class HauntedHouseGame extends GameDescription {
                             } else if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
                                 getStatus().setPositionChanged(false, true);
                                 return;
-                            } else if (door.getBlockedRoomId() == room.getId()
-                                    && !room.isVisible()) {
-                                getStatus().setPositionChanged(false);
-                                return;
                             }
                         }
                     }

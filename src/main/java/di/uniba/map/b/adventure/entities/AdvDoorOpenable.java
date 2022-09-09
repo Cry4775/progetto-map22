@@ -82,8 +82,6 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
                         locked = false;
                         open = true;
 
-                        blockedRoom.setVisible(true);
-
                         key.setMustDestroyFromInv(true);
 
                         outString.append("Hai aperto: " + getName());

@@ -5,7 +5,6 @@
         "name": "...",
         "description": "Faticosamente riprendi i sensi...il freddo pavimento sotto il tuo volto.<br><br>Cerchi di ricordare cosa ti ha condotto fino a lì: lo squillo del telefono, la tua amica Valeria che si rifaceva viva - praticamente non la sentivi da sei mesi - chiedendoti di raggiungerla nella sua futura residenza, un vecchio palazzo chiamato Villa Morgana; voleva mostrarti una cosa interessante - diceva lei - ma il tono nervoso della sua voce ti aveva messo in allarme.<br><br>Poi il viaggio, la tua auto che si fermava davanti al cancello della villa, nessuna risposta al tuo bussare; il portone era stranamente aperto. Sei entrato, preoccupato per Valeria, muovendo i tuoi passi lungo il corridoio e le stanze vicine, cercandola e chiamandola.<br><br>Di colpo tutto intorno a te ha iniziato a girare e il buio ti ha avvolto.<br><br>Ti risvegli, lasci che i tuoi occhi si abituino alla poca luce che filtra in qualche modo all'interno e ti guardi attorno. Polvere, finestre murate, pareti e mobilio in rovina. Sei sempre all'interno della Villa. Ma la Villa in qualche modo è cambiata.<br><br> [ . . . ]",
         "imgPath": "./resources/img/intro.jpg",
-        "visible": true,
         "nextRoomId": 2
     },
     {
@@ -14,7 +13,6 @@
         "name": "Un piccolo salotto",
         "description": "Sei in un piccolo salotto alquanto disadorno.<br>Un divano è appoggiato ad una parete, proprio sotto una finestra murata.<br>Un arco si apre nella parete ovest.",
         "imgPath": "./resources/img/salotto.jpg",
-        "visible": true,
         "westId": 3,
         "objects": [
             {
@@ -49,7 +47,6 @@
         "name": "Corridoio",
         "description": "Questo corridoio completamente spoglio conduce da sud a nord. Un arco conduce verso est.",
         "imgPath": "./resources/img/corridoio11.jpg",
-        "visible": true,
         "southId": 4,
         "northId": 6,
         "eastId": 2
@@ -60,7 +57,6 @@
         "name": "Ingresso",
         "description": "Il piccolo atrio in cui ti trovi è dominato dall'imponente portone, verso sud. <br>Da qui un corridoio conduce a nord, mentre a ovest puoi vedere una porta. <br>Due quadri, unico arredamento della stanza, pendono dalle pareti.",
         "imgPath": "./resources/img/ingresso1.jpg",
-        "visible": true,
         "northId": 3,
         "westId": 5,
         "objects": [
@@ -106,7 +102,6 @@
         "name": "Vestibolo",
         "description": "Una piccola stanza dove gli ospiti possono lasciare i loro soprabiti. La porta ad est è l'unica uscita. <br>Un solo cappotto è appeso ad una parete.",
         "imgPath": "./resources/img/vestibolo1.jpg",
-        "visible": false,
         "eastId": 4,
         "objects": [
             {
@@ -160,7 +155,6 @@
         "name": "Corridoio",
         "description": "Il corridoio procede ancora da nord a sud, mentre un'arcata si apre nella parete ovest e una porta conduce verso est.",
         "imgPath": "./resources/img/corridoio12.jpg",
-        "visible": true,
         "eastId": 7,
         "westId": 8,
         "northId": 11,
@@ -180,7 +174,6 @@
         "name": "Cucine",
         "description": "Le cucine del palazzo sono ovviamente inutilizzabili. Il degrado e l'abbandono regnano sovrani, tutto è coperto da almeno un dito di polvere. <br>Appoggiata ad una parete vedi una vecchia credenza.",
         "imgPath": "./resources/img/cucina1.jpg",
-        "visible": false,
         "westId": 6,
         "objects": [
             {
@@ -221,7 +214,6 @@
         "name": "Salone",
         "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest.",
         "imgPath": "./resources/img/salone1.jpg",
-        "visible": true,
         "eastId": 6,
         "southWestId": 10,
         "objects": [
@@ -284,7 +276,6 @@
         "name": "Un piccolo andito",
         "description": "Questo piccolo andito, ricavato da uno degli angoli del salone ottagonale, non contiene altro se non una corda avvolta ad una grossa ruota e, collegata a questa, una leva in legno. <br>Una porta conduce a nord-est.",
         "imgPath": "./resources/img/andito1.jpg",
-        "visible": true,
         "northEastId": 8,
         "objects": [
             {
@@ -325,7 +316,6 @@
         "name": "Ai piedi della scalinata",
         "description": "Una larga scalinata conduce da qui al piano superiore della villa. Il corridoio si apre nella parete sud.",
         "imgPath": "./resources/img/scala.jpg",
-        "visible": true,
         "southId": 6,
         "upId": 12
     },
@@ -335,7 +325,6 @@
         "name": "Pianerottolo (1° piano)",
         "description": "Le ampie scale arrivano su di un largo pianerottolo. Da qui un corridoio conduce verso sud, dando accesso al piano più alto della villa.",
         "imgPath": "./resources/img/pianerottolo.jpg",
-        "visible": true,
         "southId": 13,
         "downId": 11
     },
@@ -345,7 +334,6 @@
         "name": "Corridoio (1° piano)",
         "description": "Questo corridoio, scuro e maleodorante, procede verso nord e verso sud. Una porta conduce invece verso est.",
         "imgPath": "./resources/img/corridoio2.jpg",
-        "visible": true,
         "northId": 12,
         "southId": 14,
         "eastId": 17,
@@ -365,7 +353,6 @@
         "name": "Corridoio (1° piano)",
         "description": "Il corridoio procede ancora da nord a sud, e un corridoio secondario si apre verso est. Eppure ti pare che una strana, tenue nebbia luminescente occupi i passaggi verso est e verso sud. Verso ovest vedi una porta.",
         "imgPath": "./resources/img/vicolo1.jpg",
-        "visible": true,
         "northId": 13,
         "westId": 15,
         "objects": [
@@ -394,7 +381,6 @@
         "name": "Studio (1° piano)",
         "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. <br>Sopra la scrivania vedi un libro.",
         "imgPath": "./resources/img/studio1.jpg",
-        "visible": false,
         "eastId": 14,
         "objects": [
             {
@@ -461,7 +447,6 @@
         "name": "Passaggio segreto (1° piano)",
         "description": "Una stretta scala a chiocciola scende verso l'oscurità, probabilmente passando attraverso la vasta colonna al centro del salone. Un'apertura verso sud porta allo studio.",
         "imgPath": "./resources/img/passaggio.jpg",
-        "visible": false,
         "southId": 15,
         "downId": 19
     },
@@ -471,7 +456,6 @@
         "name": "Camera da letto (1° piano)",
         "description": "Una camera buia e spaziosa. In essa puoi vedere un letto ampio e elegante, un largo comò e, appeso ad una parete, un piccolo candeliere. La porta si trova verso ovest, e un passaggio si apre nella parete nord.",
         "imgPath": "./resources/img/camera1.jpg",
-        "visible": true,
         "westId": 13,
         "northId": 18,
         "objects": [
@@ -532,7 +516,6 @@
         "name": "Bagno (1° piano)",
         "description": "Una piccola stanza da bagno completamente in rovina. L'unico oggetto ancora riconoscibile è una vasca di ceramica. La camera si trova a sud.",
         "imgPath": "./resources/img/bagno.jpg",
-        "visible": true,
         "southId": 17,
         "objects": [
             {
@@ -564,7 +547,6 @@
         "name": "Sotterranei",
         "description": "La poca luce illumina una galleria scavata nella roccia, sotto la villa, che procede tortuosamente in direzione nord-est. Una scala a chiocciola risale lungo il passaggio verticale.",
         "imgPath": "./resources/img/tunnel.jpg",
-        "visible": true,
         "dark": true,
         "upId": 16,
         "northEastId": 20
@@ -575,7 +557,6 @@
         "name": "Bivio (sotterranei)",
         "description": "La galleria qui si biforca in due. La diramazione principale curva verso nord, mentre una galleria secondaria porta verso sud-est.",
         "imgPath": "./resources/img/bivio.jpg",
-        "visible": true,
         "isDark": true,
         "northId": 24,
         "southEastId": 21,
@@ -587,7 +568,6 @@
         "name": "Di fronte ad una cella (sotterranei)",
         "description": "Il tunnel che proviene da nord-ovest, scavato nella dura roccia si ferma davanti ad una porta di metallo, verso sud.",
         "imgPath": "./resources/img/davanti1.jpg",
-        "visible": true,
         "isDark": true,
         "northWestId": 20,
         "southId": 22,
@@ -619,7 +599,6 @@
         "name": "Cella (sotterranei)",
         "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. <br><br>Puoi vedere Valeria, incatenata ad una parete. <br><br>Appena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» <br><br>[ ... ] ",
         "imgPath": "./resources/img/cella.jpg",
-        "visible": true,
         "nextRoomId": 23
     },
     {
@@ -628,7 +607,6 @@
         "name": "Cella (sotterranei)",
         "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. La porta si trova verso nord. <br>Puoi vedere Valeria, incatenata ad una parete.",
         "imgPath": "./resources/img/cella.jpg",
-        "visible": true,
         "northId": 21,
         "objects": [
             {
@@ -688,7 +666,6 @@
         "name": "Caverna (sotterranei)",
         "description": "Questa caverna sembra una specie di anticamera. Forse per le grottesche formazioni di roccia che, pur naturali, sembrano avere la forma di bizzarre creature o di scene perverse. Hai l'impressione che l'origine di tutto si trovi oltre il passaggio verso nord. La galleria da cui provieni conduce verso sud.",
         "imgPath": "./resources/img/anticamera.jpg",
-        "visible": true,
         "northId": 25,
         "southId": 20,
         "objects": [
@@ -714,7 +691,6 @@
         "name": "L'antro della strega (sotterranei)",
         "description": "Una vasta caverna quasi circolare, scavata nella roccia, con solo un passaggio che conduce verso sud. E praticamente niente altro, se non un pentacolo tracciato sul suolo. Eppure il terrore è così palpabile, in questo luogo.<br>Un braciere, al centro della stanza, proietta la sua luce sulle pareti.<br>Una donna albina ti osserva, un'espressione divertita e beffarda sul suo volto.<br>In quel momento ti rendi conto che puoi vedere attraverso il suo corpo immateriale, che stai in realtà vedendo uno spettro, e senti la sua voce, come un vento gelido, dire: «Non so come tu abbia fatto, ma sei giunto fino a qua. Questo non ti sarà di alcun aiuto.»",
         "imgPath": "./resources/img/antro.jpg",
-        "visible": false,
         "southId": 24,
         "objects": [
             {
@@ -766,7 +742,6 @@
         "name": "L'antro della strega (sotterranei)",
         "description": "Come ti avvicini, lo spettro della donna si mette tra te e il braciere, ma è come se i suoi poteri non potessero farti nulla. Sorretto da un'energia che non credevi di avere, passi attraverso la donna, e rovesci l'acqua contenuta nella ciotola sul braciere, che inizia a spegnersi. La donna albina inizia a gridare, quasi assordandoti; un grido di dolore, frustrazione e disperazione. E quando la luce del braciere scompare, anch'ella e il suo urlo scompaiono.<br><br>Per un attimo tutto pare girare vorticosamente attorno a te, finchè non cadi a terra perdendo i sensi.<br><br>[ . . . ]",
         "imgPath": "./resources/img/antro.jpg",
-        "visible": true,
         "nextRoomId": 27
     },
     {
@@ -775,7 +750,6 @@
         "name": "...",
         "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***",
         "imgPath": "./resources/img/fine.jpg",
-        "visible": true,
         "finalRoom": true
     }
 ]
