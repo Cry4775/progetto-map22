@@ -103,6 +103,7 @@ public class Engine {
                         ILightSource light = (ILightSource) obj;
                         if (light.isOn()) {
                             currentRoom.setDark(false);
+                            gui.appendTextEdtOutput(currentRoom.getDescription(), false);
                             break;
                         }
                     }
@@ -136,7 +137,6 @@ public class Engine {
         Image roomImg = new ImageIcon(imageURL).getImage()
                 .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
         gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
-
         game.setCompassLabels(gui);
     }
 }

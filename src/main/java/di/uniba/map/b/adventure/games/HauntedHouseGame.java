@@ -594,11 +594,18 @@ public class HauntedHouseGame extends GameDescription {
                 outString.append("Meglio non avventurarsi nel buio.");
             } else if (getStatus().isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");
-            } else if (getStatus().isPositionChanged() && currentRoom.isDark()) {
-                outString.append("È completamente buio, e non riesci a vedere niente.");
-            } else if (getStatus().isPositionChanged() && !currentRoom.isDark()) {
-                outString.append(getCurrentRoom().getDescription());
-                outString.append(handleRoomEvent());
+            } else if (getStatus().isPositionChanged()) {
+                if (getCurrentRoom() instanceof PlayableRoom) {
+                    currentRoom = (PlayableRoom) getCurrentRoom();
+
+                    if (currentRoom.isDark()) {
+                        outString.append("È completamente buio e non riesci a vedere niente.");
+                    } else {
+                        outString.append(getCurrentRoom().getDescription());
+                        outString.append(handleRoomEvent());
+                    }
+                }
+
             } else {
                 outString.append("Da quella parte non si puó andare.");
             }
@@ -727,7 +734,6 @@ public class HauntedHouseGame extends GameDescription {
 
         if (!currentRoom.isDark()) {
             if (room != null) {
-
                 if (currentRoom.getObjects() != null) {
                     for (AbstractEntity obj : currentRoom.getObjects()) {
                         if (obj instanceof AdvDoorOpenable) {
