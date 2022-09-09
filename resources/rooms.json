@@ -263,7 +263,13 @@
                             "type": "AdvItem",
                             "id": 19,
                             "name": "chiave",
-                            "description": "Una chiave in ferro, coperta da un leggero strato di ruggine."
+                            "description": "Una chiave in ferro, coperta da un leggero strato di ruggine.",
+                            "events": [
+                                {
+                                    "eventType": "LOOK_AT",
+                                    "text": "Per un attimo ti é parso di sentire la musica di un pianoforte."
+                                }
+                            ]
                         }
                     ]
                 }
@@ -423,7 +429,7 @@
                         {
                             "eventType": "INSERT",
                             "updatingParentRoom": true,
-                            "text": "Hai inserito il pendente e si é aperto un varco nel muro!"
+                            "text": "Metti il pendente nell'incisione e la parete nord si apre, rivelando un passaggio."
                         }
                     ],
                     "list": []
@@ -535,7 +541,13 @@
                         "type": "AdvFluid",
                         "id": 36,
                         "name": "acqua",
-                        "description": "Come osservi l'acqua, per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso."
+                        "description": "Di certo non é l'acqua piú pulita di sempre...",
+                        "events": [
+                            {
+                                "eventType": "LOOK_AT",
+                                "text": "Per un momento ti pare di vedere al suo interno una giovane donna. Ma forse ti stai solo facendo suggestionare. Adesso è scomparsa. Forse hai visto soltanto il tuo riflesso."
+                            }
+                        ]
                     }
                 ]
             }
@@ -632,7 +644,13 @@
                 "type": "AdvWearableItem",
                 "id": 38,
                 "name": "anello",
-                "description": "Un anello d'argento. Pare sia incantato."
+                "description": "Un anello d'argento, liscio e senza pietre.",
+                "events": [
+                    {
+                        "eventType": "WEAR",
+                        "text": "Un brivido corre lungo la tua schiena appena lo indossi."
+                    }
+                ]
             },
             {
                 "type": "AdvFixedObject",
