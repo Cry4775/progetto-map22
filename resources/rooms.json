@@ -1,6 +1,6 @@
 [
     {
-        "type": "NonPlayableRoom",
+        "type": "CutsceneRoom",
         "id": 1,
         "name": "...",
         "description": "Faticosamente riprendi i sensi...il freddo pavimento sotto il tuo volto.<br><br>Cerchi di ricordare cosa ti ha condotto fino a lì: lo squillo del telefono, la tua amica Valeria che si rifaceva viva - praticamente non la sentivi da sei mesi - chiedendoti di raggiungerla nella sua futura residenza, un vecchio palazzo chiamato Villa Morgana; voleva mostrarti una cosa interessante - diceva lei - ma il tono nervoso della sua voce ti aveva messo in allarme.<br><br>Poi il viaggio, la tua auto che si fermava davanti al cancello della villa, nessuna risposta al tuo bussare; il portone era stranamente aperto. Sei entrato, preoccupato per Valeria, muovendo i tuoi passi lungo il corridoio e le stanze vicine, cercandola e chiamandola.<br><br>Di colpo tutto intorno a te ha iniziato a girare e il buio ti ha avvolto.<br><br>Ti risvegli, lasci che i tuoi occhi si abituino alla poca luce che filtra in qualche modo all'interno e ti guardi attorno. Polvere, finestre murate, pareti e mobilio in rovina. Sei sempre all'interno della Villa. Ma la Villa in qualche modo è cambiata.<br><br> [ . . . ]",
@@ -429,7 +429,8 @@
                         {
                             "eventType": "INSERT",
                             "updatingParentRoom": true,
-                            "text": "Metti il pendente nell'incisione e la parete nord si apre, rivelando un passaggio."
+                            "text": "Metti il pendente nell'incisione e la parete nord si apre, rivelando un passaggio.",
+                            "destroyOnTrigger": true
                         }
                     ],
                     "list": []
@@ -559,7 +560,7 @@
         "name": "Sotterranei",
         "description": "La poca luce illumina una galleria scavata nella roccia, sotto la villa, che procede tortuosamente in direzione nord-est. Una scala a chiocciola risale lungo il passaggio verticale.",
         "imgPath": "./resources/img/tunnel.jpg",
-        "dark": true,
+        "darkByDefault": true,
         "upId": 16,
         "northEastId": 20
     },
@@ -569,7 +570,7 @@
         "name": "Bivio (sotterranei)",
         "description": "La galleria qui si biforca in due. La diramazione principale curva verso nord, mentre una galleria secondaria porta verso sud-est.",
         "imgPath": "./resources/img/bivio.jpg",
-        "isDark": true,
+        "darkByDefault": true,
         "northId": 24,
         "southEastId": 21,
         "southWestId": 19
@@ -580,7 +581,7 @@
         "name": "Di fronte ad una cella (sotterranei)",
         "description": "Il tunnel che proviene da nord-ovest, scavato nella dura roccia si ferma davanti ad una porta di metallo, verso sud.",
         "imgPath": "./resources/img/davanti1.jpg",
-        "isDark": true,
+        "darkByDefault": true,
         "northWestId": 20,
         "southId": 22,
         "objects": [
@@ -606,7 +607,7 @@
         }
     },
     {
-        "type": "NonPlayableRoom",
+        "type": "CutsceneRoom",
         "id": 22,
         "name": "Cella (sotterranei)",
         "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. <br><br>Puoi vedere Valeria, incatenata ad una parete. <br><br>Appena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» <br><br>[ ... ] ",
@@ -755,7 +756,7 @@
         ]
     },
     {
-        "type": "NonPlayableRoom",
+        "type": "CutsceneRoom",
         "id": 26,
         "name": "L'antro della strega (sotterranei)",
         "description": "Come ti avvicini, lo spettro della donna si mette tra te e il braciere, ma è come se i suoi poteri non potessero farti nulla. Sorretto da un'energia che non credevi di avere, passi attraverso la donna, e rovesci l'acqua contenuta nella ciotola sul braciere, che inizia a spegnersi. La donna albina inizia a gridare, quasi assordandoti; un grido di dolore, frustrazione e disperazione. E quando la luce del braciere scompare, anch'ella e il suo urlo scompaiono.<br><br>Per un attimo tutto pare girare vorticosamente attorno a te, finchè non cadi a terra perdendo i sensi.<br><br>[ . . . ]",
@@ -763,7 +764,7 @@
         "nextRoomId": 27
     },
     {
-        "type": "NonPlayableRoom",
+        "type": "CutsceneRoom",
         "id": 27,
         "name": "...",
         "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***",

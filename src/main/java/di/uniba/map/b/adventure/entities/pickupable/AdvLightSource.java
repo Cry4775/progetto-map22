@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.ILightSource;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvLightSource extends AdvItem implements ILightSource {
 
@@ -13,20 +13,12 @@ public class AdvLightSource extends AdvItem implements ILightSource {
     private AdvItem requiredItem;
     private Integer requiredItemId;
 
-    public AdvLightSource(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvLightSource(int id) {
-        super(id);
-    }
-
-    public AdvLightSource(int id, String name) {
-        super(id, name);
-    }
-
     public AdvLightSource(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvLightSource(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     @Override
@@ -97,7 +89,7 @@ public class AdvLightSource extends AdvItem implements ILightSource {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 
         if (requiredItemId != null) {

@@ -16,14 +16,6 @@ public class AdvChest extends AbstractContainer implements IOpenable {
 
     private int unlockedWithItemId; // TODO reference?
 
-    public AdvChest(int id) {
-        super(id);
-    }
-
-    public AdvChest(int id, String name) {
-        super(id, name);
-    }
-
     public AdvChest(int id, String name, String description) {
         super(id, name, description);
     }

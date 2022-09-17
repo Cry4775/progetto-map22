@@ -3,7 +3,7 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.CommandType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvMagicWall extends AbstractEntity {
 
@@ -24,20 +24,12 @@ public class AdvMagicWall extends AbstractEntity {
 
     private String trespassingWhenLockedText;
 
-    public AdvMagicWall(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvMagicWall(int id) {
-        super(id);
-    }
-
-    public AdvMagicWall(int id, String name) {
-        super(id, name);
-    }
-
     public AdvMagicWall(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvMagicWall(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     public void processRequirements(List<AbstractEntity> inventory) {
@@ -56,7 +48,7 @@ public class AdvMagicWall extends AbstractEntity {
         }
     }
 
-    public boolean isDirectionBlocked(CommandType direction, Room nextRoom) {
+    public boolean isDirectionBlocked(CommandType direction, AbstractRoom nextRoom) {
         if (locked) {
             if (nextRoom != null) {
                 if (blockedRoomId == nextRoom.getId()) {
@@ -206,7 +198,8 @@ public class AdvMagicWall extends AbstractEntity {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 

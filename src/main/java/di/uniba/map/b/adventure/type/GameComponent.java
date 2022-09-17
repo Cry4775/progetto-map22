@@ -1,25 +1,21 @@
 package di.uniba.map.b.adventure.type;
 
-public abstract class Room {
+public abstract class GameComponent {
     private final int id;
 
     private String name;
 
     private String description;
 
-    private String imgPath;
-
-    public Room(int id, String name, String description) {
+    public GameComponent(int id, String name) {
         this.id = id;
         this.name = name;
-        this.description = description;
     }
 
-    public Room(int id, String name, String description, String imgPath) {
+    public GameComponent(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imgPath = imgPath;
     }
 
     public int getId() {
@@ -42,14 +38,6 @@ public abstract class Room {
         this.description = description;
     }
 
-    public String getImgPath() {
-        return imgPath;
-    }
-
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -66,7 +54,7 @@ public abstract class Room {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Room other = (Room) obj;
+        GameComponent other = (GameComponent) obj;
         if (id != other.id)
             return false;
         return true;

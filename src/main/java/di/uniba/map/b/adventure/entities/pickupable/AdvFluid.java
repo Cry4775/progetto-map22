@@ -7,27 +7,20 @@ import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 
 public class AdvFluid extends AdvItem implements IFluid {
-
-    public AdvFluid(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvFluid(int id) {
-        super(id);
-    }
-
-    public AdvFluid(int id, String name) {
-        super(id, name);
-    }
 
     public AdvFluid(int id, String name, String description) {
         super(id, name, description);
     }
 
+    public AdvFluid(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
+    }
+
     @Override
-    public StringBuilder pickup(List<AbstractEntity> inventory, List<AbstractEntity> roomObjects) {
+    public StringBuilder pickup(List<AbstractEntity> inventory) {
         StringBuilder outString = new StringBuilder();
 
         if (isPickedUp()) {
@@ -50,11 +43,14 @@ public class AdvFluid extends AdvItem implements IFluid {
                     setActionPerformed(true);
 
                     if (getParent() != null) {
-                        AbstractContainer parentContainer = (AbstractContainer) getParent();
-                        parentContainer.getList().remove(this);
-                        setParent(invObject);
-                    } else {
-                        roomObjects.remove(this);
+                        if (getParent() instanceof AbstractContainer) {
+                            AbstractContainer parentContainer = (AbstractContainer) getParent();
+                            parentContainer.getList().remove(this);
+                            setParent(null);
+                        } else if (getParent() instanceof PlayableRoom) {
+                            PlayableRoom room = (PlayableRoom) getParent();
+                            room.getObjects().remove(this);
+                        }
                     }
 
                     setPickedUp(true);

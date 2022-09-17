@@ -3,11 +3,19 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvFire extends AbstractEntity {
 
     private boolean lit = false;
+
+    public AdvFire(int id, String name, String description) {
+        super(id, name, description);
+    }
+
+    public AdvFire(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
+    }
 
     public boolean isLit() {
         return lit;
@@ -15,22 +23,6 @@ public class AdvFire extends AbstractEntity {
 
     public void setLit(boolean lit) {
         this.lit = lit;
-    }
-
-    public AdvFire(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvFire(int id) {
-        super(id);
-    }
-
-    public AdvFire(int id, String name) {
-        super(id, name);
-    }
-
-    public AdvFire(int id, String name, String description) {
-        super(id, name, description);
     }
 
     public StringBuilder extinguish() {
@@ -88,7 +80,8 @@ public class AdvFire extends AbstractEntity {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 

@@ -3,7 +3,7 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
 
@@ -11,15 +11,7 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
     private boolean locked = false;
     private int unlockedWithItemId = 0;
     private int blockedRoomId = 0;
-    private Room blockedRoom;
-
-    public AdvDoorOpenable(int id) {
-        super(id);
-    }
-
-    public AdvDoorOpenable(int id, String name) {
-        super(id, name);
-    }
+    private AbstractRoom blockedRoom;
 
     public AdvDoorOpenable(int id, String name, String description) {
         super(id, name, description);
@@ -104,22 +96,22 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
         return outString;
     }
 
-    public Room getBlockedRoom() {
+    public AbstractRoom getBlockedRoom() {
         return blockedRoom;
     }
 
-    public void setBlockedRoom(Room blockedRoom) {
+    public void setBlockedRoom(AbstractRoom blockedRoom) {
         this.blockedRoom = blockedRoom;
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
         if (blockedRoomId != 0) {
             rooms.stream()
                     .filter(room -> blockedRoomId == room.getId())
                     .forEach(room -> blockedRoom = room);
         }
-
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 }

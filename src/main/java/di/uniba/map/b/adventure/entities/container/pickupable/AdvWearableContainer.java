@@ -6,20 +6,13 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 
 public class AdvWearableContainer extends AbstractContainer implements IWearable {
 
     private boolean worn = false;
     private boolean pickedUp = false;
     private int maxSlots;
-
-    public AdvWearableContainer(int id) {
-        super(id);
-    }
-
-    public AdvWearableContainer(int id, String name) {
-        super(id, name);
-    }
 
     public AdvWearableContainer(int id, String name, String description) {
         super(id, name, description);
@@ -92,8 +85,7 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
     }
 
     @Override
-    public StringBuilder pickup(List<AbstractEntity> inventory,
-            List<AbstractEntity> roomObjects) {
+    public StringBuilder pickup(List<AbstractEntity> inventory) {
         StringBuilder outString = new StringBuilder();
 
         pickedUp = true;
@@ -101,11 +93,14 @@ public class AdvWearableContainer extends AbstractContainer implements IWearable
 
         // Check if it's an obj inside something and remove it from its list
         if (getParent() != null) {
-            AbstractContainer parentContainer = (AbstractContainer) getParent();
-            parentContainer.getList().remove(this);
-            setParent(null);
-        } else {
-            roomObjects.remove(this);
+            if (getParent() instanceof AbstractContainer) {
+                AbstractContainer parentContainer = (AbstractContainer) getParent();
+                parentContainer.getList().remove(this);
+                setParent(null);
+            } else if (getParent() instanceof PlayableRoom) {
+                PlayableRoom room = (PlayableRoom) getParent();
+                room.getObjects().remove(this);
+            }
         }
 
         outString.append("Hai raccolto: " + getName());

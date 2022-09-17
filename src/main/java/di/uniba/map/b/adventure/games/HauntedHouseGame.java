@@ -31,6 +31,7 @@ import di.uniba.map.b.adventure.entities.AdvObjectPullable;
 import di.uniba.map.b.adventure.entities.AdvObjectPushable;
 import di.uniba.map.b.adventure.entities.AdvPerson;
 import di.uniba.map.b.adventure.entities.IFluid;
+import di.uniba.map.b.adventure.entities.ILightSource;
 import di.uniba.map.b.adventure.entities.IMovable;
 import di.uniba.map.b.adventure.entities.IOpenable;
 import di.uniba.map.b.adventure.entities.IPickupable;
@@ -56,10 +57,10 @@ import di.uniba.map.b.adventure.type.AdvEvent;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
-import di.uniba.map.b.adventure.type.NonPlayableRoom;
+import di.uniba.map.b.adventure.type.CutsceneRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.RoomEvent;
 
 // Se tutto viene caricato da file allora si può cancellare
@@ -117,11 +118,11 @@ public class HauntedHouseGame extends GameDescription {
                         .registerSubtype(AdvFluid.class)
                         .registerSubtype(AdvPerson.class);
 
-        RuntimeTypeAdapterFactory<Room> typeAdapterRooms = RuntimeTypeAdapterFactory
-                .of(Room.class)
+        RuntimeTypeAdapterFactory<AbstractRoom> typeAdapterRooms = RuntimeTypeAdapterFactory
+                .of(AbstractRoom.class)
                 .registerSubtype(PlayableRoom.class)
                 .registerSubtype(MutablePlayableRoom.class)
-                .registerSubtype(NonPlayableRoom.class);
+                .registerSubtype(CutsceneRoom.class);
 
         RuntimeTypeAdapterFactory<AdvEvent> typeAdapterEvents =
                 RuntimeTypeAdapterFactory
@@ -133,7 +134,7 @@ public class HauntedHouseGame extends GameDescription {
                 .setExclusionStrategies(new ExclusionStrategy() {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {
-                        return Room.class.equals(f.getDeclaredClass())
+                        return AbstractRoom.class.equals(f.getDeclaredClass())
                                 || AdvItem.class.equals(f.getDeclaredClass());
                     }
 
@@ -144,16 +145,17 @@ public class HauntedHouseGame extends GameDescription {
                 })
                 .registerTypeAdapterFactory(typeAdapterObjects)
                 .registerTypeAdapterFactory(typeAdapterRooms)
-                .registerTypeAdapterFactory(typeAdapterEvents).create();
-        Type roomsType = new TypeToken<List<Room>>() {}.getType();
+                .registerTypeAdapterFactory(typeAdapterEvents)
+                .create();
+        Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
                 new FileInputStream("./resources/rooms.json"), StandardCharsets.UTF_8))) {
-            List<Room> rooms = gson.fromJson(in, roomsType);
+            List<AbstractRoom> rooms = gson.fromJson(in, roomsType);
 
             linkRooms(unpackRooms(rooms));
 
-            for (Room room : rooms) {
+            for (AbstractRoom room : rooms) {
                 getRooms().add(room);
             }
 
@@ -167,35 +169,27 @@ public class HauntedHouseGame extends GameDescription {
         }
     }
 
-    private List<Room> unpackRooms(List<Room> rooms) {
-        List<Room> result = new ArrayList<>();
+    private List<AbstractRoom> unpackRooms(List<AbstractRoom> rooms) {
+        List<AbstractRoom> result = new ArrayList<>();
 
-        for (Room room : rooms) {
-            result.addAll(unpackRoom(room));
-        }
+        for (AbstractRoom room : rooms) {
+            if (room instanceof MutablePlayableRoom) {
+                MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
 
-        return result;
-    }
-
-    private List<Room> unpackRoom(Room room) {
-        List<Room> result = new ArrayList<>();
-
-        if (room instanceof MutablePlayableRoom) {
-            MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
-
-            if (mRoom.getNewRoom() != null) {
-                result.addAll(unpackRoom(mRoom.getNewRoom()));
+                result.addAll(mRoom.getAllRooms());
             }
+
+            result.add(room);
         }
 
-        result.add(room);
         return result;
     }
 
     private List<AbstractEntity> listAllObjects() {
         List<AbstractEntity> objects = new ArrayList<>();
+        List<AbstractEntity> result = new ArrayList<>();
 
-        for (Room room : unpackRooms(getRooms())) {
+        for (AbstractRoom room : unpackRooms(getRooms())) {
             if (room instanceof PlayableRoom) {
                 PlayableRoom pRoom = (PlayableRoom) room;
 
@@ -204,39 +198,22 @@ public class HauntedHouseGame extends GameDescription {
                 }
             }
         }
-        objects.addAll(unpackContainers(objects));
-        return objects;
-    }
 
-    private List<AbstractEntity> unpackContainers(List<AbstractEntity> objects) {
-        List<AbstractEntity> result = new ArrayList<>();
+        result.addAll(objects);
 
         for (AbstractEntity obj : objects) {
             if (obj instanceof AbstractContainer) {
                 AbstractContainer container = (AbstractContainer) obj;
 
-                result.addAll(unpackContainer(container));
+                result.addAll(container.getAllObjects());
             }
         }
-        return result;
-    }
 
-    private List<AbstractEntity> unpackContainer(AbstractContainer container) {
-        List<AbstractEntity> result = new ArrayList<>();
-
-        if (container.getList() != null) {
-            for (AbstractEntity obj : container.getList()) {
-                if (obj instanceof AbstractContainer) {
-                    result.addAll(unpackContainer((AbstractContainer) obj));
-                }
-                result.add(obj);
-            }
-        }
         return result;
     }
 
     private AdvMagicWall getMagicWall(PlayableRoom currentRoom, CommandType direction,
-            Room nextRoom) {
+            AbstractRoom nextRoom) {
         if (currentRoom.getObjects() != null) {
             for (AbstractEntity obj : currentRoom.getObjects()) {
 
@@ -369,7 +346,7 @@ public class HauntedHouseGame extends GameDescription {
                 if (obj instanceof IPickupable) {
                     IPickupable pickupObj = (IPickupable) obj;
 
-                    outString.append(pickupObj.pickup(getInventory(), currentRoom.getObjects()));
+                    outString.append(pickupObj.pickup(getInventory()));
                 } else {
                     outString.append("Non puoi raccogliere questo oggetto.");
                 }
@@ -589,23 +566,25 @@ public class HauntedHouseGame extends GameDescription {
         processTriggeredEvents(roomObj);
         processTriggeredEvents(invObj);
 
+        if (getCurrentRoom() instanceof PlayableRoom) {
+            currentRoom = (PlayableRoom) getCurrentRoom();
+            processRoomLighting(currentRoom);
+        } else {
+            currentRoom = null;
+        }
+
         if (getStatus().isMovementAttempt()) {
-            if (currentRoom.isDark() && !getStatus().isPositionChanged()) {
+            if (!getStatus().isPositionChanged() && currentRoom.isCurrentlyDark()) {
                 outString.append("Meglio non avventurarsi nel buio.");
             } else if (getStatus().isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");
             } else if (getStatus().isPositionChanged()) {
-                if (getCurrentRoom() instanceof PlayableRoom) {
-                    currentRoom = (PlayableRoom) getCurrentRoom();
-
-                    if (currentRoom.isDark()) {
-                        outString.append("È completamente buio e non riesci a vedere niente.");
-                    } else {
-                        outString.append(getCurrentRoom().getDescription());
-                        outString.append(handleRoomEvent());
-                    }
+                if (currentRoom != null && currentRoom.isCurrentlyDark()) {
+                    outString.append("È completamente buio e non riesci a vedere niente.");
+                } else {
+                    outString.append(getCurrentRoom().getDescription());
+                    outString.append(handleRoomEvent());
                 }
-
             } else {
                 outString.append("Da quella parte non si puó andare.");
             }
@@ -626,6 +605,32 @@ public class HauntedHouseGame extends GameDescription {
 
         outString.setLength(0);
         getStatus().reset();
+    }
+
+    private void processRoomLighting(PlayableRoom currentRoom) {
+        if (currentRoom.isDarkByDefault()) {
+            if (currentRoom.isCurrentlyDark()) {
+                for (AbstractEntity obj : getInventory()) {
+                    if (obj instanceof ILightSource) {
+                        ILightSource light = (ILightSource) obj;
+                        if (light.isOn()) {
+                            currentRoom.setCurrentlyDark(false);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                for (AbstractEntity obj : getInventory()) {
+                    if (obj instanceof ILightSource) {
+                        ILightSource light = (ILightSource) obj;
+                        if (!light.isOn()) {
+                            currentRoom.setCurrentlyDark(true);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void processTriggeredEvents(AbstractEntity obj) {
@@ -693,7 +698,7 @@ public class HauntedHouseGame extends GameDescription {
         return "";
     }
 
-    private void linkRooms(List<Room> rooms) {
+    private void linkRooms(List<AbstractRoom> rooms) {
         setRoomsDirection(rooms, PlayableRoom::getEastId, PlayableRoom::setEast,
                 PlayableRoom.class);
         setRoomsDirection(rooms, PlayableRoom::getWestId, PlayableRoom::setWest,
@@ -713,12 +718,12 @@ public class HauntedHouseGame extends GameDescription {
         setRoomsDirection(rooms, PlayableRoom::getUpId, PlayableRoom::setUp, PlayableRoom.class);
         setRoomsDirection(rooms, PlayableRoom::getDownId, PlayableRoom::setDown,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, NonPlayableRoom::getNextRoomId, NonPlayableRoom::setNextRoom,
-                NonPlayableRoom.class);
+        setRoomsDirection(rooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
+                CutsceneRoom.class);
     }
 
-    private <T extends Room> void setRoomsDirection(List<Room> rooms,
-            Function<T, Integer> directionIdGetter, BiConsumer<T, Room> directionSetter,
+    private <T extends AbstractRoom> void setRoomsDirection(List<AbstractRoom> rooms,
+            Function<T, Integer> directionIdGetter, BiConsumer<T, AbstractRoom> directionSetter,
             Class<T> clazz) {
         rooms.stream()
                 .filter(clazz::isInstance)
@@ -729,10 +734,10 @@ public class HauntedHouseGame extends GameDescription {
                         .forEach(linkedRoom -> directionSetter.accept(room, linkedRoom)));
     }
 
-    private void moveTo(Room room) {
+    private void moveTo(AbstractRoom room) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
-        if (!currentRoom.isDark()) {
+        if (!currentRoom.isCurrentlyDark()) {
             if (room != null) {
                 if (currentRoom.getObjects() != null) {
                     for (AbstractEntity obj : currentRoom.getObjects()) {

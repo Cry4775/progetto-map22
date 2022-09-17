@@ -27,7 +27,50 @@ public class MutablePlayableRoom extends PlayableRoom {
         this.newRoom = newRoom;
     }
 
-    private void updateFields(Room newRoom) {
+    public List<AbstractEntity> getAllObjects() {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        for (AbstractRoom room : getAllRooms()) {
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+
+                if (pRoom.getObjects() != null) {
+                    result.addAll(pRoom.getObjects());
+                }
+            }
+        }
+
+        result.addAll(getObjects());
+
+        return result;
+    }
+
+    public List<AbstractRoom> getAllRooms() {
+        List<AbstractRoom> result = new ArrayList<>();
+
+        if (newRoom != null) {
+            result.addAll(getAllRooms(newRoom));
+        }
+
+        return result;
+    }
+
+    private List<AbstractRoom> getAllRooms(AbstractRoom room) {
+        List<AbstractRoom> result = new ArrayList<>();
+
+        if (room instanceof MutablePlayableRoom) {
+            MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+
+            if (mRoom.getNewRoom() != null) {
+                result.addAll(getAllRooms(mRoom.getNewRoom()));
+            }
+        }
+
+        result.add(room);
+        return result;
+    }
+
+    private void updateFields(AbstractRoom newRoom) {
         for (Field f : getInheritedPrivateFields(newRoom.getClass())) {
             try {
                 if (f.get(newRoom) != null

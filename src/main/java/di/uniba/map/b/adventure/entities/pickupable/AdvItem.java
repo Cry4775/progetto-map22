@@ -6,7 +6,8 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.PlayableRoom;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvItem extends AbstractEntity implements IPickupable {
 
@@ -14,20 +15,12 @@ public class AdvItem extends AbstractEntity implements IPickupable {
 
     private boolean pickedUp = false;
 
-    public AdvItem(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvItem(int id) {
-        super(id);
-    }
-
-    public AdvItem(int id, String name) {
-        super(id, name);
-    }
-
     public AdvItem(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvItem(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     public String getInventoryDescription() {
@@ -47,22 +40,25 @@ public class AdvItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public StringBuilder pickup(List<AbstractEntity> inventory, List<AbstractEntity> roomObjects) {
+    public StringBuilder pickup(List<AbstractEntity> inventory) {
 
         StringBuilder outString = new StringBuilder();
 
         if (!pickedUp) {
-            pickedUp = true;
-            inventory.add(this);
-
             // Check if it's an obj inside something and remove it from its list
             if (getParent() != null) {
-                AbstractContainer parentContainer = (AbstractContainer) getParent();
-                parentContainer.getList().remove(this);
-                setParent(null);
-            } else {
-                roomObjects.remove(this);
+                if (getParent() instanceof AbstractContainer) {
+                    AbstractContainer parentContainer = (AbstractContainer) getParent();
+                    parentContainer.getList().remove(this);
+                    setParent(null);
+                } else if (getParent() instanceof PlayableRoom) {
+                    PlayableRoom room = (PlayableRoom) getParent();
+                    room.getObjects().remove(this);
+                }
             }
+
+            inventory.add(this);
+            pickedUp = true;
 
             outString.append("Hai raccolto: " + getName());
             outString.append(processEvent(EventType.PICK_UP));
@@ -76,7 +72,8 @@ public class AdvItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 }

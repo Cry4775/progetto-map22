@@ -3,26 +3,18 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvObjectMovable extends AbstractEntity implements IMovable {
 
     private boolean moved = false;
 
-    public AdvObjectMovable(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvObjectMovable(int id) {
-        super(id);
-    }
-
-    public AdvObjectMovable(int id, String name) {
-        super(id, name);
-    }
-
     public AdvObjectMovable(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvObjectMovable(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     @Override
@@ -62,7 +54,8 @@ public class AdvObjectMovable extends AbstractEntity implements IMovable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 

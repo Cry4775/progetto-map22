@@ -1,7 +1,7 @@
 package di.uniba.map.b.adventure.type;
 
 public class ObjEvent extends AdvEvent {
-    private boolean updatingAnotherRoom;
+    private boolean updatingAnotherRoom = false;
     private Integer updateTargetRoomId;
     private MutablePlayableRoom updateTargetRoom;
 
@@ -9,7 +9,17 @@ public class ObjEvent extends AdvEvent {
     private MutablePlayableRoom parentRoom;
 
     private Integer teleportsPlayerToRoomId;
-    private Room teleportsPlayerToRoom;
+    private AbstractRoom teleportsPlayerToRoom;
+
+    private boolean destroyOnTrigger = false;
+
+    public boolean mustDestroyOnTrigger() {
+        return destroyOnTrigger;
+    }
+
+    public void setDestroyOnTrigger(boolean destroyOnTrigger) {
+        this.destroyOnTrigger = destroyOnTrigger;
+    }
 
     public MutablePlayableRoom getParentRoom() {
         return parentRoom;
@@ -59,11 +69,11 @@ public class ObjEvent extends AdvEvent {
         this.teleportsPlayerToRoomId = teleportsPlayerToRoomId;
     }
 
-    public Room getTeleportsPlayerToRoom() {
+    public AbstractRoom getTeleportsPlayerToRoom() {
         return teleportsPlayerToRoom;
     }
 
-    public void setTeleportsPlayerToRoom(Room teleportsPlayerToRoom) {
+    public void setTeleportsPlayerToRoom(AbstractRoom teleportsPlayerToRoom) {
         this.teleportsPlayerToRoom = teleportsPlayerToRoom;
     }
 }

@@ -4,27 +4,18 @@
  */
 package di.uniba.map.b.adventure;
 
-import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.entities.ILightSource;
-import di.uniba.map.b.adventure.parser.Parser;
-import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.CommandType;
-import di.uniba.map.b.adventure.type.NonPlayableRoom;
-import di.uniba.map.b.adventure.type.PlayableRoom;
 import java.awt.Image;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-
 import javax.swing.ImageIcon;
-import java.awt.event.WindowEvent;
+import di.uniba.map.b.adventure.parser.Parser;
+import di.uniba.map.b.adventure.parser.ParserOutput;
+import di.uniba.map.b.adventure.type.CommandType;
+import di.uniba.map.b.adventure.type.CutsceneRoom;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 
-/**
- * ATTENZIONE: l'Engine è molto spartano, in realtà demanda la logica alla classe che implementa
- * GameDescription e si occupa di gestire I/O sul terminale.
- *
- * @author pierpaolo
- */
 public class Engine {
 
     private final GameDescription game;
@@ -63,7 +54,7 @@ public class Engine {
 
         gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
 
-        if (game.getCurrentRoom() instanceof NonPlayableRoom) {
+        if (game.getCurrentRoom() instanceof CutsceneRoom) {
             gui.waitForEnterKey();
         }
     }
@@ -80,8 +71,8 @@ public class Engine {
             } else {
                 game.nextMove(p, gui);
             }
-        } else if (game.getCurrentRoom() instanceof NonPlayableRoom) {
-            NonPlayableRoom currentRoom = (NonPlayableRoom) game.getCurrentRoom();
+        } else if (game.getCurrentRoom() instanceof CutsceneRoom) {
+            CutsceneRoom currentRoom = (CutsceneRoom) game.getCurrentRoom();
 
             if (!currentRoom.isFinalRoom()) {
                 if (currentRoom.getNextRoom() != null) {
@@ -97,20 +88,8 @@ public class Engine {
 
         if (game.getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
-            if (currentRoom.isDark()) {
-                for (AbstractEntity obj : game.getInventory()) {
-                    if (obj instanceof ILightSource) {
-                        ILightSource light = (ILightSource) obj;
-                        if (light.isOn()) {
-                            currentRoom.setDark(false);
-                            gui.appendTextEdtOutput(currentRoom.getDescription(), false);
-                            break;
-                        }
-                    }
-                }
-            }
 
-            if (currentRoom.isDark()) {
+            if (currentRoom.isCurrentlyDark()) {
                 updateGUI("Buio", "./resources/img/buio.jpg");
             } else {
                 updateGUI();
@@ -119,7 +98,7 @@ public class Engine {
             updateGUI();
         }
 
-        if (game.getCurrentRoom() instanceof NonPlayableRoom) {
+        if (game.getCurrentRoom() instanceof CutsceneRoom) {
             gui.waitForEnterKey();
         }
     }

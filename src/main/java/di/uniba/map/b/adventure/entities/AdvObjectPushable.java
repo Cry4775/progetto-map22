@@ -3,7 +3,7 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 // TODO genera gli equals per tutti gli object
 
@@ -11,20 +11,12 @@ public class AdvObjectPushable extends AbstractEntity implements IPushable {
 
     private boolean pushed = false;
 
-    public AdvObjectPushable(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvObjectPushable(int id) {
-        super(id);
-    }
-
-    public AdvObjectPushable(int id, String name) {
-        super(id, name);
-    }
-
     public AdvObjectPushable(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvObjectPushable(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     @Override
@@ -64,7 +56,8 @@ public class AdvObjectPushable extends AbstractEntity implements IPushable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 

@@ -5,19 +5,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvPerson extends AbstractEntity implements ITalkable {
 
     private Queue<String> phrases = new LinkedList<>();
-
-    public AdvPerson(int id) {
-        super(id);
-    }
-
-    public AdvPerson(int id, String name) {
-        super(id, name);
-    }
 
     public AdvPerson(int id, String name, String description) {
         super(id, name, description);
@@ -51,7 +43,8 @@ public class AdvPerson extends AbstractEntity implements ITalkable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 }

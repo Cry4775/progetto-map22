@@ -9,7 +9,7 @@ import di.uniba.map.b.adventure.entities.IFluid;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public abstract class AbstractContainer extends AbstractEntity {
 
@@ -19,28 +19,20 @@ public abstract class AbstractContainer extends AbstractEntity {
 
     private boolean forFluids;
 
-    public void setForFluids(boolean forFluids) {
-        this.forFluids = forFluids;
-    }
-
-    public boolean isForFluids() {
-        return forFluids;
-    }
-
-    public AbstractContainer(int id) {
-        super(id);
-    }
-
-    public AbstractContainer(int id, String name) {
-        super(id, name);
-    }
-
     public AbstractContainer(int id, String name, String description) {
         super(id, name, description);
     }
 
     public AbstractContainer(int id, String name, String description, Set<String> alias) {
         super(id, name, description, alias);
+    }
+
+    public void setForFluids(boolean forFluids) {
+        this.forFluids = forFluids;
+    }
+
+    public boolean isForFluids() {
+        return forFluids;
     }
 
     public List<AbstractEntity> getList() {
@@ -140,8 +132,37 @@ public abstract class AbstractContainer extends AbstractEntity {
         return outString;
     }
 
+    public List<AbstractEntity> getAllObjects() {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        if (list != null) {
+            for (AbstractEntity obj : list) {
+                if (obj instanceof AbstractContainer) {
+                    result.addAll(getAllObjects((AbstractContainer) obj));
+                }
+                result.add(obj);
+            }
+        }
+        return result;
+    }
+
+    public List<AbstractEntity> getAllObjects(AbstractContainer container) {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        if (container.getList() != null) {
+            for (AbstractEntity obj : container.getList()) {
+                if (obj instanceof AbstractContainer) {
+                    result.addAll(getAllObjects((AbstractContainer) obj));
+                }
+                result.add(obj);
+            }
+        }
+        return result;
+    }
+
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         if (list != null) {
             for (AbstractEntity item : list) {
                 item.setParent(this);
@@ -151,6 +172,7 @@ public abstract class AbstractContainer extends AbstractEntity {
             list = new ArrayList<>();
         }
 
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 }

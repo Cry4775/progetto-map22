@@ -6,7 +6,7 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvSocket extends AbstractContainer {
 
@@ -15,20 +15,12 @@ public class AdvSocket extends AbstractContainer {
     private AbstractEntity eligibleItem;
     private Integer eligibleItemId;
 
-    public AdvSocket(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvSocket(int id) {
-        super(id);
-    }
-
-    public AdvSocket(int id, String name) {
-        super(id, name);
-    }
-
     public AdvSocket(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvSocket(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     public boolean isItemInside() {
@@ -94,7 +86,7 @@ public class AdvSocket extends AbstractContainer {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 
         if (eligibleItemId != null) {

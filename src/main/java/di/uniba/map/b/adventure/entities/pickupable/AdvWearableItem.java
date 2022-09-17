@@ -8,14 +8,6 @@ public class AdvWearableItem extends AdvItem implements IWearable {
 
     private boolean worn = false;
 
-    public AdvWearableItem(int id) {
-        super(id);
-    }
-
-    public AdvWearableItem(int id, String name) {
-        super(id, name);
-    }
-
     public AdvWearableItem(int id, String name, String description) {
         super(id, name, description);
     }

@@ -12,42 +12,44 @@ import di.uniba.map.b.adventure.entities.AbstractEntity;
 /**
  * @author Pierdamiano Zagaria
  */
-public class PlayableRoom extends Room {
-    private Room south;
+public class PlayableRoom extends AbstractRoom {
+    private AbstractRoom south;
     private Integer southId;
 
-    private Room north;
+    private AbstractRoom north;
     private Integer northId;
 
-    private Room southWest;
+    private AbstractRoom southWest;
     private Integer southWestId;
 
-    private Room northWest;
+    private AbstractRoom northWest;
     private Integer northWestId;
 
-    private Room southEast;
+    private AbstractRoom southEast;
     private Integer southEastId;
 
-    private Room northEast;
+    private AbstractRoom northEast;
     private Integer northEastId;
 
-    private Room east;
+    private AbstractRoom east;
     private Integer eastId;
 
-    private Room west;
+    private AbstractRoom west;
     private Integer westId;
 
-    private Room up;
+    private AbstractRoom up;
     private Integer upId;
 
-    private Room down;
+    private AbstractRoom down;
     private Integer downId;
 
     private final List<AbstractEntity> objects = new ArrayList<>();
 
     private RoomEvent event;
 
-    private boolean dark = false;
+    private boolean currentlyDark = false;
+
+    private boolean darkByDefault = false;
 
     public PlayableRoom(int id, String name, String description) {
         super(id, name, description);
@@ -57,75 +59,83 @@ public class PlayableRoom extends Room {
         super(id, name, description, imgPath);
     }
 
-    public boolean isDark() {
-        return dark;
+    public boolean isDarkByDefault() {
+        return darkByDefault;
     }
 
-    public void setDark(boolean dark) {
-        this.dark = dark;
+    public void setDarkByDefault(boolean darkByDefault) {
+        this.darkByDefault = darkByDefault;
     }
 
-    public Room getSouth() {
+    public boolean isCurrentlyDark() {
+        return currentlyDark;
+    }
+
+    public void setCurrentlyDark(boolean currentlyDark) {
+        this.currentlyDark = currentlyDark;
+    }
+
+    public AbstractRoom getSouth() {
         return south;
     }
 
-    public void setSouth(Room south) {
+    public void setSouth(AbstractRoom south) {
         this.south = south;
     }
 
-    public Room getNorth() {
+    public AbstractRoom getNorth() {
         return north;
     }
 
-    public void setNorth(Room north) {
+    public void setNorth(AbstractRoom north) {
         this.north = north;
     }
 
-    public Room getEast() {
+    public AbstractRoom getEast() {
         return east;
     }
 
-    public void setEast(Room east) {
+    public void setEast(AbstractRoom east) {
         this.east = east;
     }
 
-    public Room getWest() {
+    public AbstractRoom getWest() {
         return west;
     }
 
-    public void setWest(Room west) {
+    public void setWest(AbstractRoom west) {
         this.west = west;
     }
 
-    public Room getSouthWest() {
+    public AbstractRoom getSouthWest() {
         return southWest;
     }
 
-    public void setSouthWest(Room southWest) {
+    public void setSouthWest(AbstractRoom southWest) {
         this.southWest = southWest;
     }
 
-    public Room getNorthWest() {
+    public AbstractRoom getNorthWest() {
         return northWest;
     }
 
-    public void setNorthWest(Room northWest) {
+    public void setNorthWest(AbstractRoom northWest) {
         this.northWest = northWest;
     }
 
-    public Room getSouthEast() {
+    public AbstractRoom getSouthEast() {
         return southEast;
     }
 
-    public void setSouthEast(Room southEast) {
+    public void setSouthEast(AbstractRoom southEast) {
         this.southEast = southEast;
     }
 
-    public Room getNorthEast() {
+    public AbstractRoom getNorthEast() {
         return northEast;
     }
 
-    public void setNorthEast(Room northEast) {
+    public void setNorthEast(AbstractRoom northEast) {
         this.northEast = northEast;
     }
 
@@ -165,7 +175,7 @@ public class PlayableRoom extends Room {
         return objects;
     }
 
-    public Room getUp() {
+    public AbstractRoom getUp() {
         return up;
     }
 
@@ -173,7 +183,7 @@ public class PlayableRoom extends Room {
         return upId;
     }
 
-    public Room getDown() {
+    public AbstractRoom getDown() {
         return down;
     }
 
@@ -181,11 +191,11 @@ public class PlayableRoom extends Room {
         return downId;
     }
 
-    public void setUp(Room up) {
+    public void setUp(AbstractRoom up) {
         this.up = up;
     }
 
-    public void setDown(Room down) {
+    public void setDown(AbstractRoom down) {
         this.down = down;
     }
 
@@ -271,5 +281,9 @@ public class PlayableRoom extends Room {
 
     public RoomEvent getEvent() {
         return event;
+    }
+
+    public void removeObject(AbstractEntity obj) {
+        objects.remove(obj);
     }
 }

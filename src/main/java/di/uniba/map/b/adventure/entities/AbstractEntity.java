@@ -5,26 +5,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.type.GameComponent;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.PlayableRoom;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
-public abstract class AbstractEntity {
-
-    private final int id;
-
-    private String name;
-
-    private String description;
+public abstract class AbstractEntity extends GameComponent {
 
     private Set<String> alias;
 
     private boolean mustDestroyFromInv = false;
 
-    private AbstractEntity parent;
+    private GameComponent parent;
 
     private List<ObjEvent> events = new ArrayList<>();
 
@@ -35,6 +30,15 @@ public abstract class AbstractEntity {
     private String failedInteractionMessage;
 
     private boolean actionPerformed;
+
+    public AbstractEntity(int id, String name, String description) {
+        super(id, name, description);
+    }
+
+    public AbstractEntity(int id, String name, String description, Set<String> alias) {
+        super(id, name, description);
+        this.alias = alias;
+    }
 
     public boolean isActionPerformed() {
         return actionPerformed;
@@ -52,44 +56,6 @@ public abstract class AbstractEntity {
         this.failedInteractionMessage = failedInteractionMessage;
     }
 
-    public AbstractEntity(int id) {
-        this.id = id;
-    }
-
-    public AbstractEntity(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public AbstractEntity(int id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-
-    public AbstractEntity(int id, String name, String description, Set<String> alias) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.alias = alias;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Set<String> getAlias() {
         return alias;
     }
@@ -102,42 +68,32 @@ public abstract class AbstractEntity {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
-    public int getId() {
-        return this.id;
+    public abstract void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms);
+
+    public void processRoomParent(List<AbstractRoom> rooms) {
+        for (AbstractRoom room : rooms) {
+            if (room instanceof MutablePlayableRoom) {
+                MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+
+                if (mRoom.getAllObjects().contains(this)) {
+                    parent = room;
+                }
+            } else if (room instanceof PlayableRoom) {
+                PlayableRoom playableRoom = (PlayableRoom) room;
+
+                if (playableRoom.getObjects() != null) {
+                    if (playableRoom.getObjects().contains(this)) {
+                        parent = room;
+                    }
+                }
+            }
+        }
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + id;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AbstractEntity other = (AbstractEntity) obj;
-        if (id != other.id)
-            return false;
-        return true;
-    }
-
-    public abstract void processReferences(List<AbstractEntity> objects, List<Room> rooms);
-
-    public class Recursive<I> {
-        public I func;
-    }
-
-    public void processEventReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processEventReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
         if (events != null) {
             for (ObjEvent evt : events) {
-                for (Room room : rooms) {
+                for (AbstractRoom room : rooms) {
                     boolean targetRoomDone = false;
                     boolean parentRoomDone = false;
                     boolean teleportRoomDone = false;
@@ -158,39 +114,9 @@ public abstract class AbstractEntity {
 
                         if (!parentRoomDone) {
                             if (evt.isUpdatingParentRoom()) {
-                                if (mRoom.getObjects().contains(this)) {
+                                if (mRoom.getAllObjects().contains(this)) {
                                     evt.setParentRoom(mRoom);
                                     parentRoomDone = true;
-                                }
-
-                                if (evt.getParentRoom() == null) {
-                                    Recursive<BiFunction<MutablePlayableRoom, ObjEvent, Boolean>> recursive =
-                                            new Recursive<>();
-
-                                    recursive.func = (_room, objEvt) -> {
-                                        if (objEvt.getParentRoom() == null) {
-                                            MutablePlayableRoom nextRoom = _room.getNewRoom();
-                                            boolean found = false;
-
-                                            if (nextRoom != null) {
-                                                if (nextRoom.getObjects() != null
-                                                        && nextRoom.getObjects().contains(this)) {
-                                                    found = true;
-                                                } else {
-                                                    found = recursive.func.apply(nextRoom, objEvt);
-                                                }
-                                            }
-                                            return found;
-                                        }
-                                        return false;
-                                    };
-
-                                    if (mRoom.getNewRoom() != null) {
-                                        if (recursive.func.apply(mRoom, evt)) {
-                                            evt.setParentRoom(mRoom);
-                                            parentRoomDone = true;
-                                        }
-                                    }
                                 }
                             } else {
                                 parentRoomDone = true;
@@ -265,11 +191,25 @@ public abstract class AbstractEntity {
                 evt.getUpdateTargetRoom().updateToNewRoom();
             }
 
-            evt.setTriggered(true);
+            if (evt.mustDestroyOnTrigger()) {
+                if (parent instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) parent;
+
+                    container.remove(this);
+                } else if (parent instanceof PlayableRoom) {
+                    PlayableRoom pRoom = (PlayableRoom) parent;
+
+                    pRoom.removeObject(this);
+                } else {
+                    // TODO exception
+                }
+            }
 
             if (evt.getText() != null && !evt.getText().isEmpty()) {
                 outString.append("<br><br>" + evt.getText());
             }
+
+            evt.setTriggered(true);
         }
         return outString;
     }
@@ -282,11 +222,11 @@ public abstract class AbstractEntity {
         this.mustDestroyFromInv = mustDestroyFromInv;
     }
 
-    public AbstractEntity getParent() {
+    public GameComponent getParent() {
         return parent;
     }
 
-    public void setParent(AbstractEntity parent) {
+    public void setParent(GameComponent parent) {
         this.parent = parent;
     }
 
@@ -301,8 +241,8 @@ public abstract class AbstractEntity {
     public StringBuilder getLookMessage() {
         StringBuilder outString = new StringBuilder();
 
-        if (description != null) {
-            outString.append(description);
+        if (getDescription() != null) {
+            outString.append(getDescription());
         }
 
         if (this instanceof IOpenable) {

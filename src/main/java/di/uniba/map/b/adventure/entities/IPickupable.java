@@ -7,5 +7,5 @@ public interface IPickupable {
 
     public void setPickedUp(boolean value);
 
-    public StringBuilder pickup(List<AbstractEntity> inventory, List<AbstractEntity> roomObjects);
+    public StringBuilder pickup(List<AbstractEntity> inventory);
 }

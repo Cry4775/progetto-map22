@@ -11,7 +11,7 @@ import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.PlayableRoom;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +24,15 @@ import java.io.IOException;
  */
 public abstract class GameDescription {
 
-    private final List<Room> rooms = new ArrayList<>();
+    private final List<AbstractRoom> rooms = new ArrayList<>();
 
     private final List<Command> commands = new ArrayList<>();
 
     private final List<AbstractEntity> inventory = new ArrayList<>();
 
-    private Room currentRoom;
+    private AbstractRoom currentRoom;
 
-    private Room previousRoom;
+    private AbstractRoom previousRoom;
 
     private Status status = new Status();
 
@@ -40,15 +40,15 @@ public abstract class GameDescription {
         return status;
     }
 
-    public Room getPreviousRoom() {
+    public AbstractRoom getPreviousRoom() {
         return previousRoom;
     }
 
-    public void setPreviousRoom(Room previousRoom) {
+    public void setPreviousRoom(AbstractRoom previousRoom) {
         this.previousRoom = previousRoom;
     }
 
-    public List<Room> getRooms() {
+    public List<AbstractRoom> getRooms() {
         return rooms;
     }
 
@@ -56,11 +56,11 @@ public abstract class GameDescription {
         return commands;
     }
 
-    public Room getCurrentRoom() {
+    public AbstractRoom getCurrentRoom() {
         return currentRoom;
     }
 
-    public void setCurrentRoom(Room currentRoom) {
+    public void setCurrentRoom(AbstractRoom currentRoom) {
         this.currentRoom = currentRoom;
     }
 
@@ -68,7 +68,7 @@ public abstract class GameDescription {
         return inventory;
     }
 
-    public void setCompassLabel(Room room, JLabel directionLbl) {
+    public void setCompassLabel(AbstractRoom room, JLabel directionLbl) {
         if (room != null) {
             if (room.equals(previousRoom)) {
                 directionLbl.setForeground(Color.BLUE);
@@ -109,7 +109,7 @@ public abstract class GameDescription {
     public void setCompassLabels(GameJFrame gui) {
         if (getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
-            if (!currentPlayableRoom.isDark()) {
+            if (!currentPlayableRoom.isCurrentlyDark()) {
                 setCompassLabel(currentPlayableRoom.getNorth(), gui.getLblCompassNorthText());
                 setCompassLabel(currentPlayableRoom.getSouth(), gui.getLblCompassSouthText());
                 setCompassLabel(currentPlayableRoom.getWest(), gui.getLblCompassWestText());

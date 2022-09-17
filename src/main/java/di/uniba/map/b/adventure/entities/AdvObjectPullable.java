@@ -3,26 +3,18 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvObjectPullable extends AbstractEntity implements IPullable {
 
     private boolean pulled = false;
 
-    public AdvObjectPullable(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
-    public AdvObjectPullable(int id) {
-        super(id);
-    }
-
-    public AdvObjectPullable(int id, String name) {
-        super(id, name);
-    }
-
     public AdvObjectPullable(int id, String name, String description) {
         super(id, name, description);
+    }
+
+    public AdvObjectPullable(int id, String name, String description, Set<String> alias) {
+        super(id, name, description, alias);
     }
 
     @Override
@@ -63,7 +55,8 @@ public class AdvObjectPullable extends AbstractEntity implements IPullable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<Room> rooms) {
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 

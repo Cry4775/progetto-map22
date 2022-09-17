@@ -1,6 +1,6 @@
 package di.uniba.map.b.adventure.games;
 
-import di.uniba.map.b.adventure.type.Room;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class Status {
     private boolean movementAttempt = false;
@@ -8,7 +8,7 @@ public class Status {
     private boolean roomBlockedByDoor = false;
 
     private boolean warp = false;
-    private Room warpDestination;
+    private AbstractRoom warpDestination;
 
     public void reset() {
         movementAttempt = false;
@@ -69,11 +69,11 @@ public class Status {
         this.warp = warp;
     }
 
-    public Room getWarpDestination() {
+    public AbstractRoom getWarpDestination() {
         return warpDestination;
     }
 
-    public void setWarpDestination(Room warpDestination) {
+    public void setWarpDestination(AbstractRoom warpDestination) {
         this.warpDestination = warpDestination;
     }
 }
