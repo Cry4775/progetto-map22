@@ -63,8 +63,6 @@ import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.RoomEvent;
 
-// Se tutto viene caricato da file allora si può cancellare
-
 // TODO il database puó essere usato come lista di tutti gli oggetti, poi dal json si imposta tutto
 // tramite id
 public class HauntedHouseGame extends GameDescription {
@@ -99,7 +97,6 @@ public class HauntedHouseGame extends GameDescription {
                         .of(AbstractEntity.class)
                         .registerSubtype(AdvFixedObject.class)
                         .registerSubtype(AdvItem.class)
-                        .registerSubtype(AbstractContainer.class)
                         .registerSubtype(AdvContainer.class)
                         .registerSubtype(AdvWearableContainer.class)
                         .registerSubtype(AdvChest.class)
@@ -135,7 +132,7 @@ public class HauntedHouseGame extends GameDescription {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {
                         return AbstractRoom.class.equals(f.getDeclaredClass())
-                                || AdvItem.class.equals(f.getDeclaredClass());
+                                || AbstractEntity.class.equals(f.getDeclaredClass());
                     }
 
                     @Override
@@ -151,28 +148,23 @@ public class HauntedHouseGame extends GameDescription {
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
                 new FileInputStream("./resources/rooms.json"), StandardCharsets.UTF_8))) {
-            List<AbstractRoom> rooms = gson.fromJson(in, roomsType);
+            getRooms().addAll(gson.fromJson(in, roomsType));
 
-            linkRooms(unpackRooms(rooms));
-
-            for (AbstractRoom room : rooms) {
-                getRooms().add(room);
-            }
+            linkRooms();
 
             List<AbstractEntity> objects = listAllObjects();
-
             for (AbstractEntity obj : objects) {
-                obj.processReferences(objects, rooms);
+                obj.processReferences(objects, getRooms());
             }
 
-            setCurrentRoom(rooms.get(0));
+            setCurrentRoom(getRooms().get(0));
         }
     }
 
-    private List<AbstractRoom> unpackRooms(List<AbstractRoom> rooms) {
+    private List<AbstractRoom> listAllRooms() {
         List<AbstractRoom> result = new ArrayList<>();
 
-        for (AbstractRoom room : rooms) {
+        for (AbstractRoom room : getRooms()) {
             if (room instanceof MutablePlayableRoom) {
                 MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
 
@@ -189,7 +181,7 @@ public class HauntedHouseGame extends GameDescription {
         List<AbstractEntity> objects = new ArrayList<>();
         List<AbstractEntity> result = new ArrayList<>();
 
-        for (AbstractRoom room : unpackRooms(getRooms())) {
+        for (AbstractRoom room : listAllRooms()) {
             if (room instanceof PlayableRoom) {
                 PlayableRoom pRoom = (PlayableRoom) room;
 
@@ -698,27 +690,31 @@ public class HauntedHouseGame extends GameDescription {
         return "";
     }
 
-    private void linkRooms(List<AbstractRoom> rooms) {
-        setRoomsDirection(rooms, PlayableRoom::getEastId, PlayableRoom::setEast,
+    private void linkRooms() {
+        List<AbstractRoom> allRooms = listAllRooms();
+
+        setRoomsDirection(allRooms, PlayableRoom::getEastId, PlayableRoom::setEast,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getWestId, PlayableRoom::setWest,
+        setRoomsDirection(allRooms, PlayableRoom::getWestId, PlayableRoom::setWest,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getNorthId, PlayableRoom::setNorth,
+        setRoomsDirection(allRooms, PlayableRoom::getNorthId, PlayableRoom::setNorth,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getSouthId, PlayableRoom::setSouth,
+        setRoomsDirection(allRooms, PlayableRoom::getSouthId, PlayableRoom::setSouth,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
+        setRoomsDirection(allRooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
+        setRoomsDirection(allRooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
+        setRoomsDirection(allRooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
+        setRoomsDirection(allRooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getUpId, PlayableRoom::setUp, PlayableRoom.class);
-        setRoomsDirection(rooms, PlayableRoom::getDownId, PlayableRoom::setDown,
+        setRoomsDirection(allRooms, PlayableRoom::getUpId, PlayableRoom::setUp,
                 PlayableRoom.class);
-        setRoomsDirection(rooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
+        setRoomsDirection(allRooms, PlayableRoom::getDownId, PlayableRoom::setDown,
+                PlayableRoom.class);
+
+        setRoomsDirection(allRooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
                 CutsceneRoom.class);
     }
 
