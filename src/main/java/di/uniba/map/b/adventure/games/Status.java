@@ -1,11 +1,14 @@
 package di.uniba.map.b.adventure.games;
 
+import di.uniba.map.b.adventure.entities.AdvMagicWall;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class Status {
     private boolean movementAttempt = false;
     private boolean positionChanged = false;
     private boolean roomBlockedByDoor = false;
+    private boolean roomBlockedByWall = false;
+    private AdvMagicWall wall;
 
     private boolean warp = false;
     private AbstractRoom warpDestination;
@@ -75,5 +78,21 @@ public class Status {
 
     public void setWarpDestination(AbstractRoom warpDestination) {
         this.warpDestination = warpDestination;
+    }
+
+    public boolean isRoomBlockedByWall() {
+        return roomBlockedByWall;
+    }
+
+    public void setRoomBlockedByWall(boolean roomBlockedByWall) {
+        this.roomBlockedByWall = roomBlockedByWall;
+    }
+
+    public AdvMagicWall getWall() {
+        return wall;
+    }
+
+    public void setWall(AdvMagicWall wall) {
+        this.wall = wall;
     }
 }

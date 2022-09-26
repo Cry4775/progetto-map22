@@ -204,21 +204,52 @@ public class HauntedHouseGame extends GameDescription {
         return result;
     }
 
-    private AdvMagicWall getMagicWall(PlayableRoom currentRoom, CommandType direction,
-            AbstractRoom nextRoom) {
-        if (currentRoom.getObjects() != null) {
-            for (AbstractEntity obj : currentRoom.getObjects()) {
+    public boolean isPossibleToMove(CommandType direction) {
+        PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
-                if (obj instanceof AdvMagicWall) {
-                    AdvMagicWall wall = (AdvMagicWall) obj;
-                    wall.processRequirements(getInventory());
-                    if (wall.isDirectionBlocked(direction, nextRoom)) {
-                        return wall;
-                    }
-                }
+        getStatus().setMovementAttempt(true);
+
+        AdvMagicWall wall = currentRoom.getMagicWall(direction);
+        if (wall != null) {
+            wall.processRequirements(getInventory());
+
+            if (wall.isLocked()) {
+                getStatus().setRoomBlockedByWall(true);
+                getStatus().setWall(wall);
+                return false;
+            } else {
+                return true;
             }
         }
-        return null;
+
+        return true;
+    }
+
+    public boolean isMovementCommand(CommandType commandType) {
+        switch (commandType) {
+            case NORTH:
+                return true;
+            case NORTH_EAST:
+                return true;
+            case NORTH_WEST:
+                return true;
+            case SOUTH:
+                return true;
+            case SOUTH_EAST:
+                return true;
+            case SOUTH_WEST:
+                return true;
+            case EAST:
+                return true;
+            case WEST:
+                return true;
+            case UP:
+                return true;
+            case DOWN:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -226,82 +257,11 @@ public class HauntedHouseGame extends GameDescription {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
+        CommandType commandType = p.getCommand().getType();
 
-        if (p.getCommand().getType() == CommandType.NORTH) {
-            AdvMagicWall wall =
-                    getMagicWall(currentRoom, CommandType.NORTH, currentRoom.getNorth());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getNorth());
-            }
-        } else if (p.getCommand().getType() == CommandType.NORTH_EAST) {
-            AdvMagicWall wall =
-                    getMagicWall(currentRoom, CommandType.NORTH_EAST, currentRoom.getNorthEast());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getNorthEast());
-            }
-        } else if (p.getCommand().getType() == CommandType.NORTH_WEST) {
-            AdvMagicWall wall =
-                    getMagicWall(currentRoom, CommandType.NORTH_WEST, currentRoom.getNorthWest());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getNorthWest());
-            }
-        } else if (p.getCommand().getType() == CommandType.SOUTH) {
-            AdvMagicWall wall =
-                    getMagicWall(currentRoom, CommandType.SOUTH, currentRoom.getSouth());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getSouth());
-            }
-        } else if (p.getCommand().getType() == CommandType.SOUTH_EAST) {
-            AdvMagicWall wall =
-                    getMagicWall(currentRoom, CommandType.SOUTH_EAST, currentRoom.getSouthEast());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getSouthEast());
-            }
-        } else if (p.getCommand().getType() == CommandType.SOUTH_WEST) {
-            AdvMagicWall wall =
-                    getMagicWall(currentRoom, CommandType.SOUTH_WEST, currentRoom.getSouthWest());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getSouthWest());
-            }
-        } else if (p.getCommand().getType() == CommandType.EAST) {
-            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.EAST, currentRoom.getEast());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getEast());
-            }
-        } else if (p.getCommand().getType() == CommandType.WEST) {
-            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.WEST, currentRoom.getWest());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getWest());
-            }
-        } else if (p.getCommand().getType() == CommandType.UP) {
-            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.UP, currentRoom.getUp());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getUp());
-            }
-        } else if (p.getCommand().getType() == CommandType.DOWN) {
-            AdvMagicWall wall = getMagicWall(currentRoom, CommandType.DOWN, currentRoom.getDown());
-            if (wall != null) {
-                outString.append(wall.getTrespassingWhenLockedText());
-            } else {
-                moveTo(currentRoom.getDown());
+        if (isMovementCommand(commandType)) {
+            if (isPossibleToMove(commandType)) {
+                moveTo(currentRoom.getRoomAt(commandType));
             }
         } else if (p.getCommand().getType() == CommandType.INVENTORY) {
             if (!getInventory().isEmpty()) {
@@ -570,6 +530,8 @@ public class HauntedHouseGame extends GameDescription {
                 outString.append("Meglio non avventurarsi nel buio.");
             } else if (getStatus().isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");
+            } else if (getStatus().isRoomBlockedByWall()) {
+                outString.append(getStatus().getWall().getTrespassingWhenLockedText());
             } else if (getStatus().isPositionChanged()) {
                 if (currentRoom != null && currentRoom.isCurrentlyDark()) {
                     outString.append("È completamente buio e non riesci a vedere niente.");

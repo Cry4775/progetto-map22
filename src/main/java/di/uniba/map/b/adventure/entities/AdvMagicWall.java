@@ -3,6 +3,7 @@ package di.uniba.map.b.adventure.entities;
 import java.util.List;
 import java.util.Set;
 import di.uniba.map.b.adventure.type.CommandType;
+import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvMagicWall extends AbstractEntity {
@@ -32,6 +33,12 @@ public class AdvMagicWall extends AbstractEntity {
         super(id, name, description, alias);
     }
 
+    @Override
+    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
+        processEventReferences(objects, rooms);
+    }
+
     public void processRequirements(List<AbstractEntity> inventory) {
         if (locked && unlockedByWearingItemId != 0) {
             for (AbstractEntity obj : inventory) {
@@ -45,44 +52,60 @@ public class AdvMagicWall extends AbstractEntity {
                     }
                 }
             }
+        } else if (!locked && unlockedByWearingItemId != 0) {
+            for (AbstractEntity obj : inventory) {
+                if (obj.getId() == unlockedByWearingItemId) {
+                    if (obj instanceof IWearable) {
+                        IWearable wearable = (IWearable) obj;
+
+                        if (!wearable.isWorn()) {
+                            locked = true;
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    public boolean isDirectionBlocked(CommandType direction, AbstractRoom nextRoom) {
-        if (locked) {
-            if (nextRoom != null) {
-                if (blockedRoomId == nextRoom.getId()) {
-                    return true;
-                }
+    public boolean isBlocking(CommandType direction) {
+        PlayableRoom parentRoom = (PlayableRoom) getParent();
+        AbstractRoom nextRoom = parentRoom.getRoomAt(direction);
+
+        if (blockedRoomId != 0) {
+            if (nextRoom != null && nextRoom.getId() == blockedRoomId) {
+                return true;
             }
+        } else {
+            // If the wall is blocking a "fake" room we use those booleans
 
             switch (direction) {
                 case NORTH:
                     return northBlocked;
-                case SOUTH:
-                    return southBlocked;
-                case EAST:
-                    return eastBlocked;
-                case WEST:
-                    return westBlocked;
                 case NORTH_EAST:
                     return northEastBlocked;
                 case NORTH_WEST:
                     return northWestBlocked;
+                case SOUTH:
+                    return southBlocked;
                 case SOUTH_EAST:
                     return southEastBlocked;
                 case SOUTH_WEST:
                     return southWestBlocked;
+                case EAST:
+                    return eastBlocked;
+                case WEST:
+                    return westBlocked;
                 case UP:
                     return upBlocked;
                 case DOWN:
                     return downBlocked;
                 default:
-                    return true;
+                    return false;
             }
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public boolean isLocked() {
@@ -195,12 +218,6 @@ public class AdvMagicWall extends AbstractEntity {
 
     public void setDownBlocked(boolean downBlocked) {
         this.downBlocked = downBlocked;
-    }
-
-    @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
 }
