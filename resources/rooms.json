@@ -3,7 +3,7 @@
         "type": "CutsceneRoom",
         "id": 1,
         "name": "...",
-        "description": "Faticosamente riprendi i sensi...il freddo pavimento sotto il tuo volto.<br><br>Cerchi di ricordare cosa ti ha condotto fino a lì: lo squillo del telefono, la tua amica Valeria che si rifaceva viva - praticamente non la sentivi da sei mesi - chiedendoti di raggiungerla nella sua futura residenza, un vecchio palazzo chiamato Villa Morgana; voleva mostrarti una cosa interessante - diceva lei - ma il tono nervoso della sua voce ti aveva messo in allarme.<br><br>Poi il viaggio, la tua auto che si fermava davanti al cancello della villa, nessuna risposta al tuo bussare; il portone era stranamente aperto. Sei entrato, preoccupato per Valeria, muovendo i tuoi passi lungo il corridoio e le stanze vicine, cercandola e chiamandola.<br><br>Di colpo tutto intorno a te ha iniziato a girare e il buio ti ha avvolto.<br><br>Ti risvegli, lasci che i tuoi occhi si abituino alla poca luce che filtra in qualche modo all'interno e ti guardi attorno. Polvere, finestre murate, pareti e mobilio in rovina. Sei sempre all'interno della Villa. Ma la Villa in qualche modo è cambiata.<br><br> [ . . . ]",
+        "description": "Faticosamente riprendi i sensi...il freddo pavimento sotto il tuo volto.\n\nCerchi di ricordare cosa ti ha condotto fino a lì: lo squillo del telefono, la tua amica Valeria che si rifaceva viva - praticamente non la sentivi da sei mesi - chiedendoti di raggiungerla nella sua futura residenza, un vecchio palazzo chiamato Villa Morgana; voleva mostrarti una cosa interessante - diceva lei - ma il tono nervoso della sua voce ti aveva messo in allarme.\n\nPoi il viaggio, la tua auto che si fermava davanti al cancello della villa, nessuna risposta al tuo bussare; il portone era stranamente aperto. Sei entrato, preoccupato per Valeria, muovendo i tuoi passi lungo il corridoio e le stanze vicine, cercandola e chiamandola.\n\nDi colpo tutto intorno a te ha iniziato a girare e il buio ti ha avvolto.\n\nTi risvegli, lasci che i tuoi occhi si abituino alla poca luce che filtra in qualche modo all'interno e ti guardi attorno. Polvere, finestre murate, pareti e mobilio in rovina. Sei sempre all'interno della Villa. Ma la Villa in qualche modo è cambiata.\n\n [ . . . ]",
         "imgPath": "./resources/img/intro.jpg",
         "nextRoomId": 2
     },
@@ -11,7 +11,7 @@
         "type": "PlayableRoom",
         "id": 2,
         "name": "Un piccolo salotto",
-        "description": "Sei in un piccolo salotto alquanto disadorno.<br>Un divano è appoggiato ad una parete, proprio sotto una finestra murata.<br>Un arco si apre nella parete ovest.",
+        "description": "Sei in un piccolo salotto alquanto disadorno.\nUn divano è appoggiato ad una parete, proprio sotto una finestra murata.\nUn arco si apre nella parete ovest.",
         "imgPath": "./resources/img/salotto.jpg",
         "westId": 3,
         "objects": [
@@ -55,7 +55,7 @@
         "type": "MutablePlayableRoom",
         "id": 4,
         "name": "Ingresso",
-        "description": "Il piccolo atrio in cui ti trovi è dominato dall'imponente portone, verso sud. <br>Da qui un corridoio conduce a nord, mentre a ovest puoi vedere una porta. <br>Due quadri, unico arredamento della stanza, pendono dalle pareti.",
+        "description": "Il piccolo atrio in cui ti trovi è dominato dall'imponente portone, verso sud. \nDa qui un corridoio conduce a nord, mentre a ovest puoi vedere una porta. \nDue quadri, unico arredamento della stanza, pendono dalle pareti.",
         "imgPath": "./resources/img/ingresso1.jpg",
         "northId": 3,
         "westId": 5,
@@ -64,7 +64,7 @@
                 "type": "AdvFixedObject",
                 "id": 4,
                 "name": "quadri",
-                "description": "Due quadri a dir poco inquietanti. <br>Quello di sinistra pare rappresentare una visione dell'inferno così come lo descrive Dante Alighieri, mentre l'altro è il ritratto di una donna albina.",
+                "description": "Due quadri a dir poco inquietanti. \nQuello di sinistra pare rappresentare una visione dell'inferno così come lo descrive Dante Alighieri, mentre l'altro è il ritratto di una donna albina.",
                 "alias": [
                     "quadro"
                 ]
@@ -100,7 +100,7 @@
         "type": "MutablePlayableRoom",
         "id": 5,
         "name": "Vestibolo",
-        "description": "Una piccola stanza dove gli ospiti possono lasciare i loro soprabiti. La porta ad est è l'unica uscita. <br>Un solo cappotto è appeso ad una parete.",
+        "description": "Una piccola stanza dove gli ospiti possono lasciare i loro soprabiti. La porta ad est è l'unica uscita. \nUn solo cappotto è appeso ad una parete.",
         "imgPath": "./resources/img/vestibolo1.jpg",
         "eastId": 4,
         "objects": [
@@ -125,7 +125,7 @@
                         "id": 8,
                         "name": "lettera",
                         "description": "Una lettera sgualcita.",
-                        "readText": "«Non so se mai qualcuno leggerà queste note, ma se dovesse accadere, vi prego, fuggite. Se ho ben tenuto conto del tempo oggi è il sesto giorno del mese di Aprile dell'anno 1911, e da tre giorni sono rinchiuso in questo luogo dannato. Non avessi mai aperto quel passaggio murato nelle cantine, anche se esso sembrava nascondere solo vecchie stanze e caverne oscure e vuote. Poco dopo l'apertura del passaggio, la preziosa e antica villa che avevo acquistato si è trasformata in un decrepito maniero dalle finestre murate, da cui pare impossibile uscire. Adesso proverò a ridiscendere nei sotterranei, anche se il passaggio per le cantine pare scomparso. Sono sicuro che, là sotto, qualcosa vive... Lasciate questo luogo prima che sia troppo tardi, se potete.» <br><br>La firma è illeggibile."
+                        "readText": "«Non so se mai qualcuno leggerà queste note, ma se dovesse accadere, vi prego, fuggite. Se ho ben tenuto conto del tempo oggi è il sesto giorno del mese di Aprile dell'anno 1911, e da tre giorni sono rinchiuso in questo luogo dannato. Non avessi mai aperto quel passaggio murato nelle cantine, anche se esso sembrava nascondere solo vecchie stanze e caverne oscure e vuote. Poco dopo l'apertura del passaggio, la preziosa e antica villa che avevo acquistato si è trasformata in un decrepito maniero dalle finestre murate, da cui pare impossibile uscire. Adesso proverò a ridiscendere nei sotterranei, anche se il passaggio per le cantine pare scomparso. Sono sicuro che, là sotto, qualcosa vive... Lasciate questo luogo prima che sia troppo tardi, se potete.» \n\nLa firma è illeggibile."
                     },
                     {
                         "type": "AdvWearableContainer",
@@ -172,7 +172,7 @@
         "type": "MutablePlayableRoom",
         "id": 7,
         "name": "Cucine",
-        "description": "Le cucine del palazzo sono ovviamente inutilizzabili. Il degrado e l'abbandono regnano sovrani, tutto è coperto da almeno un dito di polvere. <br>Appoggiata ad una parete vedi una vecchia credenza.",
+        "description": "Le cucine del palazzo sono ovviamente inutilizzabili. Il degrado e l'abbandono regnano sovrani, tutto è coperto da almeno un dito di polvere. \nAppoggiata ad una parete vedi una vecchia credenza.",
         "imgPath": "./resources/img/cucina1.jpg",
         "westId": 6,
         "objects": [
@@ -212,7 +212,7 @@
         "type": "MutablePlayableRoom",
         "id": 8,
         "name": "Salone",
-        "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest.",
+        "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. \nAl centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. \nUn'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest.",
         "imgPath": "./resources/img/salone1.jpg",
         "eastId": 6,
         "southWestId": 10,
@@ -244,7 +244,7 @@
             }
         ],
         "newRoom": {
-            "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. <br>Al centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. <br>Un'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest. Il candeliere adesso pende dalla corda a non più di un metro da terra.",
+            "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. \nAl centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. \nUn'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest. Il candeliere adesso pende dalla corda a non più di un metro da terra.",
             "imgPath": "./resources/img/salone2.jpg",
             "objects": [
                 {
@@ -280,7 +280,7 @@
         "type": "MutablePlayableRoom",
         "id": 10,
         "name": "Un piccolo andito",
-        "description": "Questo piccolo andito, ricavato da uno degli angoli del salone ottagonale, non contiene altro se non una corda avvolta ad una grossa ruota e, collegata a questa, una leva in legno. <br>Una porta conduce a nord-est.",
+        "description": "Questo piccolo andito, ricavato da uno degli angoli del salone ottagonale, non contiene altro se non una corda avvolta ad una grossa ruota e, collegata a questa, una leva in legno. \nUna porta conduce a nord-est.",
         "imgPath": "./resources/img/andito1.jpg",
         "northEastId": 8,
         "objects": [
@@ -385,7 +385,7 @@
         "type": "MutablePlayableRoom",
         "id": 15,
         "name": "Studio (1° piano)",
-        "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. <br>Sopra la scrivania vedi un libro.",
+        "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. \nSopra la scrivania vedi un libro.",
         "imgPath": "./resources/img/studio1.jpg",
         "eastId": 14,
         "objects": [
@@ -400,13 +400,13 @@
                 "id": 27,
                 "name": "libro",
                 "description": "Un volume in ottavo dalla copertina in pelle. Sembra molto antico.",
-                "readText": "Sembra una raccolta di leggende di questa zona, buone soltanto per essere lette ai bambini. Sfogliando il libro trovi però il riferimento ad una strega che viveva da queste parti un paio di secoli fa. Era incredibilmente malvagia, e si faceva chiamare come la strega dell'isola di Avalon, Morgana.<br>Si macchiò di delitti e nefandezze d'ogni genere, finchè la sua discepola prediletta le si rivoltò contro. Grazie alle arti che aveva appreso dalla strega, la giovane creò due oggetti, due gioielli, che la aiutarono ad affrontare colei che era stata la sua maestra. La strega fu così sconfitta e giustiziata, ed il suo spirito imprigionato nel sottosuolo.<br><br>Ti chiedi come mai questo sia l'unico libro qui presente, e cosa ci sia di vero in questa storia."
+                "readText": "Sembra una raccolta di leggende di questa zona, buone soltanto per essere lette ai bambini. Sfogliando il libro trovi però il riferimento ad una strega che viveva da queste parti un paio di secoli fa. Era incredibilmente malvagia, e si faceva chiamare come la strega dell'isola di Avalon, Morgana.\nSi macchiò di delitti e nefandezze d'ogni genere, finchè la sua discepola prediletta le si rivoltò contro. Grazie alle arti che aveva appreso dalla strega, la giovane creò due oggetti, due gioielli, che la aiutarono ad affrontare colei che era stata la sua maestra. La strega fu così sconfitta e giustiziata, ed il suo spirito imprigionato nel sottosuolo.\n\nTi chiedi come mai questo sia l'unico libro qui presente, e cosa ci sia di vero in questa storia."
             },
             {
                 "type": "AdvObjectMovable",
                 "id": 28,
                 "name": "libreria",
-                "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota. <br>Noti che la libreria non è ben appoggiata al muro, forse è stata spostata.",
+                "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota. \nNoti che la libreria non è ben appoggiata al muro, forse è stata spostata.",
                 "events": [
                     {
                         "eventType": "MOVE",
@@ -610,7 +610,7 @@
         "type": "CutsceneRoom",
         "id": 22,
         "name": "Cella (sotterranei)",
-        "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. <br><br>Puoi vedere Valeria, incatenata ad una parete. <br><br>Appena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» <br><br>[ ... ] ",
+        "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. \n\nPuoi vedere Valeria, incatenata ad una parete. \n\nAppena ti vede, Valeria ti dice, quasi urlando, «Per fortuna sei arrivato. È stato terribile. Ormai non ci speravo più.» \n\n[ ... ] ",
         "imgPath": "./resources/img/cella.jpg",
         "nextRoomId": 23
     },
@@ -618,7 +618,7 @@
         "type": "PlayableRoom",
         "id": 23,
         "name": "Cella (sotterranei)",
-        "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. La porta si trova verso nord. <br>Puoi vedere Valeria, incatenata ad una parete.",
+        "description": "Piccola, angusta e priva di qualsiasi suppellettile, questa cella scavata nella roccia non è assolutamente una prigione confortevole. La porta si trova verso nord. \nPuoi vedere Valeria, incatenata ad una parete.",
         "imgPath": "./resources/img/cella.jpg",
         "northId": 21,
         "objects": [
@@ -628,9 +628,9 @@
                 "name": "valeria",
                 "description": "La ragazza è prigioniera, legata con una catena alla parete, i suoi abiti laceri e strappati. È sempre bella come te la ricordavi, ma adesso il suo volto è provato e su di esso è dipinta un'espressione che è un misto di terrore per la situazione in cui si trova e di felicità per l'averti visto.",
                 "phrases": [
-                    "«Valeria! Finalmente ti ho trovato...»<br><br>«Non immagini che gioia vederti. Ti prego, aiutami...Qualche ora fa una strana donna albina è entrata nella mia cella, passando attraverso la porta chiusa; ha detto che era venuta a controllare la sua nuova dimora, o qualcosa del genere. È stato terrificante.» ",
-                    "«Dimmi com'è successo tutto questo...» <br><br>«Fino a due giorni fa il palazzo era in condizioni perfette, poi ho trovato un anello e una collana in un bauletto in cantina, e la mattina dopo la villa era totalmente cambiata, era diventata un vecchio rudere dalle finestre murate e da cui era impossibile uscire. Poco dopo mi sono sentita mancare e mi sono risvegliata prigioniera in questa cella.»",
-                    "«Ho trovato la collana, ma non so dove sia l'anello...»<br><br>«È quello che ho sul dito, prendilo, potrebbe essere magico... la donna albina ha provato a togliermelo ma non ci è riuscita... Ti prego, trova il modo di liberarmi»",
+                    "«Valeria! Finalmente ti ho trovato...»\n\n«Non immagini che gioia vederti. Ti prego, aiutami...Qualche ora fa una strana donna albina è entrata nella mia cella, passando attraverso la porta chiusa; ha detto che era venuta a controllare la sua nuova dimora, o qualcosa del genere. È stato terrificante.» ",
+                    "«Dimmi com'è successo tutto questo...» \n\n«Fino a due giorni fa il palazzo era in condizioni perfette, poi ho trovato un anello e una collana in un bauletto in cantina, e la mattina dopo la villa era totalmente cambiata, era diventata un vecchio rudere dalle finestre murate e da cui era impossibile uscire. Poco dopo mi sono sentita mancare e mi sono risvegliata prigioniera in questa cella.»",
+                    "«Ho trovato la collana, ma non so dove sia l'anello...»\n\n«È quello che ho sul dito, prendilo, potrebbe essere magico... la donna albina ha provato a togliermelo ma non ci è riuscita... Ti prego, trova il modo di liberarmi»",
                     "«Trova il modo di liberarmi...»"
                 ],
                 "events": [
@@ -708,7 +708,7 @@
         "type": "PlayableRoom",
         "id": 25,
         "name": "L'antro della strega (sotterranei)",
-        "description": "Una vasta caverna quasi circolare, scavata nella roccia, con solo un passaggio che conduce verso sud. E praticamente niente altro, se non un pentacolo tracciato sul suolo. Eppure il terrore è così palpabile, in questo luogo.<br>Un braciere, al centro della stanza, proietta la sua luce sulle pareti.<br>Una donna albina ti osserva, un'espressione divertita e beffarda sul suo volto.<br>In quel momento ti rendi conto che puoi vedere attraverso il suo corpo immateriale, che stai in realtà vedendo uno spettro, e senti la sua voce, come un vento gelido, dire: «Non so come tu abbia fatto, ma sei giunto fino a qua. Questo non ti sarà di alcun aiuto.»",
+        "description": "Una vasta caverna quasi circolare, scavata nella roccia, con solo un passaggio che conduce verso sud. E praticamente niente altro, se non un pentacolo tracciato sul suolo. Eppure il terrore è così palpabile, in questo luogo.\nUn braciere, al centro della stanza, proietta la sua luce sulle pareti.\nUna donna albina ti osserva, un'espressione divertita e beffarda sul suo volto.\nIn quel momento ti rendi conto che puoi vedere attraverso il suo corpo immateriale, che stai in realtà vedendo uno spettro, e senti la sua voce, come un vento gelido, dire: «Non so come tu abbia fatto, ma sei giunto fino a qua. Questo non ti sarà di alcun aiuto.»",
         "imgPath": "./resources/img/antro.jpg",
         "southId": 24,
         "objects": [
@@ -759,7 +759,7 @@
         "type": "CutsceneRoom",
         "id": 26,
         "name": "L'antro della strega (sotterranei)",
-        "description": "Come ti avvicini, lo spettro della donna si mette tra te e il braciere, ma è come se i suoi poteri non potessero farti nulla. Sorretto da un'energia che non credevi di avere, passi attraverso la donna, e rovesci l'acqua contenuta nella ciotola sul braciere, che inizia a spegnersi. La donna albina inizia a gridare, quasi assordandoti; un grido di dolore, frustrazione e disperazione. E quando la luce del braciere scompare, anch'ella e il suo urlo scompaiono.<br><br>Per un attimo tutto pare girare vorticosamente attorno a te, finchè non cadi a terra perdendo i sensi.<br><br>[ . . . ]",
+        "description": "Come ti avvicini, lo spettro della donna si mette tra te e il braciere, ma è come se i suoi poteri non potessero farti nulla. Sorretto da un'energia che non credevi di avere, passi attraverso la donna, e rovesci l'acqua contenuta nella ciotola sul braciere, che inizia a spegnersi. La donna albina inizia a gridare, quasi assordandoti; un grido di dolore, frustrazione e disperazione. E quando la luce del braciere scompare, anch'ella e il suo urlo scompaiono.\n\nPer un attimo tutto pare girare vorticosamente attorno a te, finchè non cadi a terra perdendo i sensi.\n\n[ . . . ]",
         "imgPath": "./resources/img/antro.jpg",
         "nextRoomId": 27
     },
@@ -767,7 +767,7 @@
         "type": "CutsceneRoom",
         "id": 27,
         "name": "...",
-        "description": "Ti ridesta la luce del giorno. <br>Tu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.<br>Valeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»<br>L'incubo di Villa Morgana è finito.<br><br> *** Hai vinto ***",
+        "description": "Ti ridesta la luce del giorno. \nTu e Valeria siete sdraiati sul pavimento di uno stupendo salone ottagonale.\nValeria si volta verso di te dicendo «È stato terribile... Ho creduto che sarei morta in quella cella... Per fortuna sei arrivato tu...»\nL'incubo di Villa Morgana è finito.\n\n *** Hai vinto ***",
         "imgPath": "./resources/img/fine.jpg",
         "finalRoom": true
     }

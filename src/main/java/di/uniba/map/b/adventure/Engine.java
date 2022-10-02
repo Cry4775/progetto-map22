@@ -52,7 +52,7 @@ public class Engine {
 
         game.setCompassLabels(gui);
 
-        gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+        gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
 
         if (game.getCurrentRoom() instanceof CutsceneRoom) {
             gui.waitForEnterKey();
@@ -65,7 +65,7 @@ public class Engine {
             ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
                     game.getInventory());
             if (p == null || p.getCommand() == null) {
-                gui.appendTextEdtOutput("Non capisco quello che mi vuoi dire.", false);
+                gui.appendTxtPane("Non capisco quello che mi vuoi dire.", false);
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
                 gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
             } else {
@@ -77,7 +77,7 @@ public class Engine {
             if (!currentRoom.isFinalRoom()) {
                 if (currentRoom.getNextRoom() != null) {
                     game.setCurrentRoom(currentRoom.getNextRoom());
-                    gui.appendTextEdtOutput(game.getCurrentRoom().getDescription(), false);
+                    gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
                 } else {
                     // TODO errore
                 }

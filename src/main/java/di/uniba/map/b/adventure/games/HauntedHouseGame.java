@@ -276,7 +276,7 @@ public class HauntedHouseGame extends GameDescription {
                         outString.append("Nel tuo inventario ci sono:");
 
                         for (AbstractEntity obj : getInventory()) {
-                            outString.append("<br> - " + obj.getName());
+                            outString.append("\n - " + obj.getName());
                             if (obj instanceof IWearable) {
                                 IWearable wearable = (IWearable) obj;
 
@@ -584,13 +584,13 @@ public class HauntedHouseGame extends GameDescription {
             setPreviousRoom(getCurrentRoom());
             setCurrentRoom(getStatus().getWarpDestination());
 
-            outString.append(outString.length() > 0 ? "<br><br>" : "");
+            outString.append(outString.length() > 0 ? "\n\n" : "");
             outString.append(getCurrentRoom().getDescription());
             outString.append(handleRoomEvent());
         }
 
         if (outString.length() > 0) {
-            gui.appendTextEdtOutput(outString.toString(), false);
+            gui.appendTxtPane(outString.toString(), false);
         }
 
         outString.setLength(0);
@@ -676,7 +676,7 @@ public class HauntedHouseGame extends GameDescription {
                     StringBuilder outString = new StringBuilder();
 
                     if (evt.getText() != null && !evt.getText().isEmpty()) {
-                        outString.append("<br><br>" + evt.getText());
+                        outString.append("\n\n" + evt.getText());
                     }
 
                     evt.setTriggered(true);

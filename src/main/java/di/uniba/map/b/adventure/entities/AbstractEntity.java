@@ -206,7 +206,7 @@ public abstract class AbstractEntity extends GameComponent {
             }
 
             if (evt.getText() != null && !evt.getText().isEmpty()) {
-                outString.append("<br><br>" + evt.getText());
+                outString.append("\n\n" + evt.getText());
             }
 
             evt.setTriggered(true);
@@ -264,9 +264,9 @@ public abstract class AbstractEntity extends GameComponent {
         } else if (this instanceof IFillable) {
             IFillable fillable = (IFillable) this;
             if (fillable.isFilled()) {
-                outString.append("<br>É pieno di: " + fillable.getEligibleItem().getName());
+                outString.append("\nÉ pieno di: " + fillable.getEligibleItem().getName());
             } else {
-                outString.append("<br>È vuoto.");
+                outString.append("\nÈ vuoto.");
             }
         }
 

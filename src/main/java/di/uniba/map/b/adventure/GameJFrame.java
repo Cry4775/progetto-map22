@@ -1,16 +1,27 @@
 package di.uniba.map.b.adventure;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.event.*;
+import java.awt.Insets;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.BoundedRangeModel;
+import javax.swing.Timer;
+import javax.swing.UIDefaults;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.html.HTMLDocument;
-
+import javax.swing.text.StyledDocument;
 import di.uniba.map.b.adventure.games.HauntedHouseGame;
 
 /**
@@ -21,6 +32,8 @@ public class GameJFrame extends javax.swing.JFrame {
     private NoiseEffectPanel noisePanel;
 
     private Engine engine;
+
+    private boolean isSlowlyWriting = false;
 
     public GameJFrame() {
         initComponents();
@@ -52,9 +65,9 @@ public class GameJFrame extends javax.swing.JFrame {
 
         txtInput.requestFocus();
         txtInput.setCaretPosition(txtInput.getText().length());
-        edtOutput.setCaretPosition(edtOutput.getDocument().getLength());
+        txtPane.setCaretPosition(txtPane.getDocument().getLength());
 
-        ((DefaultCaret) edtOutput.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        ((DefaultCaret) txtPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         scrOutput.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             private int max = 0;
             private final BoundedRangeModel model = scrOutput.getVerticalScrollBar().getModel();
@@ -78,8 +91,8 @@ public class GameJFrame extends javax.swing.JFrame {
         pnlActions = new javax.swing.JPanel();
         lblActions = new javax.swing.JLabel();
         pnlInOut = new javax.swing.JPanel();
-        scrOutput = new ModernScrollPane(edtOutput);
-        edtOutput = new javax.swing.JEditorPane();
+        scrOutput = new ModernScrollPane(txtPane);
+        txtPane = new javax.swing.JTextPane();
         pnlInput = new javax.swing.JPanel();
         lblInput = new javax.swing.JLabel();
         txtInput = new javax.swing.JTextField();
@@ -142,14 +155,17 @@ public class GameJFrame extends javax.swing.JFrame {
 
         scrOutput.setBorder(null);
 
-        edtOutput.setEditable(false);
-        edtOutput.setBackground(new java.awt.Color(60, 63, 63));
-        edtOutput.setBorder(null);
-        edtOutput.setContentType("text/html");
-        edtOutput.setEditorKit(new javax.swing.text.html.HTMLEditorKit());
-        edtOutput.setText(
-                "<html><head></head><body id='body'; style=\"background-color: #d6d9df; margin: 5px; font-family: 'Serif'; font-size: 12px\"><div></div></body></html>");
-        scrOutput.setViewportView(edtOutput);
+        Color bgColor = new Color(214, 217, 223);
+        UIDefaults defaults = new UIDefaults();
+        defaults.put("TextPane[Enabled].backgroundPainter", bgColor);
+        txtPane.putClientProperty("Nimbus.Overrides", defaults);
+        txtPane.putClientProperty("Nimbus.Overrides.InheritDefaults", true);
+
+        txtPane.setEditable(false);
+        txtPane.setBackground(bgColor);
+        txtPane.setMargin(new Insets(2, 2, 2, 2));
+        txtPane.setFont(new Font("Serif", 0, 16));
+        scrOutput.setViewportView(txtPane);
 
         pnlInOut.add(scrOutput, java.awt.BorderLayout.CENTER);
 
@@ -165,9 +181,16 @@ public class GameJFrame extends javax.swing.JFrame {
         txtInput.setBorder(null);
         txtInput.setCaret(new CustomCaret());
         txtInput.setPreferredSize(new java.awt.Dimension(840, 25));
-        txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtInputKeyPressed(evt);
+        txtInput.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    String txt = txtInput.getText();
+                    if (txt != null && !txt.isEmpty()) {
+                        appendTxtPane(txt, true);
+                        txtInput.setText("");
+                        engine.commandPerformed(txt);
+                    }
+                }
             }
         });
         pnlInput.add(txtInput);
@@ -337,44 +360,120 @@ public class GameJFrame extends javax.swing.JFrame {
         pack();
     }
 
-    private void txtInputKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            String txt = txtInput.getText();
-            if (txt != null && !txt.isEmpty()) {
-                appendTextEdtOutput(txt, true);
-                txtInput.setText("");
-                engine.commandPerformed(txt);
-            }
-        }
-    }
+    public void appendTxtPane(String text, boolean isInputText) {
+        StyledDocument doc = txtPane.getStyledDocument();
 
-    public void appendTextEdtOutput(String text, boolean isInputText) {
-        HTMLDocument doc = (HTMLDocument) edtOutput.getDocument();
         try {
             if (isInputText) {
-                doc.insertBeforeEnd(doc.getElement("body"),
-                        String.format("<div><br>> %s<br></div>", text));
+                doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
             } else {
-                doc.insertBeforeEnd(doc.getElement("body"),
-                        String.format("<div><br>%s<br></div>", text));
+                printSlowly(text, 20);
             }
-        } catch (BadLocationException | IOException e) {
+        } catch (BadLocationException e) {
             e.printStackTrace();
-            // TODO FATAL
         }
     }
 
-    public void waitForEnterKey() {
-        txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtInput.setEditable(false);
-                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+    public void printSlowly(String message, int millisPerChar) throws BadLocationException {
+        txtInput.setEditable(false);
+        txtInput.setFocusable(false);
+
+        StyledDocument doc = txtPane.getStyledDocument();
+        doc.insertString(doc.getLength(), "\n\n", null);
+
+        Timer timer = new Timer(millisPerChar, null);
+        AtomicInteger counter = new AtomicInteger(0);
+
+        timer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    doc.insertString(doc.getLength(),
+                            String.valueOf(message.charAt(counter.getAndIncrement())),
+                            null);
+                } catch (BadLocationException e1) {
+                    e1.printStackTrace();
+                }
+                txtPane.setCaretPosition(txtPane.getDocument().getLength());
+                if (counter.get() >= message.length()) {
+                    timer.stop();
+                    isSlowlyWriting = false;
                     txtInput.setEditable(true);
-                    txtInput.removeKeyListener(this);
-                    engine.commandPerformed("");
+                    txtInput.setFocusable(true);
+                    txtInput.requestFocusInWindow();
                 }
             }
         });
+
+        timer.start();
+        isSlowlyWriting = true;
+
+        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
+                        && e.getID() == KeyEvent.KEY_RELEASED) {
+                    timer.stop();
+                    isSlowlyWriting = false;
+                    try {
+                        doc.insertString(doc.getLength(), message.substring(counter.get()), null);
+                        txtInput.setEditable(true);
+                        txtInput.setFocusable(true);
+                        txtInput.requestFocusInWindow();
+                    } catch (BadLocationException e1) {
+                        e1.printStackTrace();
+                    }
+                    manager.removeKeyEventDispatcher(this);
+                } else if (counter.get() >= message.length()) {
+                    manager.removeKeyEventDispatcher(this);
+                }
+
+                return false;
+            }
+
+        });
+
+    }
+
+    public void waitForEnterKey() {
+        Thread thread = new Thread() {
+            public void run() {
+                while (isSlowlyWriting) {
+                    try {
+                        sleep(10);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                txtInput.setText("Premere INVIO per continuare...");
+                txtInput.setEditable(false);
+
+                KeyboardFocusManager manager =
+                        KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+
+                    @Override
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
+                                && e.getID() == KeyEvent.KEY_RELEASED) {
+                            txtInput.setText("");
+                            txtInput.setEditable(true);
+                            txtInput.setFocusable(true);
+                            txtInput.requestFocusInWindow();
+                            manager.removeKeyEventDispatcher(this);
+                            engine.commandPerformed("");
+                        }
+                        return true;
+                    }
+
+                });
+            }
+        };
+        thread.start();
+
     }
 
     /**
@@ -414,7 +513,7 @@ public class GameJFrame extends javax.swing.JFrame {
         });
     }
 
-    private javax.swing.JEditorPane edtOutput;
+    private javax.swing.JTextPane txtPane;
     private javax.swing.JLabel lblActions;
     private javax.swing.JLabel lblCompassCenterImage;
     private javax.swing.JLabel lblCompassEastImage;
@@ -450,7 +549,7 @@ public class GameJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtInput;
 
     public javax.swing.JEditorPane getEdtOutput() {
-        return edtOutput;
+        return txtPane;
     }
 
     public javax.swing.JLabel getLblCompassEastText() {

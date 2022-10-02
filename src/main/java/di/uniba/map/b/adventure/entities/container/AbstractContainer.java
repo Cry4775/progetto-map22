@@ -61,7 +61,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         }
 
         if (getList() != null && !getList().isEmpty()) {
-            StringBuilder outString = new StringBuilder("<br>Ci trovi:");
+            StringBuilder outString = new StringBuilder("\nCi trovi:");
 
             for (AbstractEntity advObject : getList()) {
                 outString.append(" " + advObject.getName() + ",");
