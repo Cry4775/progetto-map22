@@ -263,274 +263,282 @@ public class HauntedHouseGame extends GameDescription {
             if (isMovementGranted(commandType)) {
                 moveTo(currentRoom.getRoomAt(commandType));
             }
-        } else if (p.getCommand().getType() == CommandType.INVENTORY) {
-            if (!getInventory().isEmpty()) {
-                outString.append("Nel tuo inventario ci sono:");
+        } else {
 
-                for (AbstractEntity obj : getInventory()) {
-                    outString.append("<br> - " + obj.getName());
-                    if (obj instanceof IWearable) {
-                        IWearable wearable = (IWearable) obj;
+            AbstractEntity roomObj = p.getObject();
+            AbstractEntity invObj = p.getInvObject();
 
-                        outString.append(wearable.isWorn() ? " (INDOSSATO)" : "");
-                    }
-                }
-            } else {
-                outString.append("Il tuo inventario è vuoto.");
-            }
-        }
+            AbstractEntity anyObj = getObjectFromParser(p);
 
-        AbstractEntity roomObj = p.getObject();
-        AbstractEntity invObj = p.getInvObject();
+            switch (commandType) {
+                case INVENTORY: {
+                    if (!getInventory().isEmpty()) {
+                        outString.append("Nel tuo inventario ci sono:");
 
-        AbstractEntity anyObj = getObjectFromParser(p);
+                        for (AbstractEntity obj : getInventory()) {
+                            outString.append("<br> - " + obj.getName());
+                            if (obj instanceof IWearable) {
+                                IWearable wearable = (IWearable) obj;
 
-        switch (p.getCommand().getType()) {
-            case LOOK_AT: {
-                if (anyObj != null) {
-                    outString.append(anyObj.getLookMessage());
-                } else {
-                    outString.append("Non trovo cosa esaminare.");
-                }
-
-                break;
-            }
-            case PICK_UP: {
-                if (anyObj != null) {
-                    if (anyObj instanceof IPickupable) {
-                        IPickupable pickupObj = (IPickupable) anyObj;
-
-                        outString.append(pickupObj.pickup(getInventory()));
-                    } else {
-                        outString.append("Non puoi raccogliere questo oggetto.");
-                    }
-                } else {
-                    outString.append("Non trovo cosa raccogliere.");
-                }
-
-                break;
-            }
-            case OPEN: {
-                if (anyObj != null) {
-                    if (anyObj instanceof IOpenable) {
-                        IOpenable openableObj = (IOpenable) anyObj;
-
-                        outString.append(openableObj.open(invObj));
-                    } else if (anyObj instanceof AdvDoorBlocked) {
-                        AdvDoorBlocked fakeDoor = (AdvDoorBlocked) anyObj;
-
-                        outString.append(fakeDoor.getOpenEventText());
-                    } else {
-                        outString.append("Non puoi aprire " + anyObj.getName());
-                    }
-                } else {
-                    outString.append("Non trovo cosa aprire.");
-                }
-
-                break;
-            }
-            case PUSH: {
-                if (anyObj != null) {
-                    if (anyObj instanceof IPushable) {
-                        IPushable pushableObj = (IPushable) anyObj;
-
-                        outString.append(pushableObj.push());
-                    } else {
-                        outString.append("Non puoi premere " + anyObj.getName());
-                    }
-                } else {
-                    outString.append("Non trovo cosa premere.");
-                }
-
-                break;
-            }
-            case PULL: {
-                if (anyObj != null) {
-                    if (anyObj instanceof IPullable) {
-                        IPullable pullableObj = (IPullable) anyObj;
-
-                        outString.append(pullableObj.pull());
-                    } else {
-                        outString.append("Non puoi tirare " + anyObj.getName());
-                    }
-                } else {
-                    outString.append("Non trovo cosa tirare.");
-                }
-
-                break;
-            }
-            case MOVE: {
-                if (roomObj != null) {
-                    if (roomObj instanceof IMovable) {
-                        IMovable movableObj = (IMovable) roomObj;
-
-                        outString.append(movableObj.move());
-                    } else {
-                        outString.append("Non puoi spostare " + roomObj.getName());
-                    }
-                } else {
-                    outString.append("Non trovo l'oggetto da spostare.");
-                }
-
-                break;
-            }
-            case INSERT: {
-                if (roomObj != null && invObj != null) {
-                    if (roomObj instanceof AbstractContainer) {
-                        AbstractContainer container = (AbstractContainer) roomObj;
-
-                        outString.append(container.insert(invObj, getInventory()));
-                    }
-                } else if (roomObj == null && invObj != null) {
-                    outString.append("Non ho capito dove inserire.");
-                } else if (roomObj != null && invObj == null) {
-                    outString.append("Non ho capito cosa inserire.");
-                } else {
-                    outString.append("Non ho capito cosa devo fare.");
-                }
-
-                break;
-            }
-            case WEAR: {
-                if (roomObj != null) {
-                    if (roomObj instanceof IWearable) {
-                        outString.append("Devi prima prenderlo per poterlo indossare.");
-                    } else {
-                        outString.append("Non puoi indossarlo.");
-                    }
-                } else if (invObj != null) {
-                    if (invObj instanceof IWearable) {
-                        IWearable wearable = (IWearable) invObj;
-
-                        outString.append(wearable.wear());
-                    } else {
-                        outString.append("Non puoi indossarlo.");
-                    }
-                } else {
-                    outString.append("Non trovo l'oggetto da indossare.");
-                }
-
-                break;
-            }
-            case UNWEAR: {
-                if (roomObj != null) {
-                    outString.append("Non posso togliermi qualcosa che non ho addosso.");
-                } else if (invObj != null) {
-                    if (invObj instanceof IWearable) {
-                        IWearable wearable = (IWearable) invObj;
-
-                        outString.append(wearable.unwear());
-                    } else {
-                        outString.append("Non puoi farlo.");
-                    }
-                } else {
-                    outString.append("Non trovo l'oggetto da togliere.");
-                }
-
-                break;
-            }
-            case TURN_ON: {
-                if (anyObj != null) {
-                    if (anyObj instanceof ISwitch) {
-                        ISwitch switchObj = (ISwitch) anyObj;
-
-                        outString.append(switchObj.turnOn());
-                    } else {
-                        outString.append("Non puoi accenderlo.");
-                    }
-                } else {
-                    outString.append("Non trovo l'oggetto da accendere.");
-                }
-
-                break;
-            }
-            case TURN_OFF: {
-                if (anyObj != null) {
-                    if (anyObj instanceof ISwitch) {
-                        ISwitch switchObj = (ISwitch) anyObj;
-
-                        outString.append(switchObj.turnOff());
-                    } else if (anyObj instanceof AdvFire) {
-                        AdvFire fire = (AdvFire) anyObj;
-
-                        if (invObj instanceof IFluid) {
-                            IFluid fluid = (IFluid) invObj;
-
-                            outString.append(fire.extinguish(fluid));
-                        } else if (invObj != null) {
-                            outString.append("Non puoi spegnerlo con quello. ");
-                        } else {
-                            outString.append("Non puoi spegnerlo senza qualcosa di adatto.");
+                                outString.append(wearable.isWorn() ? " (INDOSSATO)" : "");
+                            }
                         }
                     } else {
-                        outString.append("Non puoi spegnerlo.");
+                        outString.append("Il tuo inventario è vuoto.");
                     }
-                } else {
-                    outString.append("Non trovo l'oggetto da spegnere.");
+
+                    break;
                 }
 
-                break;
-            }
-            case TALK_TO: {
-                if (roomObj != null) {
-                    if (roomObj instanceof ITalkable) {
-                        ITalkable talkableObj = (ITalkable) roomObj;
-
-                        outString.append(talkableObj.talk());
+                case LOOK_AT: {
+                    if (anyObj != null) {
+                        outString.append(anyObj.getLookMessage());
                     } else {
-                        outString.append("Non puoi parlarci.");
+                        outString.append("Non trovo cosa esaminare.");
                     }
-                } else {
-                    outString.append("Non trovo con chi parlare.");
-                }
 
-                break;
-            }
-            case POUR: {
-                if (invObj != null) {
-                    if (invObj instanceof IFluid) {
-                        if (roomObj != null) {
-                            if (roomObj instanceof AdvFire) {
+                    break;
+                }
+                case PICK_UP: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof IPickupable) {
+                            IPickupable pickupObj = (IPickupable) anyObj;
+
+                            outString.append(pickupObj.pickup(getInventory()));
+                        } else {
+                            outString.append("Non puoi raccogliere questo oggetto.");
+                        }
+                    } else {
+                        outString.append("Non trovo cosa raccogliere.");
+                    }
+
+                    break;
+                }
+                case OPEN: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof IOpenable) {
+                            IOpenable openableObj = (IOpenable) anyObj;
+
+                            outString.append(openableObj.open(invObj));
+                        } else if (anyObj instanceof AdvDoorBlocked) {
+                            AdvDoorBlocked fakeDoor = (AdvDoorBlocked) anyObj;
+
+                            outString.append(fakeDoor.getOpenEventText());
+                        } else {
+                            outString.append("Non puoi aprire " + anyObj.getName());
+                        }
+                    } else {
+                        outString.append("Non trovo cosa aprire.");
+                    }
+
+                    break;
+                }
+                case PUSH: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof IPushable) {
+                            IPushable pushableObj = (IPushable) anyObj;
+
+                            outString.append(pushableObj.push());
+                        } else {
+                            outString.append("Non puoi premere " + anyObj.getName());
+                        }
+                    } else {
+                        outString.append("Non trovo cosa premere.");
+                    }
+
+                    break;
+                }
+                case PULL: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof IPullable) {
+                            IPullable pullableObj = (IPullable) anyObj;
+
+                            outString.append(pullableObj.pull());
+                        } else {
+                            outString.append("Non puoi tirare " + anyObj.getName());
+                        }
+                    } else {
+                        outString.append("Non trovo cosa tirare.");
+                    }
+
+                    break;
+                }
+                case MOVE: {
+                    if (roomObj != null) {
+                        if (roomObj instanceof IMovable) {
+                            IMovable movableObj = (IMovable) roomObj;
+
+                            outString.append(movableObj.move());
+                        } else {
+                            outString.append("Non puoi spostare " + roomObj.getName());
+                        }
+                    } else {
+                        outString.append("Non trovo l'oggetto da spostare.");
+                    }
+
+                    break;
+                }
+                case INSERT: {
+                    if (roomObj != null && invObj != null) {
+                        if (roomObj instanceof AbstractContainer) {
+                            AbstractContainer container = (AbstractContainer) roomObj;
+
+                            outString.append(container.insert(invObj, getInventory()));
+                        }
+                    } else if (roomObj == null && invObj != null) {
+                        outString.append("Non ho capito dove inserire.");
+                    } else if (roomObj != null && invObj == null) {
+                        outString.append("Non ho capito cosa inserire.");
+                    } else {
+                        outString.append("Non ho capito cosa devo fare.");
+                    }
+
+                    break;
+                }
+                case WEAR: {
+                    if (roomObj != null) {
+                        if (roomObj instanceof IWearable) {
+                            outString.append("Devi prima prenderlo per poterlo indossare.");
+                        } else {
+                            outString.append("Non puoi indossarlo.");
+                        }
+                    } else if (invObj != null) {
+                        if (invObj instanceof IWearable) {
+                            IWearable wearable = (IWearable) invObj;
+
+                            outString.append(wearable.wear());
+                        } else {
+                            outString.append("Non puoi indossarlo.");
+                        }
+                    } else {
+                        outString.append("Non trovo l'oggetto da indossare.");
+                    }
+
+                    break;
+                }
+                case UNWEAR: {
+                    if (roomObj != null) {
+                        outString.append("Non posso togliermi qualcosa che non ho addosso.");
+                    } else if (invObj != null) {
+                        if (invObj instanceof IWearable) {
+                            IWearable wearable = (IWearable) invObj;
+
+                            outString.append(wearable.unwear());
+                        } else {
+                            outString.append("Non puoi farlo.");
+                        }
+                    } else {
+                        outString.append("Non trovo l'oggetto da togliere.");
+                    }
+
+                    break;
+                }
+                case TURN_ON: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof ISwitch) {
+                            ISwitch switchObj = (ISwitch) anyObj;
+
+                            outString.append(switchObj.turnOn());
+                        } else {
+                            outString.append("Non puoi accenderlo.");
+                        }
+                    } else {
+                        outString.append("Non trovo l'oggetto da accendere.");
+                    }
+
+                    break;
+                }
+                case TURN_OFF: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof ISwitch) {
+                            ISwitch switchObj = (ISwitch) anyObj;
+
+                            outString.append(switchObj.turnOff());
+                        } else if (anyObj instanceof AdvFire) {
+                            AdvFire fire = (AdvFire) anyObj;
+
+                            if (invObj instanceof IFluid) {
                                 IFluid fluid = (IFluid) invObj;
-                                AdvFire fire = (AdvFire) roomObj;
 
                                 outString.append(fire.extinguish(fluid));
-                            } else if (roomObj instanceof AbstractContainer) {
-                                AbstractContainer container = (AbstractContainer) roomObj;
-
-                                outString.append(container.insert(invObj, getInventory()));
+                            } else if (invObj != null) {
+                                outString.append("Non puoi spegnerlo con quello. ");
                             } else {
-                                outString.append("Non puoi versarci il liquido.");
+                                outString.append("Non puoi spegnerlo senza qualcosa di adatto.");
                             }
                         } else {
-                            outString.append("Non trovo dove versare il liquido.");
+                            outString.append("Non puoi spegnerlo.");
                         }
                     } else {
-                        outString.append("Non posso versare qualcosa che non sia liquido.");
+                        outString.append("Non trovo l'oggetto da spegnere.");
                     }
-                } else {
-                    outString.append("Non trovo cosa versare.");
+
+                    break;
                 }
+                case TALK_TO: {
+                    if (roomObj != null) {
+                        if (roomObj instanceof ITalkable) {
+                            ITalkable talkableObj = (ITalkable) roomObj;
 
-                break;
-            }
-            case READ: {
-                if (anyObj != null) {
-                    if (anyObj instanceof IReadable) {
-                        IReadable readableObj = (IReadable) anyObj;
-
-                        outString.append(readableObj.read());
+                            outString.append(talkableObj.talk());
+                        } else {
+                            outString.append("Non puoi parlarci.");
+                        }
                     } else {
-                        outString.append("Non posso leggerlo.");
+                        outString.append("Non trovo con chi parlare.");
                     }
-                } else {
-                    outString.append("Non trovo cosa leggere.");
-                }
 
-                break;
+                    break;
+                }
+                case POUR: {
+                    if (invObj != null) {
+                        if (invObj instanceof IFluid) {
+                            if (roomObj != null) {
+                                if (roomObj instanceof AdvFire) {
+                                    IFluid fluid = (IFluid) invObj;
+                                    AdvFire fire = (AdvFire) roomObj;
+
+                                    outString.append(fire.extinguish(fluid));
+                                } else if (roomObj instanceof AbstractContainer) {
+                                    AbstractContainer container = (AbstractContainer) roomObj;
+
+                                    outString.append(container.insert(invObj, getInventory()));
+                                } else {
+                                    outString.append("Non puoi versarci il liquido.");
+                                }
+                            } else {
+                                outString.append("Non trovo dove versare il liquido.");
+                            }
+                        } else {
+                            outString.append("Non posso versare qualcosa che non sia liquido.");
+                        }
+                    } else {
+                        outString.append("Non trovo cosa versare.");
+                    }
+
+                    break;
+                }
+                case READ: {
+                    if (anyObj != null) {
+                        if (anyObj instanceof IReadable) {
+                            IReadable readableObj = (IReadable) anyObj;
+
+                            outString.append(readableObj.read());
+                        } else {
+                            outString.append("Non posso leggerlo.");
+                        }
+                    } else {
+                        outString.append("Non trovo cosa leggere.");
+                    }
+
+                    break;
+                }
+                default:
+                    break;
             }
-            default:
-                break;
+
+            processTriggeredEvents(roomObj);
+            processTriggeredEvents(invObj);
         }
 
         if (isActionPerformed(p)) {
@@ -545,9 +553,6 @@ public class HauntedHouseGame extends GameDescription {
 
             getInventory().removeIf(obj -> obj.isMustDestroyFromInv());
         }
-
-        processTriggeredEvents(roomObj);
-        processTriggeredEvents(invObj);
 
         if (getCurrentRoom() instanceof PlayableRoom) {
             currentRoom = (PlayableRoom) getCurrentRoom();
