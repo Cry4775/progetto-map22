@@ -24,6 +24,7 @@ public class Command {
     public Command(CommandType type, String name) {
         this.type = type;
         this.name = name;
+        alias = new HashSet<>();
     }
 
     public Command(CommandType type, String name, Set<String> alias) {
