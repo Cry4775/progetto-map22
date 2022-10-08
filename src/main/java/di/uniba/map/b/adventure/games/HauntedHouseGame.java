@@ -67,7 +67,7 @@ import di.uniba.map.b.adventure.type.RoomEvent;
 // tramite id
 public class HauntedHouseGame extends GameDescription {
 
-    StringBuilder outString = new StringBuilder();
+    StringBuilder outString;
 
     @Override
     public void init() throws FileNotFoundException, IOException {
