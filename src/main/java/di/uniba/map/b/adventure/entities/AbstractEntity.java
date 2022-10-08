@@ -96,34 +96,53 @@ public abstract class AbstractEntity extends GameComponent {
             List<AbstractRoom> rooms) {
         if (events != null) {
             for (ObjEvent evt : events) {
-                for (AbstractRoom room : rooms) {
-                    boolean targetRoomDone = false;
-                    boolean parentRoomDone = false;
-                    boolean teleportRoomDone = false;
+                boolean targetRoomDone = false;
+                boolean parentRoomDone = false;
+                boolean teleportRoomDone = false;
 
-                    if (room instanceof MutablePlayableRoom) {
-                        MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
-
-                        if (!targetRoomDone) {
-                            if (evt.getUpdateTargetRoomId() != null) {
-                                if (evt.getUpdateTargetRoomId() == room.getId()) {
-                                    evt.setUpdateTargetRoom(mRoom);
-                                    targetRoomDone = true;
-                                }
-                            } else {
-                                targetRoomDone = true;
-                            }
+                if (evt.isUpdatingParentRoom()) {
+                    if (parent instanceof PlayableRoom) {
+                        if (parent instanceof MutablePlayableRoom) {
+                            evt.setParentRoom((MutablePlayableRoom) parent);
+                            parentRoomDone = true;
+                        } else {
+                            // TODO throw exception
                         }
+                    }
+                }
 
-                        if (!parentRoomDone) {
-                            if (evt.isUpdatingParentRoom()) {
+                for (AbstractRoom room : rooms) {
+                    if (!targetRoomDone) {
+                        if (evt.getUpdateTargetRoomId() != null) {
+                            if (evt.getUpdateTargetRoomId() == room.getId()) {
+                                if (room instanceof MutablePlayableRoom) {
+                                    evt.setUpdateTargetRoom((MutablePlayableRoom) room);
+                                    targetRoomDone = true;
+                                } else {
+                                    // TODO throw exception
+                                }
+                            }
+                        } else {
+                            targetRoomDone = true;
+                        }
+                    }
+
+                    if (!parentRoomDone) {
+                        if (evt.isUpdatingParentRoom()) {
+                            if (room instanceof MutablePlayableRoom) {
+                                MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
                                 if (mRoom.getAllObjects().contains(this)) {
                                     evt.setParentRoom(mRoom);
                                     parentRoomDone = true;
                                 }
-                            } else {
-                                parentRoomDone = true;
+                            } else if (room instanceof PlayableRoom) {
+                                PlayableRoom pRoom = (PlayableRoom) room;
+                                if (pRoom.getObjects().contains(this)) {
+                                    // TODO throw exception
+                                }
                             }
+                        } else {
+                            parentRoomDone = true;
                         }
                     }
 
@@ -146,15 +165,12 @@ public abstract class AbstractEntity extends GameComponent {
         }
 
         if (requiredWearedItemsIdToInteract != null) {
-            if (!requiredWearedItemsIdToInteract.isEmpty()) {
-                requiredWearedItemsToInteract = new ArrayList<>();
+            requiredWearedItemsToInteract = new ArrayList<>();
 
-                for (Integer objId : requiredWearedItemsIdToInteract) {
-                    for (AbstractEntity reqItem : objects.get(objId)) {
-                        if (reqItem instanceof IWearable) {
-                            requiredWearedItemsToInteract.add((IWearable) reqItem);
-                            break;
-                        }
+            for (Integer objId : requiredWearedItemsIdToInteract) {
+                for (AbstractEntity reqItem : objects.get(objId)) {
+                    if (reqItem instanceof IWearable) {
+                        requiredWearedItemsToInteract.add((IWearable) reqItem);
                     }
                 }
             }

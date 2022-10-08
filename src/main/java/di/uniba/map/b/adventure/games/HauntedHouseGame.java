@@ -78,19 +78,160 @@ public class HauntedHouseGame extends GameDescription {
         loadRooms();
     }
 
-    private void loadCommands() throws FileNotFoundException, IOException {
-        Gson gson = new Gson();
+    private void loadCommands() {
+        Command north = new Command(CommandType.NORTH, "nord");
+        north.addAlias("n");
+        north.addAlias("north");
 
-        Type commandsType = new TypeToken<List<Command>>() {}.getType();
+        Command south = new Command(CommandType.SOUTH, "sud");
+        south.addAlias("s");
+        south.addAlias("south");
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("./resources/commands.json"), StandardCharsets.UTF_8))) {
-            List<Command> commands = gson.fromJson(in, commandsType);
+        Command east = new Command(CommandType.EAST, "est");
+        east.addAlias("e");
+        east.addAlias("east");
 
-            for (Command command : commands) {
-                getCommands().add(command);
-            }
-        }
+        Command west = new Command(CommandType.WEST, "ovest");
+        west.addAlias("w");
+        west.addAlias("o");
+        west.addAlias("west");
+
+        Command southWest = new Command(CommandType.SOUTH_WEST, "sudovest");
+        southWest.addAlias("so");
+        southWest.addAlias("sw");
+        southWest.addAlias("sud-ovest");
+        southWest.addAlias("southwest");
+        southWest.addAlias("south-west");
+
+        Command southEast = new Command(CommandType.SOUTH_EAST, "sudest");
+        southEast.addAlias("se");
+        southEast.addAlias("sud-est");
+        southEast.addAlias("south-east");
+        southEast.addAlias("southeast");
+
+        Command northWest = new Command(CommandType.NORTH_WEST, "nordovest");
+        northWest.addAlias("no");
+        northWest.addAlias("nw");
+        northWest.addAlias("northwest");
+        northWest.addAlias("nord-ovest");
+        northWest.addAlias("north-west");
+
+        Command northEast = new Command(CommandType.NORTH_EAST, "nordest");
+        northEast.addAlias("ne");
+        northEast.addAlias("northeast");
+        northEast.addAlias("north-east");
+        northEast.addAlias("nord-est");
+
+        Command up = new Command(CommandType.UP, "su");
+        up.addAlias("sopra");
+        up.addAlias("superiore");
+        up.addAlias("up");
+        up.addAlias("sali");
+        up.addAlias("upstairs");
+
+        Command down = new Command(CommandType.DOWN, "giu");
+        down.addAlias("sotto");
+        down.addAlias("inferiore");
+        down.addAlias("down");
+        down.addAlias("scendi");
+        down.addAlias("downstairs");
+
+        Command inventory = new Command(CommandType.INVENTORY, "inventario");
+        inventory.addAlias("inv");
+        inventory.addAlias("inventory");
+
+        Command lookAt = new Command(CommandType.LOOK_AT, "osserva");
+        lookAt.addAlias("guarda");
+        lookAt.addAlias("esamina");
+        lookAt.addAlias("x");
+        lookAt.addAlias("look");
+        lookAt.addAlias("vedi");
+
+        Command pickUp = new Command(CommandType.PICK_UP, "prendi");
+        pickUp.addAlias("pick");
+        pickUp.addAlias("pickup");
+        pickUp.addAlias("raccogli");
+
+        Command open = new Command(CommandType.OPEN, "apri");
+        open.addAlias("open");
+
+        Command push = new Command(CommandType.PUSH, "spingi");
+        push.addAlias("push");
+        push.addAlias("premi");
+        push.addAlias("schiaccia");
+
+        Command pull = new Command(CommandType.PULL, "tira");
+        pull.addAlias("pull");
+
+        Command move = new Command(CommandType.MOVE, "sposta");
+        move.addAlias("move");
+        move.addAlias("muovi");
+        move.addAlias("trascina");
+
+        Command insert = new Command(CommandType.INSERT, "inserisci");
+        insert.addAlias("insert");
+        insert.addAlias("metti");
+
+        Command wear = new Command(CommandType.WEAR, "indossa");
+        wear.addAlias("vesti");
+        wear.addAlias("mettiti");
+        wear.addAlias("wear");
+        wear.addAlias("equip");
+        wear.addAlias("equipaggia");
+
+        Command unwear = new Command(CommandType.UNWEAR, "togli");
+        unwear.addAlias("togliti");
+        unwear.addAlias("unwear");
+        unwear.addAlias("unequip");
+        unwear.addAlias("disequipaggia");
+        unwear.addAlias("rimuovi");
+
+        Command turnOn = new Command(CommandType.TURN_ON, "accendi");
+        turnOn.addAlias("light");
+
+        Command turnOff = new Command(CommandType.TURN_OFF, "spegni");
+        turnOff.addAlias("spengi");
+
+        Command talkTo = new Command(CommandType.TALK_TO, "parla");
+        talkTo.addAlias("talk");
+        talkTo.addAlias("speak");
+        talkTo.addAlias("conversa");
+        talkTo.addAlias("chiedi");
+        talkTo.addAlias("ask");
+
+        Command pour = new Command(CommandType.POUR, "versa");
+        pour.addAlias("butta");
+        pour.addAlias("pour");
+        pour.addAlias("throw");
+
+        Command read = new Command(CommandType.READ, "leggi");
+        read.addAlias("read");
+
+        getCommands().add(north);
+        getCommands().add(northWest);
+        getCommands().add(northEast);
+        getCommands().add(south);
+        getCommands().add(southWest);
+        getCommands().add(southEast);
+        getCommands().add(east);
+        getCommands().add(west);
+        getCommands().add(up);
+        getCommands().add(down);
+        getCommands().add(inventory);
+        getCommands().add(lookAt);
+        getCommands().add(pickUp);
+        getCommands().add(open);
+        getCommands().add(push);
+        getCommands().add(pull);
+        getCommands().add(move);
+        getCommands().add(pour);
+        getCommands().add(talkTo);
+        getCommands().add(turnOff);
+        getCommands().add(turnOn);
+        getCommands().add(unwear);
+        getCommands().add(wear);
+        getCommands().add(insert);
+        getCommands().add(read);
     }
 
     private void loadRooms() throws FileNotFoundException, IOException {

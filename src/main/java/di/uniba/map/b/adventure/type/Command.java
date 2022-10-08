@@ -48,6 +48,10 @@ public class Command {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
+    public void addAlias(String alias) {
+        this.alias.add(alias);
+    }
+
     public CommandType getType() {
         return type;
     }
