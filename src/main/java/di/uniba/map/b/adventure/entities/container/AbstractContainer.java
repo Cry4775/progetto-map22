@@ -3,6 +3,7 @@ package di.uniba.map.b.adventure.entities.container;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.IFluid;
@@ -161,7 +162,7 @@ public abstract class AbstractContainer extends AbstractEntity {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects,
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (list != null) {
             for (AbstractEntity item : list) {

@@ -2,6 +2,7 @@ package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.ILightSource;
 import di.uniba.map.b.adventure.type.AbstractRoom;
@@ -89,14 +90,14 @@ public class AdvLightSource extends AdvItem implements ILightSource {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 
         if (requiredItemId != null) {
-            objects.stream()
-                    .filter(AdvItem.class::isInstance)
-                    .filter(reqItem -> reqItem.getId() == requiredItemId)
-                    .forEach(reqItem -> setRequiredItem(reqItem));
+            for (AbstractEntity reqItem : objects.get(requiredItemId)) {
+                requiredItem = (AdvItem) reqItem;
+            }
         }
     }
 

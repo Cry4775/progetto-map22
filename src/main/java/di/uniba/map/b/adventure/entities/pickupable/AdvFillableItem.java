@@ -2,6 +2,7 @@ package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.type.AbstractRoom;
@@ -57,14 +58,14 @@ public class AdvFillableItem extends AdvItem implements IFillable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 
         if (eligibleItemId != null) {
-            objects.stream()
-                    .filter(AdvItem.class::isInstance)
-                    .filter(reqItem -> reqItem.getId() == eligibleItemId)
-                    .forEach(reqItem -> setEligibleItem(reqItem));
+            for (AbstractEntity reqItem : objects.get(eligibleItemId)) {
+                eligibleItem = reqItem;
+            }
         }
     }
 

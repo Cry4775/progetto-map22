@@ -2,6 +2,7 @@ package di.uniba.map.b.adventure.entities;
 
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 
@@ -9,7 +10,8 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
 
     private boolean open = false;
     private boolean locked = false;
-    private int unlockedWithItemId = 0;
+    private AbstractEntity unlockedWithItem;
+    private Integer unlockedWithItemId;
     private int blockedRoomId = 0;
     private AbstractRoom blockedRoom;
 
@@ -27,6 +29,14 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
 
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public AbstractEntity getUnlockedWithItem() {
+        return unlockedWithItem;
+    }
+
+    public void setUnlockedWithItem(AbstractEntity unlockedWithItem) {
+        this.unlockedWithItem = unlockedWithItem;
     }
 
     @Override
@@ -60,36 +70,28 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
     public StringBuilder open(AbstractEntity key) {
         StringBuilder outString = new StringBuilder();
 
-        if (!open && !locked) {
+        if (locked) {
+            if (blockedRoom != null) {
+                if (unlockedWithItem.equals(key)) {
+                    locked = false;
+                    key.setMustDestroyFromInv(true);
+                } else {
+                    outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
+                    outString.append(processEvent(EventType.OPEN_LOCKED));
+
+                    return outString;
+                }
+            }
+        }
+
+        if (!open) {
             open = true;
 
             outString.append("Hai aperto: " + getName());
             outString.append(processEvent(EventType.OPEN_UNLOCKED));
 
             setActionPerformed(true);
-        } else if (locked) {
-            if (blockedRoom != null) {
-                if (key != null) {
-                    if (key.getId() == unlockedWithItemId) {
-                        locked = false;
-                        open = true;
-
-                        key.setMustDestroyFromInv(true);
-
-                        outString.append("Hai aperto: " + getName());
-                        outString.append(processEvent(EventType.OPEN_UNLOCKED));
-
-                        setActionPerformed(true);
-                    } else {
-                        outString.append("Non funziona.");
-                        outString.append(processEvent(EventType.OPEN_LOCKED));
-                    }
-                } else {
-                    outString.append("È chiusa a chiave.");
-                    outString.append(processEvent(EventType.OPEN_LOCKED));
-                }
-            }
-        } else if (open) {
+        } else {
             outString.append("É giá aperta.");
         }
 
@@ -105,12 +107,20 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         if (blockedRoomId != 0) {
             rooms.stream()
                     .filter(room -> blockedRoomId == room.getId())
                     .forEach(room -> blockedRoom = room);
         }
+
+        if (unlockedWithItemId != null) {
+            for (AbstractEntity reqItem : objects.get(unlockedWithItemId)) {
+                unlockedWithItem = reqItem;
+            }
+        }
+
         processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }

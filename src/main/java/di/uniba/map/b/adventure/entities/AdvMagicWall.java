@@ -2,6 +2,7 @@ package di.uniba.map.b.adventure.entities;
 
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.AbstractRoom;
@@ -9,7 +10,7 @@ import di.uniba.map.b.adventure.type.AbstractRoom;
 public class AdvMagicWall extends AbstractEntity {
 
     private boolean locked = true;
-    private int unlockedByWearingItemId = 0; // TODO reference?
+
     private int blockedRoomId = 0;
 
     private boolean northBlocked = false;
@@ -23,7 +24,7 @@ public class AdvMagicWall extends AbstractEntity {
     private boolean upBlocked = false;
     private boolean downBlocked = false;
 
-    private String trespassingWhenLockedText;
+    private String trespassingWhenLockedText; // TODO é possibile rimuoverlo
 
     public AdvMagicWall(int id, String name, String description) {
         super(id, name, description);
@@ -34,34 +35,38 @@ public class AdvMagicWall extends AbstractEntity {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
+        if (getRequiredWearedItemsIdToInteract() != null) {
+            for (Integer reqId : getRequiredWearedItemsIdToInteract()) {
+                for (AbstractEntity obj : objects.get(reqId)) {
+                    if (obj instanceof IWearable) {
+                        getRequiredWearedItemsToInteract().add((IWearable) obj);
+                    }
+                }
+            }
+        }
+
         processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 
     public void processRequirements(List<AbstractEntity> inventory) {
-        if (locked && unlockedByWearingItemId != 0) {
-            for (AbstractEntity obj : inventory) {
-                if (obj.getId() == unlockedByWearingItemId) {
-                    if (obj instanceof IWearable) {
-                        IWearable wearable = (IWearable) obj;
-                        if (wearable.isWorn()) {
-                            locked = false;
-                            break;
-                        }
+        if (locked) {
+            if (getRequiredWearedItemsToInteract() != null) {
+                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                    if (!wearable.isWorn()) {
+                        return;
                     }
                 }
+                locked = false;
             }
-        } else if (!locked && unlockedByWearingItemId != 0) {
-            for (AbstractEntity obj : inventory) {
-                if (obj.getId() == unlockedByWearingItemId) {
-                    if (obj instanceof IWearable) {
-                        IWearable wearable = (IWearable) obj;
-
-                        if (!wearable.isWorn()) {
-                            locked = true;
-                            break;
-                        }
+        } else {
+            if (getRequiredWearedItemsToInteract() != null) {
+                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                    if (!wearable.isWorn()) {
+                        locked = true;
+                        return;
                     }
                 }
             }
@@ -114,14 +119,6 @@ public class AdvMagicWall extends AbstractEntity {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
-    }
-
-    public int getUnlockedByWearingItemId() {
-        return unlockedByWearingItemId;
-    }
-
-    public void setUnlockedByWearingItemId(int unlockedByWearingItemId) {
-        this.unlockedByWearingItemId = unlockedByWearingItemId;
     }
 
     public int getBlockedRoomId() {

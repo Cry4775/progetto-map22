@@ -7,6 +7,7 @@ package di.uniba.map.b.adventure.entities.container;
 
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IOpenable;
 import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
@@ -18,7 +19,7 @@ public class AdvChest extends AbstractContainer implements IOpenable {
     private boolean locked = false;
 
     private AbstractEntity unlockedWithItem;
-    private Integer unlockedWithItemId; // TODO reference?
+    private Integer unlockedWithItemId;
 
     public AdvChest(int id, String name, String description) {
         super(id, name, description);
@@ -45,8 +46,10 @@ public class AdvChest extends AbstractContainer implements IOpenable {
         if (locked) {
             if (unlockedWithItem.equals(key)) {
                 locked = false;
+                key.setMustDestroyFromInv(true);
             } else {
                 outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
+                outString.append(processEvent(EventType.OPEN_LOCKED));
                 return outString;
             }
         }
@@ -87,14 +90,14 @@ public class AdvChest extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 
         if (unlockedWithItemId != null) {
-            objects.stream()
-                    .filter(AdvItem.class::isInstance)
-                    .filter(reqItem -> reqItem.getId() == unlockedWithItemId)
-                    .forEach(reqItem -> unlockedWithItem = reqItem);
+            for (AbstractEntity reqItem : objects.get(unlockedWithItemId)) {
+                unlockedWithItem = reqItem;
+            }
         }
     }
 }

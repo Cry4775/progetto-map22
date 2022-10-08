@@ -10,21 +10,26 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.9.0</version>
         </dependency>
-        
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.gilecode.yagson/yagson -->
         <dependency>
             <groupId>com.gilecode.yagson</groupId>
             <artifactId>yagson</artifactId>
             <version>0.5.1</version>
         </dependency>
-    
+
     </dependencies>
     <name>adventure</name>
 </project>

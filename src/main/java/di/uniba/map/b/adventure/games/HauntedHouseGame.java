@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -53,14 +55,14 @@ import di.uniba.map.b.adventure.entities.pickupable.AdvLightSource;
 import di.uniba.map.b.adventure.entities.pickupable.AdvReadable;
 import di.uniba.map.b.adventure.entities.pickupable.AdvWearableItem;
 import di.uniba.map.b.adventure.parser.ParserOutput;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.AdvEvent;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
-import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.CutsceneRoom;
+import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
-import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.RoomEvent;
 
 // TODO il database puó essere usato come lista di tutti gli oggetti, poi dal json si imposta tutto
@@ -152,8 +154,9 @@ public class HauntedHouseGame extends GameDescription {
 
             linkRooms();
 
-            List<AbstractEntity> objects = listAllObjects();
-            for (AbstractEntity obj : objects) {
+            Multimap<Integer, AbstractEntity> objects = mapAllObjects();
+
+            for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, getRooms());
             }
 
@@ -177,27 +180,32 @@ public class HauntedHouseGame extends GameDescription {
         return result;
     }
 
-    private List<AbstractEntity> listAllObjects() {
-        List<AbstractEntity> objects = new ArrayList<>();
-        List<AbstractEntity> result = new ArrayList<>();
+    private Multimap<Integer, AbstractEntity> mapAllObjects() {
+
+        Multimap<Integer, AbstractEntity> objects = ArrayListMultimap.create();
+        Multimap<Integer, AbstractEntity> result = ArrayListMultimap.create();
 
         for (AbstractRoom room : listAllRooms()) {
             if (room instanceof PlayableRoom) {
                 PlayableRoom pRoom = (PlayableRoom) room;
 
                 if (pRoom.getObjects() != null) {
-                    objects.addAll(pRoom.getObjects());
+                    for (AbstractEntity obj : pRoom.getObjects()) {
+                        objects.put(obj.getId(), obj);
+                    }
                 }
             }
         }
 
-        result.addAll(objects);
+        result.putAll(objects);
 
-        for (AbstractEntity obj : objects) {
+        for (AbstractEntity obj : objects.values()) {
             if (obj instanceof AbstractContainer) {
                 AbstractContainer container = (AbstractContainer) obj;
 
-                result.addAll(container.getAllObjects());
+                for (AbstractEntity cObj : container.getAllObjects()) {
+                    result.put(cObj.getId(), cObj);
+                }
             }
         }
 

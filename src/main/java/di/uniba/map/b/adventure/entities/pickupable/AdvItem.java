@@ -2,6 +2,7 @@ package di.uniba.map.b.adventure.entities.pickupable;
 
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.IPickupable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
@@ -72,7 +73,8 @@ public class AdvItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }

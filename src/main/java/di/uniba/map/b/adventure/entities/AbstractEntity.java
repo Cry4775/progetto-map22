@@ -5,13 +5,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.GameComponent;
 import di.uniba.map.b.adventure.type.MutablePlayableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
-import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public abstract class AbstractEntity extends GameComponent {
 
@@ -68,7 +69,8 @@ public abstract class AbstractEntity extends GameComponent {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
-    public abstract void processReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms);
+    public abstract void processReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms);
 
     public void processRoomParent(List<AbstractRoom> rooms) {
         for (AbstractRoom room : rooms) {
@@ -90,7 +92,8 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void processEventReferences(List<AbstractEntity> objects, List<AbstractRoom> rooms) {
+    public void processEventReferences(Multimap<Integer, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
         if (events != null) {
             for (ObjEvent evt : events) {
                 for (AbstractRoom room : rooms) {
@@ -147,12 +150,10 @@ public abstract class AbstractEntity extends GameComponent {
                 requiredWearedItemsToInteract = new ArrayList<>();
 
                 for (Integer objId : requiredWearedItemsIdToInteract) {
-                    for (AbstractEntity obj : objects) {
-                        if (obj instanceof IWearable) {
-                            if (obj.getId() == objId) {
-                                requiredWearedItemsToInteract.add((IWearable) obj);
-                                break;
-                            }
+                    for (AbstractEntity reqItem : objects.get(objId)) {
+                        if (reqItem instanceof IWearable) {
+                            requiredWearedItemsToInteract.add((IWearable) reqItem);
+                            break;
                         }
                     }
                 }
