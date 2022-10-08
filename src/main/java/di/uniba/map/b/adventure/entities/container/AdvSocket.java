@@ -91,6 +91,13 @@ public class AdvSocket extends AbstractContainer {
         super.processReferences(objects, rooms);
 
         if (eligibleItemId != null) {
+            if (!objects.containsKey(eligibleItemId)) {
+                throw new RuntimeException(
+                        "Couldn't find the requested \"eligibleItem\" ID on " + getName()
+                                + " (" + getId()
+                                + "). Check the JSON file for correct object IDs.");
+            }
+
             for (AbstractEntity reqItem : objects.get(eligibleItemId)) {
                 eligibleItem = reqItem;
             }

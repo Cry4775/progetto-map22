@@ -239,7 +239,9 @@ public abstract class AbstractEntity extends GameComponent {
 
                     pRoom.removeObject(this);
                 } else {
-                    // TODO exception
+                    throw new RuntimeException(
+                            "Couldn't find the parent room of " + getName()
+                                    + " (" + getId() + ").");
                 }
             }
 

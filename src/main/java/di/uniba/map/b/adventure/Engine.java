@@ -28,17 +28,15 @@ public class Engine {
         this.game = game;
         this.gui = gui;
         try {
-            this.game.init();
-        } catch (IOException ex) {
-            System.err.println(ex);
-            // TODO GUI FATAL ERROR
-        }
-        try {
             Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
             parser = new Parser(stopwords);
+            this.game.init();
         } catch (IOException ex) {
-            System.err.println(ex);
-            // TODO GUI FATAL ERROR
+            gui.showFatalError(ex.getMessage());
+        } catch (RuntimeException ex) {
+            gui.showFatalError(ex.getMessage());
+        } catch (Exception ex) {
+            gui.showFatalError(ex.getMessage());
         }
     }
 
@@ -79,7 +77,10 @@ public class Engine {
                     game.setCurrentRoom(currentRoom.getNextRoom());
                     gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
                 } else {
-                    // TODO errore
+                    throw new RuntimeException(
+                            "Couldn't find the next room of " + currentRoom.getName()
+                                    + " (" + currentRoom.getId()
+                                    + "). Check the JSON file for correct room IDs.");
                 }
             } else {
                 gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));

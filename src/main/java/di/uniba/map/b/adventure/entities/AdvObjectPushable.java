@@ -6,8 +6,6 @@ import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 
-// TODO genera gli equals per tutti gli object
-
 public class AdvObjectPushable extends AbstractEntity implements IPushable {
 
     private boolean pushed = false;

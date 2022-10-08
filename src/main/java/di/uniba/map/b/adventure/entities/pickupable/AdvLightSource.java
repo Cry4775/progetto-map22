@@ -95,6 +95,13 @@ public class AdvLightSource extends AdvItem implements ILightSource {
         super.processReferences(objects, rooms);
 
         if (requiredItemId != null) {
+            if (!objects.containsKey(requiredItemId)) {
+                throw new RuntimeException(
+                        "Couldn't find the requested \"requiredItem\" ID on " + getName()
+                                + " (" + getId()
+                                + "). Check the JSON file for correct object IDs.");
+            }
+
             for (AbstractEntity reqItem : objects.get(requiredItemId)) {
                 requiredItem = (AdvItem) reqItem;
             }

@@ -403,14 +403,14 @@ public class HauntedHouseGame extends GameDescription {
 
     @Override
     public void nextMove(ParserOutput p, GameJFrame gui) {
-        PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
+        PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
 
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
         CommandType commandType = p.getCommand().getType();
 
         if (isMovementCommand(commandType)) {
             if (isMovementGranted(commandType)) {
-                moveTo(currentRoom.getRoomAt(commandType));
+                moveTo(currentPlayableRoom.getRoomAt(commandType));
             }
         } else {
 
@@ -704,21 +704,22 @@ public class HauntedHouseGame extends GameDescription {
         }
 
         if (getCurrentRoom() instanceof PlayableRoom) {
-            currentRoom = (PlayableRoom) getCurrentRoom();
-            processRoomLighting(currentRoom);
+            currentPlayableRoom = (PlayableRoom) getCurrentRoom();
+            processRoomLighting(currentPlayableRoom);
         } else {
-            currentRoom = null;
+            currentPlayableRoom = null;
         }
 
         if (getStatus().isMovementAttempt()) {
-            if (!getStatus().isPositionChanged() && currentRoom.isCurrentlyDark()) {
+            if (!getStatus().isPositionChanged() && currentPlayableRoom != null
+                    && currentPlayableRoom.isCurrentlyDark()) {
                 outString.append("Meglio non avventurarsi nel buio.");
             } else if (getStatus().isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");
             } else if (getStatus().isRoomBlockedByWall()) {
                 outString.append(getStatus().getWall().getTrespassingWhenLockedText());
             } else if (getStatus().isPositionChanged()) {
-                if (currentRoom != null && currentRoom.isCurrentlyDark()) {
+                if (currentPlayableRoom != null && currentPlayableRoom.isCurrentlyDark()) {
                     outString.append("È completamente buio e non riesci a vedere niente.");
                 } else {
                     outString.append(getCurrentRoom().getDescription());
@@ -872,9 +873,18 @@ public class HauntedHouseGame extends GameDescription {
                 .filter(clazz::isInstance)
                 .map(clazz::cast)
                 .filter(room -> directionIdGetter.apply(room) != null)
-                .forEach(room -> rooms.stream()
-                        .filter(linkedRoom -> linkedRoom.getId() == directionIdGetter.apply(room))
-                        .forEach(linkedRoom -> directionSetter.accept(room, linkedRoom)));
+                .forEach(room -> {
+                    for (AbstractRoom linkedRoom : rooms) {
+                        if (linkedRoom.getId() == directionIdGetter.apply(room)) {
+                            directionSetter.accept(room, linkedRoom);
+                            return;
+                        }
+                    }
+
+                    throw new RuntimeException(
+                            "Couldn't link the room (" + room.getId()
+                                    + ") directions. Check the JSON file for correct room directions IDs.");
+                });
     }
 
     private void moveTo(AbstractRoom room) {

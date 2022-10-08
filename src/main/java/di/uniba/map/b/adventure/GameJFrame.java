@@ -2,7 +2,6 @@ package di.uniba.map.b.adventure;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -12,11 +11,10 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
+import java.awt.event.WindowEvent;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BoundedRangeModel;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.UIDefaults;
 import javax.swing.text.BadLocationException;
@@ -55,10 +53,8 @@ public class GameJFrame extends javax.swing.JFrame {
             lblCompassNorthWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
             lblCompassSouthEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
             lblCompassSouthWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
-        } catch (FontFormatException ex) {
-            Logger.getLogger(GameJFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(GameJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            showFatalError(ex.getMessage());
         }
         noisePanel = new NoiseEffectPanel();
         lypRoomImage.add(noisePanel, new Integer(1));
@@ -372,6 +368,11 @@ public class GameJFrame extends javax.swing.JFrame {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
+    }
+
+    public void showFatalError(String message) {
+        JOptionPane.showMessageDialog(null, message, "Fatal Error", JOptionPane.ERROR_MESSAGE);
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     public void printSlowly(String message, int millisPerChar) throws BadLocationException {

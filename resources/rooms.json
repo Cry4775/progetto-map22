@@ -52,7 +52,7 @@
         "eastId": 2
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 4,
         "name": "Ingresso",
         "description": "Il piccolo atrio in cui ti trovi è dominato dall'imponente portone, verso sud. \nDa qui un corridoio conduce a nord, mentre a ovest puoi vedere una porta. \nDue quadri, unico arredamento della stanza, pendono dalle pareti.",
@@ -97,7 +97,7 @@
         }
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 5,
         "name": "Vestibolo",
         "description": "Una piccola stanza dove gli ospiti possono lasciare i loro soprabiti. La porta ad est è l'unica uscita. \nUn solo cappotto è appeso ad una parete.",
@@ -169,7 +169,7 @@
         ]
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 7,
         "name": "Cucine",
         "description": "Le cucine del palazzo sono ovviamente inutilizzabili. Il degrado e l'abbandono regnano sovrani, tutto è coperto da almeno un dito di polvere. \nAppoggiata ad una parete vedi una vecchia credenza.",
@@ -209,7 +209,7 @@
         }
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 8,
         "name": "Salone",
         "description": "Un vasto salone a pianta ottagonale, che probabilmente occupa buona parte di questo piano. \nAl centro noti un'alta colonna, larga e ottagonale anch'essa, che va dal soffitto al pavimento. \nUn'arcata conduce ad est e una piccola porta si apre nel lato sud-ovest.",
@@ -277,7 +277,7 @@
         }
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 10,
         "name": "Un piccolo andito",
         "description": "Questo piccolo andito, ricavato da uno degli angoli del salone ottagonale, non contiene altro se non una corda avvolta ad una grossa ruota e, collegata a questa, una leva in legno. \nUna porta conduce a nord-est.",
@@ -382,7 +382,7 @@
         ]
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 15,
         "name": "Studio (1° piano)",
         "description": "Uno studio che un tempo doveva essere ben arredato. Ora rimane soltanto una scrivania e una libreria completamente vuota. La porta è verso est. \nSopra la scrivania vedi un libro.",
@@ -458,7 +458,7 @@
         "downId": 19
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 17,
         "name": "Camera da letto (1° piano)",
         "description": "Una camera buia e spaziosa. In essa puoi vedere un letto ampio e elegante, un largo comò e, appeso ad una parete, un piccolo candeliere. La porta si trova verso ovest, e un passaggio si apre nella parete nord.",
@@ -576,7 +576,7 @@
         "southWestId": 19
     },
     {
-        "type": "MutablePlayableRoom",
+        "type": "MutableRoom",
         "id": 21,
         "name": "Di fronte ad una cella (sotterranei)",
         "description": "Il tunnel che proviene da nord-ovest, scavato nella dura roccia si ferma davanti ad una porta di metallo, verso sud.",

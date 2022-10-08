@@ -39,6 +39,14 @@ public class AdvMagicWall extends AbstractEntity {
             List<AbstractRoom> rooms) {
         if (getRequiredWearedItemsIdToInteract() != null) {
             for (Integer reqId : getRequiredWearedItemsIdToInteract()) {
+                if (!objects.containsKey(reqId)) {
+                    throw new RuntimeException(
+                            "Couldn't find the requested \"requiredWearedItemsIdToInteract\" ID "
+                                    + "(" + reqId + ") on " + getName()
+                                    + " (" + getId()
+                                    + "). Check the JSON file for correct object IDs.");
+                }
+
                 for (AbstractEntity obj : objects.get(reqId)) {
                     if (obj instanceof IWearable) {
                         getRequiredWearedItemsToInteract().add((IWearable) obj);
