@@ -3,10 +3,10 @@ package di.uniba.map.b.adventure.type;
 public class ObjEvent extends AdvEvent {
     private boolean updatingAnotherRoom = false;
     private Integer updateTargetRoomId;
-    private MutablePlayableRoom updateTargetRoom;
+    private MutableRoom updateTargetRoom;
 
     private boolean updatingParentRoom;
-    private MutablePlayableRoom parentRoom;
+    private MutableRoom parentRoom;
 
     private Integer teleportsPlayerToRoomId;
     private AbstractRoom teleportsPlayerToRoom;
@@ -21,11 +21,11 @@ public class ObjEvent extends AdvEvent {
         this.destroyOnTrigger = destroyOnTrigger;
     }
 
-    public MutablePlayableRoom getParentRoom() {
+    public MutableRoom getParentRoom() {
         return parentRoom;
     }
 
-    public void setParentRoom(MutablePlayableRoom parentRoom) {
+    public void setParentRoom(MutableRoom parentRoom) {
         this.parentRoom = parentRoom;
     }
 
@@ -45,11 +45,11 @@ public class ObjEvent extends AdvEvent {
         this.updateTargetRoomId = updateTargetRoomId;
     }
 
-    public MutablePlayableRoom getUpdateTargetRoom() {
+    public MutableRoom getUpdateTargetRoom() {
         return updateTargetRoom;
     }
 
-    public void setUpdateTargetRoom(MutablePlayableRoom updateTargetRoom) {
+    public void setUpdateTargetRoom(MutableRoom updateTargetRoom) {
         this.updateTargetRoom = updateTargetRoom;
     }
 

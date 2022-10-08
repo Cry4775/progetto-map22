@@ -60,7 +60,7 @@ import di.uniba.map.b.adventure.type.AdvEvent;
 import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
 import di.uniba.map.b.adventure.type.CutsceneRoom;
-import di.uniba.map.b.adventure.type.MutablePlayableRoom;
+import di.uniba.map.b.adventure.type.MutableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.RoomEvent;
@@ -261,7 +261,7 @@ public class HauntedHouseGame extends GameDescription {
         RuntimeTypeAdapterFactory<AbstractRoom> typeAdapterRooms = RuntimeTypeAdapterFactory
                 .of(AbstractRoom.class)
                 .registerSubtype(PlayableRoom.class)
-                .registerSubtype(MutablePlayableRoom.class)
+                .registerSubtype(MutableRoom.class)
                 .registerSubtype(CutsceneRoom.class);
 
         RuntimeTypeAdapterFactory<AdvEvent> typeAdapterEvents =
@@ -309,8 +309,8 @@ public class HauntedHouseGame extends GameDescription {
         List<AbstractRoom> result = new ArrayList<>();
 
         for (AbstractRoom room : getRooms()) {
-            if (room instanceof MutablePlayableRoom) {
-                MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+            if (room instanceof MutableRoom) {
+                MutableRoom mRoom = (MutableRoom) room;
 
                 result.addAll(mRoom.getAllRooms());
             }

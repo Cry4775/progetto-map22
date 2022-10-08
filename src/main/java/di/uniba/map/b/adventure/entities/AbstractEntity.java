@@ -10,7 +10,7 @@ import di.uniba.map.b.adventure.entities.container.AbstractContainer;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.GameComponent;
-import di.uniba.map.b.adventure.type.MutablePlayableRoom;
+import di.uniba.map.b.adventure.type.MutableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 
@@ -74,8 +74,8 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void processRoomParent(List<AbstractRoom> rooms) {
         for (AbstractRoom room : rooms) {
-            if (room instanceof MutablePlayableRoom) {
-                MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+            if (room instanceof MutableRoom) {
+                MutableRoom mRoom = (MutableRoom) room;
 
                 if (mRoom.getAllObjects().contains(this)) {
                     parent = room;
@@ -102,11 +102,13 @@ public abstract class AbstractEntity extends GameComponent {
 
                 if (evt.isUpdatingParentRoom()) {
                     if (parent instanceof PlayableRoom) {
-                        if (parent instanceof MutablePlayableRoom) {
-                            evt.setParentRoom((MutablePlayableRoom) parent);
+                        if (parent instanceof MutableRoom) {
+                            evt.setParentRoom((MutableRoom) parent);
                             parentRoomDone = true;
                         } else {
-                            // TODO throw exception
+                            throw new RuntimeException("Cannot link " + getName() + " ("
+                                    + getId()
+                                    + ") object event reference. It asks to update its parent room, but it's not a MutableRoom. Check the JSON file.");
                         }
                     }
                 }
@@ -115,11 +117,13 @@ public abstract class AbstractEntity extends GameComponent {
                     if (!targetRoomDone) {
                         if (evt.getUpdateTargetRoomId() != null) {
                             if (evt.getUpdateTargetRoomId() == room.getId()) {
-                                if (room instanceof MutablePlayableRoom) {
-                                    evt.setUpdateTargetRoom((MutablePlayableRoom) room);
+                                if (room instanceof MutableRoom) {
+                                    evt.setUpdateTargetRoom((MutableRoom) room);
                                     targetRoomDone = true;
                                 } else {
-                                    // TODO throw exception
+                                    throw new RuntimeException("Cannot link " + getName() + " ("
+                                            + getId()
+                                            + ") object event reference. It asks to update a target room, but it's not a MutableRoom. Check the JSON file.");
                                 }
                             }
                         } else {
@@ -129,8 +133,8 @@ public abstract class AbstractEntity extends GameComponent {
 
                     if (!parentRoomDone) {
                         if (evt.isUpdatingParentRoom()) {
-                            if (room instanceof MutablePlayableRoom) {
-                                MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+                            if (room instanceof MutableRoom) {
+                                MutableRoom mRoom = (MutableRoom) room;
                                 if (mRoom.getAllObjects().contains(this)) {
                                     evt.setParentRoom(mRoom);
                                     parentRoomDone = true;
@@ -138,7 +142,9 @@ public abstract class AbstractEntity extends GameComponent {
                             } else if (room instanceof PlayableRoom) {
                                 PlayableRoom pRoom = (PlayableRoom) room;
                                 if (pRoom.getObjects().contains(this)) {
-                                    // TODO throw exception
+                                    throw new RuntimeException("Cannot link " + getName() + " ("
+                                            + getId()
+                                            + ") object event reference. It asks to update its parent room, but it's not a MutableRoom. Check the JSON file.");
                                 }
                             }
                         } else {
@@ -160,6 +166,21 @@ public abstract class AbstractEntity extends GameComponent {
                     if (targetRoomDone && parentRoomDone && teleportRoomDone) {
                         break;
                     }
+                }
+
+                if (!targetRoomDone) {
+                    throw new RuntimeException(
+                            "Couldn't find the requested \"updateTargetRoom\" event on " + getName()
+                                    + " (" + getId()
+                                    + "). Check the JSON file for correct room IDs.");
+                }
+
+                if (!teleportRoomDone) {
+                    throw new RuntimeException(
+                            "Couldn't find the requested \"teleportsPlayerToRoom\" event on "
+                                    + getName()
+                                    + " (" + getId()
+                                    + "). Check the JSON file for correct room IDs.");
                 }
             }
         }

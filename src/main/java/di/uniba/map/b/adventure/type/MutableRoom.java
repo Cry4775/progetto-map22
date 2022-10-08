@@ -7,23 +7,23 @@ import java.util.Iterator;
 import java.util.List;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 
-public class MutablePlayableRoom extends PlayableRoom {
+public class MutableRoom extends PlayableRoom {
 
-    private MutablePlayableRoom newRoom;
+    private MutableRoom newRoom;
 
-    public MutablePlayableRoom(int id, String name, String description) {
+    public MutableRoom(int id, String name, String description) {
         super(id, name, description);
     }
 
-    public MutablePlayableRoom(int id, String name, String description, String imgPath) {
+    public MutableRoom(int id, String name, String description, String imgPath) {
         super(id, name, description, imgPath);
     }
 
-    public MutablePlayableRoom getNewRoom() {
+    public MutableRoom getNewRoom() {
         return newRoom;
     }
 
-    public void setNewRoom(MutablePlayableRoom newRoom) {
+    public void setNewRoom(MutableRoom newRoom) {
         this.newRoom = newRoom;
     }
 
@@ -58,8 +58,8 @@ public class MutablePlayableRoom extends PlayableRoom {
     private List<AbstractRoom> getAllRooms(AbstractRoom room) {
         List<AbstractRoom> result = new ArrayList<>();
 
-        if (room instanceof MutablePlayableRoom) {
-            MutablePlayableRoom mRoom = (MutablePlayableRoom) room;
+        if (room instanceof MutableRoom) {
+            MutableRoom mRoom = (MutableRoom) room;
 
             if (mRoom.getNewRoom() != null) {
                 result.addAll(getAllRooms(mRoom.getNewRoom()));
