@@ -255,12 +255,12 @@ public abstract class AbstractEntity extends GameComponent {
                 outString.append("È aperto.");
                 if (openableObj instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) openableObj;
-                    outString.append(container.revealContent());
+                    outString.append(container.getContentString());
                 }
             }
         } else if (this instanceof AbstractContainer) {
             AbstractContainer container = (AbstractContainer) this;
-            outString.append(container.revealContent());
+            outString.append(container.getContentString());
         } else if (this instanceof IFillable) {
             IFillable fillable = (IFillable) this;
             if (fillable.isFilled()) {

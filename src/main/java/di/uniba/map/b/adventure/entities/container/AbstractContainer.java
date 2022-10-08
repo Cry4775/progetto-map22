@@ -55,7 +55,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         return contentRevealed;
     }
 
-    public StringBuilder revealContent() {
+    public StringBuilder getContentString() {
         if (!contentRevealed) {
             contentRevealed = true;
         }
