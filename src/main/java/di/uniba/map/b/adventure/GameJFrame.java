@@ -363,7 +363,7 @@ public class GameJFrame extends javax.swing.JFrame {
             if (isInputText) {
                 doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
             } else {
-                printSlowly(text, 10);
+                printSlowly(text, 15);
             }
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -398,10 +398,10 @@ public class GameJFrame extends javax.swing.JFrame {
                 txtPane.setCaretPosition(txtPane.getDocument().getLength());
                 if (counter.get() >= message.length()) {
                     timer.stop();
-                    isSlowlyWriting = false;
                     txtInput.setEditable(true);
                     txtInput.setFocusable(true);
                     txtInput.requestFocusInWindow();
+                    isSlowlyWriting = false;
                 }
             }
         });
@@ -409,6 +409,7 @@ public class GameJFrame extends javax.swing.JFrame {
         timer.start();
         isSlowlyWriting = true;
 
+        // Skip writing animation
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -417,12 +418,12 @@ public class GameJFrame extends javax.swing.JFrame {
                 if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
                         && e.getID() == KeyEvent.KEY_RELEASED) {
                     timer.stop();
-                    isSlowlyWriting = false;
                     try {
                         doc.insertString(doc.getLength(), message.substring(counter.get()), null);
                         txtInput.setEditable(true);
                         txtInput.setFocusable(true);
                         txtInput.requestFocusInWindow();
+                        isSlowlyWriting = false;
                     } catch (BadLocationException e1) {
                         e1.printStackTrace();
                     }
@@ -431,7 +432,7 @@ public class GameJFrame extends javax.swing.JFrame {
                     manager.removeKeyEventDispatcher(this);
                 }
 
-                return false;
+                return true;
             }
 
         });
@@ -439,42 +440,47 @@ public class GameJFrame extends javax.swing.JFrame {
     }
 
     public void waitForEnterKey() {
-        Thread thread = new Thread() {
+        new Thread("WaitForInputThread") {
             public void run() {
                 while (isSlowlyWriting) {
                     try {
-                        sleep(10);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+                        sleep(30);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
 
-                txtInput.setText("Premere INVIO per continuare...");
-                txtInput.setEditable(false);
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        txtInput.setText("Premere INVIO per continuare...");
+                        txtInput.setFocusable(false);
+                        txtInput.setEditable(false);
 
-                KeyboardFocusManager manager =
-                        KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+                        KeyboardFocusManager manager =
+                                KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                        manager.addKeyEventDispatcher(new KeyEventDispatcher() {
 
-                    @Override
-                    public boolean dispatchKeyEvent(KeyEvent e) {
-                        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
-                                && e.getID() == KeyEvent.KEY_RELEASED) {
-                            txtInput.setText("");
-                            txtInput.setEditable(true);
-                            txtInput.setFocusable(true);
-                            txtInput.requestFocusInWindow();
-                            manager.removeKeyEventDispatcher(this);
-                            engine.commandPerformed("");
-                        }
-                        return true;
-                    }
+                            @Override
+                            public boolean dispatchKeyEvent(KeyEvent e) {
+                                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
+                                        && e.getID() == KeyEvent.KEY_RELEASED) {
+                                    txtInput.setText("");
+                                    txtInput.setEditable(true);
+                                    txtInput.setFocusable(true);
+                                    txtInput.requestFocusInWindow();
+                                    manager.removeKeyEventDispatcher(this);
+                                    engine.commandPerformed("");
+                                }
+                                return true;
+                            }
+                        });
+                    };
 
                 });
             }
-        };
-        thread.start();
+        }.start();;
 
+        // }.start();
     }
 
     /**

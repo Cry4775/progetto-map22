@@ -42,13 +42,8 @@ public class Engine {
 
     public void execute() {
         gui.setTitle("The Haunted House - 2021-22");
-        gui.getLblRoomName().setText(game.getCurrentRoom().getName());
 
-        Image roomImg = new ImageIcon(game.getCurrentRoom().getImgPath()).getImage()
-                .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
-        gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
-
-        game.setCompassLabels(gui);
+        updateGUI();
 
         gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
 
