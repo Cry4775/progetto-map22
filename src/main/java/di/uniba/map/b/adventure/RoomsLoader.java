@@ -7,8 +7,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.ExclusionStrategy;
@@ -16,6 +14,7 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import di.uniba.map.b.RoomsDirectionSetter;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
@@ -52,6 +51,8 @@ public class RoomsLoader implements Runnable {
 
     private List<AbstractRoom> rooms;
     private boolean exceptionThrown = false;
+
+    private List<Thread> workers = new ArrayList<>();
 
     public boolean isExceptionThrown() {
         return exceptionThrown;
@@ -128,11 +129,14 @@ public class RoomsLoader implements Runnable {
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
             }
+
+            for (Thread worker : workers) {
+                worker.join();
+            }
         } catch (Exception e) {
             exceptionThrown = true;
             throw new RuntimeException(e);
         }
-
     }
 
     private List<AbstractRoom> listAllRooms() {
@@ -186,50 +190,64 @@ public class RoomsLoader implements Runnable {
     private void linkRooms() {
         List<AbstractRoom> allRooms = listAllRooms();
 
-        setRoomsDirection(allRooms, PlayableRoom::getEastId, PlayableRoom::setEast,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getWestId, PlayableRoom::setWest,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getNorthId, PlayableRoom::setNorth,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getSouthId, PlayableRoom::setSouth,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getUpId, PlayableRoom::setUp,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getDownId, PlayableRoom::setDown,
-                PlayableRoom.class);
+        Thread east = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getEastId,
+                PlayableRoom::setEast, PlayableRoom.class));
+        Thread west = new Thread(
+                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getWestId, PlayableRoom::setWest,
+                        PlayableRoom.class));
+        Thread north = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getNorthId,
+                PlayableRoom::setNorth,
+                PlayableRoom.class));
+        Thread south = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getSouthId,
+                PlayableRoom::setSouth,
+                PlayableRoom.class));
+        Thread northEast = new Thread(new RoomsDirectionSetter<>(allRooms,
+                PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
+                PlayableRoom.class));
+        Thread northWest = new Thread(new RoomsDirectionSetter<>(allRooms,
+                PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
+                PlayableRoom.class));
+        Thread southEast = new Thread(new RoomsDirectionSetter<>(allRooms,
+                PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
+                PlayableRoom.class));
+        Thread southWest = new Thread(new RoomsDirectionSetter<>(allRooms,
+                PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
+                PlayableRoom.class));
+        Thread up = new Thread(
+                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getUpId, PlayableRoom::setUp,
+                        PlayableRoom.class));
+        Thread down = new Thread(
+                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getDownId, PlayableRoom::setDown,
+                        PlayableRoom.class));
 
-        setRoomsDirection(allRooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
-                CutsceneRoom.class);
-    }
+        Thread nextRoom = new Thread(new RoomsDirectionSetter<>(allRooms,
+                CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
+                CutsceneRoom.class));
 
-    private <T extends AbstractRoom> void setRoomsDirection(List<AbstractRoom> rooms,
-            Function<T, Integer> directionIdGetter, BiConsumer<T, AbstractRoom> directionSetter,
-            Class<T> clazz) {
-        rooms.stream()
-                .filter(clazz::isInstance)
-                .map(clazz::cast)
-                .filter(room -> directionIdGetter.apply(room) != null)
-                .forEach(room -> {
-                    for (AbstractRoom linkedRoom : rooms) {
-                        if (linkedRoom.getId() == directionIdGetter.apply(room)) {
-                            directionSetter.accept(room, linkedRoom);
-                            return;
-                        }
-                    }
+        east.start();
+        west.start();
+        north.start();
+        south.start();
+        northEast.start();
+        northWest.start();
+        southEast.start();
+        southWest.start();
+        up.start();
+        down.start();
+        nextRoom.start();
 
-                    throw new RuntimeException(
-                            "Couldn't link the room (" + room.getId()
-                                    + ") directions. Check the JSON file for correct room directions IDs.");
-                });
+        workers.add(east);
+        workers.add(west);
+        workers.add(north);
+        workers.add(south);
+        workers.add(northEast);
+        workers.add(northWest);
+        workers.add(southEast);
+        workers.add(southWest);
+        workers.add(up);
+        workers.add(down);
+        workers.add(nextRoom);
+
     }
 
 }

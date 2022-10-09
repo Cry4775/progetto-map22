@@ -45,8 +45,8 @@ public class Engine {
             if (!crashed.get())
                 execute();
         } catch (Exception ex) {
+            gui.setVisible(false);
             gui.showFatalError(ex.getMessage());
-            System.out.println("a");
         }
     }
 
