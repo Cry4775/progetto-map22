@@ -7,8 +7,8 @@ package di.uniba.map.b.adventure;
 import java.awt.Image;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ImageIcon;
 import di.uniba.map.b.adventure.parser.Parser;
 import di.uniba.map.b.adventure.parser.ParserOutput;
@@ -28,15 +28,25 @@ public class Engine {
         this.game = game;
         this.gui = gui;
         try {
+            AtomicBoolean crashed = new AtomicBoolean(false);
             Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
             parser = new Parser(stopwords);
+            Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+                    gui.showFatalError(e.getMessage());
+                    crashed.set(true);
+                }
+            });
+
             this.game.init();
-        } catch (IOException ex) {
-            gui.showFatalError(ex.getMessage());
-        } catch (RuntimeException ex) {
-            gui.showFatalError(ex.getMessage());
+
+            if (!crashed.get())
+                execute();
         } catch (Exception ex) {
             gui.showFatalError(ex.getMessage());
+            System.out.println("a");
         }
     }
 

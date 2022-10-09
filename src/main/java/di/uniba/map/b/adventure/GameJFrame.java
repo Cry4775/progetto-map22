@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.BoundedRangeModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIDefaults;
 import javax.swing.text.BadLocationException;
@@ -38,7 +39,6 @@ public class GameJFrame extends javax.swing.JFrame {
         init();
         GameDescription game = new HauntedHouseGame();
         engine = new Engine(game, this);
-        engine.execute();
     }
 
     private void init() {
@@ -343,8 +343,6 @@ public class GameJFrame extends javax.swing.JFrame {
 
         lypRoomImage.setLayout(new javax.swing.OverlayLayout(lypRoomImage));
 
-        lblRoomImage.setIcon(new javax.swing.ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/intro.jpg")));
         lblRoomImage
                 .setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         lblRoomImage.setName("");
@@ -371,8 +369,15 @@ public class GameJFrame extends javax.swing.JFrame {
     }
 
     public void showFatalError(String message) {
-        JOptionPane.showMessageDialog(null, message, "Fatal Error", JOptionPane.ERROR_MESSAGE);
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JOptionPane.showMessageDialog(null, message, "Fatal Error",
+                        JOptionPane.ERROR_MESSAGE);
+                dispatchEvent(event);
+            }
+        });
+
     }
 
     public void printSlowly(String message, int millisPerChar) throws BadLocationException {

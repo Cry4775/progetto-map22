@@ -1,37 +1,17 @@
 package di.uniba.map.b.adventure.games;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import di.uniba.map.b.adventure.CommandsLoader;
 import di.uniba.map.b.adventure.GameDescription;
 import di.uniba.map.b.adventure.GameJFrame;
-import di.uniba.map.b.adventure.RuntimeTypeAdapterFactory;
+import di.uniba.map.b.adventure.RoomsLoader;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
 import di.uniba.map.b.adventure.entities.AdvFire;
-import di.uniba.map.b.adventure.entities.AdvFixedObject;
 import di.uniba.map.b.adventure.entities.AdvMagicWall;
-import di.uniba.map.b.adventure.entities.AdvObjectMovable;
-import di.uniba.map.b.adventure.entities.AdvObjectPullable;
-import di.uniba.map.b.adventure.entities.AdvObjectPushable;
-import di.uniba.map.b.adventure.entities.AdvPerson;
 import di.uniba.map.b.adventure.entities.IFluid;
 import di.uniba.map.b.adventure.entities.ILightSource;
 import di.uniba.map.b.adventure.entities.IMovable;
@@ -44,23 +24,9 @@ import di.uniba.map.b.adventure.entities.ISwitch;
 import di.uniba.map.b.adventure.entities.ITalkable;
 import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
-import di.uniba.map.b.adventure.entities.container.AdvChest;
-import di.uniba.map.b.adventure.entities.container.AdvContainer;
-import di.uniba.map.b.adventure.entities.container.AdvSocket;
-import di.uniba.map.b.adventure.entities.container.pickupable.AdvWearableContainer;
-import di.uniba.map.b.adventure.entities.pickupable.AdvFillableItem;
-import di.uniba.map.b.adventure.entities.pickupable.AdvFluid;
-import di.uniba.map.b.adventure.entities.pickupable.AdvItem;
-import di.uniba.map.b.adventure.entities.pickupable.AdvLightSource;
-import di.uniba.map.b.adventure.entities.pickupable.AdvReadable;
-import di.uniba.map.b.adventure.entities.pickupable.AdvWearableItem;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AbstractRoom;
-import di.uniba.map.b.adventure.type.AdvEvent;
-import di.uniba.map.b.adventure.type.Command;
 import di.uniba.map.b.adventure.type.CommandType;
-import di.uniba.map.b.adventure.type.CutsceneRoom;
-import di.uniba.map.b.adventure.type.MutableRoom;
 import di.uniba.map.b.adventure.type.ObjEvent;
 import di.uniba.map.b.adventure.type.PlayableRoom;
 import di.uniba.map.b.adventure.type.RoomEvent;
@@ -74,283 +40,25 @@ public class HauntedHouseGame extends GameDescription {
     @Override
     public void init() throws FileNotFoundException, IOException {
         outString = new StringBuilder();
-        loadCommands();
-        loadRooms();
-    }
 
-    private void loadCommands() {
-        Command north = new Command(CommandType.NORTH, "nord");
-        north.addAlias("n");
-        north.addAlias("north");
+        CommandsLoader commandsLoader = new CommandsLoader(getCommands());
+        Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
-        Command south = new Command(CommandType.SOUTH, "sud");
-        south.addAlias("s");
-        south.addAlias("south");
+        RoomsLoader roomsLoader = new RoomsLoader(getRooms());
+        Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
 
-        Command east = new Command(CommandType.EAST, "est");
-        east.addAlias("e");
-        east.addAlias("east");
+        tCommands.start();
+        tRooms.start();
 
-        Command west = new Command(CommandType.WEST, "ovest");
-        west.addAlias("w");
-        west.addAlias("o");
-        west.addAlias("west");
-
-        Command southWest = new Command(CommandType.SOUTH_WEST, "sudovest");
-        southWest.addAlias("so");
-        southWest.addAlias("sw");
-        southWest.addAlias("sud-ovest");
-        southWest.addAlias("southwest");
-        southWest.addAlias("south-west");
-
-        Command southEast = new Command(CommandType.SOUTH_EAST, "sudest");
-        southEast.addAlias("se");
-        southEast.addAlias("sud-est");
-        southEast.addAlias("south-east");
-        southEast.addAlias("southeast");
-
-        Command northWest = new Command(CommandType.NORTH_WEST, "nordovest");
-        northWest.addAlias("no");
-        northWest.addAlias("nw");
-        northWest.addAlias("northwest");
-        northWest.addAlias("nord-ovest");
-        northWest.addAlias("north-west");
-
-        Command northEast = new Command(CommandType.NORTH_EAST, "nordest");
-        northEast.addAlias("ne");
-        northEast.addAlias("northeast");
-        northEast.addAlias("north-east");
-        northEast.addAlias("nord-est");
-
-        Command up = new Command(CommandType.UP, "su");
-        up.addAlias("sopra");
-        up.addAlias("superiore");
-        up.addAlias("up");
-        up.addAlias("sali");
-        up.addAlias("upstairs");
-
-        Command down = new Command(CommandType.DOWN, "giu");
-        down.addAlias("sotto");
-        down.addAlias("inferiore");
-        down.addAlias("down");
-        down.addAlias("scendi");
-        down.addAlias("downstairs");
-
-        Command inventory = new Command(CommandType.INVENTORY, "inventario");
-        inventory.addAlias("inv");
-        inventory.addAlias("inventory");
-
-        Command lookAt = new Command(CommandType.LOOK_AT, "osserva");
-        lookAt.addAlias("guarda");
-        lookAt.addAlias("esamina");
-        lookAt.addAlias("x");
-        lookAt.addAlias("look");
-        lookAt.addAlias("vedi");
-
-        Command pickUp = new Command(CommandType.PICK_UP, "prendi");
-        pickUp.addAlias("pick");
-        pickUp.addAlias("pickup");
-        pickUp.addAlias("raccogli");
-
-        Command open = new Command(CommandType.OPEN, "apri");
-        open.addAlias("open");
-
-        Command push = new Command(CommandType.PUSH, "spingi");
-        push.addAlias("push");
-        push.addAlias("premi");
-        push.addAlias("schiaccia");
-
-        Command pull = new Command(CommandType.PULL, "tira");
-        pull.addAlias("pull");
-
-        Command move = new Command(CommandType.MOVE, "sposta");
-        move.addAlias("move");
-        move.addAlias("muovi");
-        move.addAlias("trascina");
-
-        Command insert = new Command(CommandType.INSERT, "inserisci");
-        insert.addAlias("insert");
-        insert.addAlias("metti");
-
-        Command wear = new Command(CommandType.WEAR, "indossa");
-        wear.addAlias("vesti");
-        wear.addAlias("mettiti");
-        wear.addAlias("wear");
-        wear.addAlias("equip");
-        wear.addAlias("equipaggia");
-
-        Command unwear = new Command(CommandType.UNWEAR, "togli");
-        unwear.addAlias("togliti");
-        unwear.addAlias("unwear");
-        unwear.addAlias("unequip");
-        unwear.addAlias("disequipaggia");
-        unwear.addAlias("rimuovi");
-
-        Command turnOn = new Command(CommandType.TURN_ON, "accendi");
-        turnOn.addAlias("light");
-
-        Command turnOff = new Command(CommandType.TURN_OFF, "spegni");
-        turnOff.addAlias("spengi");
-
-        Command talkTo = new Command(CommandType.TALK_TO, "parla");
-        talkTo.addAlias("talk");
-        talkTo.addAlias("speak");
-        talkTo.addAlias("conversa");
-        talkTo.addAlias("chiedi");
-        talkTo.addAlias("ask");
-
-        Command pour = new Command(CommandType.POUR, "versa");
-        pour.addAlias("butta");
-        pour.addAlias("pour");
-        pour.addAlias("throw");
-
-        Command read = new Command(CommandType.READ, "leggi");
-        read.addAlias("read");
-
-        getCommands().add(north);
-        getCommands().add(northWest);
-        getCommands().add(northEast);
-        getCommands().add(south);
-        getCommands().add(southWest);
-        getCommands().add(southEast);
-        getCommands().add(east);
-        getCommands().add(west);
-        getCommands().add(up);
-        getCommands().add(down);
-        getCommands().add(inventory);
-        getCommands().add(lookAt);
-        getCommands().add(pickUp);
-        getCommands().add(open);
-        getCommands().add(push);
-        getCommands().add(pull);
-        getCommands().add(move);
-        getCommands().add(pour);
-        getCommands().add(talkTo);
-        getCommands().add(turnOff);
-        getCommands().add(turnOn);
-        getCommands().add(unwear);
-        getCommands().add(wear);
-        getCommands().add(insert);
-        getCommands().add(read);
-    }
-
-    private void loadRooms() throws FileNotFoundException, IOException {
-        RuntimeTypeAdapterFactory<AbstractEntity> typeAdapterObjects =
-                RuntimeTypeAdapterFactory
-                        .of(AbstractEntity.class)
-                        .registerSubtype(AdvFixedObject.class)
-                        .registerSubtype(AdvItem.class)
-                        .registerSubtype(AdvContainer.class)
-                        .registerSubtype(AdvWearableContainer.class)
-                        .registerSubtype(AdvChest.class)
-                        .registerSubtype(AdvSocket.class)
-                        .registerSubtype(AdvDoorBlocked.class)
-                        .registerSubtype(AdvDoorOpenable.class)
-                        .registerSubtype(AdvMagicWall.class)
-                        .registerSubtype(AdvWearableItem.class)
-                        .registerSubtype(AdvFillableItem.class)
-                        .registerSubtype(AdvReadable.class)
-                        .registerSubtype(AdvLightSource.class)
-                        .registerSubtype(AdvObjectMovable.class)
-                        .registerSubtype(AdvObjectPullable.class)
-                        .registerSubtype(AdvObjectPushable.class)
-                        .registerSubtype(AdvFire.class)
-                        .registerSubtype(AdvFluid.class)
-                        .registerSubtype(AdvPerson.class);
-
-        RuntimeTypeAdapterFactory<AbstractRoom> typeAdapterRooms = RuntimeTypeAdapterFactory
-                .of(AbstractRoom.class)
-                .registerSubtype(PlayableRoom.class)
-                .registerSubtype(MutableRoom.class)
-                .registerSubtype(CutsceneRoom.class);
-
-        RuntimeTypeAdapterFactory<AdvEvent> typeAdapterEvents =
-                RuntimeTypeAdapterFactory
-                        .of(AdvEvent.class)
-                        .registerSubtype(ObjEvent.class)
-                        .registerSubtype(RoomEvent.class);
-
-        Gson gson = new GsonBuilder()
-                .setExclusionStrategies(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        return AbstractRoom.class.equals(f.getDeclaredClass())
-                                || AbstractEntity.class.equals(f.getDeclaredClass());
-                    }
-
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
-                })
-                .registerTypeAdapterFactory(typeAdapterObjects)
-                .registerTypeAdapterFactory(typeAdapterRooms)
-                .registerTypeAdapterFactory(typeAdapterEvents)
-                .create();
-        Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("./resources/rooms.json"), StandardCharsets.UTF_8))) {
-            getRooms().addAll(gson.fromJson(in, roomsType));
-
-            linkRooms();
-
-            Multimap<Integer, AbstractEntity> objects = mapAllObjects();
-
-            for (AbstractEntity obj : objects.values()) {
-                obj.processReferences(objects, getRooms());
+        try {
+            tCommands.join();
+            tRooms.join();
+            if (!roomsLoader.isExceptionThrown()) {
+                setCurrentRoom(getRooms().get(0));
             }
-
-            setCurrentRoom(getRooms().get(0));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
-
-    private List<AbstractRoom> listAllRooms() {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        for (AbstractRoom room : getRooms()) {
-            if (room instanceof MutableRoom) {
-                MutableRoom mRoom = (MutableRoom) room;
-
-                result.addAll(mRoom.getAllRooms());
-            }
-
-            result.add(room);
-        }
-
-        return result;
-    }
-
-    private Multimap<Integer, AbstractEntity> mapAllObjects() {
-
-        Multimap<Integer, AbstractEntity> objects = ArrayListMultimap.create();
-        Multimap<Integer, AbstractEntity> result = ArrayListMultimap.create();
-
-        for (AbstractRoom room : listAllRooms()) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-
-                if (pRoom.getObjects() != null) {
-                    for (AbstractEntity obj : pRoom.getObjects()) {
-                        objects.put(obj.getId(), obj);
-                    }
-                }
-            }
-        }
-
-        result.putAll(objects);
-
-        for (AbstractEntity obj : objects.values()) {
-            if (obj instanceof AbstractContainer) {
-                AbstractContainer container = (AbstractContainer) obj;
-
-                for (AbstractEntity cObj : container.getAllObjects()) {
-                    result.put(cObj.getId(), cObj);
-                }
-            }
-        }
-
-        return result;
     }
 
     public boolean isMovementGranted(CommandType direction) {
@@ -836,55 +544,6 @@ public class HauntedHouseGame extends GameDescription {
             }
         }
         return "";
-    }
-
-    private void linkRooms() {
-        List<AbstractRoom> allRooms = listAllRooms();
-
-        setRoomsDirection(allRooms, PlayableRoom::getEastId, PlayableRoom::setEast,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getWestId, PlayableRoom::setWest,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getNorthId, PlayableRoom::setNorth,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getSouthId, PlayableRoom::setSouth,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getUpId, PlayableRoom::setUp,
-                PlayableRoom.class);
-        setRoomsDirection(allRooms, PlayableRoom::getDownId, PlayableRoom::setDown,
-                PlayableRoom.class);
-
-        setRoomsDirection(allRooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
-                CutsceneRoom.class);
-    }
-
-    private <T extends AbstractRoom> void setRoomsDirection(List<AbstractRoom> rooms,
-            Function<T, Integer> directionIdGetter, BiConsumer<T, AbstractRoom> directionSetter,
-            Class<T> clazz) {
-        rooms.stream()
-                .filter(clazz::isInstance)
-                .map(clazz::cast)
-                .filter(room -> directionIdGetter.apply(room) != null)
-                .forEach(room -> {
-                    for (AbstractRoom linkedRoom : rooms) {
-                        if (linkedRoom.getId() == directionIdGetter.apply(room)) {
-                            directionSetter.accept(room, linkedRoom);
-                            return;
-                        }
-                    }
-
-                    throw new RuntimeException(
-                            "Couldn't link the room (" + room.getId()
-                                    + ") directions. Check the JSON file for correct room directions IDs.");
-                });
     }
 
     private void moveTo(AbstractRoom room) {
