@@ -14,7 +14,6 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import di.uniba.map.b.RoomsDirectionSetter;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
 import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
 import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
