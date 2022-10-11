@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.SoundManager;
+import di.uniba.map.b.adventure.SoundManager.Mode;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
@@ -70,10 +72,13 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
     public StringBuilder open(AbstractEntity key) {
         StringBuilder outString = new StringBuilder();
 
+        boolean unlocked = false;
+
         if (locked) {
             if (blockedRoom != null) {
                 if (unlockedWithItem.equals(key)) {
                     locked = false;
+                    unlocked = true;
                     key.setMustDestroyFromInv(true);
                 } else {
                     outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
@@ -86,7 +91,8 @@ public class AdvDoorOpenable extends AbstractEntity implements IOpenable {
 
         if (!open) {
             open = true;
-
+            SoundManager.playWav(unlocked ? SoundManager.DOOR_UNLOCK_OPEN_SOUND_PATH
+                    : SoundManager.DOOR_OPEN_SOUND_PATH, Mode.SOUND);
             outString.append("Hai aperto: " + getName());
             outString.append(processEvent(EventType.OPEN_UNLOCKED));
 

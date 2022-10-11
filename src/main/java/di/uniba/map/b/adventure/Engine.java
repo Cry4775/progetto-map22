@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ImageIcon;
+import di.uniba.map.b.adventure.SoundManager.Mode;
 import di.uniba.map.b.adventure.parser.Parser;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.CommandType;
@@ -51,6 +52,8 @@ public class Engine {
     }
 
     public void execute() {
+        SoundManager.playWav("./resources/sound/ambient.wav", Mode.MUSIC);
+
         gui.setTitle("The Haunted House - 2021-22");
 
         updateGUI();

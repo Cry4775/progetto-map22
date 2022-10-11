@@ -361,7 +361,7 @@ public class GameJFrame extends javax.swing.JFrame {
             if (isInputText) {
                 doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
             } else {
-                printSlowly(text, 50);
+                printSlowly(text, 15);
             }
         } catch (BadLocationException e) {
             e.printStackTrace();

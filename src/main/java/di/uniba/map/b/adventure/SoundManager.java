@@ -13,9 +13,11 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundManager {
-    private static final String PICKUP_SOUND_PATH = "./resources/sound/pickUp.wav";
-    private static final String DOOR_CLOSE_SOUND_PATH = "./resources/sound/closeDoor.wav";
-    private static final String DOOR_OPEN_SOUND_PATH = "./resources/sound/openDoor.wav";
+    public static final String PICKUP_SOUND_PATH = "./resources/sound/pickUp.wav";
+    public static final String DOOR_CLOSE_SOUND_PATH = "./resources/sound/closeDoor.wav";
+    public static final String DOOR_OPEN_SOUND_PATH = "./resources/sound/openDoor.wav";
+    public static final String DOOR_UNLOCK_OPEN_SOUND_PATH =
+            "./resources/sound/unlockingAndOpeningDoor.wav";
 
     private static String currentMusicPath;
 
@@ -35,6 +37,7 @@ public class SoundManager {
         defaultSounds.put(PICKUP_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_CLOSE_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_OPEN_SOUND_PATH, new Wrapper<Clip>(null));
+        defaultSounds.put(DOOR_UNLOCK_OPEN_SOUND_PATH, new Wrapper<Clip>(null));
 
         for (String key : defaultSounds.keySet()) {
             openWav(key, defaultSounds.get(key));
@@ -42,7 +45,7 @@ public class SoundManager {
     }
 
     public static void playWav(String path, Mode mode) {
-        // Objects.requireNonNull(path);
+        Objects.requireNonNull(path);
         Objects.requireNonNull(mode);
 
         switch (mode) {
