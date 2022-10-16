@@ -30,6 +30,10 @@ public class WeatherFetcher {
 
     private static String locationKey = "";
 
+    private static long lastFetchTime = 0;
+
+    private static boolean lastFetchRaining = false;
+
     private static void fetchLocationKey() {
         if (locationKey.isEmpty()) {
             String ipAddress = "";
@@ -64,16 +68,19 @@ public class WeatherFetcher {
     public static boolean isRaining() {
         fetchLocationKey();
 
-        WebTarget target = CLIENT.target(URL_GET_WEATHER + locationKey);
-        Response response = target.queryParam("apikey", API_KEY).queryParam("details", true)
-                .request(MediaType.APPLICATION_JSON).get();
+        if (lastFetchTime == 0 || (System.currentTimeMillis() - lastFetchTime == 1800000)) {
+            WebTarget target = CLIENT.target(URL_GET_WEATHER + locationKey);
+            Response response = target.queryParam("apikey", API_KEY).queryParam("details", true)
+                    .request(MediaType.APPLICATION_JSON).get();
 
-        if (response.getStatus() == 200) {
-            String json = response.readEntity(String.class);
-            return getJsonField(json, "HasPrecipitation").getAsBoolean();
+            if (response.getStatus() == 200) {
+                lastFetchTime = System.currentTimeMillis();
+                String json = response.readEntity(String.class);
+                lastFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
+            }
         }
 
-        return false;
+        return lastFetchRaining;
     }
 
     private static JsonElement getJsonField(String json, String fieldName) {

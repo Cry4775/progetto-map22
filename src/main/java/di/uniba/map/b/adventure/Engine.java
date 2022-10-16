@@ -71,6 +71,12 @@ public class Engine {
     }
 
     public void commandPerformed(String command) {
+        if (!WeatherFetcher.isRaining()) {
+            SoundManager.playWav("./resources/sound/ambience.wav", Mode.MUSIC);
+        } else {
+            SoundManager.playWav("./resources/sound/rainAmbience.wav", Mode.MUSIC);
+        }
+
         if (game.getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
             ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
