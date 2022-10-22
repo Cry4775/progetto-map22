@@ -1,7 +1,6 @@
 package di.uniba.map.b;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import javax.ws.rs.client.Client;
@@ -30,7 +29,7 @@ public class WeatherFetcher {
 
     private static String locationKey = "";
 
-    private static long lastFetchTime = 0;
+    private static long latestFetchTime = 0;
 
     private static boolean lastFetchRaining = false;
 
@@ -44,22 +43,18 @@ public class WeatherFetcher {
                         new BufferedReader(new InputStreamReader(url.openStream()))) {
                     ipAddress = br.readLine();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            if (!ipAddress.isEmpty()) {
+                // If no exceptions are thrown above, continue
                 WebTarget target = CLIENT.target(URL_GET_LOCATION);
-                Response response = target.queryParam("apikey", API_KEY).queryParam("q", ipAddress)
-                        .request(MediaType.APPLICATION_JSON).get();
+                Response response =
+                        target.queryParam("apikey", API_KEY).queryParam("q", ipAddress)
+                                .request(MediaType.APPLICATION_JSON).get();
 
                 if (response.getStatus() == 200) {
                     String json = response.readEntity(String.class);
                     locationKey = getJsonField(json, "Key").getAsString();
                 }
-            }
-
-            if (locationKey.isEmpty()) {
+            } catch (Exception e) {
                 locationKey = DEFAULT_LOCATION_KEY;
             }
         }
@@ -68,15 +63,23 @@ public class WeatherFetcher {
     public static boolean isRaining() {
         fetchLocationKey();
 
-        if (lastFetchTime == 0 || (System.currentTimeMillis() - lastFetchTime == 1800000)) {
+        if (latestFetchTime == 0 || (System.currentTimeMillis() - latestFetchTime == 1800000)) {
             WebTarget target = CLIENT.target(URL_GET_WEATHER + locationKey);
-            Response response = target.queryParam("apikey", API_KEY).queryParam("details", true)
-                    .request(MediaType.APPLICATION_JSON).get();
 
-            if (response.getStatus() == 200) {
-                lastFetchTime = System.currentTimeMillis();
-                String json = response.readEntity(String.class);
-                lastFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
+            try {
+                Response response = target.queryParam("apikey", API_KEY).queryParam("details", true)
+                        .request(MediaType.APPLICATION_JSON).get();
+                target.queryParam("apikey", API_KEY).queryParam("details", true)
+                        .request(MediaType.APPLICATION_JSON).get();
+
+                if (response.getStatus() == 200) {
+                    latestFetchTime = System.currentTimeMillis();
+                    String json = response.readEntity(String.class);
+                    lastFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
+                }
+            } catch (Exception e) {
+                // Set default value
+                lastFetchRaining = false;
             }
         }
 
