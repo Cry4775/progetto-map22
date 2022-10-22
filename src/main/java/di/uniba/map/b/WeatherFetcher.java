@@ -36,9 +36,8 @@ public class WeatherFetcher {
     private static boolean latestFetchRaining = false;
 
     static {
-        String ipAddress = "";
-
         try {
+            String ipAddress = "";
             URL url = new URL(URL_GET_IP);
             try (BufferedReader br =
                     new BufferedReader(new InputStreamReader(url.openStream()))) {
