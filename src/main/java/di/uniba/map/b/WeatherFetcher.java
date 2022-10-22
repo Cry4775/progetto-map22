@@ -13,57 +13,56 @@ import com.google.gson.JsonParser;
 
 public class WeatherFetcher {
 
-    private final static String URL_GET_LOCATION =
+    private static final String URL_GET_LOCATION =
             "http://dataservice.accuweather.com/locations/v1/cities/ipaddress";
 
-    private final static String URL_GET_WEATHER =
+    private static final String URL_GET_WEATHER =
             "http://dataservice.accuweather.com/currentconditions/v1/";
 
-    private final static String API_KEY = "XUmLuDSS5WHRBFaGkfuMqJXo0txjadwQ";
+    private static final String API_KEY = "XUmLuDSS5WHRBFaGkfuMqJXo0txjadwQ";
 
-    private final static String DEFAULT_LOCATION_KEY = "214964";
+    private static final String DEFAULT_LOCATION_KEY = "214964";
 
-    private final static String URL_GET_IP = "http://checkip.amazonaws.com/";
+    private static final String URL_GET_IP = "http://checkip.amazonaws.com/";
 
-    private final static Client CLIENT = ClientBuilder.newClient();
+    private static final Client CLIENT = ClientBuilder.newClient();
 
     private static String locationKey = "";
 
+    private static final int FETCH_INTERVAL = 1800000;
+
     private static long latestFetchTime = 0;
 
-    private static boolean lastFetchRaining = false;
+    private static boolean latestFetchRaining = false;
 
-    private static void fetchLocationKey() {
-        if (locationKey.isEmpty()) {
-            String ipAddress = "";
+    static {
+        String ipAddress = "";
 
-            try {
-                URL url = new URL(URL_GET_IP);
-                try (BufferedReader br =
-                        new BufferedReader(new InputStreamReader(url.openStream()))) {
-                    ipAddress = br.readLine();
-                }
-
-                // If no exceptions are thrown above, continue
-                WebTarget target = CLIENT.target(URL_GET_LOCATION);
-                Response response =
-                        target.queryParam("apikey", API_KEY).queryParam("q", ipAddress)
-                                .request(MediaType.APPLICATION_JSON).get();
-
-                if (response.getStatus() == 200) {
-                    String json = response.readEntity(String.class);
-                    locationKey = getJsonField(json, "Key").getAsString();
-                }
-            } catch (Exception e) {
-                locationKey = DEFAULT_LOCATION_KEY;
+        try {
+            URL url = new URL(URL_GET_IP);
+            try (BufferedReader br =
+                    new BufferedReader(new InputStreamReader(url.openStream()))) {
+                ipAddress = br.readLine();
             }
+
+            // If no exceptions are thrown above, continue
+            WebTarget target = CLIENT.target(URL_GET_LOCATION);
+            Response response =
+                    target.queryParam("apikey", API_KEY).queryParam("q", ipAddress)
+                            .request(MediaType.APPLICATION_JSON).get();
+
+            if (response.getStatus() == 200) {
+                String json = response.readEntity(String.class);
+                locationKey = getJsonField(json, "Key").getAsString();
+            }
+        } catch (Exception e) {
+            locationKey = DEFAULT_LOCATION_KEY;
         }
     }
 
     public static boolean isRaining() {
-        fetchLocationKey();
-
-        if (latestFetchTime == 0 || (System.currentTimeMillis() - latestFetchTime == 1800000)) {
+        if (latestFetchTime == 0
+                || (System.currentTimeMillis() - latestFetchTime >= FETCH_INTERVAL)) {
             WebTarget target = CLIENT.target(URL_GET_WEATHER + locationKey);
 
             try {
@@ -75,15 +74,15 @@ public class WeatherFetcher {
                 if (response.getStatus() == 200) {
                     latestFetchTime = System.currentTimeMillis();
                     String json = response.readEntity(String.class);
-                    lastFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
+                    latestFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
                 }
             } catch (Exception e) {
                 // Set default value
-                lastFetchRaining = false;
+                latestFetchRaining = false;
             }
         }
 
-        return lastFetchRaining;
+        return latestFetchRaining;
     }
 
     private static JsonElement getJsonField(String json, String fieldName) {
