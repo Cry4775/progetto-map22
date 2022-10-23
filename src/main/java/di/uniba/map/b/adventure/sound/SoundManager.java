@@ -14,11 +14,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import di.uniba.map.b.adventure.utility.Wrapper;
 
 public class SoundManager {
-    public static final String PICKUP_SOUND_PATH = "./resources/sound/pickUp.wav";
-    public static final String DOOR_CLOSE_SOUND_PATH = "./resources/sound/closeDoor.wav";
-    public static final String DOOR_OPEN_SOUND_PATH = "./resources/sound/openDoor.wav";
+    public static final String PICKUP_SOUND_PATH = "resources/sound/pickUp.wav";
+    public static final String DOOR_CLOSE_SOUND_PATH = "resources/sound/closeDoor.wav";
+    public static final String DOOR_OPEN_SOUND_PATH = "resources/sound/openDoor.wav";
     public static final String DOOR_UNLOCK_OPEN_SOUND_PATH =
-            "./resources/sound/unlockingAndOpeningDoor.wav";
+            "resources/sound/unlockingAndOpeningDoor.wav";
 
     private static String currentMusicPath;
 

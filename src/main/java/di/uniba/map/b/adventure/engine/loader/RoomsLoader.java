@@ -65,7 +65,7 @@ public class RoomsLoader implements Runnable {
         Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("./resources/rooms.json"), StandardCharsets.UTF_8))) {
+                new FileInputStream("resources/rooms.json"), StandardCharsets.UTF_8))) {
             rooms.addAll(gson.fromJson(in, roomsType));
 
             linkRooms();

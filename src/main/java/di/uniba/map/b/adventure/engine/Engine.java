@@ -34,7 +34,7 @@ public class Engine {
         this.gui = gui;
         try {
             AtomicBoolean crashed = new AtomicBoolean(false);
-            Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
+            Set<String> stopwords = Utils.loadFileListInSet(new File("resources/stopwords"));
             parser = new Parser(stopwords);
             Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
@@ -57,9 +57,9 @@ public class Engine {
 
     public void execute() {
         if (!WeatherFetcher.isRaining()) {
-            SoundManager.playWav("./resources/sound/ambience.wav", Mode.MUSIC);
+            SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
         } else {
-            SoundManager.playWav("./resources/sound/rainAmbience.wav", Mode.MUSIC);
+            SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
         }
 
         gui.setTitle("The Haunted House - 2021-22");
@@ -75,9 +75,9 @@ public class Engine {
 
     public void commandPerformed(String command) {
         if (!WeatherFetcher.isRaining()) {
-            SoundManager.playWav("./resources/sound/ambience.wav", Mode.MUSIC);
+            SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
         } else {
-            SoundManager.playWav("./resources/sound/rainAmbience.wav", Mode.MUSIC);
+            SoundManager.playWav(".resources/sound/rainAmbience.wav", Mode.MUSIC);
         }
 
         if (game.getCurrentRoom() instanceof PlayableRoom) {
@@ -113,7 +113,7 @@ public class Engine {
             PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
 
             if (currentRoom.isCurrentlyDark()) {
-                updateGUI("Buio", "./resources/img/buio.jpg");
+                updateGUI("Buio", "resources/img/buio.jpg");
             } else {
                 updateGUI();
             }
