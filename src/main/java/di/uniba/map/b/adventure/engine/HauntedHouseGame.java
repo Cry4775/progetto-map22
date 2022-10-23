@@ -27,6 +27,7 @@ import di.uniba.map.b.adventure.component.event.ObjectEvent;
 import di.uniba.map.b.adventure.component.event.RoomEvent;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
+import di.uniba.map.b.adventure.engine.command.CommandType;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 
 // TODO il database puó essere usato come lista di tutti gli oggetti, poi dal json si imposta tutto

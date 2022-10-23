@@ -1,18 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package di.uniba.map.b.adventure.engine;
+package di.uniba.map.b.adventure.engine.command;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * @author pierpaolo
- */
 public class Command {
 
     private final CommandType type;

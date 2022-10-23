@@ -1,8 +1,8 @@
 package di.uniba.map.b.adventure;
 
 import java.util.List;
-import di.uniba.map.b.adventure.engine.Command;
-import di.uniba.map.b.adventure.engine.CommandType;
+import di.uniba.map.b.adventure.engine.command.Command;
+import di.uniba.map.b.adventure.engine.command.CommandType;
 
 public class CommandsLoader implements Runnable {
     private List<Command> commands;

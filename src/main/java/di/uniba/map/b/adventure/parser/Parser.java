@@ -8,7 +8,7 @@ import di.uniba.map.b.adventure.Utils;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.container.AbstractContainer;
 import di.uniba.map.b.adventure.component.entity.interfaces.IFillable;
-import di.uniba.map.b.adventure.engine.Command;
+import di.uniba.map.b.adventure.engine.command.Command;
 import java.util.List;
 import java.util.Set;
 

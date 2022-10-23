@@ -6,7 +6,7 @@
 package di.uniba.map.b.adventure.parser;
 
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
-import di.uniba.map.b.adventure.engine.Command;
+import di.uniba.map.b.adventure.engine.command.Command;
 
 /**
  * @author pierpaolo

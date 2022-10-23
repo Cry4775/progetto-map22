@@ -7,7 +7,7 @@ import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
-import di.uniba.map.b.adventure.engine.CommandType;
+import di.uniba.map.b.adventure.engine.command.CommandType;
 
 public class InvisibleWall extends AbstractEntity {
 

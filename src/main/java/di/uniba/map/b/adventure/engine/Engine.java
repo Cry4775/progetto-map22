@@ -17,6 +17,7 @@ import di.uniba.map.b.adventure.Utils;
 import di.uniba.map.b.adventure.SoundManager.Mode;
 import di.uniba.map.b.adventure.component.room.CutsceneRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
+import di.uniba.map.b.adventure.engine.command.CommandType;
 import di.uniba.map.b.adventure.parser.Parser;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 
