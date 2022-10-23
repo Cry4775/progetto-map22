@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.engine.loader;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -42,6 +42,7 @@ import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.CutsceneRoom;
 import di.uniba.map.b.adventure.component.room.MutableRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
+import di.uniba.map.b.adventure.engine.json.RuntimeTypeAdapterFactory;
 
 /**
  * RoomsLoader

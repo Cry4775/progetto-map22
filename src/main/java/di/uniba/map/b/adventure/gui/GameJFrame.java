@@ -22,8 +22,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyledDocument;
 import di.uniba.map.b.adventure.engine.Engine;
-import di.uniba.map.b.adventure.engine.GameDescription;
-import di.uniba.map.b.adventure.engine.HauntedHouseGame;
+import di.uniba.map.b.adventure.engine.GameManager;
 
 /**
  * @author Pierdamiano Zagaria
@@ -39,7 +38,7 @@ public class GameJFrame extends javax.swing.JFrame {
     public GameJFrame() {
         initComponents();
         init();
-        GameDescription game = new HauntedHouseGame();
+        GameManager game = new GameManager();
         engine = new Engine(game, this);
     }
 

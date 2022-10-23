@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.utility;
 
 public class Wrapper<T> {
     T obj;

@@ -10,26 +10,26 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ImageIcon;
-import di.uniba.map.b.adventure.SoundManager;
-import di.uniba.map.b.adventure.Utils;
-import di.uniba.map.b.adventure.WeatherFetcher;
-import di.uniba.map.b.adventure.SoundManager.Mode;
 import di.uniba.map.b.adventure.component.room.CutsceneRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
 import di.uniba.map.b.adventure.engine.command.CommandType;
 import di.uniba.map.b.adventure.engine.parser.Parser;
 import di.uniba.map.b.adventure.engine.parser.ParserOutput;
 import di.uniba.map.b.adventure.gui.GameJFrame;
+import di.uniba.map.b.adventure.rest.WeatherFetcher;
+import di.uniba.map.b.adventure.sound.SoundManager;
+import di.uniba.map.b.adventure.sound.SoundManager.Mode;
+import di.uniba.map.b.adventure.utility.Utils;
 
 public class Engine {
 
-    private final GameDescription game;
+    private final GameManager game;
 
     private Parser parser;
 
     private final GameJFrame gui;
 
-    public Engine(GameDescription game, GameJFrame gui) {
+    public Engine(GameManager game, GameJFrame gui) {
         this.game = game;
         this.gui = gui;
         try {

@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.rest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

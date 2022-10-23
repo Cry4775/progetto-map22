@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.engine.loader;
 
 import java.util.List;
 import di.uniba.map.b.adventure.engine.command.Command;

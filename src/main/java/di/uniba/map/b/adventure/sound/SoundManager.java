@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.sound;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import di.uniba.map.b.adventure.utility.Wrapper;
 
 public class SoundManager {
     public static final String PICKUP_SOUND_PATH = "./resources/sound/pickUp.wav";

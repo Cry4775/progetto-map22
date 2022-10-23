@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.engine.json;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -26,19 +26,23 @@ import com.google.gson.stream.JsonWriter;
  *     int y;
  * }
  * 
+ * 
  * class Circle extends Shape {
  *     int radius;
  * }
+ * 
  * 
  * class Rectangle extends Shape {
  *     int width;
  *     int height;
  * }
  * 
+ * 
  * class Diamond extends Shape {
  *     int width;
  *     int height;
  * }
+ * 
  * 
  * class Drawing {
  *     Shape bottomShape;
@@ -87,7 +91,6 @@ import com.google.gson.stream.JsonWriter;
  * 
  * Both the type field name ({@code "type"}) and the type labels ({@code
  * "Rectangle"}) are configurable.
- *
  * <h3>Registering Types</h3>
  * Create a {@code RuntimeTypeAdapterFactory} by passing the base type and type
  * field
@@ -95,7 +98,8 @@ import com.google.gson.stream.JsonWriter;
  * field name, {@code "type"} will be used.
  * 
  * <pre>   {@code
- * RuntimeTypeAdapterFactory<Shape> shapeAdapterFactory = RuntimeTypeAdapterFactory.of(Shape.class, "type");
+ * RuntimeTypeAdapterFactory<Shape> shapeAdapterFactory =
+ *         RuntimeTypeAdapterFactory.of(Shape.class, "type");
  * }</pre>
  * 
  * Next register all of your subtypes. Every subtype must be explicitly
@@ -148,7 +152,8 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     private final Map<Class<?>, String> subtypeToLabel = new LinkedHashMap<>();
     private final boolean maintainType;
 
-    private RuntimeTypeAdapterFactory(Class<?> baseType, String typeFieldName, boolean maintainType) {
+    private RuntimeTypeAdapterFactory(Class<?> baseType, String typeFieldName,
+            boolean maintainType) {
         if (typeFieldName == null || baseType == null) {
             throw new NullPointerException();
         }
@@ -162,7 +167,8 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * typeFieldName} as the type field name. Type field names are case sensitive.
      * {@code maintainType} flag decide if the type will be stored in pojo or not.
      */
-    public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName, boolean maintainType) {
+    public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName,
+            boolean maintainType) {
         return new RuntimeTypeAdapterFactory<>(baseType, typeFieldName, maintainType);
     }
 
@@ -188,8 +194,8 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or {@code label}
-     *                                  have already been registered on this type
-     *                                  adapter.
+     *         have already been registered on this type
+     *         adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type, String label) {
         if (type == null || label == null) {
@@ -208,8 +214,8 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * name}. Labels are case sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or its simple name
-     *                                  have already been registered on this type
-     *                                  adapter.
+     *         have already been registered on this type
+     *         adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type) {
         return registerSubtype(type, type.getSimpleName());
@@ -225,7 +231,8 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
         final Map<String, TypeAdapter<?>> labelToDelegate = new LinkedHashMap<>();
         final Map<Class<?>, TypeAdapter<?>> subtypeToDelegate = new LinkedHashMap<>();
         for (Map.Entry<String, Class<?>> entry : labelToSubtype.entrySet()) {
-            TypeAdapter<?> delegate = gson.getDelegateAdapter(this, TypeToken.get(entry.getValue()));
+            TypeAdapter<?> delegate =
+                    gson.getDelegateAdapter(this, TypeToken.get(entry.getValue()));
             labelToDelegate.put(entry.getKey(), delegate);
             subtypeToDelegate.put(entry.getValue(), delegate);
         }
@@ -249,8 +256,9 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
                 @SuppressWarnings("unchecked") // registration requires that subtype extends T
                 TypeAdapter<R> delegate = (TypeAdapter<R>) labelToDelegate.get(label);
                 if (delegate == null) {
-                    throw new JsonParseException("cannot deserialize " + baseType + " subtype named "
-                            + label + "; did you forget to register a subtype?");
+                    throw new JsonParseException(
+                            "cannot deserialize " + baseType + " subtype named "
+                                    + label + "; did you forget to register a subtype?");
                 }
                 return delegate.fromJsonTree(jsonElement);
             }
