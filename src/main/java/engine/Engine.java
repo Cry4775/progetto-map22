@@ -40,6 +40,7 @@ public class Engine {
 
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
+
                     gui.showFatalError(e.getMessage());
                     crashed.set(true);
                 }
@@ -77,7 +78,7 @@ public class Engine {
         if (!WeatherFetcher.isRaining()) {
             SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
         } else {
-            SoundManager.playWav(".resources/sound/rainAmbience.wav", Mode.MUSIC);
+            SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
         }
 
         if (game.getCurrentRoom() instanceof PlayableRoom) {
@@ -99,7 +100,7 @@ public class Engine {
                     game.setCurrentRoom(currentRoom.getNextRoom());
                     gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
                 } else {
-                    throw new RuntimeException(
+                    throw new Error(
                             "Couldn't find the next room of " + currentRoom.getName()
                                     + " (" + currentRoom.getId()
                                     + "). Check the JSON file for correct room IDs.");

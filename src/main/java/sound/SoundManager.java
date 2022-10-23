@@ -1,7 +1,7 @@
 package sound;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,16 +9,14 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import utility.Wrapper;
 
 public class SoundManager {
-    public static final String PICKUP_SOUND_PATH = "resources/sound/pickUp.wav";
-    public static final String DOOR_CLOSE_SOUND_PATH = "resources/sound/closeDoor.wav";
-    public static final String DOOR_OPEN_SOUND_PATH = "resources/sound/openDoor.wav";
+    public static final String PICKUP_SOUND_PATH = "/resources/sound/pickUp.wav";
+    public static final String DOOR_CLOSE_SOUND_PATH = "/resources/sound/closeDoor.wav";
+    public static final String DOOR_OPEN_SOUND_PATH = "/resources/sound/openDoor.wav";
     public static final String DOOR_UNLOCK_OPEN_SOUND_PATH =
-            "resources/sound/unlockingAndOpeningDoor.wav";
+            "/resources/sound/unlockingAndOpeningDoor.wav";
 
     private static String currentMusicPath;
 
@@ -35,13 +33,24 @@ public class SoundManager {
         musicClip = new Wrapper<Clip>(null);
 
         defaultSounds = new HashMap<>();
+        Map<String, InputStream> temp = new HashMap<>();
+
+        temp.put(PICKUP_SOUND_PATH,
+                SoundManager.class.getResourceAsStream(PICKUP_SOUND_PATH));
+        temp.put(DOOR_CLOSE_SOUND_PATH,
+                SoundManager.class.getResourceAsStream(DOOR_CLOSE_SOUND_PATH));
+        temp.put(DOOR_OPEN_SOUND_PATH,
+                SoundManager.class.getResourceAsStream(DOOR_OPEN_SOUND_PATH));
+        temp.put(DOOR_UNLOCK_OPEN_SOUND_PATH,
+                SoundManager.class.getResourceAsStream(DOOR_UNLOCK_OPEN_SOUND_PATH));
+
         defaultSounds.put(PICKUP_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_CLOSE_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_OPEN_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_UNLOCK_OPEN_SOUND_PATH, new Wrapper<Clip>(null));
 
         for (String key : defaultSounds.keySet()) {
-            openWav(key, defaultSounds.get(key));
+            openWav(temp.get(key), defaultSounds.get(key));
         }
     }
 
@@ -91,7 +100,7 @@ public class SoundManager {
 
             defaultSoundClip.start();
         } else {
-            throw new RuntimeException("Sound unavailable.");
+            throw new Error("Sound unavailable.");
         }
     }
 
@@ -102,10 +111,19 @@ public class SoundManager {
             DataLine.Info info = new DataLine.Info(Clip.class, audioStream.getFormat());
             target.setObj((Clip) AudioSystem.getLine(info));
             target.getObj().open(audioStream);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-            throw new RuntimeException("An error has occurred on opening of " + path);
+        } catch (Exception e) {
+            throw new Error("An error has occurred on opening of " + path);
         }
+    }
 
+    private static void openWav(InputStream inputStream, Wrapper<Clip> target) {
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream);
+            DataLine.Info info = new DataLine.Info(Clip.class, audioStream.getFormat());
+            target.setObj((Clip) AudioSystem.getLine(info));
+            target.getObj().open(audioStream);
+        } catch (Exception e) {
+            throw new Error("An error has occurred on opening of default sound.");
+        }
     }
 }

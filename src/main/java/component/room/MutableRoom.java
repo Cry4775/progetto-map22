@@ -130,7 +130,7 @@ public class MutableRoom extends PlayableRoom {
             }
         } while (tmpClass != null);
 
-        throw new RuntimeException("Field '" + fieldName
+        throw new Error("Field '" + fieldName
                 + "' not found on class " + clazz);
     }
 

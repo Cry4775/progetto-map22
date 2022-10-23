@@ -42,7 +42,7 @@ public class InvisibleWall extends AbstractEntity {
         if (getRequiredWearedItemsIdToInteract() != null) {
             for (Integer reqId : getRequiredWearedItemsIdToInteract()) {
                 if (!objects.containsKey(reqId)) {
-                    throw new RuntimeException(
+                    throw new Error(
                             "Couldn't find the requested \"requiredWearedItemsIdToInteract\" ID "
                                     + "(" + reqId + ") on " + getName()
                                     + " (" + getId()

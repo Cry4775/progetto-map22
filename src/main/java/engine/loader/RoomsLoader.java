@@ -81,7 +81,7 @@ public class RoomsLoader implements Runnable {
             }
         } catch (Exception e) {
             exceptionThrown = true;
-            throw new RuntimeException(e);
+            throw new Error(e);
         }
     }
 

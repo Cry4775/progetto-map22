@@ -109,7 +109,7 @@ public abstract class AbstractEntity extends GameComponent {
                             evt.setParentRoom((MutableRoom) parent);
                             parentRoomDone = true;
                         } else {
-                            throw new RuntimeException("Cannot link " + getName() + " ("
+                            throw new Error("Cannot link " + getName() + " ("
                                     + getId()
                                     + ") object event reference. It asks to update its parent room, but it's not a MutableRoom. Check the JSON file.");
                         }
@@ -124,7 +124,7 @@ public abstract class AbstractEntity extends GameComponent {
                                     evt.setUpdateTargetRoom((MutableRoom) room);
                                     targetRoomDone = true;
                                 } else {
-                                    throw new RuntimeException("Cannot link " + getName() + " ("
+                                    throw new Error("Cannot link " + getName() + " ("
                                             + getId()
                                             + ") object event reference. It asks to update a target room, but it's not a MutableRoom. Check the JSON file.");
                                 }
@@ -145,7 +145,7 @@ public abstract class AbstractEntity extends GameComponent {
                             } else if (room instanceof PlayableRoom) {
                                 PlayableRoom pRoom = (PlayableRoom) room;
                                 if (pRoom.getObjects().contains(this)) {
-                                    throw new RuntimeException("Cannot link " + getName() + " ("
+                                    throw new Error("Cannot link " + getName() + " ("
                                             + getId()
                                             + ") object event reference. It asks to update its parent room, but it's not a MutableRoom. Check the JSON file.");
                                 }
@@ -172,14 +172,14 @@ public abstract class AbstractEntity extends GameComponent {
                 }
 
                 if (!targetRoomDone) {
-                    throw new RuntimeException(
+                    throw new Error(
                             "Couldn't find the requested \"updateTargetRoom\" event on " + getName()
                                     + " (" + getId()
                                     + "). Check the JSON file for correct room IDs.");
                 }
 
                 if (!teleportRoomDone) {
-                    throw new RuntimeException(
+                    throw new Error(
                             "Couldn't find the requested \"teleportsPlayerToRoom\" event on "
                                     + getName()
                                     + " (" + getId()
@@ -242,7 +242,7 @@ public abstract class AbstractEntity extends GameComponent {
 
                     pRoom.removeObject(this);
                 } else {
-                    throw new RuntimeException(
+                    throw new Error(
                             "Couldn't find the parent room of " + getName()
                                     + " (" + getId() + ").");
                 }

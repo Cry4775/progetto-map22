@@ -92,7 +92,7 @@ public class SocketlikeContainer extends AbstractContainer {
 
         if (eligibleItemId != null) {
             if (!objects.containsKey(eligibleItemId)) {
-                throw new RuntimeException(
+                throw new Error(
                         "Couldn't find the requested \"eligibleItem\" ID on " + getName()
                                 + " (" + getId()
                                 + "). Check the JSON file for correct object IDs.");

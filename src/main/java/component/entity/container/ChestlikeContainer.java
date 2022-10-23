@@ -96,7 +96,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
 
         if (unlockedWithItemId != null) {
             if (!objects.containsKey(unlockedWithItemId)) {
-                throw new RuntimeException(
+                throw new Error(
                         "Couldn't find the requested \"unlockedWithItem\" ID on " + getName()
                                 + " (" + getId()
                                 + "). Check the JSON file for correct object IDs.");

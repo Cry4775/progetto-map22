@@ -96,7 +96,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
 
         if (requiredItemId != null) {
             if (!objects.containsKey(requiredItemId)) {
-                throw new RuntimeException(
+                throw new Error(
                         "Couldn't find the requested \"requiredItem\" ID on " + getName()
                                 + " (" + getId()
                                 + "). Check the JSON file for correct object IDs.");

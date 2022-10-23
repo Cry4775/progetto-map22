@@ -35,7 +35,7 @@ public class RoomsDirectionSetter<T extends AbstractRoom> implements Runnable {
                         }
                     }
 
-                    throw new RuntimeException(
+                    throw new Error(
                             "Couldn't link the room (" + room.getId()
                                     + ") directions. Check the JSON file for correct room directions IDs.\nRemember to not use ID: 0");
                 });
