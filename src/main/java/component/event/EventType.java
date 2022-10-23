@@ -1,0 +1,7 @@
+package component.event;
+
+public enum EventType {
+    LOOK_AT, OPEN_CONTAINER, PICK_UP, PULL, ROOM,
+    OPEN_UNLOCKED, OPEN_LOCKED, PUSH, MOVE, INSERT, WEAR,
+    EXTINGUISH, TALK_WITH, UNWEAR
+}
