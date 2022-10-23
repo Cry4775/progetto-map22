@@ -59,7 +59,8 @@ public class MainFrame extends JFrame {
     private void init() {
         try {
             java.awt.Font compassFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
-                    getClass().getResourceAsStream("/di/uniba/map/b/adventure/img/LEIXO-DEMO.ttf"));
+                    getClass().getResourceAsStream(
+                            "/di/uniba/map/b/adventure/resources/LEIXO-DEMO.ttf"));
             lblCompassNorthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
             lblCompassSouthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
             lblCompassEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
@@ -216,35 +217,35 @@ public class MainFrame extends JFrame {
         pnlCompass.setLayout(new java.awt.GridBagLayout());
 
         lblCompassNorthImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_02.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_02.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         pnlCompass.add(lblCompassNorthImage, gridBagConstraints);
 
         lblCompassWestImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_04.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_04.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassWestImage, gridBagConstraints);
 
         lblCompassCenterImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_05.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_05.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassCenterImage, gridBagConstraints);
 
         lblCompassEastImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_06.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_06.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassEastImage, gridBagConstraints);
 
         lblCompassSouthImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_08.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_08.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
@@ -253,7 +254,7 @@ public class MainFrame extends JFrame {
         pnlCompassNorthWest.setLayout(new OverlayLayout(pnlCompassNorthWest));
 
         lblCompassNorthWestImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_01.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_01.png")));
         pnlCompassNorthWest.add(lblCompassNorthWestImage);
 
         lblCompassNorthWestText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -271,7 +272,7 @@ public class MainFrame extends JFrame {
         pnlCompassNorthEast.setLayout(new OverlayLayout(pnlCompassNorthEast));
 
         lblCompassNorthEastImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_03.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_03.png")));
         pnlCompassNorthEast.add(lblCompassNorthEastImage);
 
         lblCompassNorthEastText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -290,7 +291,7 @@ public class MainFrame extends JFrame {
 
         lblCompassSouthWestImage.setFont(new java.awt.Font("Segoe UI", 0, 24));
         lblCompassSouthWestImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_07.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_07.png")));
         lblCompassSouthWestImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthWest.add(lblCompassSouthWestImage);
 
@@ -310,7 +311,7 @@ public class MainFrame extends JFrame {
 
         lblCompassSouthEastImage.setFont(new java.awt.Font("Segoe UI", 0, 24));
         lblCompassSouthEastImage.setIcon(new ImageIcon(
-                getClass().getResource("/di/uniba/map/b/adventure/img/bussola_09.png")));
+                getClass().getResource("/di/uniba/map/b/adventure/resources/bussola_09.png")));
         lblCompassSouthEastImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthEast.add(lblCompassSouthEastImage);
 
