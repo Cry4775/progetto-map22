@@ -16,33 +16,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.container.AbstractContainer;
-import di.uniba.map.b.adventure.component.entity.container.BasicContainer;
-import di.uniba.map.b.adventure.component.entity.container.ChestlikeContainer;
-import di.uniba.map.b.adventure.component.entity.container.SocketlikeContainer;
-import di.uniba.map.b.adventure.component.entity.container.pickupable.WearableContainer;
-import di.uniba.map.b.adventure.component.entity.doorlike.Door;
-import di.uniba.map.b.adventure.component.entity.doorlike.InvisibleWall;
-import di.uniba.map.b.adventure.component.entity.doorlike.UnopenableDoor;
-import di.uniba.map.b.adventure.component.entity.humanoid.Human;
-import di.uniba.map.b.adventure.component.entity.object.BasicObject;
-import di.uniba.map.b.adventure.component.entity.object.FireObject;
-import di.uniba.map.b.adventure.component.entity.object.MovableObject;
-import di.uniba.map.b.adventure.component.entity.object.PullableObject;
-import di.uniba.map.b.adventure.component.entity.object.PushableObject;
-import di.uniba.map.b.adventure.component.entity.pickupable.BasicItem;
-import di.uniba.map.b.adventure.component.entity.pickupable.FillableItem;
-import di.uniba.map.b.adventure.component.entity.pickupable.FluidItem;
-import di.uniba.map.b.adventure.component.entity.pickupable.LightSourceItem;
-import di.uniba.map.b.adventure.component.entity.pickupable.ReadableItem;
-import di.uniba.map.b.adventure.component.entity.pickupable.WearableItem;
-import di.uniba.map.b.adventure.component.event.AbstractEvent;
-import di.uniba.map.b.adventure.component.event.ObjectEvent;
-import di.uniba.map.b.adventure.component.event.RoomEvent;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.CutsceneRoom;
 import di.uniba.map.b.adventure.component.room.MutableRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
-import di.uniba.map.b.adventure.engine.json.RuntimeTypeAdapterFactory;
+import di.uniba.map.b.adventure.engine.loader.json.TypeAdapterHolder;
+import di.uniba.map.b.adventure.engine.loader.json.TypeAdapterHolder.AdapterType;
 
 /**
  * RoomsLoader
@@ -64,57 +43,24 @@ public class RoomsLoader implements Runnable {
 
     @Override
     public void run() {
-        RuntimeTypeAdapterFactory<AbstractEntity> typeAdapterObjects =
-                RuntimeTypeAdapterFactory
-                        .of(AbstractEntity.class)
-                        .registerSubtype(BasicObject.class)
-                        .registerSubtype(BasicItem.class)
-                        .registerSubtype(BasicContainer.class)
-                        .registerSubtype(WearableContainer.class)
-                        .registerSubtype(ChestlikeContainer.class)
-                        .registerSubtype(SocketlikeContainer.class)
-                        .registerSubtype(UnopenableDoor.class)
-                        .registerSubtype(Door.class)
-                        .registerSubtype(InvisibleWall.class)
-                        .registerSubtype(WearableItem.class)
-                        .registerSubtype(FillableItem.class)
-                        .registerSubtype(ReadableItem.class)
-                        .registerSubtype(LightSourceItem.class)
-                        .registerSubtype(MovableObject.class)
-                        .registerSubtype(PullableObject.class)
-                        .registerSubtype(PushableObject.class)
-                        .registerSubtype(FireObject.class)
-                        .registerSubtype(FluidItem.class)
-                        .registerSubtype(Human.class);
-
-        RuntimeTypeAdapterFactory<AbstractRoom> typeAdapterRooms = RuntimeTypeAdapterFactory
-                .of(AbstractRoom.class)
-                .registerSubtype(PlayableRoom.class)
-                .registerSubtype(MutableRoom.class)
-                .registerSubtype(CutsceneRoom.class);
-
-        RuntimeTypeAdapterFactory<AbstractEvent> typeAdapterEvents =
-                RuntimeTypeAdapterFactory
-                        .of(AbstractEvent.class)
-                        .registerSubtype(ObjectEvent.class)
-                        .registerSubtype(RoomEvent.class);
-
         Gson gson = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {
+                        // For performance
                         return AbstractRoom.class.equals(f.getDeclaredClass())
                                 || AbstractEntity.class.equals(f.getDeclaredClass());
                     }
 
                     @Override
                     public boolean shouldSkipClass(Class<?> clazz) {
+                        // Never
                         return false;
                     }
                 })
-                .registerTypeAdapterFactory(typeAdapterObjects)
-                .registerTypeAdapterFactory(typeAdapterRooms)
-                .registerTypeAdapterFactory(typeAdapterEvents)
+                .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ENTITIES))
+                .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ROOMS))
+                .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.EVENTS))
                 .create();
         Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
 

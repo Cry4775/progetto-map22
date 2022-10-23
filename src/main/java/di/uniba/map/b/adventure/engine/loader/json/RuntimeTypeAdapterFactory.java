@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure.engine.json;
+package di.uniba.map.b.adventure.engine.loader.json;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
