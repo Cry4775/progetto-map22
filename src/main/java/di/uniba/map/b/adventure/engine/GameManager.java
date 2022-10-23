@@ -32,7 +32,7 @@ import di.uniba.map.b.adventure.engine.command.CommandType;
 import di.uniba.map.b.adventure.engine.loader.CommandsLoader;
 import di.uniba.map.b.adventure.engine.loader.RoomsLoader;
 import di.uniba.map.b.adventure.engine.parser.ParserOutput;
-import di.uniba.map.b.adventure.gui.GameJFrame;
+import di.uniba.map.b.adventure.gui.MainFrame;
 
 public class GameManager {
 
@@ -109,7 +109,7 @@ public class GameManager {
         }
     }
 
-    private void clearCompassLabels(GameJFrame gui) {
+    private void clearCompassLabels(MainFrame gui) {
         setCompassLabel(null, gui.getLblCompassNorthText());
         setCompassLabel(null, gui.getLblCompassSouthText());
         setCompassLabel(null, gui.getLblCompassWestText());
@@ -120,7 +120,7 @@ public class GameManager {
         setCompassLabel(null, gui.getLblCompassNorthWestText());
     }
 
-    public void setCompassLabels(GameJFrame gui) {
+    public void setCompassLabels(MainFrame gui) {
         if (getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
             if (!currentPlayableRoom.isCurrentlyDark()) {
@@ -237,7 +237,7 @@ public class GameManager {
         }
     }
 
-    public void nextMove(ParserOutput p, GameJFrame gui) {
+    public void nextMove(ParserOutput p, MainFrame gui) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
 
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer

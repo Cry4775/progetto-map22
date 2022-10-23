@@ -15,7 +15,7 @@ import di.uniba.map.b.adventure.component.room.PlayableRoom;
 import di.uniba.map.b.adventure.engine.command.CommandType;
 import di.uniba.map.b.adventure.engine.parser.Parser;
 import di.uniba.map.b.adventure.engine.parser.ParserOutput;
-import di.uniba.map.b.adventure.gui.GameJFrame;
+import di.uniba.map.b.adventure.gui.MainFrame;
 import di.uniba.map.b.adventure.rest.WeatherFetcher;
 import di.uniba.map.b.adventure.sound.SoundManager;
 import di.uniba.map.b.adventure.sound.SoundManager.Mode;
@@ -27,9 +27,9 @@ public class Engine {
 
     private Parser parser;
 
-    private final GameJFrame gui;
+    private final MainFrame gui;
 
-    public Engine(GameManager game, GameJFrame gui) {
+    public Engine(GameManager game, MainFrame gui) {
         this.game = game;
         this.gui = gui;
         try {
