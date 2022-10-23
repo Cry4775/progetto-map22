@@ -8,7 +8,7 @@ package di.uniba.map.b.adventure.type;
 import java.util.ArrayList;
 import java.util.List;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.entities.AdvMagicWall;
+import di.uniba.map.b.adventure.entities.doorlike.InvisibleWall;
 
 /**
  * @author Pierdamiano Zagaria
@@ -288,11 +288,11 @@ public class PlayableRoom extends AbstractRoom {
         objects.remove(obj);
     }
 
-    public AdvMagicWall getMagicWall(CommandType direction) {
+    public InvisibleWall getMagicWall(CommandType direction) {
         if (objects != null) {
             for (AbstractEntity obj : objects) {
-                if (obj instanceof AdvMagicWall) {
-                    AdvMagicWall wall = (AdvMagicWall) obj;
+                if (obj instanceof InvisibleWall) {
+                    InvisibleWall wall = (InvisibleWall) obj;
 
                     if (wall.isBlocking(direction)) {
                         return wall;

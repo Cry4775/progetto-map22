@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.entities.IFillable;
-import di.uniba.map.b.adventure.entities.IFluid;
-import di.uniba.map.b.adventure.entities.IPickupable;
-import di.uniba.map.b.adventure.entities.IWearable;
+import di.uniba.map.b.adventure.entities.interfaces.IFillable;
+import di.uniba.map.b.adventure.entities.interfaces.IFluid;
+import di.uniba.map.b.adventure.entities.interfaces.IPickupable;
+import di.uniba.map.b.adventure.entities.interfaces.IWearable;
 import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 

@@ -6,7 +6,7 @@
 package di.uniba.map.b.adventure;
 
 import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
+import di.uniba.map.b.adventure.entities.doorlike.Door;
 import di.uniba.map.b.adventure.games.Status;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.Command;
@@ -80,8 +80,8 @@ public abstract class GameDescription {
                 PlayableRoom playableRoom = (PlayableRoom) getCurrentRoom();
                 if (playableRoom.getObjects() != null) {
                     for (AbstractEntity obj : playableRoom.getObjects()) {
-                        if (obj instanceof AdvDoorOpenable) {
-                            AdvDoorOpenable door = (AdvDoorOpenable) obj;
+                        if (obj instanceof Door) {
+                            Door door = (Door) obj;
                             if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
                                 directionLbl.setForeground(Color.ORANGE);
                                 break;

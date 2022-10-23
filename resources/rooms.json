@@ -16,14 +16,14 @@
         "westId": 3,
         "objects": [
             {
-                "type": "AdvDoorBlocked",
+                "type": "UnopenableDoor",
                 "id": 1,
                 "name": "finestra",
                 "description": "La finestra pare inesorabilmente murata.",
                 "openEventText": "Apri la finestra e controlli. La muratura, come sospettavi, è estremamente robusta."
             },
             {
-                "type": "AdvContainer",
+                "type": "BasicContainer",
                 "id": 2,
                 "name": "divano",
                 "description": "Un divano in pelle a tre posti, vecchio e ormai consunto.",
@@ -32,7 +32,7 @@
                 ],
                 "list": [
                     {
-                        "type": "AdvItem",
+                        "type": "BasicItem",
                         "id": 3,
                         "name": "accendino",
                         "description": "Un grazioso oggetto in argento che sei sicuro di aver già visto tra le mani di Valeria."
@@ -61,7 +61,7 @@
         "westId": 5,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 4,
                 "name": "quadri",
                 "description": "Due quadri a dir poco inquietanti. \nQuello di sinistra pare rappresentare una visione dell'inferno così come lo descrive Dante Alighieri, mentre l'altro è il ritratto di una donna albina.",
@@ -70,7 +70,7 @@
                 ]
             },
             {
-                "type": "AdvDoorBlocked",
+                "type": "UnopenableDoor",
                 "id": 5,
                 "name": "portone",
                 "description": "Il portone d'ingresso è estremamente robusto e evidentemente ben chiuso a chiave.",
@@ -80,7 +80,7 @@
                 "openEventText": "Come sospettavi, è chiuso a chiave."
             },
             {
-                "type": "AdvDoorOpenable",
+                "type": "Door",
                 "id": 6,
                 "name": "porta",
                 "blockedRoomId": 5,
@@ -105,7 +105,7 @@
         "eastId": 4,
         "objects": [
             {
-                "type": "AdvWearableContainer",
+                "type": "WearableContainer",
                 "id": 7,
                 "name": "cappotto",
                 "description": "Un elegante cappotto da donna, probabilmente quello di Valeria.",
@@ -121,20 +121,20 @@
                 ],
                 "list": [
                     {
-                        "type": "AdvReadable",
+                        "type": "ReadableItem",
                         "id": 8,
                         "name": "lettera",
                         "description": "Una lettera sgualcita.",
                         "readText": "«Non so se mai qualcuno leggerà queste note, ma se dovesse accadere, vi prego, fuggite. Se ho ben tenuto conto del tempo oggi è il sesto giorno del mese di Aprile dell'anno 1911, e da tre giorni sono rinchiuso in questo luogo dannato. Non avessi mai aperto quel passaggio murato nelle cantine, anche se esso sembrava nascondere solo vecchie stanze e caverne oscure e vuote. Poco dopo l'apertura del passaggio, la preziosa e antica villa che avevo acquistato si è trasformata in un decrepito maniero dalle finestre murate, da cui pare impossibile uscire. Adesso proverò a ridiscendere nei sotterranei, anche se il passaggio per le cantine pare scomparso. Sono sicuro che, là sotto, qualcosa vive... Lasciate questo luogo prima che sia troppo tardi, se potete.» \n\nLa firma è illeggibile."
                     },
                     {
-                        "type": "AdvWearableContainer",
+                        "type": "WearableContainer",
                         "id": 9,
                         "name": "collana",
                         "description": "Una collana in oro.",
                         "list": [
                             {
-                                "type": "AdvItem",
+                                "type": "BasicItem",
                                 "id": 47,
                                 "name": "pendente",
                                 "description": "Un pendente a forma di stella a cinque punte, sul retro c'è un piccolo incasso circolare."
@@ -161,7 +161,7 @@
         "southId": 3,
         "objects": [
             {
-                "type": "AdvDoorOpenable",
+                "type": "Door",
                 "id": 10,
                 "name": "porta",
                 "blockedRoomId": 7
@@ -177,7 +177,7 @@
         "westId": 6,
         "objects": [
             {
-                "type": "AdvChest",
+                "type": "ChestlikeContainer",
                 "id": 11,
                 "name": "credenza",
                 "description": "Una grossa credenza in mogano.",
@@ -189,7 +189,7 @@
                 ],
                 "list": [
                     {
-                        "type": "AdvFillableItem",
+                        "type": "FillableItem",
                         "id": 12,
                         "name": "ciotola",
                         "description": "Una ciotola in porcellana decorata con motivi geometrici.",
@@ -198,7 +198,7 @@
                 ]
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 13,
                 "name": "camino",
                 "description": "Un vecchio camino, ormai privo di qualsiasi utilità..."
@@ -218,13 +218,13 @@
         "southWestId": 10,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 14,
                 "name": "colonna",
                 "description": "Alta, di solida pietra e di forma ottagonale, larga almeno due metri e priva di qualsiasi asperità, occupa la parte centrale della sala. Accanto ad essa noti un grande candeliere."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 15,
                 "name": "candeliere",
                 "description": "Un ingombrante candeliere in peltro, ormai privo di candele, domina dall'alto il salone, sorretto da una corda che esce da un foro nel soffitto.",
@@ -236,7 +236,7 @@
                 ]
             },
             {
-                "type": "AdvDoorOpenable",
+                "type": "Door",
                 "id": 16,
                 "name": "porta",
                 "open": true,
@@ -248,19 +248,19 @@
             "imgPath": "./resources/img/salone2.jpg",
             "objects": [
                 {
-                    "type": "AdvFixedObject",
+                    "type": "BasicObject",
                     "id": 14,
                     "name": "colonna",
                     "description": "Alta, di solida pietra e di forma ottagonale, larga almeno due metri e priva di qualsiasi asperità, occupa la parte centrale della sala."
                 },
                 {
-                    "type": "AdvContainer",
+                    "type": "BasicContainer",
                     "id": 15,
                     "name": "candeliere",
                     "description": "Il pesante candeliere in peltro adesso è alla tua portata.",
                     "list": [
                         {
-                            "type": "AdvItem",
+                            "type": "BasicItem",
                             "id": 19,
                             "name": "chiave",
                             "description": "Una chiave in ferro, coperta da un leggero strato di ruggine.",
@@ -285,19 +285,19 @@
         "northEastId": 8,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 21,
                 "name": "corda",
                 "description": "La corda va dalla ruota in legno ad un foro nel soffitto."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 22,
                 "name": "ruota",
                 "description": "Una larga ruota di legno, rinforzata in metallo. Attorno ad essa è avvolta una corda che proviene da un foro nel soffitto."
             },
             {
-                "type": "AdvObjectPullable",
+                "type": "PullableObject",
                 "id": 23,
                 "name": "leva",
                 "description": "Una corta leva di legno che blocca la ruota.",
@@ -345,7 +345,7 @@
         "eastId": 17,
         "objects": [
             {
-                "type": "AdvDoorOpenable",
+                "type": "Door",
                 "id": 24,
                 "name": "porta",
                 "open": true,
@@ -363,7 +363,7 @@
         "westId": 15,
         "objects": [
             {
-                "type": "AdvDoorOpenable",
+                "type": "Door",
                 "id": 25,
                 "name": "porta",
                 "locked": true,
@@ -371,7 +371,7 @@
                 "blockedRoomId": 15
             },
             {
-                "type": "AdvMagicWall",
+                "type": "InvisibleWall",
                 "id": 60,
                 "name": "nebbia",
                 "locked": true,
@@ -390,20 +390,20 @@
         "eastId": 14,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 26,
                 "name": "scrivania",
                 "description": "Una vecchia scrivania in mogano, semplice e priva di cassetti."
             },
             {
-                "type": "AdvReadable",
+                "type": "ReadableItem",
                 "id": 27,
                 "name": "libro",
                 "description": "Un volume in ottavo dalla copertina in pelle. Sembra molto antico.",
                 "readText": "Sembra una raccolta di leggende di questa zona, buone soltanto per essere lette ai bambini. Sfogliando il libro trovi però il riferimento ad una strega che viveva da queste parti un paio di secoli fa. Era incredibilmente malvagia, e si faceva chiamare come la strega dell'isola di Avalon, Morgana.\nSi macchiò di delitti e nefandezze d'ogni genere, finchè la sua discepola prediletta le si rivoltò contro. Grazie alle arti che aveva appreso dalla strega, la giovane creò due oggetti, due gioielli, che la aiutarono ad affrontare colei che era stata la sua maestra. La strega fu così sconfitta e giustiziata, ed il suo spirito imprigionato nel sottosuolo.\n\nTi chiedi come mai questo sia l'unico libro qui presente, e cosa ci sia di vero in questa storia."
             },
             {
-                "type": "AdvObjectMovable",
+                "type": "MovableObject",
                 "id": 28,
                 "name": "libreria",
                 "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota. \nNoti che la libreria non è ben appoggiata al muro, forse è stata spostata.",
@@ -420,7 +420,7 @@
             "imgPath": "./resources/img/studio2.jpg",
             "objects": [
                 {
-                    "type": "AdvSocket",
+                    "type": "SocketlikeContainer",
                     "id": 29,
                     "name": "incisione",
                     "description": "L'incisione che era nascosta dalla libreria ha la forma di una stella a cinque punte.",
@@ -436,7 +436,7 @@
                     "list": []
                 },
                 {
-                    "type": "AdvFixedObject",
+                    "type": "BasicObject",
                     "id": 28,
                     "name": "libreria",
                     "description": "La libreria occupa parte della parete nord e forse un tempo era carica di libri. Ora è stranamente vuota."
@@ -467,13 +467,13 @@
         "northId": 18,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 30,
                 "name": "letto",
                 "description": "Pensi di non aver mai visto un letto così vasto e così lussuoso. Peccato che sia ricoperto da un dito di polvere."
             },
             {
-                "type": "AdvObjectMovable",
+                "type": "MovableObject",
                 "id": 31,
                 "name": "comò",
                 "alias": [
@@ -490,7 +490,7 @@
                 ]
             },
             {
-                "type": "AdvContainer",
+                "type": "BasicContainer",
                 "id": 32,
                 "name": "candeliere",
                 "description": "Un piccolo candeliere in ferro, appeso ben alto alla parete. Sul candeliere vedi una singola candela, ma è troppo in alto per prenderla."
@@ -500,13 +500,13 @@
             "imgPath": "./resources/img/camera2.jpg",
             "objects": [
                 {
-                    "type": "AdvContainer",
+                    "type": "BasicContainer",
                     "id": 32,
                     "name": "candeliere",
                     "description": "Un piccolo candeliere in ferro.",
                     "list": [
                         {
-                            "type": "AdvLightSource",
+                            "type": "LightSourceItem",
                             "id": 33,
                             "name": "candela",
                             "description": "Una semplice candela.",
@@ -526,20 +526,20 @@
         "southId": 17,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 34,
                 "name": "lavandino",
                 "description": "Un lavandino in ceramica, sporco e pieno di crepe."
             },
             {
-                "type": "AdvContainer",
+                "type": "BasicContainer",
                 "id": 35,
                 "name": "vasca",
                 "description": "Una vasca da bagno in ceramica. Un tempo probabilmente era costosa ed elegante, ma ora è in pessimo stato. Stranamente è ancora piena d'acqua.",
                 "forFluids": true,
                 "list": [
                     {
-                        "type": "AdvFluid",
+                        "type": "FluidItem",
                         "id": 36,
                         "name": "acqua",
                         "description": "Di certo non é l'acqua piú pulita di sempre...",
@@ -586,7 +586,7 @@
         "southId": 22,
         "objects": [
             {
-                "type": "AdvDoorOpenable",
+                "type": "Door",
                 "id": 37,
                 "name": "porta",
                 "description": "La porta, che sembra molto robusta, non ha serrature ma solo un paletto che permette di aprirla e chiuderla dall'esterno.",
@@ -623,7 +623,7 @@
         "northId": 21,
         "objects": [
             {
-                "type": "AdvPerson",
+                "type": "Human",
                 "id": 37,
                 "name": "valeria",
                 "description": "La ragazza è prigioniera, legata con una catena alla parete, i suoi abiti laceri e strappati. È sempre bella come te la ricordavi, ma adesso il suo volto è provato e su di esso è dipinta un'espressione che è un misto di terrore per la situazione in cui si trova e di felicità per l'averti visto.",
@@ -642,7 +642,7 @@
                 ]
             },
             {
-                "type": "AdvWearableItem",
+                "type": "WearableItem",
                 "id": 38,
                 "name": "anello",
                 "description": "Un anello d'argento, liscio e senza pietre.",
@@ -654,25 +654,25 @@
                 ]
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 39,
                 "name": "catene",
                 "description": "Una robusta catena, chiusa da un lucchetto altrettanto robusto, va da un gancio piantato nella solida roccia fino ad un paio di bracciali di metallo chiusi attorno ai polsi di Valeria."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 40,
                 "name": "bracciali",
                 "description": "Un paio di bracciali di metallo chiusi attorno ai polsi di Valeria."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 41,
                 "name": "gancio",
                 "description": "Un gancio piantato nella roccia a cui è collegata la catena."
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 42,
                 "name": "lucchetto",
                 "description": "Un robusto lucchetto che blocca la catena."
@@ -689,13 +689,13 @@
         "southId": 20,
         "objects": [
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 43,
                 "name": "rocce",
                 "description": "Una formazione in un angolo pare rappresentare il sacrificio di una giovane."
             },
             {
-                "type": "AdvMagicWall",
+                "type": "InvisibleWall",
                 "id": 50,
                 "locked": true,
                 "unlockedByWearingItemId": 38,
@@ -713,7 +713,7 @@
         "southId": 24,
         "objects": [
             {
-                "type": "AdvPerson",
+                "type": "Human",
                 "id": 44,
                 "name": "strega",
                 "description": "Non è priva di una certa terribile bellezza. Osservandola ti rendi conto che puoi vederle attraverso. In un certo senso pare proiettata dal braciere, quasi fosse solo un'ombra sulla parete.",
@@ -725,13 +725,13 @@
                 ]
             },
             {
-                "type": "AdvFixedObject",
+                "type": "BasicObject",
                 "id": 45,
                 "name": "pentacolo",
                 "description": "Una stella a cinque punte circondata da un cerchio, tracciata sul terreno."
             },
             {
-                "type": "AdvFire",
+                "type": "FireObject",
                 "id": 46,
                 "name": "braciere",
                 "alias": [

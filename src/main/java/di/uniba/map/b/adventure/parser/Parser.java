@@ -6,8 +6,8 @@ package di.uniba.map.b.adventure.parser;
 
 import di.uniba.map.b.adventure.Utils;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.entities.IFillable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.entities.interfaces.IFillable;
 import di.uniba.map.b.adventure.type.Command;
 import java.util.List;
 import java.util.Set;

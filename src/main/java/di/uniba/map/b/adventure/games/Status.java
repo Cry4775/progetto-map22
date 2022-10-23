@@ -1,6 +1,6 @@
 package di.uniba.map.b.adventure.games;
 
-import di.uniba.map.b.adventure.entities.AdvMagicWall;
+import di.uniba.map.b.adventure.entities.doorlike.InvisibleWall;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 
 public class Status {
@@ -8,7 +8,7 @@ public class Status {
     private boolean positionChanged = false;
     private boolean roomBlockedByDoor = false;
     private boolean roomBlockedByWall = false;
-    private AdvMagicWall wall;
+    private InvisibleWall wall;
 
     private boolean warp = false;
     private AbstractRoom warpDestination;
@@ -88,11 +88,11 @@ public class Status {
         this.roomBlockedByWall = roomBlockedByWall;
     }
 
-    public AdvMagicWall getWall() {
+    public InvisibleWall getWall() {
         return wall;
     }
 
-    public void setWall(AdvMagicWall wall) {
+    public void setWall(InvisibleWall wall) {
         this.wall = wall;
     }
 }

@@ -8,22 +8,22 @@ import di.uniba.map.b.adventure.GameDescription;
 import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.RoomsLoader;
 import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.entities.AdvDoorBlocked;
-import di.uniba.map.b.adventure.entities.AdvDoorOpenable;
-import di.uniba.map.b.adventure.entities.AdvFire;
-import di.uniba.map.b.adventure.entities.AdvMagicWall;
-import di.uniba.map.b.adventure.entities.IFluid;
-import di.uniba.map.b.adventure.entities.ILightSource;
-import di.uniba.map.b.adventure.entities.IMovable;
-import di.uniba.map.b.adventure.entities.IOpenable;
-import di.uniba.map.b.adventure.entities.IPickupable;
-import di.uniba.map.b.adventure.entities.IPullable;
-import di.uniba.map.b.adventure.entities.IPushable;
-import di.uniba.map.b.adventure.entities.IReadable;
-import di.uniba.map.b.adventure.entities.ISwitch;
-import di.uniba.map.b.adventure.entities.ITalkable;
-import di.uniba.map.b.adventure.entities.IWearable;
 import di.uniba.map.b.adventure.entities.container.AbstractContainer;
+import di.uniba.map.b.adventure.entities.doorlike.UnopenableDoor;
+import di.uniba.map.b.adventure.entities.doorlike.Door;
+import di.uniba.map.b.adventure.entities.doorlike.InvisibleWall;
+import di.uniba.map.b.adventure.entities.interfaces.IFluid;
+import di.uniba.map.b.adventure.entities.interfaces.ILightSource;
+import di.uniba.map.b.adventure.entities.interfaces.IMovable;
+import di.uniba.map.b.adventure.entities.interfaces.IOpenable;
+import di.uniba.map.b.adventure.entities.interfaces.IPickupable;
+import di.uniba.map.b.adventure.entities.interfaces.IPullable;
+import di.uniba.map.b.adventure.entities.interfaces.IPushable;
+import di.uniba.map.b.adventure.entities.interfaces.IReadable;
+import di.uniba.map.b.adventure.entities.interfaces.ISwitch;
+import di.uniba.map.b.adventure.entities.interfaces.ITalkable;
+import di.uniba.map.b.adventure.entities.interfaces.IWearable;
+import di.uniba.map.b.adventure.entities.object.FireObject;
 import di.uniba.map.b.adventure.parser.ParserOutput;
 import di.uniba.map.b.adventure.type.AbstractRoom;
 import di.uniba.map.b.adventure.type.CommandType;
@@ -66,7 +66,7 @@ public class HauntedHouseGame extends GameDescription {
 
         getStatus().setMovementAttempt(true);
 
-        AdvMagicWall wall = currentRoom.getMagicWall(direction);
+        InvisibleWall wall = currentRoom.getMagicWall(direction);
         if (wall != null) {
             wall.processRequirements(getInventory());
 
@@ -177,8 +177,8 @@ public class HauntedHouseGame extends GameDescription {
                             IOpenable openableObj = (IOpenable) anyObj;
 
                             outString.append(openableObj.open(invObj));
-                        } else if (anyObj instanceof AdvDoorBlocked) {
-                            AdvDoorBlocked fakeDoor = (AdvDoorBlocked) anyObj;
+                        } else if (anyObj instanceof UnopenableDoor) {
+                            UnopenableDoor fakeDoor = (UnopenableDoor) anyObj;
 
                             outString.append(fakeDoor.getOpenEventText());
                         } else {
@@ -311,8 +311,8 @@ public class HauntedHouseGame extends GameDescription {
                             ISwitch switchObj = (ISwitch) anyObj;
 
                             outString.append(switchObj.turnOff());
-                        } else if (anyObj instanceof AdvFire) {
-                            AdvFire fire = (AdvFire) anyObj;
+                        } else if (anyObj instanceof FireObject) {
+                            FireObject fire = (FireObject) anyObj;
 
                             if (invObj instanceof IFluid) {
                                 IFluid fluid = (IFluid) invObj;
@@ -351,9 +351,9 @@ public class HauntedHouseGame extends GameDescription {
                     if (invObj != null) {
                         if (invObj instanceof IFluid) {
                             if (roomObj != null) {
-                                if (roomObj instanceof AdvFire) {
+                                if (roomObj instanceof FireObject) {
                                     IFluid fluid = (IFluid) invObj;
-                                    AdvFire fire = (AdvFire) roomObj;
+                                    FireObject fire = (FireObject) roomObj;
 
                                     outString.append(fire.extinguish(fluid));
                                 } else if (roomObj instanceof AbstractContainer) {
@@ -553,8 +553,8 @@ public class HauntedHouseGame extends GameDescription {
             if (room != null) {
                 if (currentRoom.getObjects() != null) {
                     for (AbstractEntity obj : currentRoom.getObjects()) {
-                        if (obj instanceof AdvDoorOpenable) {
-                            AdvDoorOpenable door = (AdvDoorOpenable) obj;
+                        if (obj instanceof Door) {
+                            Door door = (Door) obj;
                             if (door.getBlockedRoomId() == room.getId() && door.isOpen()) {
                                 setPreviousRoom(currentRoom);
                                 setCurrentRoom(room);
