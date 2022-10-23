@@ -5,8 +5,8 @@
  */
 package di.uniba.map.b.adventure.parser;
 
-import di.uniba.map.b.adventure.entities.AbstractEntity;
-import di.uniba.map.b.adventure.type.Command;
+import di.uniba.map.b.adventure.component.entity.AbstractEntity;
+import di.uniba.map.b.adventure.engine.Command;
 
 /**
  * @author pierpaolo

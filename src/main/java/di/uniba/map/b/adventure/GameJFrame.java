@@ -21,7 +21,9 @@ import javax.swing.UIDefaults;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyledDocument;
-import di.uniba.map.b.adventure.games.HauntedHouseGame;
+import di.uniba.map.b.adventure.engine.Engine;
+import di.uniba.map.b.adventure.engine.GameDescription;
+import di.uniba.map.b.adventure.engine.HauntedHouseGame;
 
 /**
  * @author Pierdamiano Zagaria

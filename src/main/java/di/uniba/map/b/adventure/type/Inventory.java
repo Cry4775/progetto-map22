@@ -7,7 +7,7 @@ package di.uniba.map.b.adventure.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import di.uniba.map.b.adventure.entities.AbstractEntity;
+import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 
 /**
  * @author pierpaolo

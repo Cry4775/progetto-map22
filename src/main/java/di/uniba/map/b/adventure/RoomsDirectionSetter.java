@@ -3,7 +3,7 @@ package di.uniba.map.b.adventure;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import di.uniba.map.b.adventure.type.AbstractRoom;
+import di.uniba.map.b.adventure.component.room.AbstractRoom;
 
 public class RoomsDirectionSetter<T extends AbstractRoom> implements Runnable {
     List<AbstractRoom> rooms;

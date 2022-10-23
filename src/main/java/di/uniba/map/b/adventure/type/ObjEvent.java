@@ -1,5 +1,8 @@
 package di.uniba.map.b.adventure.type;
 
+import di.uniba.map.b.adventure.component.room.AbstractRoom;
+import di.uniba.map.b.adventure.component.room.MutableRoom;
+
 public class ObjEvent extends AdvEvent {
     private boolean updatingAnotherRoom = false;
     private Integer updateTargetRoomId;
