@@ -1,6 +1,6 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.component.event;
 
-public abstract class AdvEvent {
+public abstract class AbstractEvent {
     private EventType eventType;
 
     private String text;

@@ -11,11 +11,11 @@ import di.uniba.map.b.adventure.component.entity.container.AbstractContainer;
 import di.uniba.map.b.adventure.component.entity.interfaces.IFillable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IOpenable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
+import di.uniba.map.b.adventure.component.event.EventType;
+import di.uniba.map.b.adventure.component.event.ObjectEvent;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.MutableRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
-import di.uniba.map.b.adventure.type.EventType;
-import di.uniba.map.b.adventure.type.ObjEvent;
 
 public abstract class AbstractEntity extends GameComponent {
 
@@ -25,7 +25,7 @@ public abstract class AbstractEntity extends GameComponent {
 
     private GameComponent parent;
 
-    private List<ObjEvent> events = new ArrayList<>();
+    private List<ObjectEvent> events = new ArrayList<>();
 
     private List<Integer> requiredWearedItemsIdToInteract = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public abstract class AbstractEntity extends GameComponent {
     public void processEventReferences(Multimap<Integer, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (events != null) {
-            for (ObjEvent evt : events) {
+            for (ObjectEvent evt : events) {
                 boolean targetRoomDone = false;
                 boolean parentRoomDone = false;
                 boolean teleportRoomDone = false;
@@ -201,13 +201,13 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public List<ObjEvent> getEvents() {
+    public List<ObjectEvent> getEvents() {
         return events;
     }
 
-    public ObjEvent getEvent(EventType type) {
+    public ObjectEvent getEvent(EventType type) {
         if (getEvents() != null) {
-            for (ObjEvent evt : getEvents()) {
+            for (ObjectEvent evt : getEvents()) {
                 if (evt.getEventType() == type) {
                     if (!evt.isTriggered()) {
                         return evt;
@@ -221,7 +221,7 @@ public abstract class AbstractEntity extends GameComponent {
     public StringBuilder processEvent(EventType eventType) {
         StringBuilder outString = new StringBuilder();
 
-        ObjEvent evt = getEvent(eventType);
+        ObjectEvent evt = getEvent(eventType);
 
         if (evt != null) {
             if (evt.isUpdatingParentRoom()) {
@@ -322,7 +322,7 @@ public abstract class AbstractEntity extends GameComponent {
         return outString;
     }
 
-    public void setEvents(List<ObjEvent> events) {
+    public void setEvents(List<ObjectEvent> events) {
         this.events = events;
     }
 

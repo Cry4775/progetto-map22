@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import com.google.common.collect.Multimap;
-import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.interfaces.IFillable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IFluid;
 import di.uniba.map.b.adventure.component.entity.interfaces.IPickupable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 
 public abstract class AbstractContainer extends AbstractEntity {

@@ -35,13 +35,13 @@ import di.uniba.map.b.adventure.component.entity.pickupable.FluidItem;
 import di.uniba.map.b.adventure.component.entity.pickupable.LightSourceItem;
 import di.uniba.map.b.adventure.component.entity.pickupable.ReadableItem;
 import di.uniba.map.b.adventure.component.entity.pickupable.WearableItem;
+import di.uniba.map.b.adventure.component.event.AbstractEvent;
+import di.uniba.map.b.adventure.component.event.ObjectEvent;
+import di.uniba.map.b.adventure.component.event.RoomEvent;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.CutsceneRoom;
 import di.uniba.map.b.adventure.component.room.MutableRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
-import di.uniba.map.b.adventure.type.AdvEvent;
-import di.uniba.map.b.adventure.type.ObjEvent;
-import di.uniba.map.b.adventure.type.RoomEvent;
 
 /**
  * RoomsLoader
@@ -92,10 +92,10 @@ public class RoomsLoader implements Runnable {
                 .registerSubtype(MutableRoom.class)
                 .registerSubtype(CutsceneRoom.class);
 
-        RuntimeTypeAdapterFactory<AdvEvent> typeAdapterEvents =
+        RuntimeTypeAdapterFactory<AbstractEvent> typeAdapterEvents =
                 RuntimeTypeAdapterFactory
-                        .of(AdvEvent.class)
-                        .registerSubtype(ObjEvent.class)
+                        .of(AbstractEvent.class)
+                        .registerSubtype(ObjectEvent.class)
                         .registerSubtype(RoomEvent.class);
 
         Gson gson = new GsonBuilder()

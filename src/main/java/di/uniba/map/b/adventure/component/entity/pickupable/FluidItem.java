@@ -6,8 +6,8 @@ import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.container.AbstractContainer;
 import di.uniba.map.b.adventure.component.entity.interfaces.IFillable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IFluid;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
-import di.uniba.map.b.adventure.type.EventType;
 
 public class FluidItem extends BasicItem implements IFluid {
 

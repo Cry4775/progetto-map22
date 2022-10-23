@@ -23,11 +23,11 @@ import di.uniba.map.b.adventure.component.entity.interfaces.ISwitch;
 import di.uniba.map.b.adventure.component.entity.interfaces.ITalkable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
 import di.uniba.map.b.adventure.component.entity.object.FireObject;
+import di.uniba.map.b.adventure.component.event.ObjectEvent;
+import di.uniba.map.b.adventure.component.event.RoomEvent;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
 import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.ObjEvent;
-import di.uniba.map.b.adventure.type.RoomEvent;
 
 // TODO il database puó essere usato come lista di tutti gli oggetti, poi dal json si imposta tutto
 // tramite id
@@ -482,10 +482,10 @@ public class HauntedHouseGame extends GameDescription {
     private void processTriggeredEvents(AbstractEntity obj) {
         if (obj != null) {
             if (obj.getEvents() != null) {
-                Iterator<ObjEvent> it = obj.getEvents().iterator();
+                Iterator<ObjectEvent> it = obj.getEvents().iterator();
 
                 while (it.hasNext()) {
-                    ObjEvent evt = it.next();
+                    ObjectEvent evt = it.next();
 
                     if (evt.isTriggered()) {
                         if (evt.getTeleportsPlayerToRoom() != null) {

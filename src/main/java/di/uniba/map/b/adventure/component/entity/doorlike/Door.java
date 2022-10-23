@@ -3,11 +3,11 @@ package di.uniba.map.b.adventure.component.entity.doorlike;
 import java.util.List;
 import java.util.Set;
 import com.google.common.collect.Multimap;
-import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.SoundManager;
 import di.uniba.map.b.adventure.SoundManager.Mode;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.interfaces.IOpenable;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 
 public class Door extends AbstractEntity implements IOpenable {

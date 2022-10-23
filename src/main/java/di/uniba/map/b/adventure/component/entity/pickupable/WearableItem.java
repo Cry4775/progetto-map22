@@ -2,7 +2,7 @@ package di.uniba.map.b.adventure.component.entity.pickupable;
 
 import java.util.Set;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
-import di.uniba.map.b.adventure.type.EventType;
+import di.uniba.map.b.adventure.component.event.EventType;
 
 public class WearableItem extends BasicItem implements IWearable {
 

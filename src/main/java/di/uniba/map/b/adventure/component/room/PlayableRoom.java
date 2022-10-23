@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.doorlike.InvisibleWall;
+import di.uniba.map.b.adventure.component.event.RoomEvent;
 import di.uniba.map.b.adventure.engine.CommandType;
-import di.uniba.map.b.adventure.type.RoomEvent;
 
 /**
  * @author Pierdamiano Zagaria

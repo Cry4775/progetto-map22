@@ -3,10 +3,10 @@ package di.uniba.map.b.adventure.component.entity.object;
 import java.util.List;
 import java.util.Set;
 import com.google.common.collect.Multimap;
-import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.interfaces.IPullable;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 
 public class PullableObject extends AbstractEntity implements IPullable {

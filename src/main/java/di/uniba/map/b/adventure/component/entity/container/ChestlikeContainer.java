@@ -11,8 +11,8 @@ import com.google.common.collect.Multimap;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.interfaces.IOpenable;
 import di.uniba.map.b.adventure.component.entity.pickupable.BasicItem;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
-import di.uniba.map.b.adventure.type.EventType;
 
 public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     private boolean open = false;

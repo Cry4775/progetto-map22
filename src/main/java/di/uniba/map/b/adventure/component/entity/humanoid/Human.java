@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import com.google.common.collect.Multimap;
-import di.uniba.map.b.adventure.type.EventType;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.interfaces.ITalkable;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 
 public class Human extends AbstractEntity implements ITalkable {

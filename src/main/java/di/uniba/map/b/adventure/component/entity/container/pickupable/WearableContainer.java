@@ -5,8 +5,8 @@ import java.util.Set;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.container.AbstractContainer;
 import di.uniba.map.b.adventure.component.entity.interfaces.IWearable;
+import di.uniba.map.b.adventure.component.event.EventType;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
-import di.uniba.map.b.adventure.type.EventType;
 
 public class WearableContainer extends AbstractContainer implements IWearable {
 

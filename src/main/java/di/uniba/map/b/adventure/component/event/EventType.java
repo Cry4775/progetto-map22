@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure.type;
+package di.uniba.map.b.adventure.component.event;
 
 public enum EventType {
     LOOK_AT, OPEN_CONTAINER, PICK_UP, PULL, ROOM,
