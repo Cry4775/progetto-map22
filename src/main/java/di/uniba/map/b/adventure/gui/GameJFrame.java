@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -30,7 +30,7 @@ import di.uniba.map.b.adventure.engine.HauntedHouseGame;
  */
 public class GameJFrame extends javax.swing.JFrame {
 
-    private NoiseEffectPanel noisePanel;
+    private NoiseFXPanel noisePanel;
 
     private Engine engine;
 
@@ -58,7 +58,7 @@ public class GameJFrame extends javax.swing.JFrame {
         } catch (Exception ex) {
             showFatalError(ex.getMessage());
         }
-        noisePanel = new NoiseEffectPanel();
+        noisePanel = new NoiseFXPanel();
         lypRoomImage.add(noisePanel, new Integer(1));
 
         txtInput.requestFocus();

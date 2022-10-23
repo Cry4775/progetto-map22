@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.gui;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;

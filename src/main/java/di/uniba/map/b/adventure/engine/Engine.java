@@ -10,16 +10,16 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ImageIcon;
-import di.uniba.map.b.WeatherFetcher;
-import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.SoundManager;
 import di.uniba.map.b.adventure.Utils;
+import di.uniba.map.b.adventure.WeatherFetcher;
 import di.uniba.map.b.adventure.SoundManager.Mode;
 import di.uniba.map.b.adventure.component.room.CutsceneRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
 import di.uniba.map.b.adventure.engine.command.CommandType;
-import di.uniba.map.b.adventure.parser.Parser;
-import di.uniba.map.b.adventure.parser.ParserOutput;
+import di.uniba.map.b.adventure.engine.parser.Parser;
+import di.uniba.map.b.adventure.engine.parser.ParserOutput;
+import di.uniba.map.b.adventure.gui.GameJFrame;
 
 public class Engine {
 

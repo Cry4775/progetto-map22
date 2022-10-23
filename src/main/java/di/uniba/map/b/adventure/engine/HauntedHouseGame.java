@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import di.uniba.map.b.adventure.CommandsLoader;
-import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.RoomsLoader;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.container.AbstractContainer;
@@ -28,7 +27,8 @@ import di.uniba.map.b.adventure.component.event.RoomEvent;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
 import di.uniba.map.b.adventure.engine.command.CommandType;
-import di.uniba.map.b.adventure.parser.ParserOutput;
+import di.uniba.map.b.adventure.engine.parser.ParserOutput;
+import di.uniba.map.b.adventure.gui.GameJFrame;
 
 // TODO il database puó essere usato come lista di tutti gli oggetti, poi dal json si imposta tutto
 // tramite id

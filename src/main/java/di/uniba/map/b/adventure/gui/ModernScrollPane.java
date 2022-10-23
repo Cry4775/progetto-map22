@@ -1,4 +1,4 @@
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.gui;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -119,8 +119,7 @@ public class ModernScrollPane extends JScrollPane {
         }
 
         @Override
-        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
-        }
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
 
         @Override
         protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
@@ -136,7 +135,8 @@ public class ModernScrollPane extends JScrollPane {
             height = Math.max(height, THUMB_SIZE);
 
             Graphics2D graphics2D = (Graphics2D) g.create();
-            graphics2D.setColor(new Color(THUMB_COLOR.getRed(), THUMB_COLOR.getGreen(), THUMB_COLOR.getBlue(), alpha));
+            graphics2D.setColor(new Color(THUMB_COLOR.getRed(), THUMB_COLOR.getGreen(),
+                    THUMB_COLOR.getBlue(), alpha));
             graphics2D.fillRect(x, y, width, height);
             graphics2D.dispose();
         }

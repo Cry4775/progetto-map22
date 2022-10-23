@@ -3,7 +3,7 @@
  * license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package di.uniba.map.b.adventure;
+package di.uniba.map.b.adventure.gui;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -16,10 +16,7 @@ import java.awt.image.WritableRaster;
 import java.util.Random;
 import javax.swing.JComponent;
 
-/**
- * @author Pierdamiano
- */
-public class NoiseEffectPanel extends JComponent implements Runnable {
+public class NoiseFXPanel extends JComponent implements Runnable {
     private byte[] data;
 
     private BufferedImage image;

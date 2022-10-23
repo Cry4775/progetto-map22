@@ -5,13 +5,13 @@
  */
 package di.uniba.map.b.adventure.engine;
 
-import di.uniba.map.b.adventure.GameJFrame;
 import di.uniba.map.b.adventure.component.entity.AbstractEntity;
 import di.uniba.map.b.adventure.component.entity.doorlike.Door;
 import di.uniba.map.b.adventure.component.room.AbstractRoom;
 import di.uniba.map.b.adventure.component.room.PlayableRoom;
 import di.uniba.map.b.adventure.engine.command.Command;
-import di.uniba.map.b.adventure.parser.ParserOutput;
+import di.uniba.map.b.adventure.engine.parser.ParserOutput;
+import di.uniba.map.b.adventure.gui.GameJFrame;
 import java.util.ArrayList;
 import java.util.List;
 
