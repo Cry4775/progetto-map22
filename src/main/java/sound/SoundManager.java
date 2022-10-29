@@ -1,5 +1,6 @@
 package sound;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -118,7 +119,8 @@ public class SoundManager {
 
     private static void openWav(InputStream inputStream, Wrapper<Clip> target) {
         try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream);
+            InputStream bufferedIn = new BufferedInputStream(inputStream);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
             DataLine.Info info = new DataLine.Info(Clip.class, audioStream.getFormat());
             target.setObj((Clip) AudioSystem.getLine(info));
             target.getObj().open(audioStream);

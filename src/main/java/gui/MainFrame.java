@@ -12,7 +12,10 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.ImageIcon;
@@ -60,7 +63,7 @@ public class MainFrame extends JFrame {
         try {
             java.awt.Font compassFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
                     getClass().getResourceAsStream(
-                            "/resources/LEIXO-DEMO.ttf"));
+                            "/resources/font/LEIXO-DEMO.ttf"));
             lblCompassNorthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
             lblCompassSouthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
             lblCompassEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
@@ -93,6 +96,12 @@ public class MainFrame extends JFrame {
                 max = model.getMaximum();
             }
         });
+    }
+
+    private ImageIcon getResourceAsImageIcon(String path) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(path);
+
+        return new ImageIcon(ImageIO.read(inputStream));
     }
 
     private void initComponents() {
@@ -211,41 +220,49 @@ public class MainFrame extends JFrame {
 
         getContentPane().add(pnlInOut, java.awt.BorderLayout.PAGE_END);
 
-        pnlCompass
-                .setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlCompass.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnlCompass.setPreferredSize(new java.awt.Dimension(300, 300));
         pnlCompass.setLayout(new java.awt.GridBagLayout());
 
-        lblCompassNorthImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_02.png")));
+        try {
+            lblCompassNorthImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_02.png"));
+            lblCompassWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_04.png"));
+            lblCompassCenterImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_05.png"));
+            lblCompassEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_06.png"));
+            lblCompassSouthImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_08.png"));
+            lblCompassNorthWestImage
+                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_01.png"));
+            lblCompassNorthEastImage
+                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_03.png"));
+            lblCompassSouthWestImage
+                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_07.png"));
+            lblCompassSouthEastImage
+                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
+        } catch (IOException e) {
+            showFatalError(
+                    "Error occurred on loading of compass images. Details: " + e.getMessage());
+        }
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         pnlCompass.add(lblCompassNorthImage, gridBagConstraints);
 
-        lblCompassWestImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_04.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassWestImage, gridBagConstraints);
 
-        lblCompassCenterImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_05.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassCenterImage, gridBagConstraints);
 
-        lblCompassEastImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_06.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassEastImage, gridBagConstraints);
 
-        lblCompassSouthImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_08.png")));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
@@ -253,8 +270,6 @@ public class MainFrame extends JFrame {
 
         pnlCompassNorthWest.setLayout(new OverlayLayout(pnlCompassNorthWest));
 
-        lblCompassNorthWestImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_01.png")));
         pnlCompassNorthWest.add(lblCompassNorthWestImage);
 
         lblCompassNorthWestText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -271,8 +286,6 @@ public class MainFrame extends JFrame {
 
         pnlCompassNorthEast.setLayout(new OverlayLayout(pnlCompassNorthEast));
 
-        lblCompassNorthEastImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_03.png")));
         pnlCompassNorthEast.add(lblCompassNorthEastImage);
 
         lblCompassNorthEastText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -290,8 +303,7 @@ public class MainFrame extends JFrame {
         pnlCompassSouthWest.setLayout(new OverlayLayout(pnlCompassSouthWest));
 
         lblCompassSouthWestImage.setFont(new java.awt.Font("Segoe UI", 0, 24));
-        lblCompassSouthWestImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_07.png")));
+
         lblCompassSouthWestImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthWest.add(lblCompassSouthWestImage);
 
@@ -310,8 +322,7 @@ public class MainFrame extends JFrame {
         pnlCompassSouthEast.setLayout(new OverlayLayout(pnlCompassSouthEast));
 
         lblCompassSouthEastImage.setFont(new java.awt.Font("Segoe UI", 0, 24));
-        lblCompassSouthEastImage.setIcon(new ImageIcon(
-                getClass().getResource("/resources/bussola_09.png")));
+
         lblCompassSouthEastImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthEast.add(lblCompassSouthEastImage);
 
