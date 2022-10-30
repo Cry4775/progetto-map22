@@ -96,7 +96,7 @@ public class GameManager {
                     for (AbstractEntity obj : playableRoom.getObjects()) {
                         if (obj instanceof Door) {
                             Door door = (Door) obj;
-                            if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
+                            if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
                                 directionLbl.setForeground(Color.ORANGE);
                                 break;
                             }
@@ -682,12 +682,13 @@ public class GameManager {
                     for (AbstractEntity obj : currentRoom.getObjects()) {
                         if (obj instanceof Door) {
                             Door door = (Door) obj;
-                            if (door.getBlockedRoomId() == room.getId() && door.isOpen()) {
+                            if (door.getBlockedRoomId().equals(room.getId()) && door.isOpen()) {
                                 setPreviousRoom(currentRoom);
                                 setCurrentRoom(room);
                                 getStatus().setPositionChanged(true);
                                 return;
-                            } else if (door.getBlockedRoomId() == room.getId() && !door.isOpen()) {
+                            } else if (door.getBlockedRoomId().equals(room.getId())
+                                    && !door.isOpen()) {
                                 getStatus().setPositionChanged(false, true);
                                 return;
                             }

@@ -1,7 +1,6 @@
 package component.entity.object;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IFluid;
@@ -12,14 +11,6 @@ import component.room.AbstractRoom;
 public class FireObject extends AbstractEntity {
 
     private boolean lit = false;
-
-    public FireObject(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public FireObject(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     public boolean isLit() {
         return lit;
@@ -84,7 +75,7 @@ public class FireObject extends AbstractEntity {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);

@@ -1,7 +1,6 @@
 package component.entity.container;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IWearable;
@@ -13,15 +12,7 @@ public class SocketlikeContainer extends AbstractContainer {
     private boolean itemInside = false;
 
     private AbstractEntity eligibleItem;
-    private Integer eligibleItemId;
-
-    public SocketlikeContainer(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public SocketlikeContainer(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
+    private String eligibleItemId;
 
     public boolean isItemInside() {
         return itemInside;
@@ -39,11 +30,11 @@ public class SocketlikeContainer extends AbstractContainer {
         this.eligibleItem = eligibleItem;
     }
 
-    public Integer getEligibleItemId() {
+    public String getEligibleItemId() {
         return eligibleItemId;
     }
 
-    public void setEligibleItemId(int eligibleItemId) {
+    public void setEligibleItemId(String eligibleItemId) {
         this.eligibleItemId = eligibleItemId;
     }
 
@@ -86,7 +77,7 @@ public class SocketlikeContainer extends AbstractContainer {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 

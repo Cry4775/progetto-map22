@@ -6,7 +6,6 @@
 package component.entity.container;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
@@ -19,15 +18,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     private boolean locked = false;
 
     private AbstractEntity unlockedWithItem;
-    private Integer unlockedWithItemId;
-
-    public ChestlikeContainer(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public ChestlikeContainer(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
+    private String unlockedWithItemId;
 
     @Override
     public boolean isOpen() {
@@ -77,7 +68,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public int getUnlockedWithItemId() {
+    public String getUnlockedWithItemId() {
         return unlockedWithItemId;
     }
 
@@ -90,7 +81,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 

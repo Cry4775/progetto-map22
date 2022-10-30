@@ -1,7 +1,6 @@
 package component.entity.pickupable;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IFillable;
@@ -12,15 +11,7 @@ public class FillableItem extends BasicItem implements IFillable {
     private boolean filled;
 
     private AbstractEntity eligibleItem;
-    private Integer eligibleItemId;
-
-    public FillableItem(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public FillableItem(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
+    private String eligibleItemId;
 
     public boolean isFilled() {
         return filled;
@@ -38,11 +29,11 @@ public class FillableItem extends BasicItem implements IFillable {
         this.eligibleItem = eligibleItem;
     }
 
-    public Integer getEligibleItemId() {
+    public String getEligibleItemId() {
         return eligibleItemId;
     }
 
-    public void setEligibleItemId(Integer eligibleItemId) {
+    public void setEligibleItemId(String eligibleItemId) {
         this.eligibleItemId = eligibleItemId;
     }
 
@@ -58,7 +49,7 @@ public class FillableItem extends BasicItem implements IFillable {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 

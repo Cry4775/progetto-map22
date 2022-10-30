@@ -1,7 +1,6 @@
 package component.entity.pickupable;
 
 import java.util.List;
-import java.util.Set;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
@@ -10,14 +9,6 @@ import component.event.EventType;
 import component.room.PlayableRoom;
 
 public class FluidItem extends BasicItem implements IFluid {
-
-    public FluidItem(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public FluidItem(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     @Override
     public StringBuilder pickup(List<AbstractEntity> inventory) {

@@ -2,20 +2,9 @@ package component.room;
 
 public class CutsceneRoom extends AbstractRoom {
     private AbstractRoom nextRoom;
-    private Integer nextRoomId;
+    private String nextRoomId;
 
     private boolean finalRoom = false;
-
-    public CutsceneRoom(int id, String name, String description, AbstractRoom nextRoom) {
-        super(id, name, description);
-        this.nextRoom = nextRoom;
-    }
-
-    public CutsceneRoom(int id, String name, String description, String imgPath,
-            AbstractRoom nextRoom) {
-        super(id, name, description, imgPath);
-        this.nextRoom = nextRoom;
-    }
 
     public boolean isFinalRoom() {
         return finalRoom;
@@ -33,11 +22,11 @@ public class CutsceneRoom extends AbstractRoom {
         this.nextRoom = nextRoom;
     }
 
-    public Integer getNextRoomId() {
+    public String getNextRoomId() {
         return nextRoomId;
     }
 
-    public void setNextRoomId(int nextRoomId) {
+    public void setNextRoomId(String nextRoomId) {
         this.nextRoomId = nextRoomId;
     }
 }

@@ -1,7 +1,6 @@
 package component.entity.object;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IMovable;
@@ -12,14 +11,6 @@ import component.room.AbstractRoom;
 public class MovableObject extends AbstractEntity implements IMovable {
 
     private boolean moved = false;
-
-    public MovableObject(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public MovableObject(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     @Override
     public boolean isMoved() {
@@ -58,7 +49,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);

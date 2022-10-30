@@ -1,7 +1,6 @@
 package component.entity.pickupable;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ILightSource;
@@ -12,15 +11,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     private boolean lighted = false;
 
     private BasicItem requiredItem;
-    private Integer requiredItemId;
-
-    public LightSourceItem(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public LightSourceItem(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
+    private String requiredItemId;
 
     @Override
     public boolean isOn() {
@@ -40,11 +31,11 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         this.requiredItem = (BasicItem) requiredItem;
     }
 
-    public Integer getRequiredItemId() {
+    public String getRequiredItemId() {
         return requiredItemId;
     }
 
-    public void setRequiredItemId(Integer requiredItemId) {
+    public void setRequiredItemId(String requiredItemId) {
         this.requiredItemId = requiredItemId;
     }
 
@@ -90,7 +81,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 

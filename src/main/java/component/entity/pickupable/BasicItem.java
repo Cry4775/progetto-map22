@@ -1,7 +1,6 @@
 package component.entity.pickupable;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
@@ -17,14 +16,6 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     private String inventoryDescription; // TODO implementare
 
     private boolean pickedUp = false;
-
-    public BasicItem(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public BasicItem(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     public String getInventoryDescription() {
         return inventoryDescription;
@@ -76,7 +67,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);

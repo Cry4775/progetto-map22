@@ -1,7 +1,6 @@
 package component.entity.container.pickupable;
 
 import java.util.List;
-import java.util.Set;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IWearable;
@@ -13,14 +12,6 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     private boolean worn = false;
     private boolean pickedUp = false;
     private int maxSlots;
-
-    public WearableContainer(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public WearableContainer(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     public int getMaxSlots() {
         return maxSlots;

@@ -27,22 +27,13 @@ public abstract class AbstractEntity extends GameComponent {
 
     private List<ObjectEvent> events = new ArrayList<>();
 
-    private List<Integer> requiredWearedItemsIdToInteract = new ArrayList<>();
+    private List<String> requiredWearedItemsIdToInteract = new ArrayList<>();
 
     private List<IWearable> requiredWearedItemsToInteract = new ArrayList<>();
 
     private String failedInteractionMessage;
 
     private boolean actionPerformed;
-
-    public AbstractEntity(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public AbstractEntity(int id, String name, String description, Set<String> alias) {
-        super(id, name, description);
-        this.alias = alias;
-    }
 
     public boolean isActionPerformed() {
         return actionPerformed;
@@ -72,7 +63,7 @@ public abstract class AbstractEntity extends GameComponent {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
-    public abstract void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public abstract void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms);
 
     public void processRoomParent(List<AbstractRoom> rooms) {
@@ -95,7 +86,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void processEventReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processEventReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (events != null) {
             for (ObjectEvent evt : events) {
@@ -119,7 +110,7 @@ public abstract class AbstractEntity extends GameComponent {
                 for (AbstractRoom room : rooms) {
                     if (!targetRoomDone) {
                         if (evt.getUpdateTargetRoomId() != null) {
-                            if (evt.getUpdateTargetRoomId() == room.getId()) {
+                            if (evt.getUpdateTargetRoomId().equals(room.getId())) {
                                 if (room instanceof MutableRoom) {
                                     evt.setUpdateTargetRoom((MutableRoom) room);
                                     targetRoomDone = true;
@@ -157,7 +148,7 @@ public abstract class AbstractEntity extends GameComponent {
 
                     if (!teleportRoomDone) {
                         if (evt.getTeleportsPlayerToRoomId() != null) {
-                            if (evt.getTeleportsPlayerToRoomId() == room.getId()) {
+                            if (evt.getTeleportsPlayerToRoomId().equals(room.getId())) {
                                 evt.setTeleportsPlayerToRoom(room);
                                 teleportRoomDone = true;
                             }
@@ -191,7 +182,7 @@ public abstract class AbstractEntity extends GameComponent {
         if (requiredWearedItemsIdToInteract != null) {
             requiredWearedItemsToInteract = new ArrayList<>();
 
-            for (Integer objId : requiredWearedItemsIdToInteract) {
+            for (String objId : requiredWearedItemsIdToInteract) {
                 for (AbstractEntity reqItem : objects.get(objId)) {
                     if (reqItem instanceof IWearable) {
                         requiredWearedItemsToInteract.add((IWearable) reqItem);
@@ -273,7 +264,7 @@ public abstract class AbstractEntity extends GameComponent {
         this.parent = parent;
     }
 
-    public List<Integer> getRequiredWearedItemsIdToInteract() {
+    public List<String> getRequiredWearedItemsIdToInteract() {
         return requiredWearedItemsIdToInteract;
     }
 
@@ -326,7 +317,7 @@ public abstract class AbstractEntity extends GameComponent {
         this.events = events;
     }
 
-    public void setRequiredWearedItemsIdToInteract(List<Integer> requiredWearedItemsIdToInteract) {
+    public void setRequiredWearedItemsIdToInteract(List<String> requiredWearedItemsIdToInteract) {
         this.requiredWearedItemsIdToInteract = requiredWearedItemsIdToInteract;
     }
 

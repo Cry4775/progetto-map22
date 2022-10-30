@@ -1,7 +1,6 @@
 package component.entity.doorlike;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
@@ -15,17 +14,9 @@ public class Door extends AbstractEntity implements IOpenable {
     private boolean open = false;
     private boolean locked = false;
     private AbstractEntity unlockedWithItem;
-    private Integer unlockedWithItemId;
-    private int blockedRoomId = 0;
+    private String unlockedWithItemId;
+    private String blockedRoomId;
     private AbstractRoom blockedRoom;
-
-    public Door(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public Door(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     public boolean isOpen() {
         return open;
@@ -44,19 +35,19 @@ public class Door extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public int getUnlockedWithItemId() {
+    public String getUnlockedWithItemId() {
         return unlockedWithItemId;
     }
 
-    public void setUnlockedWithItemId(int unlockedWithItemId) {
+    public void setUnlockedWithItemId(String unlockedWithItemId) {
         this.unlockedWithItemId = unlockedWithItemId;
     }
 
-    public int getBlockedRoomId() {
+    public String getBlockedRoomId() {
         return blockedRoomId;
     }
 
-    public void setBlockedRoomId(int blockedRoomId) {
+    public void setBlockedRoomId(String blockedRoomId) {
         this.blockedRoomId = blockedRoomId;
     }
 
@@ -115,11 +106,11 @@ public class Door extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
-        if (blockedRoomId != 0) {
+        if (blockedRoomId != null) {
             rooms.stream()
-                    .filter(room -> blockedRoomId == room.getId())
+                    .filter(room -> blockedRoomId.equals(room.getId()))
                     .forEach(room -> blockedRoom = room);
         }
 

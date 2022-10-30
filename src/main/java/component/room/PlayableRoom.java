@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package component.room;
 
 import java.util.ArrayList;
@@ -17,34 +12,34 @@ import engine.command.CommandType;
  */
 public class PlayableRoom extends AbstractRoom {
     private AbstractRoom south;
-    private Integer southId;
+    private String southId;
 
     private AbstractRoom north;
-    private Integer northId;
+    private String northId;
 
     private AbstractRoom southWest;
-    private Integer southWestId;
+    private String southWestId;
 
     private AbstractRoom northWest;
-    private Integer northWestId;
+    private String northWestId;
 
     private AbstractRoom southEast;
-    private Integer southEastId;
+    private String southEastId;
 
     private AbstractRoom northEast;
-    private Integer northEastId;
+    private String northEastId;
 
     private AbstractRoom east;
-    private Integer eastId;
+    private String eastId;
 
     private AbstractRoom west;
-    private Integer westId;
+    private String westId;
 
     private AbstractRoom up;
-    private Integer upId;
+    private String upId;
 
     private AbstractRoom down;
-    private Integer downId;
+    private String downId;
 
     private final List<AbstractEntity> objects = new ArrayList<>();
 
@@ -53,14 +48,6 @@ public class PlayableRoom extends AbstractRoom {
     private boolean currentlyDark = false;
 
     private boolean darkByDefault = false;
-
-    public PlayableRoom(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public PlayableRoom(int id, String name, String description, String imgPath) {
-        super(id, name, description, imgPath);
-    }
 
     public boolean isDarkByDefault() {
         return darkByDefault;
@@ -142,35 +129,35 @@ public class PlayableRoom extends AbstractRoom {
         this.northEast = northEast;
     }
 
-    public Integer getSouthWestId() {
+    public String getSouthWestId() {
         return southWestId;
     }
 
-    public Integer getNorthWestId() {
+    public String getNorthWestId() {
         return northWestId;
     }
 
-    public Integer getSouthEastId() {
+    public String getSouthEastId() {
         return southEastId;
     }
 
-    public Integer getNorthEastId() {
+    public String getNorthEastId() {
         return northEastId;
     }
 
-    public Integer getSouthId() {
+    public String getSouthId() {
         return southId;
     }
 
-    public Integer getNorthId() {
+    public String getNorthId() {
         return northId;
     }
 
-    public Integer getWestId() {
+    public String getWestId() {
         return westId;
     }
 
-    public Integer getEastId() {
+    public String getEastId() {
         return eastId;
     }
 
@@ -182,7 +169,7 @@ public class PlayableRoom extends AbstractRoom {
         return up;
     }
 
-    public Integer getUpId() {
+    public String getUpId() {
         return upId;
     }
 
@@ -190,7 +177,7 @@ public class PlayableRoom extends AbstractRoom {
         return down;
     }
 
-    public Integer getDownId() {
+    public String getDownId() {
         return downId;
     }
 
@@ -202,86 +189,46 @@ public class PlayableRoom extends AbstractRoom {
         this.down = down;
     }
 
-    public void setSouthId(int southId) {
+    public void setSouthId(String southId) {
         this.southId = southId;
     }
 
-    public void setNorthId(int northId) {
+    public void setNorthId(String northId) {
         this.northId = northId;
     }
 
-    public void setSouthWestId(int southWestId) {
+    public void setSouthWestId(String southWestId) {
         this.southWestId = southWestId;
     }
 
-    public void setNorthWestId(int northWestId) {
+    public void setNorthWestId(String northWestId) {
         this.northWestId = northWestId;
     }
 
-    public void setSouthEastId(int southEastId) {
+    public void setSouthEastId(String southEastId) {
         this.southEastId = southEastId;
     }
 
-    public void setNorthEastId(int northEastId) {
+    public void setNorthEastId(String northEastId) {
         this.northEastId = northEastId;
     }
 
-    public void setEastId(int eastId) {
+    public void setEastId(String eastId) {
         this.eastId = eastId;
     }
 
-    public void setWestId(int westId) {
+    public void setWestId(String westId) {
         this.westId = westId;
     }
 
-    public void setUpId(int upId) {
+    public void setUpId(String upId) {
         this.upId = upId;
     }
 
-    public void setDownId(int downId) {
+    public void setDownId(String downId) {
         this.downId = downId;
     }
-
-    public void setSouthId(Integer southId) {
-        this.southId = southId;
-    }
-
-    public void setNorthId(Integer northId) {
-        this.northId = northId;
-    }
-
-    public void setSouthWestId(Integer southWestId) {
-        this.southWestId = southWestId;
-    }
-
-    public void setNorthWestId(Integer northWestId) {
-        this.northWestId = northWestId;
-    }
-
-    public void setSouthEastId(Integer southEastId) {
-        this.southEastId = southEastId;
-    }
-
-    public void setNorthEastId(Integer northEastId) {
-        this.northEastId = northEastId;
-    }
-
-    public void setEastId(Integer eastId) {
-        this.eastId = eastId;
-    }
-
-    public void setWestId(Integer westId) {
-        this.westId = westId;
-    }
-
-    public void setUpId(Integer upId) {
-        this.upId = upId;
-    }
-
-    public void setDownId(Integer downId) {
-        this.downId = downId;
-    }
-
+    
     public RoomEvent getEvent() {
         return event;
     }

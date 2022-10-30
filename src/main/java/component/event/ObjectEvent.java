@@ -5,13 +5,13 @@ import component.room.MutableRoom;
 
 public class ObjectEvent extends AbstractEvent {
     private boolean updatingAnotherRoom = false;
-    private Integer updateTargetRoomId;
+    private String updateTargetRoomId;
     private MutableRoom updateTargetRoom;
 
     private boolean updatingParentRoom;
     private MutableRoom parentRoom;
 
-    private Integer teleportsPlayerToRoomId;
+    private String teleportsPlayerToRoomId;
     private AbstractRoom teleportsPlayerToRoom;
 
     private boolean destroyOnTrigger = false;
@@ -40,11 +40,11 @@ public class ObjectEvent extends AbstractEvent {
         this.updatingAnotherRoom = updatingAnotherRoom;
     }
 
-    public Integer getUpdateTargetRoomId() {
+    public String getUpdateTargetRoomId() {
         return updateTargetRoomId;
     }
 
-    public void setUpdateTargetRoomId(Integer updateTargetRoomId) {
+    public void setUpdateTargetRoomId(String updateTargetRoomId) {
         this.updateTargetRoomId = updateTargetRoomId;
     }
 
@@ -64,11 +64,11 @@ public class ObjectEvent extends AbstractEvent {
         this.updatingParentRoom = updatingParentRoom;
     }
 
-    public Integer getTeleportsPlayerToRoomId() {
+    public String getTeleportsPlayerToRoomId() {
         return teleportsPlayerToRoomId;
     }
 
-    public void setTeleportsPlayerToRoomId(Integer teleportsPlayerToRoomId) {
+    public void setTeleportsPlayerToRoomId(String teleportsPlayerToRoomId) {
         this.teleportsPlayerToRoomId = teleportsPlayerToRoomId;
     }
 

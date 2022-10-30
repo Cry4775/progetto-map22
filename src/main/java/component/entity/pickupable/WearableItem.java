@@ -1,20 +1,11 @@
 package component.entity.pickupable;
 
-import java.util.Set;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 
 public class WearableItem extends BasicItem implements IWearable {
 
     private boolean worn = false;
-
-    public WearableItem(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public WearableItem(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     @Override
     public boolean isWorn() {

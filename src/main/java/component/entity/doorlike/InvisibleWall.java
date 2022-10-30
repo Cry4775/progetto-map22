@@ -1,7 +1,6 @@
 package component.entity.doorlike;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IWearable;
@@ -13,7 +12,7 @@ public class InvisibleWall extends AbstractEntity {
 
     private boolean locked = true;
 
-    private int blockedRoomId = 0;
+    private String blockedRoomId;
 
     private boolean northBlocked = false;
     private boolean southBlocked = false;
@@ -28,19 +27,11 @@ public class InvisibleWall extends AbstractEntity {
 
     private String trespassingWhenLockedText; // TODO é possibile rimuoverlo
 
-    public InvisibleWall(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public InvisibleWall(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
-
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (getRequiredWearedItemsIdToInteract() != null) {
-            for (Integer reqId : getRequiredWearedItemsIdToInteract()) {
+            for (String reqId : getRequiredWearedItemsIdToInteract()) {
                 if (!objects.containsKey(reqId)) {
                     throw new Error(
                             "Couldn't find the requested \"requiredWearedItemsIdToInteract\" ID "
@@ -87,8 +78,8 @@ public class InvisibleWall extends AbstractEntity {
         PlayableRoom parentRoom = (PlayableRoom) getParent();
         AbstractRoom nextRoom = parentRoom.getRoomAt(direction);
 
-        if (blockedRoomId != 0) {
-            if (nextRoom != null && nextRoom.getId() == blockedRoomId) {
+        if (blockedRoomId != null) {
+            if (nextRoom != null && nextRoom.getId().equals(blockedRoomId)) {
                 return true;
             }
         } else {
@@ -131,11 +122,11 @@ public class InvisibleWall extends AbstractEntity {
         this.locked = locked;
     }
 
-    public int getBlockedRoomId() {
+    public String getBlockedRoomId() {
         return blockedRoomId;
     }
 
-    public void setBlockedRoomId(int blockedRoomId) {
+    public void setBlockedRoomId(String blockedRoomId) {
         this.blockedRoomId = blockedRoomId;
     }
 

@@ -1,7 +1,6 @@
 package component.entity.object;
 
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IPullable;
@@ -12,14 +11,6 @@ import component.room.AbstractRoom;
 public class PullableObject extends AbstractEntity implements IPullable {
 
     private boolean pulled = false;
-
-    public PullableObject(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public PullableObject(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     @Override
     public boolean isPulled() {
@@ -59,7 +50,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);

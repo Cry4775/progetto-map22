@@ -2,7 +2,6 @@ package component.entity.container;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IFillable;
@@ -19,14 +18,6 @@ public abstract class AbstractContainer extends AbstractEntity {
     private List<AbstractEntity> list = new ArrayList<>();
 
     private boolean forFluids;
-
-    public AbstractContainer(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public AbstractContainer(int id, String name, String description, Set<String> alias) {
-        super(id, name, description, alias);
-    }
 
     public void setForFluids(boolean forFluids) {
         this.forFluids = forFluids;
@@ -162,7 +153,7 @@ public abstract class AbstractContainer extends AbstractEntity {
     }
 
     @Override
-    public void processReferences(Multimap<Integer, AbstractEntity> objects,
+    public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (list != null) {
             for (AbstractEntity item : list) {

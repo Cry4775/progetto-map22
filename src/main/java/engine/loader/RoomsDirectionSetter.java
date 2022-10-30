@@ -7,11 +7,11 @@ import component.room.AbstractRoom;
 
 public class RoomsDirectionSetter<T extends AbstractRoom> implements Runnable {
     List<AbstractRoom> rooms;
-    Function<T, Integer> directionIdGetter;
+    Function<T, String> directionIdGetter;
     BiConsumer<T, AbstractRoom> directionSetter;
     Class<T> clazz;
 
-    public RoomsDirectionSetter(List<AbstractRoom> rooms, Function<T, Integer> directionIdGetter,
+    public RoomsDirectionSetter(List<AbstractRoom> rooms, Function<T, String> directionIdGetter,
             BiConsumer<T, AbstractRoom> directionSetter, Class<T> clazz) {
         this.rooms = rooms;
         this.directionIdGetter = directionIdGetter;
@@ -26,9 +26,9 @@ public class RoomsDirectionSetter<T extends AbstractRoom> implements Runnable {
                 .map(clazz::cast)
                 .filter(room -> directionIdGetter.apply(room) != null)
                 .forEach(room -> {
-                    if (directionIdGetter.apply(room) != 0) {
+                    if (directionIdGetter.apply(room) != null) {
                         for (AbstractRoom linkedRoom : rooms) {
-                            if (linkedRoom.getId() == directionIdGetter.apply(room)) {
+                            if (directionIdGetter.apply(room).equals(linkedRoom.getId())) {
                                 directionSetter.accept(room, linkedRoom);
                                 return;
                             }

@@ -11,14 +11,6 @@ public class MutableRoom extends PlayableRoom {
 
     private MutableRoom newRoom;
 
-    public MutableRoom(int id, String name, String description) {
-        super(id, name, description);
-    }
-
-    public MutableRoom(int id, String name, String description, String imgPath) {
-        super(id, name, description, imgPath);
-    }
-
     public MutableRoom getNewRoom() {
         return newRoom;
     }
@@ -86,7 +78,7 @@ public class MutableRoom extends PlayableRoom {
                                 Object newRoomObj = newIt.next();
 
                                 if (newRoomObj instanceof AbstractEntity) {
-                                    if (((AbstractEntity) newRoomObj).getId() == obj.getId()) {
+                                    if (((AbstractEntity) newRoomObj).getId().equals(obj.getId())) {
                                         it.remove();
                                         tempList.add((AbstractEntity) newRoomObj);
                                         newIt.remove();

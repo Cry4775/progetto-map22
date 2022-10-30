@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
 import engine.command.CommandType;
+import engine.database.DBManager;
 import engine.parser.Parser;
 import engine.parser.ParserOutput;
 import gui.MainFrame;
@@ -40,11 +41,13 @@ public class Engine {
 
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
-
+                    e.printStackTrace();
                     gui.showFatalError(e.getMessage());
                     crashed.set(true);
                 }
             });
+
+            DBManager.createDB();
 
             this.game.init();
 

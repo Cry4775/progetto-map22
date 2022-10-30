@@ -70,7 +70,7 @@ public class RoomsLoader implements Runnable {
 
             linkRooms();
 
-            Multimap<Integer, AbstractEntity> objects = mapAllObjects();
+            Multimap<String, AbstractEntity> objects = mapAllObjects();
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
@@ -101,10 +101,10 @@ public class RoomsLoader implements Runnable {
         return result;
     }
 
-    private Multimap<Integer, AbstractEntity> mapAllObjects() {
+    private Multimap<String, AbstractEntity> mapAllObjects() {
 
-        Multimap<Integer, AbstractEntity> objects = ArrayListMultimap.create();
-        Multimap<Integer, AbstractEntity> result = ArrayListMultimap.create();
+        Multimap<String, AbstractEntity> objects = ArrayListMultimap.create();
+        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
         for (AbstractRoom room : listAllRooms()) {
             if (room instanceof PlayableRoom) {

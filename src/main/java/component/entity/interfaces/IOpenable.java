@@ -11,7 +11,7 @@ public interface IOpenable {
 
     public void setLocked(boolean value);
 
-    public int getUnlockedWithItemId();
+    public String getUnlockedWithItemId();
 
     public StringBuilder open(AbstractEntity key);
 }
