@@ -71,7 +71,6 @@ public class WeatherFetcher {
                         .request(MediaType.APPLICATION_JSON).get();
 
                 if (response.getStatus() == 200) {
-                    latestFetchTime = System.currentTimeMillis();
                     String json = response.readEntity(String.class);
                     latestFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
                 }
@@ -81,6 +80,7 @@ public class WeatherFetcher {
             }
         }
 
+        latestFetchTime = System.currentTimeMillis();
         return latestFetchRaining;
     }
 
