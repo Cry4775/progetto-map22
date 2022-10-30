@@ -5,13 +5,18 @@
  */
 package component.entity.container;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
 import component.entity.pickupable.BasicItem;
 import component.event.EventType;
+import component.event.ObjectEvent;
 import component.room.AbstractRoom;
+import component.room.PlayableRoom;
 
 public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     private boolean open = false;
@@ -96,6 +101,35 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
             for (AbstractEntity reqItem : objects.get(unlockedWithItemId)) {
                 unlockedWithItem = reqItem;
             }
+        }
+    }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ChestlikeContainer values (?, ?, ?, ?, ?)");
+        PreparedStatement evtStm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+
+        stm.setString(1, getId());
+
+        if (getParent() instanceof PlayableRoom) {
+            stm.setString(2, getParent().getId());
+            stm.setString(3, "null");
+        } else if (getParent() instanceof AbstractContainer) {
+            stm.setString(2, "null");
+            stm.setString(3, getParent().getId());
+        }
+
+        stm.setBoolean(4, open);
+        stm.setBoolean(5, locked);
+        stm.executeUpdate();
+
+        for (ObjectEvent evt : getEvents()) {
+            evtStm.setString(1, getId());
+            evtStm.setString(2, evt.getEventType().toString());
+            evtStm.setString(3, evt.getText());
+            evtStm.executeUpdate();
         }
     }
 }

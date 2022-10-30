@@ -28,7 +28,7 @@ import engine.loader.json.TypeAdapterHolder.AdapterType;
  */
 public class RoomsLoader implements Runnable {
 
-    private List<AbstractRoom> rooms;
+    private static List<AbstractRoom> rooms;
     private boolean exceptionThrown = false;
 
     private List<Thread> workers = new ArrayList<>();
@@ -38,7 +38,7 @@ public class RoomsLoader implements Runnable {
     }
 
     public RoomsLoader(List<AbstractRoom> rooms) {
-        this.rooms = rooms;
+        RoomsLoader.rooms = rooms;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class RoomsLoader implements Runnable {
         }
     }
 
-    private List<AbstractRoom> listAllRooms() {
+    public static List<AbstractRoom> listAllRooms() {
         List<AbstractRoom> result = new ArrayList<>();
 
         for (AbstractRoom room : rooms) {
@@ -101,7 +101,7 @@ public class RoomsLoader implements Runnable {
         return result;
     }
 
-    private Multimap<String, AbstractEntity> mapAllObjects() {
+    public static Multimap<String, AbstractEntity> mapAllObjects() {
 
         Multimap<String, AbstractEntity> objects = ArrayListMultimap.create();
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();

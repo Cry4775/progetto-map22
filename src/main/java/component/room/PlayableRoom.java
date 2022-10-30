@@ -1,5 +1,8 @@
 package component.room;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import component.entity.AbstractEntity;
@@ -228,7 +231,7 @@ public class PlayableRoom extends AbstractRoom {
     public void setDownId(String downId) {
         this.downId = downId;
     }
-    
+
     public RoomEvent getEvent() {
         return event;
     }
@@ -276,6 +279,37 @@ public class PlayableRoom extends AbstractRoom {
                 return down;
             default:
                 return null;
+        }
+    }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        PreparedStatement evtStm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
+
+        stm.setString(1, getId());
+        stm.setBoolean(2, false);
+        stm.setString(3, null);
+        stm.setString(4, southId);
+        stm.setString(5, northId);
+        stm.setString(6, southWestId);
+        stm.setString(7, northWestId);
+        stm.setString(8, southEastId);
+        stm.setString(9, northEastId);
+        stm.setString(10, eastId);
+        stm.setString(11, westId);
+        stm.setString(12, upId);
+        stm.setString(13, downId);
+        stm.setBoolean(14, currentlyDark);
+        stm.executeUpdate();
+
+        if (event != null) {
+            evtStm.setString(1, getId());
+            evtStm.setString(2, event.getEventType().toString());
+            evtStm.setString(3, event.getText());
+            evtStm.executeUpdate();
         }
     }
 }

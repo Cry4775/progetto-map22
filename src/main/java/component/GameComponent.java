@@ -1,5 +1,8 @@
 package component;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public abstract class GameComponent {
     private String id;
 
@@ -51,5 +54,7 @@ public abstract class GameComponent {
             return false;
         return true;
     }
+
+    public abstract void saveOnDB(Connection connection) throws SQLException;
 
 }

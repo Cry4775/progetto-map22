@@ -1,5 +1,8 @@
 package component.entity.humanoid;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -7,6 +10,7 @@ import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ITalkable;
 import component.event.EventType;
+import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 
 public class Human extends AbstractEntity implements ITalkable {
@@ -42,4 +46,18 @@ public class Human extends AbstractEntity implements ITalkable {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+        PreparedStatement evtStm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+
+        for (ObjectEvent evt : getEvents()) {
+            evtStm.setString(1, getId());
+            evtStm.setString(2, evt.getEventType().toString());
+            evtStm.setString(3, evt.getText());
+            evtStm.executeUpdate();
+        }
+    }
+
 }

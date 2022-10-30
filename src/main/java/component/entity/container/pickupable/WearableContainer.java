@@ -1,10 +1,14 @@
 package component.entity.container.pickupable;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
+import component.event.ObjectEvent;
 import component.room.PlayableRoom;
 
 public class WearableContainer extends AbstractContainer implements IWearable {
@@ -132,6 +136,35 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             outString.append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
         }
         return outString;
+    }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.WearableContainer values (?, ?, ?, ?, ?)");
+        PreparedStatement evtStm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+
+        stm.setString(1, getId());
+
+        if (getParent() instanceof PlayableRoom) {
+            stm.setString(3, getParent().getId());
+            stm.setString(4, "null");
+        } else if (getParent() instanceof AbstractContainer) {
+            stm.setString(3, "null");
+            stm.setString(4, getParent().getId());
+        }
+
+        stm.setBoolean(2, pickedUp);
+        stm.setBoolean(5, worn);
+        stm.executeUpdate();
+
+        for (ObjectEvent evt : getEvents()) {
+            evtStm.setString(1, getId());
+            evtStm.setString(2, evt.getEventType().toString());
+            evtStm.setString(3, evt.getText());
+            evtStm.executeUpdate();
+        }
     }
 
 }

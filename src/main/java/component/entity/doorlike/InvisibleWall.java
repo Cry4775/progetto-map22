@@ -1,9 +1,13 @@
 package component.entity.doorlike;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IWearable;
+import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.command.CommandType;
@@ -216,6 +220,30 @@ public class InvisibleWall extends AbstractEntity {
 
     public void setDownBlocked(boolean downBlocked) {
         this.downBlocked = downBlocked;
+    }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.InvisibleWall values (?, ?, ?)");
+        PreparedStatement evtStm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+
+        stm.setString(1, getId());
+
+        if (getParent() instanceof PlayableRoom) {
+            stm.setString(2, getParent().getId());
+        }
+
+        stm.setBoolean(3, locked);
+        stm.executeUpdate();
+
+        for (ObjectEvent evt : getEvents()) {
+            evtStm.setString(1, getId());
+            evtStm.setString(2, evt.getEventType().toString());
+            evtStm.setString(3, evt.getText());
+            evtStm.executeUpdate();
+        }
     }
 
 }

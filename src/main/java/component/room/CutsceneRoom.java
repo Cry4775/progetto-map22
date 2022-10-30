@@ -1,5 +1,8 @@
 package component.room;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class CutsceneRoom extends AbstractRoom {
     private AbstractRoom nextRoom;
     private String nextRoomId;
@@ -28,5 +31,10 @@ public class CutsceneRoom extends AbstractRoom {
 
     public void setNextRoomId(String nextRoomId) {
         this.nextRoomId = nextRoomId;
+    }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+
     }
 }

@@ -1,26 +1,32 @@
 package component.entity.pickupable;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 import component.entity.interfaces.ILightSource;
+import component.event.ObjectEvent;
 import component.room.AbstractRoom;
+import component.room.PlayableRoom;
 
 public class LightSourceItem extends BasicItem implements ILightSource {
 
-    private boolean lighted = false;
+    private boolean on = false;
 
     private BasicItem requiredItem;
     private String requiredItemId;
 
     @Override
     public boolean isOn() {
-        return lighted;
+        return on;
     }
 
     @Override
     public void setOn(boolean value) {
-        lighted = value;
+        on = value;
     }
 
     public BasicItem getRequiredItem() {
@@ -43,18 +49,18 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     public StringBuilder turnOn() {
         StringBuilder outString = new StringBuilder();
 
-        if (!lighted) {
+        if (!on) {
 
             if (requiredItem != null && requiredItem.isPickedUp()) {
 
-                lighted = true;
+                on = true;
                 outString.append("Hai acceso: " + getName());
 
                 setActionPerformed(true);
             } else if (requiredItem != null && !requiredItem.isPickedUp()) {
                 outString.append("Non puoi farlo senza lo strumento adatto.");
             } else {
-                lighted = true;
+                on = true;
                 outString.append("Hai acceso: " + getName());
 
                 setActionPerformed(true);
@@ -69,8 +75,8 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     public StringBuilder turnOff() {
         StringBuilder outString = new StringBuilder();
 
-        if (lighted) {
-            lighted = false;
+        if (on) {
+            on = false;
             outString.append("Hai spento: " + getName());
 
             setActionPerformed(true);
@@ -96,6 +102,35 @@ public class LightSourceItem extends BasicItem implements ILightSource {
             for (AbstractEntity reqItem : objects.get(requiredItemId)) {
                 requiredItem = (BasicItem) reqItem;
             }
+        }
+    }
+
+    @Override
+    public void saveOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.LightSourceItem values (?, ?, ?, ?, ?)");
+        PreparedStatement evtStm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+
+        stm.setString(1, getId());
+
+        if (getParent() instanceof PlayableRoom) {
+            stm.setString(3, getParent().getId());
+            stm.setString(4, "null");
+        } else if (getParent() instanceof AbstractContainer) {
+            stm.setString(3, "null");
+            stm.setString(4, getParent().getId());
+        }
+
+        stm.setBoolean(2, isPickedUp());
+        stm.setBoolean(5, on);
+        stm.executeUpdate();
+
+        for (ObjectEvent evt : getEvents()) {
+            evtStm.setString(1, getId());
+            evtStm.setString(2, evt.getEventType().toString());
+            evtStm.setString(3, evt.getText());
+            evtStm.executeUpdate();
         }
     }
 
