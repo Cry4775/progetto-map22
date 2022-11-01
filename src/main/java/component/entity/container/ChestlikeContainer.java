@@ -23,7 +23,8 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         super(resultSet);
         open = resultSet.getBoolean(6);
         locked = resultSet.getBoolean(7);
-        unlockedWithItemId = unlockedWithItemId;
+        unlockedWithItemId = resultSet.getString(8);
+        setForFluids(resultSet.getBoolean(9));
     }
 
     private boolean open = false;
@@ -114,7 +115,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ChestlikeContainer values (?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.ChestlikeContainer values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -130,9 +131,10 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
 
         stm.setBoolean(6, open);
         stm.setBoolean(7, locked);
+        stm.setString(8, unlockedWithItemId);
+        stm.setBoolean(9, isForFluids());
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 }

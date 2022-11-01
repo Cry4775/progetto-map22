@@ -9,12 +9,13 @@ import component.room.PlayableRoom;
 public class BasicContainer extends AbstractContainer {
     public BasicContainer(ResultSet resultSet) throws SQLException {
         super(resultSet);
+        setForFluids(resultSet.getBoolean(6));
     }
 
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.BasicContainer values (?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.BasicContainer values (?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -28,9 +29,10 @@ public class BasicContainer extends AbstractContainer {
             stm.setString(5, getParent().getId());
         }
 
+        stm.setBoolean(6, isForFluids());
+
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 }

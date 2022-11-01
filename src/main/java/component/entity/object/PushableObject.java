@@ -86,8 +86,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
         stm.setBoolean(6, pushed);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

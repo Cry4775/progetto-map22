@@ -55,8 +55,7 @@ public class UnopenableDoor extends AbstractEntity {
         stm.setString(6, openEventText);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

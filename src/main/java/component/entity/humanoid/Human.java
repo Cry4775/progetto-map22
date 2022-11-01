@@ -86,8 +86,7 @@ public class Human extends AbstractEntity implements ITalkable {
             }
         }
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

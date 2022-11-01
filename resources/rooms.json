@@ -305,7 +305,6 @@
                     {
                         "eventType": "PULL",
                         "text": "La ruota gira per qualche secondo, e la corda si srotola. Ti pare di sentire un rumore secco provenire dal salone.",
-                        "updatingAnotherRoom": true,
                         "updatingParentRoom": true,
                         "updateTargetRoomId": "8"
                     }
@@ -624,7 +623,7 @@
         "objects": [
             {
                 "type": "Human",
-                "id": "37",
+                "id": "48",
                 "name": "valeria",
                 "description": "La ragazza è prigioniera, legata con una catena alla parete, i suoi abiti laceri e strappati. È sempre bella come te la ricordavi, ma adesso il suo volto è provato e su di esso è dipinta un'espressione che è un misto di terrore per la situazione in cui si trova e di felicità per l'averti visto.",
                 "phrases": [
@@ -636,7 +635,6 @@
                 "events": [
                     {
                         "eventType": "TALK_WITH",
-                        "updatingAnotherRoom": true,
                         "updateTargetRoomId": "21"
                     }
                 ]

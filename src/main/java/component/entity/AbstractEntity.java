@@ -20,10 +20,11 @@ import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public abstract class AbstractEntity extends GameComponent {
 
-    private Set<String> alias;
+    private Set<String> alias = new HashSet<>();
 
     private boolean mustDestroyFromInv = false;
 
@@ -43,8 +44,45 @@ public abstract class AbstractEntity extends GameComponent {
 
     public AbstractEntity(ResultSet resultSet) throws SQLException {
         super(resultSet);
-        this.requiredWearedItemsIdToInteract = requiredWearedItemsIdToInteract;
-        this.failedInteractionMessage = failedInteractionMessage;
+
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.RequiredWearedItem");
+        ResultSet rs = stm.executeQuery();
+
+        while (rs.next()) {
+            if (rs.getString(1).equals(getId())) {
+                requiredWearedItemsIdToInteract.add(rs.getString(2));
+
+                if (failedInteractionMessage == null) {
+                    failedInteractionMessage = rs.getString(3);
+                }
+            }
+        }
+
+        stm.close();
+
+        stm = DBManager.getConnection().prepareStatement("SELECT * FROM SAVEDATA.Alias");
+        rs = stm.executeQuery();
+
+        while (rs.next()) {
+            if (rs.getString(1).equals(getId())) {
+                addAlias(rs.getString(2));
+            }
+        }
+
+        stm.close();
+
+        stm = DBManager.getConnection().prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent");
+        rs = stm.executeQuery();
+
+        while (rs.next()) {
+            if (rs.getString(1).equals(getId())) {
+                events.add(new ObjectEvent(rs));
+            }
+        }
+
+        stm.close();
     }
 
     public boolean isActionPerformed() {
@@ -73,6 +111,10 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void setAlias(String[] alias) {
         this.alias = new HashSet<>(Arrays.asList(alias));
+    }
+
+    public void addAlias(String alias) {
+        this.alias.add(alias);
     }
 
     public PlayableRoom getClosestRoomParent() {
@@ -366,13 +408,17 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void saveEventsOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?, ?, ?, ?, ?)");
 
         if (getEvents() != null) {
             for (ObjectEvent evt : getEvents()) {
                 stm.setString(1, getId());
                 stm.setString(2, evt.getEventType().toString());
                 stm.setString(3, evt.getText());
+                stm.setBoolean(4, evt.isUpdatingParentRoom());
+                stm.setString(5, evt.getUpdateTargetRoomId());
+                stm.setString(6, evt.getTeleportsPlayerToRoomId());
+                stm.setBoolean(7, evt.mustDestroyOnTrigger());
                 stm.executeUpdate();
             }
         }
@@ -389,6 +435,28 @@ public abstract class AbstractEntity extends GameComponent {
                 stm.executeUpdate();
             }
         }
+    }
+
+    public void saveRequiredWearedItemsOnDB() throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection().prepareStatement(
+                        "INSERT INTO SAVEDATA.RequiredWearedItem values (?, ?, ?)");
+
+        if (requiredWearedItemsIdToInteract != null) {
+            for (String string : requiredWearedItemsIdToInteract) {
+                stm.setString(1, getId());
+                stm.setString(2, string);
+                stm.setString(3,
+                        failedInteractionMessage == null ? "null" : failedInteractionMessage);
+                stm.executeUpdate();
+            }
+        }
+    }
+
+    public void saveExternalsOnDB(Connection connection) throws SQLException {
+        saveAliasesOnDB(connection);
+        saveRequiredWearedItemsOnDB();
+        saveEventsOnDB(connection);
     }
 
 }

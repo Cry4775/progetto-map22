@@ -17,7 +17,6 @@ public abstract class AbstractContainer extends AbstractEntity {
 
     public AbstractContainer(ResultSet resultSet) throws SQLException {
         super(resultSet);
-        forFluids = forFluids;
     }
 
     protected boolean contentRevealed = false;

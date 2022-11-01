@@ -243,8 +243,7 @@ public class InvisibleWall extends AbstractEntity {
         stm.setBoolean(5, locked);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

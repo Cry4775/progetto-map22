@@ -1,11 +1,19 @@
 package component.event;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public abstract class AbstractEvent {
     private EventType eventType;
 
     private String text;
 
     private boolean triggered;
+
+    public AbstractEvent(ResultSet resultSet) throws SQLException {
+        eventType = EventType.valueOf(resultSet.getString(2));
+        text = resultSet.getString(3);
+    }
 
     public EventType getEventType() {
         return eventType;

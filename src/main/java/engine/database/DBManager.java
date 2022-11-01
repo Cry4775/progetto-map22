@@ -12,6 +12,7 @@ import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.container.BasicContainer;
 import component.entity.container.ChestlikeContainer;
+import component.entity.container.SocketlikeContainer;
 import component.entity.container.pickupable.WearableContainer;
 import component.entity.doorlike.Door;
 import component.entity.doorlike.InvisibleWall;
@@ -28,7 +29,6 @@ import component.entity.pickupable.FluidItem;
 import component.entity.pickupable.LightSourceItem;
 import component.entity.pickupable.ReadableItem;
 import component.entity.pickupable.WearableItem;
-import component.event.EventType;
 import component.event.RoomEvent;
 import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
@@ -43,6 +43,10 @@ public class DBManager {
     private static final String DB_PATH = "jdbc:h2:./savedata";
 
     static List<AbstractRoom> rooms = new ArrayList<>();
+
+    public static Connection getConnection() {
+        return connection;
+    }
 
     private static void openConnection() throws SQLException {
         if (connection == null || !connection.isValid(0)) {
@@ -129,6 +133,15 @@ public class DBManager {
                         + ")");
                 createStatement.executeUpdate();
 
+                createStatement =
+                        connection.prepareStatement("CREATE TABLE SAVEDATA.RequiredWearedItem"
+                                + "("
+                                + " id varchar(10),"
+                                + " requiredWearedItemId varchar(10),"
+                                + " failedInteractionMessage varchar(512)"
+                                + ")");
+                createStatement.executeUpdate();
+
                 createStatement = connection.prepareStatement("CREATE TABLE SAVEDATA.BasicItem"
                         + "("
                         + " id varchar(10),"
@@ -148,7 +161,8 @@ public class DBManager {
                         + " locatedInRoomId varchar(10),"
                         + " locatedInContainerId varchar(10),"
                         + " pickedUp boolean,"
-                        + " filled boolean"
+                        + " filled boolean,"
+                        + " eligibleItemId varchar(10)"
                         + ")");
                 createStatement.executeUpdate();
 
@@ -161,7 +175,8 @@ public class DBManager {
                                 + " locatedInRoomId varchar(10),"
                                 + " locatedInContainerId varchar(10),"
                                 + " pickedUp boolean,"
-                                + " lit boolean"
+                                + " lit boolean,"
+                                + " requiredItemId varchar(10)"
                                 + ")");
                 createStatement.executeUpdate();
 
@@ -228,7 +243,9 @@ public class DBManager {
                         + " description varchar(8192),"
                         + " locatedInRoomId varchar(10),"
                         + " open boolean,"
-                        + " locked boolean"
+                        + " locked boolean,"
+                        + " unlockedWithItemId varchar(10),"
+                        + " blockedRoomId varchar(10)"
                         + ")");
                 createStatement.executeUpdate();
 
@@ -251,7 +268,9 @@ public class DBManager {
                                 + " locatedInRoomId varchar(10),"
                                 + " locatedInContainerId varchar(10),"
                                 + " open boolean,"
-                                + " locked boolean"
+                                + " locked boolean,"
+                                + " unlockedWithItemId varchar(10),"
+                                + " forFluids boolean"
                                 + ")");
                 createStatement.executeUpdate();
 
@@ -263,7 +282,9 @@ public class DBManager {
                                 + " description varchar(8192),"
                                 + " locatedInRoomId varchar(10),"
                                 + " locatedInContainerId varchar(10),"
-                                + " itemInside boolean"
+                                + " itemInside boolean,"
+                                + " eligibleItemId varchar(10),"
+                                + " forFluids boolean"
                                 + ")");
                 createStatement.executeUpdate();
 
@@ -276,7 +297,9 @@ public class DBManager {
                                 + " locatedInRoomId varchar(10),"
                                 + " locatedInContainerId varchar(10),"
                                 + " pickedUp boolean,"
-                                + " worn boolean"
+                                + " worn boolean,"
+                                + " maxSlots int,"
+                                + " forFluids boolean"
                                 + ")");
                 createStatement.executeUpdate();
 
@@ -287,7 +310,8 @@ public class DBManager {
                                 + " name varchar(128),"
                                 + " description varchar(8192),"
                                 + " locatedInRoomId varchar(10),"
-                                + " locatedInContainerId varchar(10)"
+                                + " locatedInContainerId varchar(10),"
+                                + " forFluids boolean"
                                 + ")");
                 createStatement.executeUpdate();
 
@@ -377,7 +401,11 @@ public class DBManager {
                         + "("
                         + " objId varchar(10),"
                         + " type varchar(128),"
-                        + " text varchar(8192)"
+                        + " text varchar(8192),"
+                        + " updatingParentRoom boolean,"
+                        + " updateTargetRoomId varchar(10),"
+                        + " teleportsPlayerToRoomId varchar(10),"
+                        + " destroyOnTrigger boolean"
                         + ")");
                 createStatement.executeUpdate();
             }
@@ -405,52 +433,82 @@ public class DBManager {
     public static void wipeExistingDB() throws SQLException {
         PreparedStatement stm;
 
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PlayableRoom");
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.Alias");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.BasicContainer");
         stm.executeUpdate();
 
         stm = connection.prepareStatement("DELETE FROM SAVEDATA.BasicItem");
         stm.executeUpdate();
 
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FillableItem");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.LightSourceItem");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableItem");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FireObject");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.MovableObject");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PushableObject");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PullableObject");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.Door");
-        stm.executeUpdate();
-
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.InvisibleWall");
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.BasicObject");
         stm.executeUpdate();
 
         stm = connection.prepareStatement("DELETE FROM SAVEDATA.ChestlikeContainer");
         stm.executeUpdate();
 
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.SocketlikeContainer");
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.CutsceneRoom");
         stm.executeUpdate();
 
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableContainer");
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.Door");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FillableItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FireObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FluidItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.Human");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.HumanPhrases");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.InvisibleWall");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.LightSourceItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.MovableObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.ObjectEvent");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PlayableRoom");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PullableObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PushableObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.ReadableItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.RequiredWearedItem");
         stm.executeUpdate();
 
         stm = connection.prepareStatement("DELETE FROM SAVEDATA.RoomEvent");
         stm.executeUpdate();
 
-        stm = connection.prepareStatement("DELETE FROM SAVEDATA.ObjectEvent");
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.SocketlikeContainer");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.UnopenableDoor");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableContainer");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableItem");
         stm.executeUpdate();
     }
 
@@ -508,6 +566,7 @@ public class DBManager {
             return rooms;
         } catch (SQLException e) {
             closeConnection();
+            e.printStackTrace();
             throw new Error(
                     "An error has occurred while attempting to load state on DB. Details: "
                             + e.getMessage());
@@ -518,17 +577,17 @@ public class DBManager {
         List<Pair<AbstractEntity, String>> pending = new ArrayList<>();
 
         PreparedStatement stm =
-                connection.prepareStatement("SELECT * FROM SAVEDATA.ChestlikeContainer");
+                connection.prepareStatement("SELECT * FROM SAVEDATA.BasicContainer");
         ResultSet resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
-            ChestlikeContainer obj = new ChestlikeContainer(resultSet);
+            BasicContainer obj = new BasicContainer(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
@@ -541,17 +600,17 @@ public class DBManager {
 
         stm.close();
 
-        stm = connection.prepareStatement("SELECT * FROM SAVEDATA.BasicContainer");
+        stm = connection.prepareStatement("SELECT * FROM SAVEDATA.ChestlikeContainer");
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
-            BasicContainer obj = new BasicContainer(resultSet);
+            ChestlikeContainer obj = new ChestlikeContainer(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
@@ -571,10 +630,10 @@ public class DBManager {
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
-            ChestlikeContainer obj = new ChestlikeContainer(resultSet);
+            SocketlikeContainer obj = new SocketlikeContainer(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
@@ -591,13 +650,13 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
-            String roomId = resultSet.getString(3);
-            String containerId = resultSet.getString(4);
+            String roomId = resultSet.getString(4);
+            String containerId = resultSet.getString(5);
 
             WearableContainer obj = new WearableContainer(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
@@ -611,7 +670,7 @@ public class DBManager {
         stm.close();
 
         for (Pair<AbstractEntity, String> pendingItem : pending) {
-            for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+            for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                 if (entity instanceof AbstractContainer
                         && pendingItem.getSecond().equals(entity.getId())) {
                     AbstractContainer aContainer = (AbstractContainer) entity;
@@ -625,20 +684,20 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
-            String roomId = resultSet.getString(3);
-            String containerId = resultSet.getString(4);
+            String roomId = resultSet.getString(4);
+            String containerId = resultSet.getString(5);
 
             BasicItem basicItem = new BasicItem(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(basicItem);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity obj : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity obj : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (obj instanceof AbstractContainer && containerId.equals(obj.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) obj;
 
@@ -660,14 +719,14 @@ public class DBManager {
             BasicObject obj = new BasicObject(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -688,39 +747,10 @@ public class DBManager {
             Door obj = new Door(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
-                    }
-                }
-            }
-        }
-
-        stm.close();
-
-        stm = connection.prepareStatement("SELECT * FROM SAVEDATA.UnopenableDoor");
-        resultSet = stm.executeQuery();
-
-        while (resultSet.next()) {
-            String roomId = resultSet.getString(4);
-            String containerId = resultSet.getString(5);
-
-            UnopenableDoor obj = new UnopenableDoor(resultSet);
-
-            if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
-                    if (roomId.equals(room.getId())) {
-                        PlayableRoom pRoom = (PlayableRoom) room;
-                        pRoom.getObjects().add(obj);
-                    }
-                }
-            } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
-                    if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
-                        AbstractContainer aContainer = (AbstractContainer) entity;
-
-                        aContainer.add(obj);
                     }
                 }
             }
@@ -738,18 +768,19 @@ public class DBManager {
             FillableItem obj = new FillableItem(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        break; // TODO
                     }
                 }
             }
@@ -767,14 +798,14 @@ public class DBManager {
             FireObject obj = new FireObject(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -796,14 +827,14 @@ public class DBManager {
             FluidItem obj = new FluidItem(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -840,14 +871,14 @@ public class DBManager {
             phrsStm.close();
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -868,7 +899,7 @@ public class DBManager {
             InvisibleWall obj = new InvisibleWall(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
@@ -889,14 +920,14 @@ public class DBManager {
             LightSourceItem obj = new LightSourceItem(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -918,14 +949,14 @@ public class DBManager {
             MovableObject obj = new MovableObject(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -947,14 +978,14 @@ public class DBManager {
             PullableObject obj = new PullableObject(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -976,14 +1007,14 @@ public class DBManager {
             PushableObject obj = new PushableObject(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -1005,14 +1036,43 @@ public class DBManager {
             ReadableItem obj = new ReadableItem(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
+                    if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
+                        AbstractContainer aContainer = (AbstractContainer) entity;
+
+                        aContainer.add(obj);
+                    }
+                }
+            }
+        }
+
+        stm.close();
+
+        stm = connection.prepareStatement("SELECT * FROM SAVEDATA.UnopenableDoor");
+        resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            String roomId = resultSet.getString(4);
+            String containerId = resultSet.getString(5);
+
+            UnopenableDoor obj = new UnopenableDoor(resultSet);
+
+            if (!roomId.equals("null")) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
+                    if (roomId.equals(room.getId())) {
+                        PlayableRoom pRoom = (PlayableRoom) room;
+                        pRoom.getObjects().add(obj);
+                    }
+                }
+            } else if (!containerId.equals("null")) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
@@ -1034,17 +1094,16 @@ public class DBManager {
             WearableItem obj = new WearableItem(resultSet);
 
             if (!roomId.equals("null")) {
-                for (AbstractRoom room : RoomsLoader.listAllRooms()) {
+                for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
                     }
                 }
             } else if (!containerId.equals("null")) {
-                for (AbstractEntity entity : RoomsLoader.mapAllObjects().values()) {
+                for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
-
                         aContainer.add(obj);
                     }
                 }
@@ -1079,12 +1138,8 @@ public class DBManager {
                 String roomId = evtResultSet.getString(1);
 
                 if (room.getId().equals(roomId)) {
-                    String type = evtResultSet.getString(2);
-                    String text = evtResultSet.getString(3);
+                    RoomEvent evt = new RoomEvent(resultSet);
 
-                    RoomEvent evt = new RoomEvent();
-                    evt.setEventType(EventType.valueOf(type));
-                    evt.setText(text);
                     room.setEvent(evt);
                 }
             }

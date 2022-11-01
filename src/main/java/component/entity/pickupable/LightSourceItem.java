@@ -17,7 +17,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     public LightSourceItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         on = resultSet.getBoolean(7);
-        requiredItemId = requiredItemId;
+        requiredItemId = resultSet.getString(8);
     }
 
     private boolean on = false;
@@ -114,7 +114,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.LightSourceItem values (?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.LightSourceItem values (?, ?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -130,9 +130,11 @@ public class LightSourceItem extends BasicItem implements ILightSource {
 
         stm.setBoolean(6, isPickedUp());
         stm.setBoolean(7, on);
+        stm.setString(8, requiredItemId);
         stm.executeUpdate();
 
         saveAliasesOnDB(connection);
+        saveRequiredWearedItemsOnDB();
         saveEventsOnDB(connection);
     }
 

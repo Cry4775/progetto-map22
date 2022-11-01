@@ -20,8 +20,8 @@ public class Door extends AbstractEntity implements IOpenable {
         super(resultSet);
         open = resultSet.getBoolean(5);
         locked = resultSet.getBoolean(6);
-        unlockedWithItemId = unlockedWithItemId;
-        blockedRoomId = blockedRoomId;
+        unlockedWithItemId = resultSet.getString(7);
+        blockedRoomId = resultSet.getString(8);
     }
 
     private boolean open = false;
@@ -147,7 +147,7 @@ public class Door extends AbstractEntity implements IOpenable {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.Door values (?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.Door values (?, ?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -159,9 +159,10 @@ public class Door extends AbstractEntity implements IOpenable {
 
         stm.setBoolean(5, open);
         stm.setBoolean(6, locked);
+        stm.setString(7, unlockedWithItemId);
+        stm.setString(8, blockedRoomId);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 }

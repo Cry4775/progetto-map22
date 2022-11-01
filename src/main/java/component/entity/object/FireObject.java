@@ -112,8 +112,7 @@ public class FireObject extends AbstractEntity {
         stm.setBoolean(6, lit);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

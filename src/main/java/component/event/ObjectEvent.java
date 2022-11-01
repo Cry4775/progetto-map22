@@ -1,10 +1,11 @@
 package component.event;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import component.room.AbstractRoom;
 import component.room.MutableRoom;
 
 public class ObjectEvent extends AbstractEvent {
-    private boolean updatingAnotherRoom = false;
     private String updateTargetRoomId;
     private MutableRoom updateTargetRoom;
 
@@ -15,6 +16,14 @@ public class ObjectEvent extends AbstractEvent {
     private AbstractRoom teleportsPlayerToRoom;
 
     private boolean destroyOnTrigger = false;
+
+    public ObjectEvent(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        updatingParentRoom = resultSet.getBoolean(4);
+        updateTargetRoomId = resultSet.getString(5);
+        teleportsPlayerToRoomId = resultSet.getString(6);
+        destroyOnTrigger = resultSet.getBoolean(7);
+    }
 
     public boolean mustDestroyOnTrigger() {
         return destroyOnTrigger;
@@ -30,14 +39,6 @@ public class ObjectEvent extends AbstractEvent {
 
     public void setParentRoom(MutableRoom parentRoom) {
         this.parentRoom = parentRoom;
-    }
-
-    public boolean isUpdatingAnotherRoom() {
-        return updatingAnotherRoom;
-    }
-
-    public void setUpdatingAnotherRoom(boolean updatingAnotherRoom) {
-        this.updatingAnotherRoom = updatingAnotherRoom;
     }
 
     public String getUpdateTargetRoomId() {

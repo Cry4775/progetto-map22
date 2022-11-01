@@ -17,7 +17,8 @@ public class SocketlikeContainer extends AbstractContainer {
     public SocketlikeContainer(ResultSet resultSet) throws SQLException {
         super(resultSet);
         itemInside = resultSet.getBoolean(6);
-        eligibleItemId = eligibleItemId;
+        eligibleItemId = resultSet.getString(7);
+        setForFluids(resultSet.getBoolean(8));
     }
 
     private boolean itemInside = false;
@@ -109,7 +110,7 @@ public class SocketlikeContainer extends AbstractContainer {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.SocketlikeContainer values (?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.SocketlikeContainer values (?, ?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -124,10 +125,12 @@ public class SocketlikeContainer extends AbstractContainer {
         }
 
         stm.setBoolean(6, itemInside);
+        stm.setString(7, eligibleItemId);
+        stm.setBoolean(8, isForFluids());
+
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

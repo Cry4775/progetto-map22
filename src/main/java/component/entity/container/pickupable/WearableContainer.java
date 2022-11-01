@@ -17,7 +17,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         super(resultSet);
         pickedUp = resultSet.getBoolean(6);
         worn = resultSet.getBoolean(7);
-        maxSlots = maxSlots;
+        maxSlots = resultSet.getInt(8);
+        setForFluids(resultSet.getBoolean(9));
     }
 
     private boolean worn = false;
@@ -148,7 +149,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.WearableContainer values (?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.WearableContainer values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -164,10 +165,11 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
         stm.setBoolean(6, pickedUp);
         stm.setBoolean(7, worn);
+        stm.setInt(8, maxSlots);
+        stm.setBoolean(9, isForFluids());
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

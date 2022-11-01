@@ -17,7 +17,7 @@ public class FillableItem extends BasicItem implements IFillable {
     public FillableItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         filled = resultSet.getBoolean(7);
-        eligibleItemId = eligibleItemId;
+        eligibleItemId = resultSet.getString(8);
     }
 
     private boolean filled;
@@ -82,7 +82,7 @@ public class FillableItem extends BasicItem implements IFillable {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.FillableItem values (?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.FillableItem values (?, ?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
         stm.setString(2, getName());
@@ -98,10 +98,10 @@ public class FillableItem extends BasicItem implements IFillable {
 
         stm.setBoolean(6, isPickedUp());
         stm.setBoolean(7, filled);
+        stm.setString(8, eligibleItemId);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

@@ -95,8 +95,7 @@ public class FluidItem extends BasicItem implements IFluid {
         stm.setBoolean(6, isPickedUp());
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

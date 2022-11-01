@@ -55,8 +55,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         stm.setString(7, readText);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

@@ -119,12 +119,59 @@ public class RoomsLoader implements Runnable {
         return result;
     }
 
+    public static List<AbstractRoom> listAllRooms(List<AbstractRoom> rooms) {
+        List<AbstractRoom> result = new ArrayList<>();
+
+        for (AbstractRoom room : rooms) {
+            result.add(room);
+            if (room instanceof MutableRoom) {
+                MutableRoom mRoom = (MutableRoom) room;
+
+                result.addAll(mRoom.getAllRooms());
+            }
+        }
+
+        return result;
+    }
+
     public static Multimap<String, AbstractEntity> mapAllObjects() {
 
         Multimap<String, AbstractEntity> objects = ArrayListMultimap.create();
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
         for (AbstractRoom room : listAllRooms()) {
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+
+                if (pRoom.getObjects() != null) {
+                    for (AbstractEntity obj : pRoom.getObjects()) {
+                        objects.put(obj.getId(), obj);
+                    }
+                }
+            }
+        }
+
+        result.putAll(objects);
+
+        for (AbstractEntity obj : objects.values()) {
+            if (obj instanceof AbstractContainer) {
+                AbstractContainer container = (AbstractContainer) obj;
+
+                for (AbstractEntity cObj : container.getAllObjects()) {
+                    result.put(cObj.getId(), cObj);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static Multimap<String, AbstractEntity> mapAllObjects(List<AbstractRoom> rooms) {
+
+        Multimap<String, AbstractEntity> objects = ArrayListMultimap.create();
+        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
+
+        for (AbstractRoom room : listAllRooms(rooms)) {
             if (room instanceof PlayableRoom) {
                 PlayableRoom pRoom = (PlayableRoom) room;
 

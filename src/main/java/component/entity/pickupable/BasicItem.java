@@ -102,7 +102,6 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         stm.setBoolean(6, pickedUp);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 }

@@ -86,8 +86,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
         stm.setBoolean(6, moved);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

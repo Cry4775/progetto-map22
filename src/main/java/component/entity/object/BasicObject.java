@@ -43,8 +43,7 @@ public class BasicObject extends AbstractEntity {
 
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

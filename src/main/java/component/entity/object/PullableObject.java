@@ -87,8 +87,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
         stm.setBoolean(6, pulled);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 
 }

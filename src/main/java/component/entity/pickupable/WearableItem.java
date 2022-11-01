@@ -83,7 +83,6 @@ public class WearableItem extends BasicItem implements IWearable {
         stm.setBoolean(7, worn);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveEventsOnDB(connection);
+        saveExternalsOnDB(connection);
     }
 }
