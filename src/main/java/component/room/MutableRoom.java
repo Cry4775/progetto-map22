@@ -47,6 +47,11 @@ public class MutableRoom extends PlayableRoom {
             result.addAll(getAllRooms(newRoom));
         }
 
+        for (int i = 0; i < result.size(); i++) {
+            result.get(i).setId(getId());
+            result.get(i).setSecondaryId(Character.forDigit(i + 10, 16));
+        }
+
         return result;
     }
 
@@ -56,12 +61,13 @@ public class MutableRoom extends PlayableRoom {
         if (room instanceof MutableRoom) {
             MutableRoom mRoom = (MutableRoom) room;
 
+            result.add(room);
+
             if (mRoom.getNewRoom() != null) {
                 result.addAll(getAllRooms(mRoom.getNewRoom()));
             }
         }
 
-        result.add(room);
         return result;
     }
 
@@ -105,6 +111,12 @@ public class MutableRoom extends PlayableRoom {
             }
         }
 
+        // Destroy the "newRoom" if it's there's none later
+        if (newRoom instanceof MutableRoom) {
+            if (((MutableRoom) newRoom).getNewRoom() == null) {
+                setNewRoom(null);
+            }
+        }
     }
 
     public void updateToNewRoom() {

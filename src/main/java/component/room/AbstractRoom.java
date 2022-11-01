@@ -13,4 +13,8 @@ public abstract class AbstractRoom extends GameComponent {
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
+
+    public void setSecondaryId(char value) {
+        setId(getId() + Character.toString(value));
+    }
 }

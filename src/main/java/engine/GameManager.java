@@ -29,6 +29,7 @@ import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.command.Command;
 import engine.command.CommandType;
+import engine.database.DBManager;
 import engine.loader.CommandsLoader;
 import engine.loader.RoomsLoader;
 import engine.parser.ParserOutput;
@@ -255,6 +256,10 @@ public class GameManager {
             AbstractEntity anyObj = getObjectFromParser(p);
 
             switch (commandType) {
+                case SAVE: {
+                    DBManager.save();
+                    break;
+                }
                 case INVENTORY: {
                     if (!getInventory().isEmpty()) {
                         outString.append("Nel tuo inventario ci sono:");

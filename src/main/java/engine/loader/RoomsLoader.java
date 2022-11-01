@@ -89,13 +89,12 @@ public class RoomsLoader implements Runnable {
         List<AbstractRoom> result = new ArrayList<>();
 
         for (AbstractRoom room : rooms) {
+            result.add(room);
             if (room instanceof MutableRoom) {
                 MutableRoom mRoom = (MutableRoom) room;
 
                 result.addAll(mRoom.getAllRooms());
             }
-
-            result.add(room);
         }
 
         return result;

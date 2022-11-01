@@ -141,6 +141,9 @@ public class CommandsLoader implements Runnable {
         Command read = new Command(CommandType.READ, "leggi");
         read.addAlias("read");
 
+        Command save = new Command(CommandType.SAVE, "salva");
+        save.addAlias("save");
+
         commands.add(north);
         commands.add(northWest);
         commands.add(northEast);
@@ -166,6 +169,7 @@ public class CommandsLoader implements Runnable {
         commands.add(wear);
         commands.add(insert);
         commands.add(read);
+        commands.add(save);
     }
 
 }

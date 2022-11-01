@@ -61,7 +61,7 @@ public class Engine {
     }
 
     public void execute() {
-        DBManager.save();
+        // DBManager.save();
 
         if (!WeatherFetcher.isRaining()) {
             SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
