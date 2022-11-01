@@ -20,6 +20,7 @@ import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import engine.GameManager;
 import engine.database.DBManager;
 import engine.loader.json.TypeAdapterHolder;
 import engine.loader.json.TypeAdapterHolder.AdapterType;
@@ -81,17 +82,27 @@ public class RoomsLoader implements Runnable {
                 exceptionThrown = true;
                 throw new Error(e);
             }
+
+            Multimap<String, AbstractEntity> objects = mapAllObjects();
+
+            for (AbstractEntity obj : objects.values()) {
+                obj.processReferences(objects, rooms);
+            }
         } else {
             rooms.addAll(DBManager.load());
+
+            Multimap<String, AbstractEntity> objects = mapAllObjects();
+
+            for (AbstractEntity obj : GameManager.getFullInventory()) {
+                objects.put(obj.getId(), obj);
+            }
+
+            for (AbstractEntity obj : objects.values()) {
+                obj.processReferences(objects, rooms);
+            }
         }
 
         linkRooms();
-
-        Multimap<String, AbstractEntity> objects = mapAllObjects();
-
-        for (AbstractEntity obj : objects.values()) {
-            obj.processReferences(objects, rooms);
-        }
 
         for (Thread worker : workers) {
             try {

@@ -91,7 +91,10 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         stm.setString(2, getName());
         stm.setString(3, getDescription());
 
-        if (getParent() instanceof PlayableRoom) {
+        if (pickedUp) {
+            stm.setString(4, "null");
+            stm.setString(5, "null");
+        } else if (getParent() instanceof PlayableRoom) {
             stm.setString(4, getClosestRoomParent().getId());
             stm.setString(5, "null");
         } else if (getParent() instanceof AbstractContainer) {

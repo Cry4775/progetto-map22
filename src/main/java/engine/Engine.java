@@ -90,7 +90,7 @@ public class Engine {
         if (game.getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
             ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
-                    game.getInventory());
+                    GameManager.getInventory());
             if (p == null || p.getCommand() == null) {
                 gui.appendTxtPane("Non capisco quello che mi vuoi dire.", false);
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {

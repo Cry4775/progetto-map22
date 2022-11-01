@@ -42,7 +42,7 @@ public class GameManager {
 
     private final List<Command> commands = new ArrayList<>();
 
-    private final List<AbstractEntity> inventory = new ArrayList<>();
+    private static final List<AbstractEntity> inventory = new ArrayList<>();
 
     private AbstractRoom currentRoom;
 
@@ -80,8 +80,24 @@ public class GameManager {
         this.currentRoom = currentRoom;
     }
 
-    public List<AbstractEntity> getInventory() {
+    public static List<AbstractEntity> getInventory() {
         return inventory;
+    }
+
+    public static List<AbstractEntity> getFullInventory() {
+        List<AbstractEntity> inv = new ArrayList<>();
+
+        for (AbstractEntity obj : inventory) {
+            inv.add(obj);
+
+            if (obj instanceof AbstractContainer) {
+                AbstractContainer container = (AbstractContainer) obj;
+
+                inv.addAll(container.getAllObjects());
+            }
+        }
+
+        return inv;
     }
 
     public void setCompassLabel(AbstractRoom room, JLabel directionLbl) {
@@ -174,7 +190,7 @@ public class GameManager {
         CommandsLoader commandsLoader = new CommandsLoader(getCommands());
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
-        RoomsLoader roomsLoader = new RoomsLoader(getRooms(), Mode.JSON);
+        RoomsLoader roomsLoader = new RoomsLoader(getRooms(), Mode.DB);
         Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
 
         tCommands.start();

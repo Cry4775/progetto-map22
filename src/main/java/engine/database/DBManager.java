@@ -34,6 +34,7 @@ import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import engine.GameManager;
 import engine.loader.RoomsLoader;
 import utility.Pair;
 
@@ -428,6 +429,21 @@ public class DBManager {
         for (AbstractEntity obj : RoomsLoader.mapAllObjects().values()) {
             obj.saveOnDB(connection);
         }
+
+        List<AbstractEntity> inventory = new ArrayList<>();
+
+        for (AbstractEntity obj : GameManager.getInventory()) {
+            obj.saveOnDB(connection);
+            if (obj instanceof AbstractContainer) {
+                AbstractContainer container = (AbstractContainer) obj;
+
+                inventory.addAll(container.getAllObjects());
+            }
+        }
+
+        for (AbstractEntity abstractEntity : inventory) {
+            abstractEntity.saveOnDB(connection);
+        }
     }
 
     public static void wipeExistingDB() throws SQLException {
@@ -591,6 +607,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -614,6 +631,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -637,6 +655,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -655,11 +674,14 @@ public class DBManager {
 
             WearableContainer obj = new WearableContainer(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -668,14 +690,30 @@ public class DBManager {
         }
 
         stm.close();
+        boolean found = false;
 
         for (Pair<AbstractEntity, String> pendingItem : pending) {
+            found = false;
             for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                 if (entity instanceof AbstractContainer
                         && pendingItem.getSecond().equals(entity.getId())) {
                     AbstractContainer aContainer = (AbstractContainer) entity;
 
                     aContainer.add(pendingItem.getFirst());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                for (AbstractEntity obj : GameManager.getFullInventory()) {
+                    if (obj instanceof AbstractContainer
+                            && pendingItem.getSecond().equals(obj.getId())) {
+                        AbstractContainer aContainer = (AbstractContainer) obj;
+
+                        aContainer.add(pendingItem.getFirst());
+                        break;
+                    }
                 }
             }
         }
@@ -684,16 +722,20 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
             BasicItem basicItem = new BasicItem(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (basicItem.isPickedUp()) {
+                GameManager.getInventory().add(basicItem);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(basicItem);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -702,6 +744,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) obj;
 
                         aContainer.add(basicItem);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity obj : GameManager.getFullInventory()) {
+                        if (obj instanceof AbstractContainer && containerId.equals(obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) obj;
+
+                            aContainer.add(basicItem);
+                            break;
+                        }
                     }
                 }
             }
@@ -713,6 +768,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -723,6 +779,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -731,6 +788,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -742,6 +812,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
 
             Door obj = new Door(resultSet);
@@ -751,6 +822,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             }
@@ -767,11 +839,14 @@ public class DBManager {
 
             FillableItem obj = new FillableItem(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -780,7 +855,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
-                        break; // TODO
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -792,6 +879,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -802,6 +890,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -810,6 +899,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -821,16 +923,20 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
             FluidItem obj = new FluidItem(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -839,6 +945,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -850,6 +969,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -875,6 +995,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -883,6 +1004,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -894,6 +1028,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
 
             InvisibleWall obj = new InvisibleWall(resultSet);
@@ -903,6 +1038,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             }
@@ -919,11 +1055,14 @@ public class DBManager {
 
             LightSourceItem obj = new LightSourceItem(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -932,6 +1071,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -943,6 +1095,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -953,6 +1106,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -961,6 +1115,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -972,6 +1139,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -982,6 +1150,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -990,6 +1159,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -1001,6 +1183,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -1011,6 +1194,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -1019,6 +1203,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -1030,16 +1227,20 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
             ReadableItem obj = new ReadableItem(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -1048,6 +1249,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -1059,6 +1273,7 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
@@ -1069,6 +1284,7 @@ public class DBManager {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
@@ -1077,6 +1293,19 @@ public class DBManager {
                         AbstractContainer aContainer = (AbstractContainer) entity;
 
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
@@ -1088,23 +1317,41 @@ public class DBManager {
         resultSet = stm.executeQuery();
 
         while (resultSet.next()) {
+            found = false;
             String roomId = resultSet.getString(4);
             String containerId = resultSet.getString(5);
 
             WearableItem obj = new WearableItem(resultSet);
 
-            if (!roomId.equals("null")) {
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else if (!roomId.equals("null")) {
                 for (AbstractRoom room : RoomsLoader.listAllRooms(rooms)) {
                     if (roomId.equals(room.getId())) {
                         PlayableRoom pRoom = (PlayableRoom) room;
                         pRoom.getObjects().add(obj);
+                        break;
                     }
                 }
             } else if (!containerId.equals("null")) {
                 for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
                     if (entity instanceof AbstractContainer && containerId.equals(entity.getId())) {
                         AbstractContainer aContainer = (AbstractContainer) entity;
+
                         aContainer.add(obj);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    for (AbstractEntity _obj : GameManager.getFullInventory()) {
+                        if (_obj instanceof AbstractContainer && containerId.equals(_obj.getId())) {
+                            AbstractContainer aContainer = (AbstractContainer) _obj;
+
+                            aContainer.add(obj);
+                            break;
+                        }
                     }
                 }
             }
