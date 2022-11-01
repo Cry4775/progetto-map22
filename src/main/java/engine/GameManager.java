@@ -32,6 +32,7 @@ import engine.command.CommandType;
 import engine.database.DBManager;
 import engine.loader.CommandsLoader;
 import engine.loader.RoomsLoader;
+import engine.loader.RoomsLoader.Mode;
 import engine.parser.ParserOutput;
 import gui.MainFrame;
 
@@ -173,7 +174,7 @@ public class GameManager {
         CommandsLoader commandsLoader = new CommandsLoader(getCommands());
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
-        RoomsLoader roomsLoader = new RoomsLoader(getRooms());
+        RoomsLoader roomsLoader = new RoomsLoader(getRooms(), Mode.JSON);
         Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
 
         tCommands.start();

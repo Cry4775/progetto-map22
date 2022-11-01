@@ -1,5 +1,7 @@
 package component.entity.container;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.common.collect.Multimap;
@@ -12,6 +14,11 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 
 public abstract class AbstractContainer extends AbstractEntity {
+
+    public AbstractContainer(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        forFluids = forFluids;
+    }
 
     protected boolean contentRevealed = false;
 

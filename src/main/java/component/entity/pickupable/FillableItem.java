@@ -2,17 +2,23 @@ package component.entity.pickupable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
-import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 
 public class FillableItem extends BasicItem implements IFillable {
+
+    public FillableItem(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        filled = resultSet.getBoolean(7);
+        eligibleItemId = eligibleItemId;
+    }
 
     private boolean filled;
 
@@ -76,30 +82,26 @@ public class FillableItem extends BasicItem implements IFillable {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.FillableItem values (?, ?, ?, ?, ?)");
-        PreparedStatement evtStm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+                "INSERT INTO SAVEDATA.FillableItem values (?, ?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
 
         if (getParent() instanceof PlayableRoom) {
-            stm.setString(3, getParent().getId());
-            stm.setString(4, "null");
+            stm.setString(4, getClosestRoomParent().getId());
+            stm.setString(5, "null");
         } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(3, "null");
-            stm.setString(4, getParent().getId());
+            stm.setString(4, "null");
+            stm.setString(5, getParent().getId());
         }
 
-        stm.setBoolean(2, isPickedUp());
-        stm.setBoolean(5, filled);
+        stm.setBoolean(6, isPickedUp());
+        stm.setBoolean(7, filled);
         stm.executeUpdate();
 
-        for (ObjectEvent evt : getEvents()) {
-            evtStm.setString(1, getId());
-            evtStm.setString(2, evt.getEventType().toString());
-            evtStm.setString(3, evt.getText());
-            evtStm.executeUpdate();
-        }
+        saveAliasesOnDB(connection);
+        saveEventsOnDB(connection);
     }
 
 }

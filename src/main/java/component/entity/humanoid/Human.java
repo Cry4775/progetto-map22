@@ -2,20 +2,30 @@ package component.entity.humanoid;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 import component.entity.interfaces.ITalkable;
 import component.event.EventType;
-import component.event.ObjectEvent;
 import component.room.AbstractRoom;
+import component.room.PlayableRoom;
 
 public class Human extends AbstractEntity implements ITalkable {
 
+    public Human(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+    }
+
     private Queue<String> phrases = new LinkedList<>();
+
+    public void queuePhrase(String phrase) {
+        phrases.add(phrase);
+    }
 
     @Override
     public StringBuilder talk() {
@@ -49,15 +59,35 @@ public class Human extends AbstractEntity implements ITalkable {
 
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement evtStm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.Human values (?, ?, ?, ?, ?)");
 
-        for (ObjectEvent evt : getEvents()) {
-            evtStm.setString(1, getId());
-            evtStm.setString(2, evt.getEventType().toString());
-            evtStm.setString(3, evt.getText());
-            evtStm.executeUpdate();
+        stm.setString(1, getId());
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
+
+        if (getParent() instanceof PlayableRoom) {
+            stm.setString(4, getClosestRoomParent().getId());
+            stm.setString(5, "null");
+        } else if (getParent() instanceof AbstractContainer) {
+            stm.setString(4, "null");
+            stm.setString(5, getParent().getId());
         }
+
+        stm.executeUpdate();
+
+        if (phrases != null) {
+
+            stm = connection.prepareStatement("INSERT INTO SAVEDATA.HumanPhrases values (?, ?)");
+            for (String string : phrases) {
+                stm.setString(1, getId());
+                stm.setString(2, string);
+                stm.executeUpdate();
+            }
+        }
+
+        saveAliasesOnDB(connection);
+        saveEventsOnDB(connection);
     }
 
 }

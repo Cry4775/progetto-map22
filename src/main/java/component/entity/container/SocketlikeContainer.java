@@ -2,17 +2,23 @@ package component.entity.container;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
-import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 
 public class SocketlikeContainer extends AbstractContainer {
+
+    public SocketlikeContainer(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        itemInside = resultSet.getBoolean(6);
+        eligibleItemId = eligibleItemId;
+    }
 
     private boolean itemInside = false;
 
@@ -103,29 +109,25 @@ public class SocketlikeContainer extends AbstractContainer {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.SocketlikeContainer values (?, ?, ?, ?)");
-        PreparedStatement evtStm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+                "INSERT INTO SAVEDATA.SocketlikeContainer values (?, ?, ?, ?, ?, ?)");
 
         stm.setString(1, getId());
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
 
         if (getParent() instanceof PlayableRoom) {
-            stm.setString(2, getParent().getId());
-            stm.setString(3, "null");
+            stm.setString(4, getClosestRoomParent().getId());
+            stm.setString(5, "null");
         } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(2, "null");
-            stm.setString(3, getParent().getId());
+            stm.setString(4, "null");
+            stm.setString(5, getParent().getId());
         }
 
-        stm.setBoolean(4, itemInside);
+        stm.setBoolean(6, itemInside);
         stm.executeUpdate();
 
-        for (ObjectEvent evt : getEvents()) {
-            evtStm.setString(1, getId());
-            evtStm.setString(2, evt.getEventType().toString());
-            evtStm.setString(3, evt.getText());
-            evtStm.executeUpdate();
-        }
+        saveAliasesOnDB(connection);
+        saveEventsOnDB(connection);
     }
 
 }

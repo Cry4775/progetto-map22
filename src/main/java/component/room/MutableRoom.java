@@ -3,6 +3,7 @@ package component.room;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,10 @@ import java.util.List;
 import component.entity.AbstractEntity;
 
 public class MutableRoom extends PlayableRoom {
+
+    public MutableRoom(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+    }
 
     private MutableRoom newRoom;
 
@@ -66,6 +71,8 @@ public class MutableRoom extends PlayableRoom {
             if (mRoom.getNewRoom() != null) {
                 result.addAll(getAllRooms(mRoom.getNewRoom()));
             }
+        } else {
+            result.add(room);
         }
 
         return result;
@@ -158,24 +165,27 @@ public class MutableRoom extends PlayableRoom {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         PreparedStatement evtStm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
         stm.setString(1, getId());
-        stm.setBoolean(2, newRoom != null ? true : false);
-        stm.setString(3, newRoom != null ? newRoom.getId() : null);
-        stm.setString(4, getSouthId());
-        stm.setString(5, getNorthId());
-        stm.setString(6, getSouthWestId());
-        stm.setString(7, getNorthWestId());
-        stm.setString(8, getSouthEastId());
-        stm.setString(9, getNorthEastId());
-        stm.setString(10, getEastId());
-        stm.setString(11, getWestId());
-        stm.setString(12, getUpId());
-        stm.setString(13, getDownId());
-        stm.setBoolean(14, isCurrentlyDark());
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
+        stm.setString(4, getImgPath());
+        stm.setBoolean(5, newRoom != null ? true : false);
+        stm.setString(6, newRoom != null ? newRoom.getId() : null);
+        stm.setString(7, getSouthId());
+        stm.setString(8, getNorthId());
+        stm.setString(9, getSouthWestId());
+        stm.setString(10, getNorthWestId());
+        stm.setString(11, getSouthEastId());
+        stm.setString(12, getNorthEastId());
+        stm.setString(13, getEastId());
+        stm.setString(14, getWestId());
+        stm.setString(15, getUpId());
+        stm.setString(16, getDownId());
+        stm.setBoolean(17, isDarkByDefault());
         stm.executeUpdate();
 
         if (getEvent() != null) {

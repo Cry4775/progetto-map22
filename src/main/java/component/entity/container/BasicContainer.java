@@ -2,20 +2,35 @@ package component.entity.container;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import component.event.ObjectEvent;
+import component.room.PlayableRoom;
 
 public class BasicContainer extends AbstractContainer {
+    public BasicContainer(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+    }
+
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement evtStm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.BasicContainer values (?, ?, ?, ?, ?)");
 
-        for (ObjectEvent evt : getEvents()) {
-            evtStm.setString(1, getId());
-            evtStm.setString(2, evt.getEventType().toString());
-            evtStm.setString(3, evt.getText());
-            evtStm.executeUpdate();
+        stm.setString(1, getId());
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
+
+        if (getParent() instanceof PlayableRoom) {
+            stm.setString(4, getClosestRoomParent().getId());
+            stm.setString(5, "null");
+        } else if (getParent() instanceof AbstractContainer) {
+            stm.setString(4, "null");
+            stm.setString(5, getParent().getId());
         }
+
+        stm.executeUpdate();
+
+        saveAliasesOnDB(connection);
+        saveEventsOnDB(connection);
     }
 }

@@ -20,6 +20,7 @@ import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 import engine.loader.json.TypeAdapterHolder;
 import engine.loader.json.TypeAdapterHolder.AdapterType;
 
@@ -30,6 +31,12 @@ public class RoomsLoader implements Runnable {
 
     private static List<AbstractRoom> rooms;
     private boolean exceptionThrown = false;
+    private Mode mode;
+
+    public enum Mode {
+        JSON,
+        DB
+    }
 
     private List<Thread> workers = new ArrayList<>();
 
@@ -37,51 +44,63 @@ public class RoomsLoader implements Runnable {
         return exceptionThrown;
     }
 
-    public RoomsLoader(List<AbstractRoom> rooms) {
+    public RoomsLoader(List<AbstractRoom> rooms, Mode mode) {
         RoomsLoader.rooms = rooms;
+        this.mode = mode;
     }
 
     @Override
     public void run() {
-        Gson gson = new GsonBuilder()
-                .setExclusionStrategies(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        // For performance
-                        return AbstractRoom.class.equals(f.getDeclaredClass())
-                                || AbstractEntity.class.equals(f.getDeclaredClass());
-                    }
+        if (mode == Mode.JSON) {
+            Gson gson = new GsonBuilder()
+                    .setExclusionStrategies(new ExclusionStrategy() {
+                        @Override
+                        public boolean shouldSkipField(FieldAttributes f) {
+                            // For performance
+                            return AbstractRoom.class.equals(f.getDeclaredClass())
+                                    || AbstractEntity.class.equals(f.getDeclaredClass());
+                        }
 
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        // Never
-                        return false;
-                    }
-                })
-                .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ENTITIES))
-                .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ROOMS))
-                .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.EVENTS))
-                .create();
-        Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
+                        @Override
+                        public boolean shouldSkipClass(Class<?> clazz) {
+                            // Never
+                            return false;
+                        }
+                    })
+                    .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ENTITIES))
+                    .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ROOMS))
+                    .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.EVENTS))
+                    .create();
+            Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("resources/rooms.json"), StandardCharsets.UTF_8))) {
-            rooms.addAll(gson.fromJson(in, roomsType));
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(
+                    new FileInputStream("resources/rooms.json"), StandardCharsets.UTF_8))) {
+                rooms.addAll(gson.fromJson(in, roomsType));
 
-            linkRooms();
-
-            Multimap<String, AbstractEntity> objects = mapAllObjects();
-
-            for (AbstractEntity obj : objects.values()) {
-                obj.processReferences(objects, rooms);
+            } catch (Exception e) {
+                exceptionThrown = true;
+                throw new Error(e);
             }
+        } else {
+            rooms.addAll(DBManager.load());
+        }
 
-            for (Thread worker : workers) {
+        linkRooms();
+
+        Multimap<String, AbstractEntity> objects = mapAllObjects();
+
+        for (AbstractEntity obj : objects.values()) {
+            obj.processReferences(objects, rooms);
+        }
+
+        for (Thread worker : workers) {
+            try {
                 worker.join();
+            } catch (InterruptedException e) {
+                exceptionThrown = true;
+                e.printStackTrace();
+                throw new Error(e);
             }
-        } catch (Exception e) {
-            exceptionThrown = true;
-            throw new Error(e);
         }
     }
 

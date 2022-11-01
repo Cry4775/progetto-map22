@@ -2,6 +2,7 @@ package component.room;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,21 @@ import engine.command.CommandType;
  * @author Pierdamiano Zagaria
  */
 public class PlayableRoom extends AbstractRoom {
+    public PlayableRoom(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        southId = resultSet.getString(7);
+        northId = resultSet.getString(8);
+        southWestId = resultSet.getString(9);
+        northWestId = resultSet.getString(10);
+        southEastId = resultSet.getString(11);
+        northEastId = resultSet.getString(12);
+        eastId = resultSet.getString(13);
+        westId = resultSet.getString(14);
+        upId = resultSet.getString(15);
+        downId = resultSet.getString(16);
+        darkByDefault = resultSet.getBoolean(17);
+    }
+
     private AbstractRoom south;
     private String southId;
 
@@ -236,6 +252,10 @@ public class PlayableRoom extends AbstractRoom {
         return event;
     }
 
+    public void setEvent(RoomEvent event) {
+        this.event = event;
+    }
+
     public void removeObject(AbstractEntity obj) {
         objects.remove(obj);
     }
@@ -285,24 +305,27 @@ public class PlayableRoom extends AbstractRoom {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         PreparedStatement evtStm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
         stm.setString(1, getId());
-        stm.setBoolean(2, false);
-        stm.setString(3, null);
-        stm.setString(4, southId);
-        stm.setString(5, northId);
-        stm.setString(6, southWestId);
-        stm.setString(7, northWestId);
-        stm.setString(8, southEastId);
-        stm.setString(9, northEastId);
-        stm.setString(10, eastId);
-        stm.setString(11, westId);
-        stm.setString(12, upId);
-        stm.setString(13, downId);
-        stm.setBoolean(14, currentlyDark);
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
+        stm.setString(4, getImgPath());
+        stm.setBoolean(5, false);
+        stm.setString(6, null);
+        stm.setString(7, southId);
+        stm.setString(8, northId);
+        stm.setString(9, southWestId);
+        stm.setString(10, northWestId);
+        stm.setString(11, southEastId);
+        stm.setString(12, northEastId);
+        stm.setString(13, eastId);
+        stm.setString(14, westId);
+        stm.setString(15, upId);
+        stm.setString(16, downId);
+        stm.setBoolean(17, darkByDefault);
         stm.executeUpdate();
 
         if (event != null) {

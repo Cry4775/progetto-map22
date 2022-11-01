@@ -1,5 +1,9 @@
 package component.entity;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,6 +29,8 @@ public abstract class AbstractEntity extends GameComponent {
 
     private GameComponent parent;
 
+    private PlayableRoom closestRoomParent;
+
     private List<ObjectEvent> events = new ArrayList<>();
 
     private List<String> requiredWearedItemsIdToInteract = new ArrayList<>();
@@ -34,6 +40,12 @@ public abstract class AbstractEntity extends GameComponent {
     private String failedInteractionMessage;
 
     private boolean actionPerformed;
+
+    public AbstractEntity(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        this.requiredWearedItemsIdToInteract = requiredWearedItemsIdToInteract;
+        this.failedInteractionMessage = failedInteractionMessage;
+    }
 
     public boolean isActionPerformed() {
         return actionPerformed;
@@ -63,6 +75,14 @@ public abstract class AbstractEntity extends GameComponent {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
+    public PlayableRoom getClosestRoomParent() {
+        return closestRoomParent;
+    }
+
+    public void setClosestRoomParent(PlayableRoom closestRoomParent) {
+        this.closestRoomParent = closestRoomParent;
+    }
+
     public abstract void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms);
 
@@ -73,6 +93,24 @@ public abstract class AbstractEntity extends GameComponent {
 
                 if (mRoom.getAllObjects().contains(this)) {
                     parent = room;
+
+                    if (mRoom.getObjects() != null) {
+                        if (mRoom.getObjects().contains(this)) {
+                            closestRoomParent = mRoom;
+                        } else {
+                            for (AbstractRoom _room : mRoom.getAllRooms()) {
+                                if (_room instanceof PlayableRoom) {
+                                    PlayableRoom pRoom = (PlayableRoom) _room;
+
+                                    if (pRoom.getObjects() != null) {
+                                        if (pRoom.getObjects().contains(this)) {
+                                            closestRoomParent = pRoom;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             } else if (room instanceof PlayableRoom) {
                 PlayableRoom playableRoom = (PlayableRoom) room;
@@ -80,6 +118,7 @@ public abstract class AbstractEntity extends GameComponent {
                 if (playableRoom.getObjects() != null) {
                     if (playableRoom.getObjects().contains(this)) {
                         parent = room;
+                        closestRoomParent = playableRoom;
                     }
                 }
             }
@@ -323,6 +362,33 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
+    }
+
+    public void saveEventsOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?)");
+
+        if (getEvents() != null) {
+            for (ObjectEvent evt : getEvents()) {
+                stm.setString(1, getId());
+                stm.setString(2, evt.getEventType().toString());
+                stm.setString(3, evt.getText());
+                stm.executeUpdate();
+            }
+        }
+    }
+
+    public void saveAliasesOnDB(Connection connection) throws SQLException {
+        PreparedStatement stm =
+                connection.prepareStatement("INSERT INTO SAVEDATA.Alias values (?, ?)");
+
+        if (alias != null) {
+            for (String string : alias) {
+                stm.setString(1, getId());
+                stm.setString(2, string);
+                stm.executeUpdate();
+            }
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package component;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public abstract class GameComponent {
@@ -9,6 +10,12 @@ public abstract class GameComponent {
     private String name;
 
     private String description;
+
+    public GameComponent(ResultSet resultSet) throws SQLException {
+        id = resultSet.getString(1);
+        name = resultSet.getString(2);
+        description = resultSet.getString(3);
+    }
 
     public String getId() {
         return id;

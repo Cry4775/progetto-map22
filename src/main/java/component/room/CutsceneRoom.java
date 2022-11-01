@@ -1,9 +1,17 @@
 package component.room;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CutsceneRoom extends AbstractRoom {
+    public CutsceneRoom(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        nextRoomId = resultSet.getString(5);
+        finalRoom = resultSet.getBoolean(6);
+    }
+
     private AbstractRoom nextRoom;
     private String nextRoomId;
 
@@ -35,6 +43,14 @@ public class CutsceneRoom extends AbstractRoom {
 
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
-
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.CutsceneRoom values (?, ?, ?, ?, ?, ?)");
+        stm.setString(1, getId());
+        stm.setString(2, getName());
+        stm.setString(3, getDescription());
+        stm.setString(4, getImgPath());
+        stm.setString(5, nextRoomId);
+        stm.setBoolean(6, finalRoom);
+        stm.executeUpdate();
     }
 }
