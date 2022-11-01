@@ -7,7 +7,6 @@ package engine;
 import java.awt.Image;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ImageIcon;
@@ -62,12 +61,7 @@ public class Engine {
     }
 
     public void execute() {
-        try {
-            DBManager.saveObjects();
-            DBManager.saveRooms();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        DBManager.save();
 
         if (!WeatherFetcher.isRaining()) {
             SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
