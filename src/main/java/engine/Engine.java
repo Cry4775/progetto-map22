@@ -61,8 +61,6 @@ public class Engine {
     }
 
     public void execute() {
-        // DBManager.save();
-
         if (!WeatherFetcher.isRaining()) {
             SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
         } else {
@@ -73,9 +71,9 @@ public class Engine {
 
         updateGUI();
 
-        gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
+        gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
 
-        if (game.getCurrentRoom() instanceof CutsceneRoom) {
+        if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
             gui.waitForEnterKey();
         }
     }
@@ -87,8 +85,8 @@ public class Engine {
             SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
         }
 
-        if (game.getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
+        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
             ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
                     GameManager.getInventory());
             if (p == null || p.getCommand() == null) {
@@ -98,13 +96,13 @@ public class Engine {
             } else {
                 game.nextMove(p, gui);
             }
-        } else if (game.getCurrentRoom() instanceof CutsceneRoom) {
-            CutsceneRoom currentRoom = (CutsceneRoom) game.getCurrentRoom();
+        } else if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
+            CutsceneRoom currentRoom = (CutsceneRoom) GameManager.getCurrentRoom();
 
             if (!currentRoom.isFinalRoom()) {
                 if (currentRoom.getNextRoom() != null) {
-                    game.setCurrentRoom(currentRoom.getNextRoom());
-                    gui.appendTxtPane(game.getCurrentRoom().getDescription(), false);
+                    GameManager.setCurrentRoom(currentRoom.getNextRoom());
+                    gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
                 } else {
                     throw new Error(
                             "Couldn't find the next room of " + currentRoom.getName()
@@ -116,8 +114,8 @@ public class Engine {
             }
         }
 
-        if (game.getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentRoom = (PlayableRoom) game.getCurrentRoom();
+        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
 
             if (currentRoom.isCurrentlyDark()) {
                 updateGUI("Buio", "resources/img/buio.jpg");
@@ -128,14 +126,14 @@ public class Engine {
             updateGUI();
         }
 
-        if (game.getCurrentRoom() instanceof CutsceneRoom) {
+        if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
             gui.waitForEnterKey();
         }
     }
 
     public void updateGUI() {
-        gui.getLblRoomName().setText(game.getCurrentRoom().getName());
-        Image roomImg = new ImageIcon(game.getCurrentRoom().getImgPath()).getImage()
+        gui.getLblRoomName().setText(GameManager.getCurrentRoom().getName());
+        Image roomImg = new ImageIcon(GameManager.getCurrentRoom().getImgPath()).getImage()
                 .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
         gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
         game.setCompassLabels(gui);

@@ -101,6 +101,12 @@ public class DBManager {
                         connection.prepareStatement("CREATE SCHEMA SAVEDATA");
                 createStatement.executeUpdate();
 
+                createStatement = connection.prepareStatement("CREATE TABLE SAVEDATA.CurrentRoom"
+                        + "("
+                        + " id varchar(10)"
+                        + ")");
+                createStatement.executeUpdate();
+
                 createStatement = connection.prepareStatement("CREATE TABLE SAVEDATA.CutsceneRoom"
                         + "("
                         + " id varchar(10),"
@@ -423,6 +429,12 @@ public class DBManager {
         for (AbstractRoom room : RoomsLoader.listAllRooms()) {
             room.saveOnDB(connection);
         }
+
+        PreparedStatement stm = connection.prepareStatement(
+                "INSERT INTO SAVEDATA.CurrentRoom values (?)");
+
+        stm.setString(1, GameManager.getCurrentRoom().getId());
+        stm.executeUpdate();
     }
 
     public static void saveObjects() throws SQLException {
@@ -448,6 +460,9 @@ public class DBManager {
 
     public static void wipeExistingDB() throws SQLException {
         PreparedStatement stm;
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.CurrentRoom");
+        stm.executeUpdate();
 
         stm = connection.prepareStatement("DELETE FROM SAVEDATA.Alias");
         stm.executeUpdate();
@@ -563,6 +578,7 @@ public class DBManager {
 
             saveRooms();
             saveObjects();
+            // TODO counter azioni
         } catch (SQLException e) {
             closeConnection();
             e.printStackTrace();
@@ -587,6 +603,22 @@ public class DBManager {
                     "An error has occurred while attempting to load state on DB. Details: "
                             + e.getMessage());
         }
+    }
+
+    public static String getCurrentRoomId() {
+        try {
+            PreparedStatement stm =
+                    connection.prepareStatement("SELECT * FROM SAVEDATA.CurrentRoom");
+            ResultSet resultSet = stm.executeQuery();
+
+            while (resultSet.next()) {
+                return resultSet.getString(1);
+            }
+        } catch (SQLException e) {
+
+        }
+
+        return null;
     }
 
     private static void loadObjects() throws SQLException {

@@ -404,7 +404,13 @@ public class MainFrame extends JFrame {
                 dispatchEvent(event);
             }
         });
+    }
 
+    public static int askLoadingConfirmation() {
+        return JOptionPane.showConfirmDialog(null,
+                "É stato trovata una partita precedentemente salvata. Desideri caricarla?",
+                "Caricamento salvataggio",
+                JOptionPane.YES_NO_OPTION);
     }
 
     public void printSlowly(String message, int millisPerChar) throws BadLocationException {

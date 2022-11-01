@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.doorlike.Door;
@@ -44,7 +45,7 @@ public class GameManager {
 
     private static final List<AbstractEntity> inventory = new ArrayList<>();
 
-    private AbstractRoom currentRoom;
+    private static AbstractRoom currentRoom;
 
     private AbstractRoom previousRoom;
 
@@ -72,12 +73,12 @@ public class GameManager {
         return commands;
     }
 
-    public AbstractRoom getCurrentRoom() {
+    public static AbstractRoom getCurrentRoom() {
         return currentRoom;
     }
 
-    public void setCurrentRoom(AbstractRoom currentRoom) {
-        this.currentRoom = currentRoom;
+    public static void setCurrentRoom(AbstractRoom currentRoom) {
+        GameManager.currentRoom = currentRoom;
     }
 
     public static List<AbstractEntity> getInventory() {
@@ -190,7 +191,16 @@ public class GameManager {
         CommandsLoader commandsLoader = new CommandsLoader(getCommands());
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
-        RoomsLoader roomsLoader = new RoomsLoader(getRooms(), Mode.DB);
+        RoomsLoader roomsLoader;
+
+        if (DBManager.existsSaving()) {
+            roomsLoader = new RoomsLoader(getRooms(),
+                    MainFrame.askLoadingConfirmation() == JOptionPane.YES_OPTION ? Mode.DB
+                            : Mode.JSON);
+        } else {
+            roomsLoader = new RoomsLoader(getRooms(), Mode.JSON);
+        }
+
         Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
 
         tCommands.start();
@@ -200,7 +210,14 @@ public class GameManager {
             tCommands.join();
             tRooms.join();
             if (!roomsLoader.isExceptionThrown()) {
-                setCurrentRoom(getRooms().get(0));
+                String currentRoomId = DBManager.getCurrentRoomId();
+
+                for (AbstractRoom room : getRooms()) {
+                    if (room.getId().equals(currentRoomId)) {
+                        setCurrentRoom(room);
+                        break;
+                    }
+                }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

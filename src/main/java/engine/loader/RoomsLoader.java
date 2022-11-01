@@ -88,6 +88,8 @@ public class RoomsLoader implements Runnable {
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
             }
+
+            GameManager.setCurrentRoom(rooms.get(0));
         } else {
             rooms.addAll(DBManager.load());
 
@@ -99,6 +101,15 @@ public class RoomsLoader implements Runnable {
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
+            }
+
+            String currentRoomId = DBManager.getCurrentRoomId();
+
+            for (AbstractRoom room : rooms) {
+                if (room.getId().equals(currentRoomId)) {
+                    GameManager.setCurrentRoom(room);
+                    break;
+                }
             }
         }
 
