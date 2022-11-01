@@ -21,27 +21,41 @@ public class DBManager {
         }
     }
 
-    private static void closeConnection() throws SQLException {
-        if (connection != null) {
-            connection.close();
+    private static void closeConnection() {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new Error(
+                    "An error has occurred while attempting to close connection with DB. Details: "
+                            + e.getMessage());
         }
     }
 
-    private static boolean existsDB() throws SQLException {
-        openConnection();
-        DatabaseMetaData databaseMetaData = connection.getMetaData();
-        ResultSet resultSet = databaseMetaData.getSchemas();
+    private static boolean existsDB() {
+        try {
 
-        while (resultSet.next()) {
-            String name = resultSet.getString("TABLE_SCHEM");
+            openConnection();
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
+            ResultSet resultSet = databaseMetaData.getSchemas();
 
-            // DB esistente
-            if (name.equalsIgnoreCase("SAVEDATA")) {
-                return true;
+            while (resultSet.next()) {
+                String name = resultSet.getString("TABLE_SCHEM");
+
+                // DB esistente
+                if (name.equalsIgnoreCase("SAVEDATA")) {
+                    return true;
+                }
             }
-        }
 
-        return false;
+            return false;
+        } catch (SQLException e) {
+            closeConnection();
+            throw new Error(
+                    "An error has occurred while attempting to fetch DB existence. Details: "
+                            + e.getMessage());
+        }
     }
 
     public static void createDB() {
@@ -215,7 +229,10 @@ public class DBManager {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            closeConnection();
+            throw new Error(
+                    "An error has occurred while attempting to create DB. Details: "
+                            + e.getMessage());
         }
     }
 
@@ -229,5 +246,104 @@ public class DBManager {
         for (AbstractEntity obj : RoomsLoader.mapAllObjects().values()) {
             obj.saveOnDB(connection);
         }
+    }
+
+    public static void wipeExistingDB() throws SQLException {
+        PreparedStatement stm;
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PlayableRoom");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.BasicItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FillableItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.LightSourceItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableItem");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.FireObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.MovableObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PushableObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.PullableObject");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.Door");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.InvisibleWall");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.ChestlikeContainer");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.SocketlikeContainer");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableContainer");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.RoomEvent");
+        stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.ObjectEvent");
+        stm.executeUpdate();
+    }
+
+    public static boolean existsSaving() {
+        try {
+            openConnection();
+
+            if (!existsDB()) {
+                return false;
+            }
+
+            PreparedStatement stm =
+                    connection.prepareStatement("SELECT id FROM SAVEDATA.PlayableRoom");
+            ResultSet resultSet = stm.executeQuery();
+
+            if (resultSet.next()) {
+                resultSet.close();
+                stm.close();
+
+                return true;
+            }
+
+            return false;
+        } catch (SQLException e) {
+            closeConnection();
+            throw new Error(
+                    "An error has occurred while attempting to fetch existence of savings on DB. Details: "
+                            + e.getMessage());
+        }
+    }
+
+    public static void save() {
+        try {
+            openConnection();
+            wipeExistingDB();
+
+            saveRooms();
+            saveObjects();
+        } catch (SQLException e) {
+            closeConnection();
+            throw new Error(
+                    "An error has occurred while attempting to save state on DB. Details: "
+                            + e.getMessage());
+        }
+    }
+
+    public static void load() {
+
     }
 }
