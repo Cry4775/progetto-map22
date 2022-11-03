@@ -157,7 +157,7 @@ public class Door extends AbstractEntity implements IOpenable {
         stm.setString(9, blockedRoomId);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

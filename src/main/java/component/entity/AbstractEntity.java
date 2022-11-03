@@ -1,6 +1,5 @@
 package component.entity;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,39 +50,36 @@ public abstract class AbstractEntity extends GameComponent {
 
         PreparedStatement stm =
                 DBManager.getConnection()
-                        .prepareStatement("SELECT * FROM SAVEDATA.RequiredWearedItem");
+                        .prepareStatement(
+                                "SELECT * FROM SAVEDATA.RequiredWearedItem WHERE ID = " + getId());
         ResultSet rs = stm.executeQuery();
 
         while (rs.next()) {
-            if (rs.getString(1).equals(getId())) {
-                requiredWearedItemsIdToInteract.add(rs.getString(2));
+            requiredWearedItemsIdToInteract.add(rs.getString(2));
 
-                if (failedInteractionMessage == null) {
-                    failedInteractionMessage = rs.getString(3);
-                }
+            if (failedInteractionMessage == null) {
+                failedInteractionMessage = rs.getString(3);
             }
         }
 
         stm.close();
 
-        stm = DBManager.getConnection().prepareStatement("SELECT * FROM SAVEDATA.Alias");
+        stm = DBManager.getConnection()
+                .prepareStatement("SELECT * FROM SAVEDATA.Alias WHERE ID = " + getId());
         rs = stm.executeQuery();
 
         while (rs.next()) {
-            if (rs.getString(1).equals(getId())) {
-                addAlias(rs.getString(2));
-            }
+            addAlias(rs.getString(2));
         }
 
         stm.close();
 
-        stm = DBManager.getConnection().prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent");
+        stm = DBManager.getConnection()
+                .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = " + getId());
         rs = stm.executeQuery();
 
         while (rs.next()) {
-            if (rs.getString(1).equals(getId())) {
-                events.add(new ObjectEvent(rs));
-            }
+            events.add(new ObjectEvent(rs));
         }
 
         stm.close();
@@ -412,9 +408,9 @@ public abstract class AbstractEntity extends GameComponent {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
-    public void saveEventsOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?, ?, ?, ?, ?)");
+    public void saveEventsOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection()
+                .prepareStatement("INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?, ?, ?, ?, ?)");
 
         if (getEvents() != null) {
             for (ObjectEvent evt : getEvents()) {
@@ -430,9 +426,9 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void saveAliasesOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm =
-                connection.prepareStatement("INSERT INTO SAVEDATA.Alias values (?, ?)");
+    public void saveAliasesOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection()
+                .prepareStatement("INSERT INTO SAVEDATA.Alias values (?, ?)");
 
         if (alias != null) {
             for (String string : alias) {
@@ -459,10 +455,10 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void saveExternalsOnDB(Connection connection) throws SQLException {
-        saveAliasesOnDB(connection);
+    public void saveExternalsOnDB() throws SQLException {
+        saveAliasesOnDB();
         saveRequiredWearedItemsOnDB();
-        saveEventsOnDB(connection);
+        saveEventsOnDB();
     }
 
     public void setValuesOnStatement(PreparedStatement stm) throws SQLException {

@@ -89,7 +89,7 @@ public class FillableItem extends BasicItem implements IFillable {
         stm.setString(8, eligibleItemId);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

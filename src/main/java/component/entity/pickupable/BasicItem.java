@@ -94,7 +94,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         setValuesOnStatement(stm);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public void setValuesOnStatement(PreparedStatement stm) throws SQLException {

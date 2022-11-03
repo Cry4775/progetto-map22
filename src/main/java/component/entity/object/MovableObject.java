@@ -75,7 +75,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
         stm.setBoolean(6, moved);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

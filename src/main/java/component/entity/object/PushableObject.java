@@ -75,7 +75,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
         stm.setBoolean(6, pushed);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

@@ -101,7 +101,7 @@ public class FireObject extends AbstractEntity {
         stm.setBoolean(6, lit);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

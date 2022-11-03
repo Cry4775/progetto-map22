@@ -125,7 +125,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         stm.setBoolean(9, isForFluids());
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

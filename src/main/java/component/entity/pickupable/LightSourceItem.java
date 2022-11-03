@@ -121,9 +121,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         stm.setString(8, requiredItemId);
         stm.executeUpdate();
 
-        saveAliasesOnDB(connection);
-        saveRequiredWearedItemsOnDB();
-        saveEventsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

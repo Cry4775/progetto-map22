@@ -44,7 +44,7 @@ public class UnopenableDoor extends AbstractEntity {
         stm.setString(6, openEventText);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

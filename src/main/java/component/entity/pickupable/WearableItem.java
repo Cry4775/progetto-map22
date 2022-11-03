@@ -73,7 +73,7 @@ public class WearableItem extends BasicItem implements IWearable {
         stm.setBoolean(7, worn);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

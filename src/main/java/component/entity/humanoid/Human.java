@@ -88,7 +88,7 @@ public class Human extends AbstractEntity implements ITalkable {
             }
         }
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

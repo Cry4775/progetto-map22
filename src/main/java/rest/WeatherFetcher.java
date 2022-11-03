@@ -53,6 +53,8 @@ public class WeatherFetcher {
             if (response.getStatus() == 200) {
                 String json = response.readEntity(String.class);
                 locationKey = getJsonField(json, "Key").getAsString();
+            } else {
+                locationKey = DEFAULT_LOCATION_KEY;
             }
         } catch (Exception e) {
             locationKey = DEFAULT_LOCATION_KEY;

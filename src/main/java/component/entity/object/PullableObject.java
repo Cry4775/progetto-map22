@@ -76,7 +76,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
         stm.setBoolean(6, pulled);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

@@ -167,7 +167,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         stm.setBoolean(9, isForFluids());
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public void setValuesOnStatement(PreparedStatement stm) throws SQLException {

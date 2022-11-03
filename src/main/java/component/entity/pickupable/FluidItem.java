@@ -87,7 +87,7 @@ public class FluidItem extends BasicItem implements IFluid {
         setValuesOnStatement(stm);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,

@@ -45,7 +45,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         stm.setString(7, readText);
         stm.executeUpdate();
 
-        saveExternalsOnDB(connection);
+        saveExternalsOnDB();
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,
