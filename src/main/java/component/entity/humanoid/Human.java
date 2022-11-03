@@ -102,6 +102,7 @@ public class Human extends AbstractEntity implements ITalkable {
             Human obj = new Human(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

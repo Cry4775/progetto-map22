@@ -59,6 +59,7 @@ public class ReadableItem extends BasicItem implements IReadable {
             ReadableItem obj = new ReadableItem(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

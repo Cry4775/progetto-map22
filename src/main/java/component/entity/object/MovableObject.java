@@ -89,6 +89,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
             MovableObject obj = new MovableObject(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

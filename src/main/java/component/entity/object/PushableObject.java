@@ -89,6 +89,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
             PushableObject obj = new PushableObject(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

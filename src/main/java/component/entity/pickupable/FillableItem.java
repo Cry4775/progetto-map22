@@ -103,6 +103,7 @@ public class FillableItem extends BasicItem implements IFillable {
             FillableItem obj = new FillableItem(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

@@ -97,11 +97,12 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         saveExternalsOnDB();
     }
 
+    @Override
     public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
         super.setValuesOnStatement(stm);
         if (pickedUp) {
-            stm.setString(4, "null");
-            stm.setString(5, "null");
+            stm.setString(4, null);
+            stm.setString(5, null);
         }
 
         stm.setBoolean(6, pickedUp);
@@ -118,6 +119,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
             BasicItem obj = new BasicItem(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

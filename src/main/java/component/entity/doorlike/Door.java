@@ -171,6 +171,7 @@ public class Door extends AbstractEntity implements IOpenable {
             Door obj = new Door(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

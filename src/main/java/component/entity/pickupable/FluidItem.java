@@ -101,6 +101,7 @@ public class FluidItem extends BasicItem implements IFluid {
             FluidItem obj = new FluidItem(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

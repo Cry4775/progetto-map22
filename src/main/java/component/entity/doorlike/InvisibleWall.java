@@ -252,6 +252,7 @@ public class InvisibleWall extends AbstractEntity {
             InvisibleWall obj = new InvisibleWall(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

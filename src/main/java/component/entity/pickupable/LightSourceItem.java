@@ -135,6 +135,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
             LightSourceItem obj = new LightSourceItem(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

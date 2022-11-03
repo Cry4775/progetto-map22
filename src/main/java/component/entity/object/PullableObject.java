@@ -90,6 +90,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
             PullableObject obj = new PullableObject(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

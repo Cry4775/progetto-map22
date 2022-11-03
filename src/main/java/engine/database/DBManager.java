@@ -409,6 +409,7 @@ public class DBManager {
                 createStatement = connection.prepareStatement("CREATE TABLE SAVEDATA.ObjectEvent"
                         + "("
                         + " objId varchar(10),"
+                        + " roomId varchar(10),"
                         + " type varchar(128),"
                         + " text varchar(8192),"
                         + " updatingParentRoom boolean,"
@@ -633,44 +634,29 @@ public class DBManager {
         WearableContainer.loadFromDB(allRooms, pendingList);
 
         for (Triple<AbstractEntity, String, String> pending : pendingList) {
-            boolean found = false;
-
             AbstractEntity object = pending.getFirst();
             String roomId = pending.getSecond();
             String containerId = pending.getThird();
 
+            if (roomId == null && containerId != null) {
+                AbstractContainer.addObjectToContainerId(object, GameManager.getFullInventory(),
+                        containerId);
+                break;
+            }
+
             for (AbstractRoom room : allRooms) {
-                if (roomId.equals(room.getId())) {
-                    found = true;
-
+                if (room.getId().equals(roomId)) {
                     PlayableRoom pRoom = (PlayableRoom) room;
+                    object.setClosestRoomParentId(roomId);
 
-                    if (!containerId.equals("null")) {
-                        for (AbstractEntity obj : pRoom.getAllObjects()) {
-                            if (obj instanceof AbstractContainer) {
-                                if (obj.getId().equals(containerId)) {
-                                    AbstractContainer container = (AbstractContainer) obj;
-
-                                    container.add(object);
-                                    break;
-                                }
-                            }
-                        }
+                    if (containerId != null) {
+                        AbstractContainer.addObjectToContainerId(object, pRoom.getAllObjects(),
+                                containerId);
+                        break;
                     }
 
                     pRoom.getObjects().add(object);
                     break;
-                }
-            }
-
-            if (!found) {
-                for (AbstractEntity obj : GameManager.getFullInventory()) {
-                    if (obj instanceof AbstractContainer && obj.getId().equals(containerId)) {
-                        AbstractContainer aContainer = (AbstractContainer) obj;
-
-                        aContainer.add(object);
-                        break;
-                    }
                 }
             }
         }

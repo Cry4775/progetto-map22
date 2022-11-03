@@ -19,10 +19,10 @@ public class ObjectEvent extends AbstractEvent {
 
     public ObjectEvent(ResultSet resultSet) throws SQLException {
         super(resultSet);
-        updatingParentRoom = resultSet.getBoolean(4);
-        updateTargetRoomId = resultSet.getString(5);
-        teleportsPlayerToRoomId = resultSet.getString(6);
-        destroyOnTrigger = resultSet.getBoolean(7);
+        updatingParentRoom = resultSet.getBoolean(5);
+        updateTargetRoomId = resultSet.getString(6);
+        teleportsPlayerToRoomId = resultSet.getString(7);
+        destroyOnTrigger = resultSet.getBoolean(8);
     }
 
     public boolean mustDestroyOnTrigger() {

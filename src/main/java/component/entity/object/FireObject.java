@@ -115,6 +115,7 @@ public class FireObject extends AbstractEntity {
             FireObject obj = new FireObject(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

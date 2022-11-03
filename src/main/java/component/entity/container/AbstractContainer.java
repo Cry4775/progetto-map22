@@ -180,7 +180,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
-        if (!containerId.equals("null")) {
+        if (containerId != null) {
             return new Triple<AbstractEntity, String, String>(this, roomId, containerId);
         }
 
@@ -188,10 +188,26 @@ public abstract class AbstractContainer extends AbstractEntity {
             if (roomId.equals(room.getId())) {
                 PlayableRoom pRoom = (PlayableRoom) room;
 
+                setClosestRoomParentId(roomId);
+
                 pRoom.getObjects().add(this);
             }
         }
 
         return null;
+    }
+
+    public static void addObjectToContainerId(AbstractEntity object,
+            List<AbstractEntity> list, String id) {
+        for (AbstractEntity obj : list) {
+            if (obj instanceof AbstractContainer) {
+                if (obj.getId().equals(id)) {
+                    AbstractContainer container = (AbstractContainer) obj;
+
+                    container.add(object);
+                    return;
+                }
+            }
+        }
     }
 }

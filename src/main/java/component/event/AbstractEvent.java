@@ -11,8 +11,8 @@ public abstract class AbstractEvent {
     private boolean triggered;
 
     public AbstractEvent(ResultSet resultSet) throws SQLException {
-        eventType = EventType.valueOf(resultSet.getString(2));
-        text = resultSet.getString(3);
+        eventType = EventType.valueOf(resultSet.getString(3));
+        text = resultSet.getString(4);
     }
 
     public EventType getEventType() {

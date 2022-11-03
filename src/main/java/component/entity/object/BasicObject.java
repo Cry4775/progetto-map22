@@ -46,6 +46,7 @@ public class BasicObject extends AbstractEntity {
             BasicObject obj = new BasicObject(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

@@ -58,6 +58,7 @@ public class UnopenableDoor extends AbstractEntity {
             UnopenableDoor obj = new UnopenableDoor(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();

@@ -87,6 +87,7 @@ public class WearableItem extends BasicItem implements IWearable {
             WearableItem obj = new WearableItem(resultSet);
 
             obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadObjEvents();
         }
 
         stm.close();
