@@ -11,6 +11,7 @@ import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class FillableItem extends BasicItem implements IFillable {
 
@@ -102,6 +103,22 @@ public class FillableItem extends BasicItem implements IFillable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.FillableItem");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            FillableItem obj = new FillableItem(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

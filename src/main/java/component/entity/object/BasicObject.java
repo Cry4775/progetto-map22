@@ -10,6 +10,7 @@ import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class BasicObject extends AbstractEntity {
 
@@ -44,6 +45,22 @@ public class BasicObject extends AbstractEntity {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.BasicObject");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            BasicObject obj = new BasicObject(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

@@ -11,6 +11,7 @@ import component.entity.container.AbstractContainer;
 import component.entity.interfaces.ILightSource;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class LightSourceItem extends BasicItem implements ILightSource {
 
@@ -136,6 +137,22 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         saveAliasesOnDB(connection);
         saveRequiredWearedItemsOnDB();
         saveEventsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.LightSourceItem");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            LightSourceItem obj = new LightSourceItem(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

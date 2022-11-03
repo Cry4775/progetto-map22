@@ -9,7 +9,11 @@ import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
+import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.GameManager;
+import engine.database.DBManager;
+import utility.Pair;
 
 public class WearableContainer extends AbstractContainer implements IWearable {
 
@@ -173,6 +177,29 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<Pair<AbstractEntity, String>> pendingList) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.WearableContainer");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            WearableContainer obj = new WearableContainer(resultSet);
+
+            if (obj.isPickedUp()) {
+                GameManager.getInventory().add(obj);
+            } else {
+                Pair<AbstractEntity, String> pending = obj.loadLocation(resultSet, allRooms);
+
+                if (pending != null)
+                    pendingList.add(pending);
+            }
+        }
+
+        stm.close();
     }
 
 }

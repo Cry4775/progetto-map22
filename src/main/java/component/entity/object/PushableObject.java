@@ -13,6 +13,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class PushableObject extends AbstractEntity implements IPushable {
 
@@ -87,6 +88,22 @@ public class PushableObject extends AbstractEntity implements IPushable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.PushableObject");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            PushableObject obj = new PushableObject(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

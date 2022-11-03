@@ -10,6 +10,7 @@ import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class UnopenableDoor extends AbstractEntity {
 
@@ -56,6 +57,22 @@ public class UnopenableDoor extends AbstractEntity {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.UnopenableDoor");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            UnopenableDoor obj = new UnopenableDoor(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

@@ -7,10 +7,12 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IOpenable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 import sound.SoundManager;
 import sound.SoundManager.Mode;
 
@@ -164,5 +166,21 @@ public class Door extends AbstractEntity implements IOpenable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.Door");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            Door obj = new Door(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 }

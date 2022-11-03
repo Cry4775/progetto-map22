@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IReadable;
+import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class ReadableItem extends BasicItem implements IReadable {
 
@@ -56,6 +59,22 @@ public class ReadableItem extends BasicItem implements IReadable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.ReadableItem");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            ReadableItem obj = new ReadableItem(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

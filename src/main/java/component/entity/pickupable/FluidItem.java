@@ -10,7 +10,9 @@ import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
 import component.entity.interfaces.IFluid;
 import component.event.EventType;
+import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class FluidItem extends BasicItem implements IFluid {
 
@@ -96,6 +98,22 @@ public class FluidItem extends BasicItem implements IFluid {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.FluidItem");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            FluidItem obj = new FluidItem(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

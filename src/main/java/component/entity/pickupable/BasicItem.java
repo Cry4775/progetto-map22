@@ -12,6 +12,8 @@ import component.entity.interfaces.IPickupable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.GameManager;
+import engine.database.DBManager;
 import sound.SoundManager;
 import sound.SoundManager.Mode;
 
@@ -106,5 +108,57 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.BasicItem");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            BasicItem obj = new BasicItem(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
+    }
+
+    @Override
+    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers)
+            throws SQLException {
+        String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
+        String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
+
+        if (pickedUp) {
+            GameManager.getInventory().add(this);
+        } else if (!roomId.equals("null")) {
+            for (AbstractRoom room : allRooms) {
+                if (roomId.equals(room.getId())) {
+                    PlayableRoom pRoom = (PlayableRoom) room;
+                    pRoom.getObjects().add(this);
+                    return;
+                }
+            }
+        } else if (!containerId.equals("null")) {
+            for (AbstractContainer obj : allContainers) {
+                if (containerId.equals(obj.getId())) {
+                    obj.add(this);
+                    return;
+                }
+            }
+
+            for (AbstractEntity obj : GameManager.getFullInventory()) {
+                if (obj instanceof AbstractContainer && containerId.equals(obj.getId())) {
+                    AbstractContainer aContainer = (AbstractContainer) obj;
+
+                    aContainer.add(this);
+                    return;
+                }
+            }
+        }
     }
 }

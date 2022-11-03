@@ -14,11 +14,25 @@ import component.entity.interfaces.ITalkable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class Human extends AbstractEntity implements ITalkable {
 
     public Human(ResultSet resultSet) throws SQLException {
         super(resultSet);
+
+        PreparedStatement phrsStm =
+                DBManager.getConnection().prepareStatement(
+                        "SELECT * FROM SAVEDATA.HumanPhrases WHERE ID = " + getId());
+        ResultSet rs = phrsStm.executeQuery();
+
+        while (rs.next()) {
+            String text = resultSet.getString(2);
+
+            queuePhrase(text);
+        }
+
+        phrsStm.close();
     }
 
     private Queue<String> phrases = new LinkedList<>();
@@ -87,6 +101,22 @@ public class Human extends AbstractEntity implements ITalkable {
         }
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.Human");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            Human obj = new Human(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

@@ -13,6 +13,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class MovableObject extends AbstractEntity implements IMovable {
 
@@ -87,6 +88,22 @@ public class MovableObject extends AbstractEntity implements IMovable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.MovableObject");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            MovableObject obj = new MovableObject(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 
 }

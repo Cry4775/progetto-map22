@@ -209,16 +209,6 @@ public class GameManager {
         try {
             tCommands.join();
             tRooms.join();
-            if (!roomsLoader.isExceptionThrown()) {
-                String currentRoomId = DBManager.getCurrentRoomId();
-
-                for (AbstractRoom room : getRooms()) {
-                    if (room.getId().equals(currentRoomId)) {
-                        setCurrentRoom(room);
-                        break;
-                    }
-                }
-            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -292,6 +282,8 @@ public class GameManager {
             switch (commandType) {
                 case SAVE: {
                     DBManager.save();
+
+                    outString.append("Partita salvata correttamente!");
                     break;
                 }
                 case INVENTORY: {

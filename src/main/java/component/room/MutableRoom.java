@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 
 public class MutableRoom extends PlayableRoom {
 
@@ -41,6 +42,16 @@ public class MutableRoom extends PlayableRoom {
         }
 
         result.addAll(getObjects());
+
+        List<AbstractEntity> temp = new ArrayList<>();
+
+        for (AbstractEntity obj : result) {
+            if (obj instanceof AbstractContainer) {
+                temp.addAll(((AbstractContainer) obj).getAllObjects());
+            }
+        }
+
+        result.addAll(temp);
 
         return result;
     }

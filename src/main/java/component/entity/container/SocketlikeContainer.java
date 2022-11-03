@@ -11,6 +11,8 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
+import utility.Pair;
 
 public class SocketlikeContainer extends AbstractContainer {
 
@@ -131,6 +133,25 @@ public class SocketlikeContainer extends AbstractContainer {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<Pair<AbstractEntity, String>> pendingList) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.SocketlikeContainer");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            SocketlikeContainer obj = new SocketlikeContainer(resultSet);
+
+            Pair<AbstractEntity, String> pending = obj.loadLocation(resultSet, allRooms);
+
+            if (pending != null)
+                pendingList.add(pending);
+        }
+
+        stm.close();
     }
 
 }

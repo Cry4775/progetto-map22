@@ -12,6 +12,8 @@ import component.entity.interfaces.IPickupable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import component.room.PlayableRoom;
+import utility.Pair;
 
 public abstract class AbstractContainer extends AbstractEntity {
 
@@ -164,7 +166,6 @@ public abstract class AbstractContainer extends AbstractEntity {
         if (list != null) {
             for (AbstractEntity item : list) {
                 item.setParent(this);
-                item.processReferences(objects, rooms);
             }
         } else {
             list = new ArrayList<>();
@@ -172,5 +173,24 @@ public abstract class AbstractContainer extends AbstractEntity {
 
         processRoomParent(rooms);
         processEventReferences(objects, rooms);
+    }
+
+    public Pair<AbstractEntity, String> loadLocation(ResultSet resultSet,
+            List<AbstractRoom> allRooms) throws SQLException {
+        String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
+        String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
+
+        if (!roomId.equals("null")) {
+            for (AbstractRoom room : allRooms) {
+                if (roomId.equals(room.getId())) {
+                    PlayableRoom pRoom = (PlayableRoom) room;
+                    pRoom.getObjects().add(this);
+                    break;
+                }
+            }
+        } else if (!containerId.equals("null")) {
+            return new Pair<AbstractEntity, String>(this, containerId);
+        }
+        return null;
     }
 }

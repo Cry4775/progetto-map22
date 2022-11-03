@@ -4,10 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
+import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.database.DBManager;
 
 public class WearableItem extends BasicItem implements IWearable {
 
@@ -84,5 +87,21 @@ public class WearableItem extends BasicItem implements IWearable {
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public static void loadFromDB(List<AbstractRoom> allRooms,
+            List<AbstractContainer> allContainers) throws SQLException {
+        PreparedStatement stm =
+                DBManager.getConnection()
+                        .prepareStatement("SELECT * FROM SAVEDATA.WearableItem");
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            WearableItem obj = new WearableItem(resultSet);
+
+            obj.loadLocation(resultSet, allRooms, allContainers);
+        }
+
+        stm.close();
     }
 }
