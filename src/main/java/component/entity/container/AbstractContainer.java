@@ -175,7 +175,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         processEventReferences(objects, rooms);
     }
 
-    public Triple<AbstractEntity, String, String> loadLocation(ResultSet resultSet,
+    public Triple<AbstractEntity, String, String> loadRoomLocation(ResultSet resultSet,
             List<AbstractRoom> allRooms) throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);

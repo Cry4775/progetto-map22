@@ -38,7 +38,8 @@ public class BasicContainer extends AbstractContainer {
         while (resultSet.next()) {
             BasicContainer obj = new BasicContainer(resultSet);
 
-            Triple<AbstractEntity, String, String> pending = obj.loadLocation(resultSet, allRooms);
+            Triple<AbstractEntity, String, String> pending =
+                    obj.loadRoomLocation(resultSet, allRooms);
             obj.loadObjEvents();
 
             if (pending != null)

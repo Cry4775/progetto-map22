@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
 import component.room.AbstractRoom;
 import engine.database.DBManager;
@@ -92,8 +91,7 @@ public class FillableItem extends BasicItem implements IFillable {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.FillableItem");
@@ -102,7 +100,7 @@ public class FillableItem extends BasicItem implements IFillable {
         while (resultSet.next()) {
             FillableItem obj = new FillableItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

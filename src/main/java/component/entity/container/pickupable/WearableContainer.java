@@ -195,7 +195,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
                 GameManager.getInventory().add(obj);
             } else {
                 Triple<AbstractEntity, String, String> pending =
-                        obj.loadLocation(resultSet, allRooms);
+                        obj.loadRoomLocation(resultSet, allRooms);
                 obj.loadObjEvents();
 
                 if (pending != null)

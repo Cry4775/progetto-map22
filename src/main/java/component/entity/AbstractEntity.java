@@ -487,9 +487,7 @@ public abstract class AbstractEntity extends GameComponent {
                 getParent() instanceof AbstractContainer ? getParent().getId() : null);
     }
 
-    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers)
-            throws SQLException {
+    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms) throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 

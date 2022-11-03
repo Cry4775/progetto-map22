@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IWearable;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
@@ -241,8 +240,7 @@ public class InvisibleWall extends AbstractEntity {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.InvisibleWall");
@@ -251,7 +249,7 @@ public class InvisibleWall extends AbstractEntity {
         while (resultSet.next()) {
             InvisibleWall obj = new InvisibleWall(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

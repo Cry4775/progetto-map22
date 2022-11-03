@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.entity.interfaces.ILightSource;
 import component.room.AbstractRoom;
 import engine.database.DBManager;
@@ -124,8 +123,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.LightSourceItem");
@@ -134,7 +132,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         while (resultSet.next()) {
             LightSourceItem obj = new LightSourceItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

@@ -661,29 +661,21 @@ public class DBManager {
             }
         }
 
-        List<AbstractContainer> allContainers = new ArrayList<>();
-
-        for (AbstractEntity obj : RoomsLoader.mapAllObjects(rooms).values()) {
-            if (obj instanceof AbstractContainer) {
-                allContainers.add((AbstractContainer) obj);
-            }
-        }
-
-        BasicItem.loadFromDB(allRooms, allContainers);
-        BasicObject.loadFromDB(allRooms, allContainers);
-        Door.loadFromDB(allRooms, allContainers);
-        FillableItem.loadFromDB(allRooms, allContainers);
-        FireObject.loadFromDB(allRooms, allContainers);
-        FluidItem.loadFromDB(allRooms, allContainers);
-        Human.loadFromDB(allRooms, allContainers);
-        InvisibleWall.loadFromDB(allRooms, allContainers);
-        LightSourceItem.loadFromDB(allRooms, allContainers);
-        MovableObject.loadFromDB(allRooms, allContainers);
-        PullableObject.loadFromDB(allRooms, allContainers);
-        PushableObject.loadFromDB(allRooms, allContainers);
-        ReadableItem.loadFromDB(allRooms, allContainers);
-        UnopenableDoor.loadFromDB(allRooms, allContainers);
-        WearableItem.loadFromDB(allRooms, allContainers);
+        BasicItem.loadFromDB(allRooms);
+        BasicObject.loadFromDB(allRooms);
+        Door.loadFromDB(allRooms);
+        FillableItem.loadFromDB(allRooms);
+        FireObject.loadFromDB(allRooms);
+        FluidItem.loadFromDB(allRooms);
+        Human.loadFromDB(allRooms);
+        InvisibleWall.loadFromDB(allRooms);
+        LightSourceItem.loadFromDB(allRooms);
+        MovableObject.loadFromDB(allRooms);
+        PullableObject.loadFromDB(allRooms);
+        PushableObject.loadFromDB(allRooms);
+        ReadableItem.loadFromDB(allRooms);
+        UnopenableDoor.loadFromDB(allRooms);
+        WearableItem.loadFromDB(allRooms);
     }
 
     private static void loadRooms() throws SQLException {

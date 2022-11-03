@@ -138,7 +138,8 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         while (resultSet.next()) {
             ChestlikeContainer obj = new ChestlikeContainer(resultSet);
 
-            Triple<AbstractEntity, String, String> pending = obj.loadLocation(resultSet, allRooms);
+            Triple<AbstractEntity, String, String> pending =
+                    obj.loadRoomLocation(resultSet, allRooms);
             obj.loadObjEvents();
 
             if (pending != null)

@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFluid;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
@@ -104,8 +103,7 @@ public class FireObject extends AbstractEntity {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.FireObject");
@@ -114,7 +112,7 @@ public class FireObject extends AbstractEntity {
         while (resultSet.next()) {
             FireObject obj = new FireObject(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

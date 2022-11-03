@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Queue;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.entity.interfaces.ITalkable;
 import component.event.EventType;
 import component.room.AbstractRoom;
@@ -91,8 +90,7 @@ public class Human extends AbstractEntity implements ITalkable {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.Human");
@@ -101,7 +99,7 @@ public class Human extends AbstractEntity implements ITalkable {
         while (resultSet.next()) {
             Human obj = new Human(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

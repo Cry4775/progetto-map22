@@ -90,8 +90,7 @@ public class FluidItem extends BasicItem implements IFluid {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.FluidItem");
@@ -100,7 +99,7 @@ public class FluidItem extends BasicItem implements IFluid {
         while (resultSet.next()) {
             FluidItem obj = new FluidItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

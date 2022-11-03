@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IPushable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
@@ -78,8 +77,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.PushableObject");
@@ -88,7 +86,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
         while (resultSet.next()) {
             PushableObject obj = new PushableObject(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 

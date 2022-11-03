@@ -133,7 +133,8 @@ public class SocketlikeContainer extends AbstractContainer {
         while (resultSet.next()) {
             SocketlikeContainer obj = new SocketlikeContainer(resultSet);
 
-            Triple<AbstractEntity, String, String> pending = obj.loadLocation(resultSet, allRooms);
+            Triple<AbstractEntity, String, String> pending =
+                    obj.loadRoomLocation(resultSet, allRooms);
             obj.loadObjEvents();
 
             if (pending != null)

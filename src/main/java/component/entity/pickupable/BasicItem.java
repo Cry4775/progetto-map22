@@ -108,8 +108,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         stm.setBoolean(6, pickedUp);
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.BasicItem");
@@ -118,7 +117,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         while (resultSet.next()) {
             BasicItem obj = new BasicItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms, allContainers);
+            obj.loadLocation(resultSet, allRooms);
             obj.loadObjEvents();
         }
 
@@ -126,13 +125,12 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms,
-            List<AbstractContainer> allContainers)
+    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms)
             throws SQLException {
         if (pickedUp) {
             GameManager.getInventory().add(this);
         } else {
-            super.loadLocation(resultSet, allRooms, allContainers);
+            super.loadLocation(resultSet, allRooms);
         }
     }
 }
