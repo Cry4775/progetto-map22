@@ -40,7 +40,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.ReadableItem values (?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setString(7, readText);
         stm.executeUpdate();
 

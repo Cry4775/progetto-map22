@@ -21,7 +21,7 @@ public class BasicContainer extends AbstractContainer {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.BasicContainer values (?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(6, isForFluids());
 
         stm.executeUpdate();

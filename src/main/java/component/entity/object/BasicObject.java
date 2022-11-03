@@ -28,7 +28,7 @@ public class BasicObject extends AbstractEntity {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.BasicObject values (?, ?, ?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.executeUpdate();
 
         saveExternalsOnDB();

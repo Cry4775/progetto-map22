@@ -70,7 +70,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.PushableObject values (?, ?, ?, ?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.setBoolean(6, pushed);
         stm.executeUpdate();
 

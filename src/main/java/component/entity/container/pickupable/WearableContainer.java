@@ -161,7 +161,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.WearableContainer values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(7, worn);
         stm.setInt(8, maxSlots);
         stm.setBoolean(9, isForFluids());
@@ -171,8 +171,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
-        super.setValuesOnStatement(stm);
+    public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
+        super.setKnownValuesOnStatement(stm);
         if (pickedUp) {
             stm.setString(4, null);
             stm.setString(5, null);

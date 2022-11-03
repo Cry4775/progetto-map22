@@ -83,7 +83,7 @@ public class FillableItem extends BasicItem implements IFillable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.FillableItem values (?, ?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(7, filled);
         stm.setString(8, eligibleItemId);
         stm.executeUpdate();

@@ -91,15 +91,15 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.BasicItem values (?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.executeUpdate();
 
         saveExternalsOnDB();
     }
 
     @Override
-    public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
-        super.setValuesOnStatement(stm);
+    public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
+        super.setKnownValuesOnStatement(stm);
         if (pickedUp) {
             stm.setString(4, null);
             stm.setString(5, null);

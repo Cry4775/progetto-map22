@@ -68,7 +68,7 @@ public class WearableItem extends BasicItem implements IWearable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.WearableItem values (?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(7, worn);
         stm.executeUpdate();
 

@@ -181,8 +181,50 @@ public class PlayableRoom extends AbstractRoom {
         return eastId;
     }
 
+    public enum Mode {
+        UNPACK_CONTAINERS,
+        INCLUDE_NEW_ROOMS,
+        INCLUDE_EVERYTHING
+    }
+
     public List<AbstractEntity> getObjects() {
         return objects;
+    }
+
+    public List<AbstractEntity> getObjects(Mode mode) {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        if (mode == Mode.UNPACK_CONTAINERS) {
+            if (objects != null) {
+                for (AbstractEntity obj : objects) {
+                    result.addAll(AbstractContainer.getAllObjects(obj));
+                    result.add(obj);
+                }
+            }
+        } else if (mode == Mode.INCLUDE_NEW_ROOMS) {
+            for (AbstractRoom room : getAllRooms(this)) {
+                if (room instanceof PlayableRoom) {
+                    result.addAll(((PlayableRoom) room).getObjects());
+                }
+            }
+
+        } else if (mode == Mode.INCLUDE_EVERYTHING) {
+            List<AbstractEntity> buffer = new ArrayList<>();
+
+            for (AbstractRoom room : getAllRooms(this)) {
+                if (room instanceof PlayableRoom) {
+                    result.addAll(((PlayableRoom) room).getObjects());
+                }
+            }
+
+            for (AbstractEntity obj : result) {
+                buffer.addAll(AbstractContainer.getAllObjects(obj));
+            }
+
+            result.addAll(buffer);
+        }
+
+        return result;
     }
 
     public AbstractRoom getUp() {
@@ -261,21 +303,6 @@ public class PlayableRoom extends AbstractRoom {
         objects.remove(obj);
     }
 
-    public List<AbstractEntity> getAllObjects() {
-        List<AbstractEntity> result = new ArrayList<>();
-
-        if (objects != null) {
-            for (AbstractEntity obj : objects) {
-                if (obj instanceof AbstractContainer) {
-                    result.addAll(((AbstractContainer) obj).getAllObjects());
-                }
-                result.add(obj);
-            }
-        }
-
-        return result;
-    }
-
     public InvisibleWall getMagicWall(CommandType direction) {
         if (objects != null) {
             for (AbstractEntity obj : objects) {
@@ -325,7 +352,7 @@ public class PlayableRoom extends AbstractRoom {
         PreparedStatement evtStm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.setString(4, getImgPath());
         stm.setBoolean(5, false);
         stm.setString(6, null);

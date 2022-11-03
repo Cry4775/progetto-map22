@@ -71,7 +71,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.PullableObject values (?, ?, ?, ?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.setBoolean(6, pulled);
         stm.executeUpdate();
 

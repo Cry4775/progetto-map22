@@ -70,7 +70,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.MovableObject values (?, ?, ?, ?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.setBoolean(6, moved);
         stm.executeUpdate();
 

@@ -34,6 +34,7 @@ import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.loader.RoomsLoader;
 import utility.Triple;
@@ -650,7 +651,8 @@ public class DBManager {
                     object.setClosestRoomParentId(roomId);
 
                     if (containerId != null) {
-                        AbstractContainer.addObjectToContainerId(object, pRoom.getAllObjects(),
+                        AbstractContainer.addObjectToContainerId(object,
+                                pRoom.getObjects(Mode.UNPACK_CONTAINERS),
                                 containerId);
                         break;
                     }

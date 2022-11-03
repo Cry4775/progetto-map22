@@ -113,7 +113,7 @@ public class SocketlikeContainer extends AbstractContainer {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.SocketlikeContainer values (?, ?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(6, itemInside);
         stm.setString(7, eligibleItemId);
         stm.setBoolean(8, isForFluids());

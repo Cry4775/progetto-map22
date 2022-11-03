@@ -19,6 +19,7 @@ import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.database.DBManager;
 
@@ -77,10 +78,6 @@ public abstract class AbstractEntity extends GameComponent {
     }
 
     public void loadObjEvents() throws SQLException {
-        if (closestRoomParentId == null) {
-            System.out.println("here");
-        }
-
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId()
                         + "' AND ROOMID = '" + closestRoomParentId + "'");
@@ -146,39 +143,21 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void processRoomParent(List<AbstractRoom> rooms) {
         for (AbstractRoom room : rooms) {
-            if (room instanceof MutableRoom) {
-                MutableRoom mRoom = (MutableRoom) room;
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
 
-                if (mRoom.getAllPossibleObjects().contains(this)) {
+                if (pRoom.getObjects(Mode.INCLUDE_EVERYTHING).contains(this)) {
                     if (parent == null)
-                        parent = room;
+                        parent = pRoom;
 
-                    if (mRoom.getObjects() != null) {
-                        if (mRoom.getAllObjects().contains(this)) {
-                            closestRoomParent = mRoom;
-                        } else {
-                            for (AbstractRoom _room : mRoom.getAllRooms()) {
-                                if (_room instanceof PlayableRoom) {
-                                    PlayableRoom pRoom = (PlayableRoom) _room;
+                    for (AbstractRoom _room : AbstractRoom.getAllRooms(pRoom)) {
+                        if (_room instanceof PlayableRoom) {
+                            PlayableRoom _pRoom = (PlayableRoom) _room;
 
-                                    if (pRoom.getObjects() != null) {
-                                        if (pRoom.getAllObjects().contains(this)) {
-                                            closestRoomParent = pRoom;
-                                        }
-                                    }
-                                }
+                            if (_pRoom.getObjects(Mode.UNPACK_CONTAINERS).contains(this)) {
+                                closestRoomParent = _pRoom;
                             }
                         }
-                    }
-                }
-            } else if (room instanceof PlayableRoom) {
-                PlayableRoom playableRoom = (PlayableRoom) room;
-
-                if (playableRoom.getObjects() != null) {
-                    if (playableRoom.getAllObjects().contains(this)) {
-                        if (parent == null)
-                            parent = room;
-                        closestRoomParent = playableRoom;
                     }
                 }
             }
@@ -228,7 +207,7 @@ public abstract class AbstractEntity extends GameComponent {
                         if (evt.isUpdatingParentRoom()) {
                             if (room instanceof MutableRoom) {
                                 MutableRoom mRoom = (MutableRoom) room;
-                                if (mRoom.getAllPossibleObjects().contains(this)) {
+                                if (mRoom.getObjects(Mode.INCLUDE_EVERYTHING).contains(this)) {
                                     evt.setParentRoom(mRoom);
                                     parentRoomDone = true;
                                 }
@@ -479,8 +458,8 @@ public abstract class AbstractEntity extends GameComponent {
     }
 
     @Override
-    public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
-        super.setValuesOnStatement(stm);
+    public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
+        super.setKnownValuesOnStatement(stm);
         stm.setString(4,
                 getClosestRoomParent() != null ? getClosestRoomParent().getId() : null);
         stm.setString(5,
@@ -492,14 +471,9 @@ public abstract class AbstractEntity extends GameComponent {
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
         if (roomId == null && containerId != null) {
-            for (AbstractEntity obj : GameManager.getFullInventory()) {
-                if (obj.getId().equals(containerId)) {
-                    AbstractContainer container = (AbstractContainer) obj;
-
-                    container.add(this);
-                    return;
-                }
-            }
+            AbstractContainer.addObjectToContainerId(this, GameManager.getFullInventory(),
+                    containerId);
+            return;
         } else {
             for (AbstractRoom room : allRooms) {
                 if (room.getId().equals(roomId)) {
@@ -507,16 +481,9 @@ public abstract class AbstractEntity extends GameComponent {
                     closestRoomParentId = roomId;
 
                     if (containerId != null) {
-                        for (AbstractEntity obj : pRoom.getAllObjects()) {
-                            if (obj instanceof AbstractContainer) {
-                                if (obj.getId().equals(containerId)) {
-                                    AbstractContainer container = (AbstractContainer) obj;
-
-                                    container.add(this);
-                                    return;
-                                }
-                            }
-                        }
+                        AbstractContainer.addObjectToContainerId(this,
+                                pRoom.getObjects(Mode.UNPACK_CONTAINERS), containerId);
+                        return;
                     }
 
                     pRoom.getObjects().add(this);

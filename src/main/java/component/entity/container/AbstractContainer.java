@@ -146,17 +146,22 @@ public abstract class AbstractContainer extends AbstractEntity {
         return result;
     }
 
-    public List<AbstractEntity> getAllObjects(AbstractContainer container) {
+    public static List<AbstractEntity> getAllObjects(AbstractEntity obj) {
         List<AbstractEntity> result = new ArrayList<>();
 
-        if (container.getList() != null) {
-            for (AbstractEntity obj : container.getList()) {
-                if (obj instanceof AbstractContainer) {
-                    result.addAll(getAllObjects((AbstractContainer) obj));
+        if (obj instanceof AbstractContainer) {
+            AbstractContainer container = (AbstractContainer) obj;
+
+            if (container.getList() != null) {
+                for (AbstractEntity _obj : container.getList()) {
+                    if (_obj instanceof AbstractContainer) {
+                        result.addAll(getAllObjects(_obj));
+                    }
+                    result.add(_obj);
                 }
-                result.add(obj);
             }
         }
+
         return result;
     }
 

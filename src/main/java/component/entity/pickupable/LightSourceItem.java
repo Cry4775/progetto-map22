@@ -115,7 +115,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.LightSourceItem values (?, ?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(7, on);
         stm.setString(8, requiredItemId);
         stm.executeUpdate();

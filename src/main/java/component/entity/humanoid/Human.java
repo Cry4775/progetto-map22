@@ -74,7 +74,7 @@ public class Human extends AbstractEntity implements ITalkable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.Human values (?, ?, ?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.executeUpdate();
 
         if (phrases != null) {

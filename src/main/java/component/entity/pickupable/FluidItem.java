@@ -84,7 +84,7 @@ public class FluidItem extends BasicItem implements IFluid {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.FluidItem values (?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.executeUpdate();
 
         saveExternalsOnDB();

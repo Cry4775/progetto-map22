@@ -149,7 +149,7 @@ public class Door extends AbstractEntity implements IOpenable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.Door values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(6, open);
         stm.setBoolean(7, locked);
         stm.setString(8, unlockedWithItemId);

@@ -6,54 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
+import utility.Utils;
 
 public class MutableRoom extends PlayableRoom {
 
-    public MutableRoom(ResultSet resultSet) throws SQLException {
-        super(resultSet);
-    }
-
     private MutableRoom newRoom;
 
-    public MutableRoom getNewRoom() {
-        return newRoom;
-    }
-
-    public void setNewRoom(MutableRoom newRoom) {
-        this.newRoom = newRoom;
-    }
-
-    public List<AbstractEntity> getAllPossibleObjects() {
-        List<AbstractEntity> result = new ArrayList<>();
-
-        for (AbstractRoom room : getAllRooms()) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-
-                if (pRoom.getObjects() != null) {
-                    result.addAll(pRoom.getObjects());
-                }
-            }
-        }
-
-        result.addAll(getObjects());
-
-        List<AbstractEntity> temp = new ArrayList<>();
-
-        for (AbstractEntity obj : result) {
-            if (obj instanceof AbstractContainer) {
-                temp.addAll(((AbstractContainer) obj).getAllObjects());
-            }
-        }
-
-        result.addAll(temp);
-
-        return result;
+    public MutableRoom(ResultSet resultSet) throws SQLException {
+        super(resultSet);
     }
 
     public List<AbstractRoom> getAllRooms() {
@@ -71,26 +34,8 @@ public class MutableRoom extends PlayableRoom {
         return result;
     }
 
-    private List<AbstractRoom> getAllRooms(AbstractRoom room) {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        if (room instanceof MutableRoom) {
-            MutableRoom mRoom = (MutableRoom) room;
-
-            result.add(room);
-
-            if (mRoom.getNewRoom() != null) {
-                result.addAll(getAllRooms(mRoom.getNewRoom()));
-            }
-        } else {
-            result.add(room);
-        }
-
-        return result;
-    }
-
     private void updateFields(AbstractRoom newRoom) {
-        for (Field f : getInheritedPrivateFields(newRoom.getClass())) {
+        for (Field f : Utils.getInheritedPrivateFields(newRoom.getClass())) {
             try {
                 if (f.get(newRoom) != null
                         && !f.getName().equals("id")) {
@@ -120,7 +65,7 @@ public class MutableRoom extends PlayableRoom {
                         }
                         getObjects().addAll(tempList);
                     } else {
-                        f.set(this, getField(newRoom.getClass(), f.getName()).get(newRoom));
+                        f.set(this, Utils.getField(newRoom.getClass(), f.getName()).get(newRoom));
                     }
                 }
             } catch (IllegalArgumentException | IllegalAccessException
@@ -143,36 +88,6 @@ public class MutableRoom extends PlayableRoom {
         }
     }
 
-    private static Field getField(Class<?> clazz, String fieldName) {
-        Class<?> tmpClass = clazz;
-        do {
-            try {
-                Field f = tmpClass.getDeclaredField(fieldName);
-                f.setAccessible(true);
-                return f;
-            } catch (NoSuchFieldException e) {
-                tmpClass = tmpClass.getSuperclass();
-            }
-        } while (tmpClass != null);
-
-        throw new Error("Field '" + fieldName
-                + "' not found on class " + clazz);
-    }
-
-    private List<Field> getInheritedPrivateFields(Class<?> type) {
-        List<Field> result = new ArrayList<Field>();
-
-        Class<?> i = type;
-        while (i != null && i != Object.class) {
-            Collections.addAll(result, i.getDeclaredFields());
-            i = i.getSuperclass();
-        }
-        for (Field field : result) {
-            field.setAccessible(true);
-        }
-        return result;
-    }
-
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
@@ -180,7 +95,7 @@ public class MutableRoom extends PlayableRoom {
         PreparedStatement evtStm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.setString(4, getImgPath());
         stm.setBoolean(5, newRoom != null ? true : false);
         stm.setString(6, newRoom != null ? newRoom.getId() : null);
@@ -203,6 +118,14 @@ public class MutableRoom extends PlayableRoom {
             evtStm.setString(3, getEvent().getText());
             evtStm.executeUpdate();
         }
+    }
+
+    public MutableRoom getNewRoom() {
+        return newRoom;
+    }
+
+    public void setNewRoom(MutableRoom newRoom) {
+        this.newRoom = newRoom;
     }
 
 }

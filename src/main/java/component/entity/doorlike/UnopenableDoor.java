@@ -39,7 +39,7 @@ public class UnopenableDoor extends AbstractEntity {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.UnopenableDoor values (?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setString(6, openEventText);
         stm.executeUpdate();
 

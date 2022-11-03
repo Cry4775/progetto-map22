@@ -96,7 +96,7 @@ public class FireObject extends AbstractEntity {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.FireObject values (?, ?, ?, ?, ?, ?)");
 
-        super.setValuesOnStatement(stm);
+        super.setKnownValuesOnStatement(stm);
         stm.setBoolean(6, lit);
         stm.executeUpdate();
 

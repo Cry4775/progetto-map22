@@ -233,7 +233,7 @@ public class InvisibleWall extends AbstractEntity {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.InvisibleWall values (?, ?, ?, ?, ?, ?)");
 
-        setValuesOnStatement(stm);
+        setKnownValuesOnStatement(stm);
         stm.setBoolean(6, locked);
         stm.executeUpdate();
 
