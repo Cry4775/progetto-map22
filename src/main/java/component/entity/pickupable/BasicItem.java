@@ -55,12 +55,14 @@ public class BasicItem extends AbstractEntity implements IPickupable {
                 if (getParent() instanceof AbstractContainer) {
                     AbstractContainer parentContainer = (AbstractContainer) getParent();
                     parentContainer.getList().remove(this);
-                    setParent(null);
                 } else if (getParent() instanceof PlayableRoom) {
                     PlayableRoom room = (PlayableRoom) getParent();
                     room.getObjects().remove(this);
                 }
             }
+
+            setParent(null);
+            setClosestRoomParent(null);
 
             inventory.add(this);
             SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
@@ -89,25 +91,20 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.BasicItem values (?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (pickedUp) {
-            stm.setString(4, "null");
-            stm.setString(5, "null");
-        } else if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-            stm.setString(5, "null");
-        } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(4, "null");
-            stm.setString(5, getParent().getId());
-        }
-
-        stm.setBoolean(6, pickedUp);
+        setValuesOnStatement(stm);
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);
+    }
+
+    public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
+        super.setValuesOnStatement(stm);
+        if (pickedUp) {
+            stm.setString(4, "null");
+            stm.setString(5, "null");
+        }
+
+        stm.setBoolean(6, pickedUp);
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,
@@ -130,35 +127,10 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms,
             List<AbstractContainer> allContainers)
             throws SQLException {
-        String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
-        String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
-
         if (pickedUp) {
             GameManager.getInventory().add(this);
-        } else if (!roomId.equals("null")) {
-            for (AbstractRoom room : allRooms) {
-                if (roomId.equals(room.getId())) {
-                    PlayableRoom pRoom = (PlayableRoom) room;
-                    pRoom.getObjects().add(this);
-                    return;
-                }
-            }
-        } else if (!containerId.equals("null")) {
-            for (AbstractContainer obj : allContainers) {
-                if (containerId.equals(obj.getId())) {
-                    obj.add(this);
-                    return;
-                }
-            }
-
-            for (AbstractEntity obj : GameManager.getFullInventory()) {
-                if (obj instanceof AbstractContainer && containerId.equals(obj.getId())) {
-                    AbstractContainer aContainer = (AbstractContainer) obj;
-
-                    aContainer.add(this);
-                    return;
-                }
-            }
+        } else {
+            super.loadLocation(resultSet, allRooms, allContainers);
         }
     }
 }

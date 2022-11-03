@@ -9,7 +9,6 @@ import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import component.room.PlayableRoom;
 import engine.database.DBManager;
 
 public class WearableItem extends BasicItem implements IWearable {
@@ -70,19 +69,7 @@ public class WearableItem extends BasicItem implements IWearable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.WearableItem values (?, ?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-            stm.setString(5, "null");
-        } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(4, "null");
-            stm.setString(5, getParent().getId());
-        }
-
-        stm.setBoolean(6, isPickedUp());
+        setValuesOnStatement(stm);
         stm.setBoolean(7, worn);
         stm.executeUpdate();
 

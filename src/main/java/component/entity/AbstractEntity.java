@@ -137,12 +137,12 @@ public abstract class AbstractEntity extends GameComponent {
             if (room instanceof MutableRoom) {
                 MutableRoom mRoom = (MutableRoom) room;
 
-                if (mRoom.getAllObjects().contains(this)) {
+                if (mRoom.getAllPossibleObjects().contains(this)) {
                     if (parent == null)
                         parent = room;
 
                     if (mRoom.getObjects() != null) {
-                        if (mRoom.getObjects().contains(this)) {
+                        if (mRoom.getAllObjects().contains(this)) {
                             closestRoomParent = mRoom;
                         } else {
                             for (AbstractRoom _room : mRoom.getAllRooms()) {
@@ -150,7 +150,7 @@ public abstract class AbstractEntity extends GameComponent {
                                     PlayableRoom pRoom = (PlayableRoom) _room;
 
                                     if (pRoom.getObjects() != null) {
-                                        if (pRoom.getObjects().contains(this)) {
+                                        if (pRoom.getAllObjects().contains(this)) {
                                             closestRoomParent = pRoom;
                                         }
                                     }
@@ -163,7 +163,7 @@ public abstract class AbstractEntity extends GameComponent {
                 PlayableRoom playableRoom = (PlayableRoom) room;
 
                 if (playableRoom.getObjects() != null) {
-                    if (playableRoom.getObjects().contains(this)) {
+                    if (playableRoom.getAllObjects().contains(this)) {
                         if (parent == null)
                             parent = room;
                         closestRoomParent = playableRoom;
@@ -216,7 +216,7 @@ public abstract class AbstractEntity extends GameComponent {
                         if (evt.isUpdatingParentRoom()) {
                             if (room instanceof MutableRoom) {
                                 MutableRoom mRoom = (MutableRoom) room;
-                                if (mRoom.getAllObjects().contains(this)) {
+                                if (mRoom.getAllPossibleObjects().contains(this)) {
                                     evt.setParentRoom(mRoom);
                                     parentRoomDone = true;
                                 }
@@ -465,34 +465,48 @@ public abstract class AbstractEntity extends GameComponent {
         saveEventsOnDB(connection);
     }
 
+    public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
+        super.setValuesOnStatement(stm);
+        stm.setString(4,
+                getClosestRoomParent() != null ? getClosestRoomParent().getId() : "null");
+        stm.setString(5,
+                getParent() instanceof AbstractContainer ? getParent().getId() : "null");
+    }
+
     public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms,
             List<AbstractContainer> allContainers)
             throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
-        if (!roomId.equals("null")) {
+        if (roomId.equals("null") && !containerId.equals("null")) {
+            for (AbstractEntity obj : GameManager.getFullInventory()) {
+                if (obj.getId().equals(containerId)) {
+                    AbstractContainer container = (AbstractContainer) obj;
+
+                    container.add(this);
+                    return;
+                }
+            }
+        } else {
             for (AbstractRoom room : allRooms) {
                 if (roomId.equals(room.getId())) {
                     PlayableRoom pRoom = (PlayableRoom) room;
+
+                    if (!containerId.equals("null")) {
+                        for (AbstractEntity obj : pRoom.getAllObjects()) {
+                            if (obj instanceof AbstractContainer) {
+                                if (obj.getId().equals(containerId)) {
+                                    AbstractContainer container = (AbstractContainer) obj;
+
+                                    container.add(this);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
                     pRoom.getObjects().add(this);
-                    return;
-                }
-            }
-        } else if (!containerId.equals("null")) {
-            for (AbstractContainer obj : allContainers) {
-                if (containerId.equals(obj.getId())) {
-                    obj.add(this);
-                    return;
-                }
-            }
-
-            for (AbstractEntity obj : GameManager.getFullInventory()) {
-                if (obj instanceof AbstractContainer && containerId.equals(obj.getId())) {
-                    AbstractContainer aContainer = (AbstractContainer) obj;
-
-                    aContainer.add(this);
-                    return;
                 }
             }
         }

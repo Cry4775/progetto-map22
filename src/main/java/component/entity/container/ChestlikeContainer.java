@@ -16,9 +16,8 @@ import component.entity.interfaces.IOpenable;
 import component.entity.pickupable.BasicItem;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import component.room.PlayableRoom;
 import engine.database.DBManager;
-import utility.Pair;
+import utility.Triple;
 
 public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     public ChestlikeContainer(ResultSet resultSet) throws SQLException {
@@ -119,18 +118,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.ChestlikeContainer values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-            stm.setString(5, "null");
-        } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(4, "null");
-            stm.setString(5, getParent().getId());
-        }
-
+        setValuesOnStatement(stm);
         stm.setBoolean(6, open);
         stm.setBoolean(7, locked);
         stm.setString(8, unlockedWithItemId);
@@ -141,7 +129,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<Pair<AbstractEntity, String>> pendingList) throws SQLException {
+            List<Triple<AbstractEntity, String, String>> pendingList) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.ChestlikeContainer");
@@ -150,7 +138,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         while (resultSet.next()) {
             ChestlikeContainer obj = new ChestlikeContainer(resultSet);
 
-            Pair<AbstractEntity, String> pending = obj.loadLocation(resultSet, allRooms);
+            Triple<AbstractEntity, String, String> pending = obj.loadLocation(resultSet, allRooms);
 
             if (pending != null)
                 pendingList.add(pending);

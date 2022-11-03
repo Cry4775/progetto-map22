@@ -36,7 +36,7 @@ import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
 import engine.loader.RoomsLoader;
-import utility.Pair;
+import utility.Triple;
 
 public class DBManager {
     private static Connection connection;
@@ -249,6 +249,7 @@ public class DBManager {
                         + " name varchar(128),"
                         + " description varchar(8192),"
                         + " locatedInRoomId varchar(10),"
+                        + " locatedInContainerId varchar(10),"
                         + " open boolean,"
                         + " locked boolean,"
                         + " unlockedWithItemId varchar(10),"
@@ -262,6 +263,7 @@ public class DBManager {
                         + " name varchar(128),"
                         + " description varchar(8192),"
                         + " locatedInRoomId varchar(10),"
+                        + " locatedInContainerId varchar(10),"
                         + " locked boolean"
                         + ")");
                 createStatement.executeUpdate();
@@ -622,7 +624,7 @@ public class DBManager {
     }
 
     private static void loadObjects() throws SQLException {
-        List<Pair<AbstractEntity, String>> pendingList = new ArrayList<>();
+        List<Triple<AbstractEntity, String, String>> pendingList = new ArrayList<>();
         List<AbstractRoom> allRooms = RoomsLoader.listAllRooms(rooms);
 
         BasicContainer.loadFromDB(allRooms, pendingList);
@@ -630,26 +632,43 @@ public class DBManager {
         SocketlikeContainer.loadFromDB(allRooms, pendingList);
         WearableContainer.loadFromDB(allRooms, pendingList);
 
-        for (Pair<AbstractEntity, String> pending : pendingList) {
+        for (Triple<AbstractEntity, String, String> pending : pendingList) {
             boolean found = false;
-            for (AbstractEntity entity : RoomsLoader.mapAllObjects(rooms).values()) {
-                if (entity instanceof AbstractContainer
-                        && pending.getSecond().equals(entity.getId())) {
-                    AbstractContainer aContainer = (AbstractContainer) entity;
 
-                    aContainer.add(pending.getFirst());
+            AbstractEntity object = pending.getFirst();
+            String roomId = pending.getSecond();
+            String containerId = pending.getThird();
+
+            for (AbstractRoom room : allRooms) {
+                if (roomId.equals(room.getId())) {
                     found = true;
+
+                    PlayableRoom pRoom = (PlayableRoom) room;
+
+                    if (!containerId.equals("null")) {
+                        for (AbstractEntity obj : pRoom.getAllObjects()) {
+                            if (obj instanceof AbstractContainer) {
+                                if (obj.getId().equals(containerId)) {
+                                    AbstractContainer container = (AbstractContainer) obj;
+
+                                    container.add(object);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    pRoom.getObjects().add(object);
                     break;
                 }
             }
 
             if (!found) {
                 for (AbstractEntity obj : GameManager.getFullInventory()) {
-                    if (obj instanceof AbstractContainer
-                            && pending.getSecond().equals(obj.getId())) {
+                    if (obj instanceof AbstractContainer && obj.getId().equals(containerId)) {
                         AbstractContainer aContainer = (AbstractContainer) obj;
 
-                        aContainer.add(pending.getFirst());
+                        aContainer.add(object);
                         break;
                     }
                 }

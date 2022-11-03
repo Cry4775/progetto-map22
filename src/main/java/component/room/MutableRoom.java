@@ -28,7 +28,7 @@ public class MutableRoom extends PlayableRoom {
         this.newRoom = newRoom;
     }
 
-    public List<AbstractEntity> getAllObjects() {
+    public List<AbstractEntity> getAllPossibleObjects() {
         List<AbstractEntity> result = new ArrayList<>();
 
         for (AbstractRoom room : getAllRooms()) {
@@ -180,9 +180,7 @@ public class MutableRoom extends PlayableRoom {
         PreparedStatement evtStm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
+        super.setValuesOnStatement(stm);
         stm.setString(4, getImgPath());
         stm.setBoolean(5, newRoom != null ? true : false);
         stm.setString(6, newRoom != null ? newRoom.getId() : null);

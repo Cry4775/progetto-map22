@@ -18,7 +18,7 @@ public class InvisibleWall extends AbstractEntity {
 
     public InvisibleWall(ResultSet resultSet) throws SQLException {
         super(resultSet);
-        locked = resultSet.getBoolean(5);
+        locked = resultSet.getBoolean(6);
     }
 
     private boolean locked = true;
@@ -232,17 +232,10 @@ public class InvisibleWall extends AbstractEntity {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.InvisibleWall values (?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.InvisibleWall values (?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getParent().getId());
-        }
-
-        stm.setBoolean(5, locked);
+        setValuesOnStatement(stm);
+        stm.setBoolean(6, locked);
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);

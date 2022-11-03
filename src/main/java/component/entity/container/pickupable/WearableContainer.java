@@ -13,7 +13,7 @@ import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
 import engine.database.DBManager;
-import utility.Pair;
+import utility.Triple;
 
 public class WearableContainer extends AbstractContainer implements IWearable {
 
@@ -103,11 +103,16 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             if (getParent() instanceof AbstractContainer) {
                 AbstractContainer parentContainer = (AbstractContainer) getParent();
                 parentContainer.getList().remove(this);
-                setParent(null);
             } else if (getParent() instanceof PlayableRoom) {
                 PlayableRoom room = (PlayableRoom) getParent();
                 room.getObjects().remove(this);
             }
+        }
+
+        setParent(null);
+
+        for (AbstractEntity obj : getAllObjects()) {
+            obj.setClosestRoomParent(null);
         }
 
         outString.append("Hai raccolto: " + getName());
@@ -135,6 +140,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
                 }
             }
 
+            obj.setClosestRoomParent((PlayableRoom) GameManager.getCurrentRoom());
             obj.setParent(this);
             inventory.remove(obj);
 
@@ -155,22 +161,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.WearableContainer values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (pickedUp) {
-            stm.setString(4, "null");
-            stm.setString(5, "null");
-        } else if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-            stm.setString(5, "null");
-        } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(4, "null");
-            stm.setString(5, getParent().getId());
-        }
-
-        stm.setBoolean(6, pickedUp);
+        setValuesOnStatement(stm);
         stm.setBoolean(7, worn);
         stm.setInt(8, maxSlots);
         stm.setBoolean(9, isForFluids());
@@ -179,8 +170,18 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         saveExternalsOnDB(connection);
     }
 
+    public void setValuesOnStatement(PreparedStatement stm) throws SQLException {
+        super.setValuesOnStatement(stm);
+        if (pickedUp) {
+            stm.setString(4, "null");
+            stm.setString(5, "null");
+        }
+
+        stm.setBoolean(6, pickedUp);
+    }
+
     public static void loadFromDB(List<AbstractRoom> allRooms,
-            List<Pair<AbstractEntity, String>> pendingList) throws SQLException {
+            List<Triple<AbstractEntity, String, String>> pendingList) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.WearableContainer");
@@ -192,7 +193,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             if (obj.isPickedUp()) {
                 GameManager.getInventory().add(obj);
             } else {
-                Pair<AbstractEntity, String> pending = obj.loadLocation(resultSet, allRooms);
+                Triple<AbstractEntity, String, String> pending =
+                        obj.loadLocation(resultSet, allRooms);
 
                 if (pending != null)
                     pendingList.add(pending);

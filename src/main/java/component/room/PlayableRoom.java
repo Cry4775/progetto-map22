@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 import component.entity.doorlike.InvisibleWall;
 import component.event.RoomEvent;
 import engine.command.CommandType;
@@ -260,6 +261,21 @@ public class PlayableRoom extends AbstractRoom {
         objects.remove(obj);
     }
 
+    public List<AbstractEntity> getAllObjects() {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        if (objects != null) {
+            for (AbstractEntity obj : objects) {
+                if (obj instanceof AbstractContainer) {
+                    result.addAll(((AbstractContainer) obj).getAllObjects());
+                }
+                result.add(obj);
+            }
+        }
+
+        return result;
+    }
+
     public InvisibleWall getMagicWall(CommandType direction) {
         if (objects != null) {
             for (AbstractEntity obj : objects) {
@@ -309,9 +325,7 @@ public class PlayableRoom extends AbstractRoom {
         PreparedStatement evtStm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
+        super.setValuesOnStatement(stm);
         stm.setString(4, getImgPath());
         stm.setBoolean(5, false);
         stm.setString(6, null);

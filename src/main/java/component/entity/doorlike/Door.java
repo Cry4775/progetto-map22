@@ -11,7 +11,6 @@ import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IOpenable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import component.room.PlayableRoom;
 import engine.database.DBManager;
 import sound.SoundManager;
 import sound.SoundManager.Mode;
@@ -20,10 +19,10 @@ public class Door extends AbstractEntity implements IOpenable {
 
     public Door(ResultSet resultSet) throws SQLException {
         super(resultSet);
-        open = resultSet.getBoolean(5);
-        locked = resultSet.getBoolean(6);
-        unlockedWithItemId = resultSet.getString(7);
-        blockedRoomId = resultSet.getString(8);
+        open = resultSet.getBoolean(6);
+        locked = resultSet.getBoolean(7);
+        unlockedWithItemId = resultSet.getString(8);
+        blockedRoomId = resultSet.getString(9);
     }
 
     private boolean open = false;
@@ -149,20 +148,13 @@ public class Door extends AbstractEntity implements IOpenable {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.Door values (?, ?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.Door values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-        }
-
-        stm.setBoolean(5, open);
-        stm.setBoolean(6, locked);
-        stm.setString(7, unlockedWithItemId);
-        stm.setString(8, blockedRoomId);
+        setValuesOnStatement(stm);
+        stm.setBoolean(6, open);
+        stm.setBoolean(7, locked);
+        stm.setString(8, unlockedWithItemId);
+        stm.setString(9, blockedRoomId);
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);

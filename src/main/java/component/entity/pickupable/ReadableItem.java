@@ -8,7 +8,6 @@ import java.util.List;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IReadable;
 import component.room.AbstractRoom;
-import component.room.PlayableRoom;
 import engine.database.DBManager;
 
 public class ReadableItem extends BasicItem implements IReadable {
@@ -42,19 +41,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.ReadableItem values (?, ?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-            stm.setString(5, "null");
-        } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(4, "null");
-            stm.setString(5, getParent().getId());
-        }
-
-        stm.setBoolean(6, isPickedUp());
+        setValuesOnStatement(stm);
         stm.setString(7, readText);
         stm.executeUpdate();
 

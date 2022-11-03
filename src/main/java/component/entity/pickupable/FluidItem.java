@@ -47,12 +47,14 @@ public class FluidItem extends BasicItem implements IFluid {
                         if (getParent() instanceof AbstractContainer) {
                             AbstractContainer parentContainer = (AbstractContainer) getParent();
                             parentContainer.getList().remove(this);
-                            setParent(null);
                         } else if (getParent() instanceof PlayableRoom) {
                             PlayableRoom room = (PlayableRoom) getParent();
                             room.getObjects().remove(this);
                         }
                     }
+
+                    setParent(null);
+                    setClosestRoomParent(null);
 
                     setPickedUp(true);
                     break;
@@ -82,19 +84,7 @@ public class FluidItem extends BasicItem implements IFluid {
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.FluidItem values (?, ?, ?, ?, ?, ?)");
 
-        stm.setString(1, getId());
-        stm.setString(2, getName());
-        stm.setString(3, getDescription());
-
-        if (getParent() instanceof PlayableRoom) {
-            stm.setString(4, getClosestRoomParent().getId());
-            stm.setString(5, "null");
-        } else if (getParent() instanceof AbstractContainer) {
-            stm.setString(4, "null");
-            stm.setString(5, getParent().getId());
-        }
-
-        stm.setBoolean(6, isPickedUp());
+        setValuesOnStatement(stm);
         stm.executeUpdate();
 
         saveExternalsOnDB(connection);

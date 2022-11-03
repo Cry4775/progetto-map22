@@ -13,7 +13,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import utility.Pair;
+import utility.Triple;
 
 public abstract class AbstractContainer extends AbstractEntity {
 
@@ -175,22 +175,23 @@ public abstract class AbstractContainer extends AbstractEntity {
         processEventReferences(objects, rooms);
     }
 
-    public Pair<AbstractEntity, String> loadLocation(ResultSet resultSet,
+    public Triple<AbstractEntity, String, String> loadLocation(ResultSet resultSet,
             List<AbstractRoom> allRooms) throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
-        if (!roomId.equals("null")) {
-            for (AbstractRoom room : allRooms) {
-                if (roomId.equals(room.getId())) {
-                    PlayableRoom pRoom = (PlayableRoom) room;
-                    pRoom.getObjects().add(this);
-                    break;
-                }
-            }
-        } else if (!containerId.equals("null")) {
-            return new Pair<AbstractEntity, String>(this, containerId);
+        if (!containerId.equals("null")) {
+            return new Triple<AbstractEntity, String, String>(this, roomId, containerId);
         }
+
+        for (AbstractRoom room : allRooms) {
+            if (roomId.equals(room.getId())) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+
+                pRoom.getObjects().add(this);
+            }
+        }
+
         return null;
     }
 }

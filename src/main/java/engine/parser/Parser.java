@@ -35,25 +35,32 @@ public class Parser {
 
     private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
         if (objects != null) {
-            for (int i = 0; i < objects.size(); i++) {
-                if ((objects.get(i).getName() != null
-                        && objects.get(i).getName().equals(token))
-                        || (objects.get(i).getAlias() != null
-                                && objects.get(i).getAlias().contains(token))) {
-                    return objects.get(i);
-                } else if (objects.get(i) instanceof AbstractContainer) {
-                    AbstractContainer container = (AbstractContainer) objects.get(i);
+            for (AbstractEntity obj : objects) {
+                if ((obj.getName() != null && obj.getName().equals(token))
+                        || (obj.getAlias() != null && obj.getAlias().contains(token))) {
+                    return obj;
+                } else if (obj instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) obj;
 
                     if (container.isContentRevealed()) {
-                        for (AbstractEntity obj : container.getList()) {
-                            if (obj.getName().equals(token)
-                                    || (obj.getAlias() != null && obj.getAlias().contains(token))) {
-                                return obj;
+                        for (AbstractEntity _obj : container.getAllObjects()) {
+                            if (_obj.getName().equals(token)
+                                    || (_obj.getAlias() != null
+                                            && _obj.getAlias().contains(token))) {
+                                if (_obj.getParent() instanceof AbstractContainer) {
+                                    AbstractContainer parentContainer =
+                                            (AbstractContainer) _obj.getParent();
+
+                                    if (parentContainer.isContentRevealed()) {
+                                        return _obj;
+                                    }
+                                }
+
                             }
                         }
                     }
-                } else if (objects.get(i) instanceof IFillable) {
-                    IFillable fillable = (IFillable) objects.get(i);
+                } else if (obj instanceof IFillable) {
+                    IFillable fillable = (IFillable) obj;
 
                     if (fillable.isFilled()) {
                         if (fillable.getEligibleItem().getName().equals(token)
