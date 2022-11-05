@@ -36,6 +36,7 @@ import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
+import engine.GameManager.InventoryMode;
 import utility.Triple;
 
 public class DBManager {
@@ -457,7 +458,7 @@ public class DBManager {
     }
 
     public static void saveObjects() throws SQLException {
-        for (AbstractEntity obj : GameManager.mapAllObjects().values()) {
+        for (AbstractEntity obj : GameManager.mapAllRoomsObjects().values()) {
             obj.saveOnDB();
         }
 
@@ -668,7 +669,7 @@ public class DBManager {
 
             if (roomId == null && containerId != null) {
                 AbstractContainer.addObjectToContainerId(object,
-                        GameManager.getFullInventory(),
+                        GameManager.getInventory(InventoryMode.UNPACK_CONTAINERS),
                         containerId);
                 break;
             }

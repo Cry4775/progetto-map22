@@ -77,8 +77,7 @@ public class RoomsLoader implements Runnable {
                 throw new Error(e);
             }
 
-            Multimap<String, AbstractEntity> objects =
-                    GameManager.mapAllObjects(GameManager.listAllRooms(rooms));
+            Multimap<String, AbstractEntity> objects = GameManager.mapAllRoomsObjects();
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
@@ -88,12 +87,8 @@ public class RoomsLoader implements Runnable {
         } else {
             rooms.addAll(DBManager.load());
 
-            Multimap<String, AbstractEntity> objects =
-                    GameManager.mapAllObjects(GameManager.listAllRooms(rooms));
-
-            for (AbstractEntity obj : GameManager.getFullInventory()) {
-                objects.put(obj.getId(), obj);
-            }
+            Multimap<String, AbstractEntity> objects = GameManager.mapAllRoomsObjects();
+            objects.putAll(GameManager.mapAllInventoryObjects());
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
@@ -132,7 +127,7 @@ public class RoomsLoader implements Runnable {
     }
 
     private void linkRooms() {
-        List<AbstractRoom> allRooms = GameManager.listAllRooms(rooms);
+        List<AbstractRoom> allRooms = GameManager.listAllRooms();
 
         Thread east = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getEastId,
                 PlayableRoom::setEast, PlayableRoom.class));

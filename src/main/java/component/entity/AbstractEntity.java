@@ -20,6 +20,7 @@ import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
+import engine.GameManager.InventoryMode;
 import engine.database.DBManager;
 
 public abstract class AbstractEntity extends GameComponent {
@@ -457,7 +458,8 @@ public abstract class AbstractEntity extends GameComponent {
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
         if (roomId == null && containerId != null) {
-            AbstractContainer.addObjectToContainerId(this, GameManager.getFullInventory(),
+            AbstractContainer.addObjectToContainerId(this,
+                    GameManager.getInventory(InventoryMode.UNPACK_CONTAINERS),
                     containerId);
             return;
         } else {

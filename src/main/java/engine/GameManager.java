@@ -42,22 +42,18 @@ import gui.MainFrame;
 public class GameManager {
 
     private static final List<AbstractRoom> rooms = new ArrayList<>();
-
     private static final List<Command> commands = new ArrayList<>();
-
     private static final List<AbstractEntity> inventory = new ArrayList<>();
 
-    private static AbstractRoom currentRoom;
+    private static final List<AbstractRoom> allRooms = new ArrayList<>();
+    private static final Multimap<String, AbstractEntity> allRoomsObjects =
+            ArrayListMultimap.create();
 
+    private static AbstractRoom currentRoom;
     private static AbstractRoom previousRoom;
 
     private static Status status = new Status();
-
     private static StringBuilder outString;
-
-    public Status getStatus() {
-        return status;
-    }
 
     public static AbstractRoom getPreviousRoom() {
         return previousRoom;
@@ -65,10 +61,6 @@ public class GameManager {
 
     public static void setPreviousRoom(AbstractRoom previousRoom) {
         GameManager.previousRoom = previousRoom;
-    }
-
-    public List<AbstractRoom> getRooms() {
-        return rooms;
     }
 
     public static List<Command> getCommands() {
@@ -83,46 +75,30 @@ public class GameManager {
         GameManager.currentRoom = currentRoom;
     }
 
+    public enum InventoryMode {
+        NORMAL,
+        UNPACK_CONTAINERS
+    }
+
     public static List<AbstractEntity> getInventory() {
         return inventory;
     }
 
-    public static List<AbstractEntity> getFullInventory() {
-        List<AbstractEntity> inv = new ArrayList<>();
+    public static List<AbstractEntity> getInventory(InventoryMode mode) {
+        switch (mode) {
+            case NORMAL:
+                return inventory;
+            case UNPACK_CONTAINERS:
+                List<AbstractEntity> result = new ArrayList<>();
 
-        for (AbstractEntity obj : inventory) {
-            inv.add(obj);
-
-            inv.addAll(AbstractContainer.getAllObjectsInside(obj));
-        }
-
-        return inv;
-    }
-
-    public void setCompassLabel(AbstractRoom room, JLabel directionLbl) {
-        if (room != null) {
-            if (room.equals(previousRoom)) {
-                directionLbl.setForeground(Color.BLUE);
-            } else {
-                directionLbl.setForeground(Color.GREEN);
-            }
-
-            if (getCurrentRoom() instanceof PlayableRoom) {
-                PlayableRoom playableRoom = (PlayableRoom) getCurrentRoom();
-                if (playableRoom.getObjects() != null) {
-                    for (AbstractEntity obj : playableRoom.getObjects()) {
-                        if (obj instanceof Door) {
-                            Door door = (Door) obj;
-                            if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
-                                directionLbl.setForeground(Color.ORANGE);
-                                break;
-                            }
-                        }
-                    }
+                for (AbstractEntity obj : inventory) {
+                    result.add(obj);
+                    result.addAll(AbstractContainer.getAllObjectsInside(obj));
                 }
-            }
-        } else {
-            directionLbl.setForeground(Color.RED);
+
+                return result;
+            default:
+                return inventory;
         }
     }
 
@@ -183,6 +159,33 @@ public class GameManager {
         }
     }
 
+    private void setCompassLabel(AbstractRoom room, JLabel directionLbl) {
+        if (room != null) {
+            if (room.equals(previousRoom)) {
+                directionLbl.setForeground(Color.BLUE);
+            } else {
+                directionLbl.setForeground(Color.GREEN);
+            }
+
+            if (getCurrentRoom() instanceof PlayableRoom) {
+                PlayableRoom playableRoom = (PlayableRoom) getCurrentRoom();
+                if (playableRoom.getObjects() != null) {
+                    for (AbstractEntity obj : playableRoom.getObjects()) {
+                        if (obj instanceof Door) {
+                            Door door = (Door) obj;
+                            if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
+                                directionLbl.setForeground(Color.ORANGE);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            directionLbl.setForeground(Color.RED);
+        }
+    }
+
     public void init() throws IOException {
         outString = new StringBuilder();
 
@@ -192,11 +195,11 @@ public class GameManager {
         RoomsLoader roomsLoader;
 
         if (DBManager.existsSaving()) {
-            roomsLoader = new RoomsLoader(getRooms(),
+            roomsLoader = new RoomsLoader(rooms,
                     MainFrame.askLoadingConfirmation() == JOptionPane.YES_OPTION ? Mode.DB
                             : Mode.JSON);
         } else {
-            roomsLoader = new RoomsLoader(getRooms(), Mode.JSON);
+            roomsLoader = new RoomsLoader(rooms, Mode.JSON);
         }
 
         Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
@@ -215,22 +218,22 @@ public class GameManager {
         }
     }
 
-    public boolean isMovementGranted(CommandType direction) {
+    private boolean isMovementGranted(CommandType direction) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
-        getStatus().setMovementAttempt(true);
+        status.setMovementAttempt(true);
 
         InvisibleWall wall = currentRoom.getMagicWall(direction);
         if (wall != null) {
-            getStatus().setRoomBlockedByWall(true);
-            getStatus().setWall(wall);
+            status.setRoomBlockedByWall(true);
+            status.setWall(wall);
             return false;
         }
 
         return true;
     }
 
-    public boolean isMovementCommand(CommandType commandType) {
+    private boolean isMovementCommand(CommandType commandType) {
         switch (commandType) {
             case NORTH:
                 return true;
@@ -571,15 +574,15 @@ public class GameManager {
             currentPlayableRoom = null;
         }
 
-        if (getStatus().isMovementAttempt()) {
-            if (!getStatus().isPositionChanged() && currentPlayableRoom != null
+        if (status.isMovementAttempt()) {
+            if (!status.isPositionChanged() && currentPlayableRoom != null
                     && currentPlayableRoom.isCurrentlyDark()) {
                 outString.append("Meglio non avventurarsi nel buio.");
-            } else if (getStatus().isRoomBlockedByDoor()) {
+            } else if (status.isRoomBlockedByDoor()) {
                 outString.append("La porta é chiusa.");
-            } else if (getStatus().isRoomBlockedByWall()) {
-                outString.append(getStatus().getWall().getTrespassingWhenLockedText());
-            } else if (getStatus().isPositionChanged()) {
+            } else if (status.isRoomBlockedByWall()) {
+                outString.append(status.getWall().getTrespassingWhenLockedText());
+            } else if (status.isPositionChanged()) {
                 if (currentPlayableRoom != null && currentPlayableRoom.isCurrentlyDark()) {
                     outString.append("È completamente buio e non riesci a vedere niente.");
                 } else {
@@ -591,9 +594,9 @@ public class GameManager {
             }
         }
 
-        if (getStatus().isWarp()) {
+        if (status.isWarp()) {
             setPreviousRoom(getCurrentRoom());
-            setCurrentRoom(getStatus().getWarpDestination());
+            setCurrentRoom(status.getWarpDestination());
 
             outString.append(outString.length() > 0 ? "\n\n" : "");
             outString.append(getCurrentRoom().getDescription());
@@ -605,7 +608,7 @@ public class GameManager {
         }
 
         outString.setLength(0);
-        getStatus().reset();
+        status.reset();
     }
 
     private void processRoomLighting(PlayableRoom currentRoom) {
@@ -644,8 +647,8 @@ public class GameManager {
 
                     if (evt.isTriggered()) {
                         if (evt.getTeleportsPlayerToRoom() != null) {
-                            getStatus().setWarp(true);
-                            getStatus().setWarpDestination(evt.getTeleportsPlayerToRoom());
+                            status.setWarp(true);
+                            status.setWarpDestination(evt.getTeleportsPlayerToRoom());
                         }
                         it.remove();
                     }
@@ -655,7 +658,7 @@ public class GameManager {
     }
 
     private boolean isActionPerformed(ParserOutput p) {
-        if (getStatus().isMovementAttempt() && getStatus().isPositionChanged()) {
+        if (status.isMovementAttempt() && status.isPositionChanged()) {
             return true;
         } else if (p.getObject() != null && p.getObject().isActionPerformed()) {
             p.getObject().setActionPerformed(false);
@@ -711,11 +714,11 @@ public class GameManager {
                             if (door.getBlockedRoomId().equals(room.getId()) && door.isOpen()) {
                                 setPreviousRoom(currentRoom);
                                 setCurrentRoom(room);
-                                getStatus().setPositionChanged(true);
+                                status.setPositionChanged(true);
                                 return;
                             } else if (door.getBlockedRoomId().equals(room.getId())
                                     && !door.isOpen()) {
-                                getStatus().setPositionChanged(false, true);
+                                status.setPositionChanged(false, true);
                                 return;
                             }
                         }
@@ -723,10 +726,10 @@ public class GameManager {
                 }
                 setPreviousRoom(currentRoom);
                 setCurrentRoom(room);
-                getStatus().setPositionChanged(true);
+                status.setPositionChanged(true);
                 return;
             } else {
-                getStatus().setPositionChanged(false);
+                status.setPositionChanged(false);
                 return;
             }
         } else {
@@ -734,23 +737,21 @@ public class GameManager {
                 if (room.equals(getPreviousRoom())) {
                     setPreviousRoom(currentRoom);
                     setCurrentRoom(room);
-                    getStatus().setPositionChanged(true);
+                    status.setPositionChanged(true);
                     return;
                 }
             } else {
-                getStatus().setPositionChanged(false);
+                status.setPositionChanged(false);
             }
         }
     }
 
     public static List<AbstractRoom> listAllRooms() {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        for (AbstractRoom room : rooms) {
-            result.addAll(AbstractRoom.getAllRooms(room));
+        if (allRooms.isEmpty()) {
+            allRooms.addAll(listAllRooms(rooms));
         }
 
-        return result;
+        return allRooms;
     }
 
     public static List<AbstractRoom> listAllRooms(List<AbstractRoom> rooms) {
@@ -763,7 +764,19 @@ public class GameManager {
         return result;
     }
 
-    public static Multimap<String, AbstractEntity> mapAllObjects() {
+    public static Multimap<String, AbstractEntity> mapAllRoomsObjects() {
+        if (allRoomsObjects.isEmpty()) {
+            allRoomsObjects.putAll(mapAllRoomsObjects(listAllRooms()));
+        } else {
+            for (AbstractEntity obj : getInventory()) {
+                allRoomsObjects.remove(obj.getId(), obj);
+            }
+        }
+
+        return allRoomsObjects;
+    }
+
+    public static Multimap<String, AbstractEntity> mapAllRoomsObjects(List<AbstractRoom> rooms) {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
         for (AbstractRoom room : rooms) {
@@ -776,14 +789,11 @@ public class GameManager {
         return result;
     }
 
-    public static Multimap<String, AbstractEntity> mapAllObjects(List<AbstractRoom> rooms) {
+    public static Multimap<String, AbstractEntity> mapAllInventoryObjects() {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
-        for (AbstractRoom room : rooms) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-                result.putAll(pRoom.getObjectsAsMap(PlayableRoom.Mode.INCLUDE_EVERYTHING));
-            }
+        for (AbstractEntity obj : getInventory(InventoryMode.UNPACK_CONTAINERS)) {
+            result.put(obj.getId(), obj);
         }
 
         return result;
