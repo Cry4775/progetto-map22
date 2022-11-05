@@ -1,16 +1,18 @@
 package component.room;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.doorlike.InvisibleWall;
 import component.event.RoomEvent;
 import engine.command.CommandType;
+import engine.database.DBManager;
 
 /**
  * @author Pierdamiano Zagaria
@@ -229,6 +231,16 @@ public class PlayableRoom extends AbstractRoom {
         return result;
     }
 
+    public Multimap<String, AbstractEntity> getObjectsAsMap(Mode mode) {
+        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
+
+        for (AbstractEntity obj : getObjects(mode)) {
+            result.put(obj.getId(), obj);
+        }
+
+        return result;
+    }
+
     public AbstractRoom getUp() {
         return up;
     }
@@ -348,10 +360,10 @@ public class PlayableRoom extends AbstractRoom {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        PreparedStatement evtStm = connection.prepareStatement(
+        PreparedStatement evtStm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
         super.setKnownValuesOnStatement(stm);

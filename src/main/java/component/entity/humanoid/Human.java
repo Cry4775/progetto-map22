@@ -1,6 +1,5 @@
 package component.entity.humanoid;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,8 +61,8 @@ public class Human extends AbstractEntity implements ITalkable {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.Human values (?, ?, ?, ?, ?)");
 
         super.setKnownValuesOnStatement(stm);
@@ -71,7 +70,8 @@ public class Human extends AbstractEntity implements ITalkable {
 
         if (phrases != null) {
 
-            stm = connection.prepareStatement("INSERT INTO SAVEDATA.HumanPhrases values (?, ?)");
+            stm = DBManager.getConnection()
+                    .prepareStatement("INSERT INTO SAVEDATA.HumanPhrases values (?, ?)");
             for (String string : phrases) {
                 stm.setString(1, getId());
                 stm.setString(2, string);

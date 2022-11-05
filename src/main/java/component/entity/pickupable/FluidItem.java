@@ -1,6 +1,5 @@
 package component.entity.pickupable;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +11,7 @@ import component.entity.interfaces.IFluid;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.GameManager;
 import engine.database.DBManager;
 
 public class FluidItem extends BasicItem implements IFluid {
@@ -21,7 +21,7 @@ public class FluidItem extends BasicItem implements IFluid {
     }
 
     @Override
-    public StringBuilder pickup(List<AbstractEntity> inventory) {
+    public StringBuilder pickup() {
         StringBuilder outString = new StringBuilder();
 
         if (isPickedUp()) {
@@ -31,7 +31,7 @@ public class FluidItem extends BasicItem implements IFluid {
 
         boolean canProceed = false;
 
-        for (AbstractEntity invObject : inventory) {
+        for (AbstractEntity invObject : GameManager.getInventory()) {
             if (invObject instanceof IFillable) {
                 IFillable invFillable = (IFillable) invObject;
 
@@ -80,8 +80,8 @@ public class FluidItem extends BasicItem implements IFluid {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.FluidItem values (?, ?, ?, ?, ?, ?)");
 
         setKnownValuesOnStatement(stm);

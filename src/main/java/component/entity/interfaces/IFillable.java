@@ -5,7 +5,7 @@ import component.entity.AbstractEntity;
 public interface IFillable {
     public boolean isFilled();
 
-    public void setFilled(boolean value);
+    public void setFilled(boolean filled);
 
     public AbstractEntity getEligibleItem();
 

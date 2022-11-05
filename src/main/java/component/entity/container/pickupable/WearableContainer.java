@@ -1,6 +1,5 @@
 package component.entity.container.pickupable;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -84,11 +83,11 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public StringBuilder pickup(List<AbstractEntity> inventory) {
+    public StringBuilder pickup() {
         StringBuilder outString = new StringBuilder();
 
         pickedUp = true;
-        inventory.add(this); // TODO porting a static
+        GameManager.getInventory().add(this);
 
         // Check if it's an obj inside something and remove it from its list
         if (getParent() != null) {
@@ -150,8 +149,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.WearableContainer values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         setKnownValuesOnStatement(stm);

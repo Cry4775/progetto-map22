@@ -1,6 +1,5 @@
 package component.entity.pickupable;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,8 +31,8 @@ public class ReadableItem extends BasicItem implements IReadable {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.ReadableItem values (?, ?, ?, ?, ?, ?, ?)");
 
         setKnownValuesOnStatement(stm);

@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.doorlike.Door;
@@ -39,7 +41,7 @@ import gui.MainFrame;
 
 public class GameManager {
 
-    private final List<AbstractRoom> rooms = new ArrayList<>();
+    private static final List<AbstractRoom> rooms = new ArrayList<>();
 
     private final List<Command> commands = new ArrayList<>();
 
@@ -312,7 +314,7 @@ public class GameManager {
                         if (anyObj instanceof IPickupable) {
                             IPickupable pickupObj = (IPickupable) anyObj;
 
-                            outString.append(pickupObj.pickup(getInventory()));
+                            outString.append(pickupObj.pickup());
                         } else {
                             outString.append("Non puoi raccogliere questo oggetto.");
                         }
@@ -739,6 +741,52 @@ public class GameManager {
                 getStatus().setPositionChanged(false);
             }
         }
+    }
+
+    public static List<AbstractRoom> listAllRooms() {
+        List<AbstractRoom> result = new ArrayList<>();
+
+        for (AbstractRoom room : rooms) {
+            result.addAll(AbstractRoom.getAllRooms(room));
+        }
+
+        return result;
+    }
+
+    public static List<AbstractRoom> listAllRooms(List<AbstractRoom> rooms) {
+        List<AbstractRoom> result = new ArrayList<>();
+
+        for (AbstractRoom room : rooms) {
+            result.addAll(AbstractRoom.getAllRooms(room));
+        }
+
+        return result;
+    }
+
+    public static Multimap<String, AbstractEntity> mapAllObjects() {
+        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
+
+        for (AbstractRoom room : rooms) {
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+                result.putAll(pRoom.getObjectsAsMap(PlayableRoom.Mode.INCLUDE_EVERYTHING));
+            }
+        }
+
+        return result;
+    }
+
+    public static Multimap<String, AbstractEntity> mapAllObjects(List<AbstractRoom> rooms) {
+        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
+
+        for (AbstractRoom room : rooms) {
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+                result.putAll(pRoom.getObjectsAsMap(PlayableRoom.Mode.INCLUDE_EVERYTHING));
+            }
+        }
+
+        return result;
     }
 
 }

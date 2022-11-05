@@ -1,6 +1,5 @@
 package component;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,7 +41,7 @@ public abstract class GameComponent {
         this.description = description;
     }
 
-    public abstract void saveOnDB(Connection connection) throws SQLException;
+    public abstract void saveOnDB() throws SQLException;
 
     public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
         stm.setString(1, getId());

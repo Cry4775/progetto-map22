@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -15,19 +14,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import component.entity.AbstractEntity;
-import component.entity.container.AbstractContainer;
 import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
-import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
 import engine.database.DBManager;
 import engine.loader.json.TypeAdapterHolder;
 import engine.loader.json.TypeAdapterHolder.AdapterType;
 
-/**
- * RoomsLoader
- */
 public class RoomsLoader implements Runnable {
 
     private static List<AbstractRoom> rooms;
@@ -83,7 +77,8 @@ public class RoomsLoader implements Runnable {
                 throw new Error(e);
             }
 
-            Multimap<String, AbstractEntity> objects = mapAllObjects();
+            Multimap<String, AbstractEntity> objects =
+                    GameManager.mapAllObjects(GameManager.listAllRooms(rooms));
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
@@ -93,7 +88,8 @@ public class RoomsLoader implements Runnable {
         } else {
             rooms.addAll(DBManager.load());
 
-            Multimap<String, AbstractEntity> objects = mapAllObjects();
+            Multimap<String, AbstractEntity> objects =
+                    GameManager.mapAllObjects(GameManager.listAllRooms(rooms));
 
             for (AbstractEntity obj : GameManager.getFullInventory()) {
                 objects.put(obj.getId(), obj);
@@ -135,94 +131,8 @@ public class RoomsLoader implements Runnable {
         }
     }
 
-    public static List<AbstractRoom> listAllRooms() {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        for (AbstractRoom room : rooms) {
-            result.add(room);
-            if (room instanceof MutableRoom) {
-                MutableRoom mRoom = (MutableRoom) room;
-
-                result.addAll(mRoom.getAllRooms());
-            }
-        }
-
-        return result;
-    }
-
-    public static List<AbstractRoom> listAllRooms(List<AbstractRoom> rooms) {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        for (AbstractRoom room : rooms) {
-            result.add(room);
-            if (room instanceof MutableRoom) {
-                MutableRoom mRoom = (MutableRoom) room;
-
-                result.addAll(mRoom.getAllRooms());
-            }
-        }
-
-        return result;
-    }
-
-    public static Multimap<String, AbstractEntity> mapAllObjects() {
-
-        Multimap<String, AbstractEntity> objects = ArrayListMultimap.create();
-        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
-
-        for (AbstractRoom room : listAllRooms()) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-
-                if (pRoom.getObjects() != null) {
-                    for (AbstractEntity obj : pRoom.getObjects()) {
-                        objects.put(obj.getId(), obj);
-                    }
-                }
-            }
-        }
-
-        result.putAll(objects);
-
-        for (AbstractEntity obj : objects.values()) {
-            for (AbstractEntity cObj : AbstractContainer.getAllObjectsInside(obj)) {
-                result.put(cObj.getId(), cObj);
-            }
-        }
-
-        return result;
-    }
-
-    public static Multimap<String, AbstractEntity> mapAllObjects(List<AbstractRoom> rooms) {
-
-        Multimap<String, AbstractEntity> objects = ArrayListMultimap.create();
-        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
-
-        for (AbstractRoom room : listAllRooms(rooms)) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-
-                if (pRoom.getObjects() != null) {
-                    for (AbstractEntity obj : pRoom.getObjects()) {
-                        objects.put(obj.getId(), obj);
-                    }
-                }
-            }
-        }
-
-        result.putAll(objects);
-
-        for (AbstractEntity obj : objects.values()) {
-            for (AbstractEntity cObj : AbstractContainer.getAllObjectsInside(obj)) {
-                result.put(cObj.getId(), cObj);
-            }
-        }
-
-        return result;
-    }
-
     private void linkRooms() {
-        List<AbstractRoom> allRooms = listAllRooms();
+        List<AbstractRoom> allRooms = GameManager.listAllRooms(rooms);
 
         Thread east = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getEastId,
                 PlayableRoom::setEast, PlayableRoom.class));

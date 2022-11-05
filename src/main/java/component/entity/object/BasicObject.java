@@ -1,6 +1,5 @@
 package component.entity.object;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,8 +15,8 @@ public class BasicObject extends AbstractEntity {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.BasicObject values (?, ?, ?, ?, ?)");
 
         super.setKnownValuesOnStatement(stm);

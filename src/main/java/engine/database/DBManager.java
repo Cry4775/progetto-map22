@@ -36,7 +36,6 @@ import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
-import engine.loader.RoomsLoader;
 import utility.Triple;
 
 public class DBManager {
@@ -44,7 +43,7 @@ public class DBManager {
 
     private static final String DB_PATH = "jdbc:h2:./savedata";
 
-    static List<AbstractRoom> rooms = new ArrayList<>();
+    static List<AbstractRoom> loadedRooms = new ArrayList<>();
 
     public static Connection getConnection() {
         return connection;
@@ -443,8 +442,8 @@ public class DBManager {
     }
 
     public static void saveRooms() throws SQLException {
-        for (AbstractRoom room : RoomsLoader.listAllRooms()) {
-            room.saveOnDB(connection);
+        for (AbstractRoom room : GameManager.listAllRooms()) {
+            room.saveOnDB();
         }
 
         PreparedStatement stm = connection.prepareStatement(
@@ -458,19 +457,19 @@ public class DBManager {
     }
 
     public static void saveObjects() throws SQLException {
-        for (AbstractEntity obj : RoomsLoader.mapAllObjects().values()) {
-            obj.saveOnDB(connection);
+        for (AbstractEntity obj : GameManager.mapAllObjects().values()) {
+            obj.saveOnDB();
         }
 
         List<AbstractEntity> inventory = new ArrayList<>();
 
         for (AbstractEntity obj : GameManager.getInventory()) {
-            obj.saveOnDB(connection);
+            obj.saveOnDB();
             inventory.addAll(AbstractContainer.getAllObjectsInside(obj));
         }
 
         for (AbstractEntity abstractEntity : inventory) {
-            abstractEntity.saveOnDB(connection);
+            abstractEntity.saveOnDB();
         }
     }
 
@@ -611,7 +610,7 @@ public class DBManager {
             loadRooms();
             loadObjects();
 
-            return rooms;
+            return loadedRooms;
         } catch (SQLException e) {
             closeConnection();
             e.printStackTrace();
@@ -655,7 +654,7 @@ public class DBManager {
 
     private static void loadObjects() throws SQLException {
         List<Triple<AbstractEntity, String, String>> pendingList = new ArrayList<>();
-        List<AbstractRoom> allRooms = RoomsLoader.listAllRooms(rooms);
+        List<AbstractRoom> allRooms = GameManager.listAllRooms(loadedRooms);
 
         BasicContainer.loadFromDB(allRooms, pendingList);
         ChestlikeContainer.loadFromDB(allRooms, pendingList);
@@ -668,7 +667,8 @@ public class DBManager {
             String containerId = pending.getThird();
 
             if (roomId == null && containerId != null) {
-                AbstractContainer.addObjectToContainerId(object, GameManager.getFullInventory(),
+                AbstractContainer.addObjectToContainerId(object,
+                        GameManager.getFullInventory(),
                         containerId);
                 break;
             }
@@ -738,7 +738,7 @@ public class DBManager {
                     room.setEvent(evt);
                 }
             }
-            rooms.add(room);
+            loadedRooms.add(room);
             evtStm.close();
             evtResultSet.close();
         }
@@ -751,7 +751,7 @@ public class DBManager {
         while (resultSet.next()) {
             CutsceneRoom room = new CutsceneRoom(resultSet);
 
-            rooms.add(room);
+            loadedRooms.add(room);
         }
     }
 

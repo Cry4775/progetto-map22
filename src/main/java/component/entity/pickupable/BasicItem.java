@@ -1,6 +1,5 @@
 package component.entity.pickupable;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +34,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public StringBuilder pickup(List<AbstractEntity> inventory) {
+    public StringBuilder pickup() {
 
         StringBuilder outString = new StringBuilder();
 
@@ -54,7 +53,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
             setParent(null);
             setClosestRoomParent(null);
 
-            inventory.add(this);
+            GameManager.getInventory().add(this);
             SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
             pickedUp = true;
 
@@ -70,8 +69,8 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.BasicItem values (?, ?, ?, ?, ?, ?)");
 
         setKnownValuesOnStatement(stm);

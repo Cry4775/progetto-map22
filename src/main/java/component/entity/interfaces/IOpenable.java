@@ -5,11 +5,11 @@ import component.entity.AbstractEntity;
 public interface IOpenable {
     public boolean isOpen();
 
-    public void setOpen(boolean value);
+    public void setOpen(boolean open);
 
     public boolean isLocked();
 
-    public void setLocked(boolean value);
+    public void setLocked(boolean locked);
 
     public String getUnlockedWithItemId();
 

@@ -1,7 +1,6 @@
 package component.room;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import component.entity.AbstractEntity;
+import engine.database.DBManager;
 import utility.Utils;
 
 public class MutableRoom extends PlayableRoom {
@@ -94,10 +94,10 @@ public class MutableRoom extends PlayableRoom {
     }
 
     @Override
-    public void saveOnDB(Connection connection) throws SQLException {
-        PreparedStatement stm = connection.prepareStatement(
+    public void saveOnDB() throws SQLException {
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.PlayableRoom values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        PreparedStatement evtStm = connection.prepareStatement(
+        PreparedStatement evtStm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.RoomEvent values (?, ?, ?)");
 
         super.setKnownValuesOnStatement(stm);
