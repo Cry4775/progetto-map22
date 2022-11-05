@@ -488,32 +488,29 @@ public class MainFrame extends JFrame {
                     }
                 }
 
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        txtInput.setText("Premere INVIO per continuare...");
-                        txtInput.setFocusable(false);
-                        txtInput.setEditable(false);
+                SwingUtilities.invokeLater(() -> {
+                    txtInput.setText("Premere INVIO per continuare...");
+                    txtInput.setFocusable(false);
+                    txtInput.setEditable(false);
 
-                        KeyboardFocusManager manager =
-                                KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                        manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+                    KeyboardFocusManager manager =
+                            KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                    manager.addKeyEventDispatcher(new KeyEventDispatcher() {
 
-                            @Override
-                            public boolean dispatchKeyEvent(KeyEvent e) {
-                                if (e.getKeyCode() == KeyEvent.VK_ENTER
-                                        && e.getID() == KeyEvent.KEY_RELEASED) {
-                                    txtInput.setText("");
-                                    txtInput.setEditable(true);
-                                    txtInput.setFocusable(true);
-                                    txtInput.requestFocusInWindow();
-                                    manager.removeKeyEventDispatcher(this);
-                                    engine.commandPerformed("");
-                                }
-                                return true;
+                        @Override
+                        public boolean dispatchKeyEvent(KeyEvent e) {
+                            if (e.getKeyCode() == KeyEvent.VK_ENTER
+                                    && e.getID() == KeyEvent.KEY_RELEASED) {
+                                txtInput.setText("");
+                                txtInput.setEditable(true);
+                                txtInput.setFocusable(true);
+                                txtInput.requestFocusInWindow();
+                                manager.removeKeyEventDispatcher(this);
+                                engine.commandPerformed("");
                             }
-                        });
-                    };
-
+                            return true;
+                        }
+                    });
                 });
             }
         }.start();
