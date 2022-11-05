@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.room.AbstractRoom;
 import engine.database.DBManager;
@@ -14,13 +13,6 @@ public class BasicObject extends AbstractEntity {
 
     public BasicObject(ResultSet resultSet) throws SQLException {
         super(resultSet);
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

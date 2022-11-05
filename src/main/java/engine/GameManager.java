@@ -91,11 +91,7 @@ public class GameManager {
         for (AbstractEntity obj : inventory) {
             inv.add(obj);
 
-            if (obj instanceof AbstractContainer) {
-                AbstractContainer container = (AbstractContainer) obj;
-
-                inv.addAll(container.getAllObjects());
-            }
+            inv.addAll(AbstractContainer.getAllObjectsInside(obj));
         }
 
         return inv;
@@ -224,15 +220,9 @@ public class GameManager {
 
         InvisibleWall wall = currentRoom.getMagicWall(direction);
         if (wall != null) {
-            wall.processRequirements(getInventory());
-
-            if (wall.isLocked()) {
-                getStatus().setRoomBlockedByWall(true);
-                getStatus().setWall(wall);
-                return false;
-            } else {
-                return true;
-            }
+            getStatus().setRoomBlockedByWall(true);
+            getStatus().setWall(wall);
+            return false;
         }
 
         return true;

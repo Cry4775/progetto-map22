@@ -15,40 +15,16 @@ import utility.Triple;
 
 public class SocketlikeContainer extends AbstractContainer {
 
-    public SocketlikeContainer(ResultSet resultSet) throws SQLException {
-        super(resultSet);
-        itemInside = resultSet.getBoolean(6);
-        eligibleItemId = resultSet.getString(7);
-        setForFluids(resultSet.getBoolean(8));
-    }
-
     private boolean itemInside = false;
 
     private AbstractEntity eligibleItem;
     private String eligibleItemId;
 
-    public boolean isItemInside() {
-        return itemInside;
-    }
-
-    public void setItemInside(boolean itemInside) {
-        this.itemInside = itemInside;
-    }
-
-    public AbstractEntity getEligibleItem() {
-        return eligibleItem;
-    }
-
-    public void setEligibleItem(AbstractEntity eligibleItem) {
-        this.eligibleItem = eligibleItem;
-    }
-
-    public String getEligibleItemId() {
-        return eligibleItemId;
-    }
-
-    public void setEligibleItemId(String eligibleItemId) {
-        this.eligibleItemId = eligibleItemId;
+    public SocketlikeContainer(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        itemInside = resultSet.getBoolean(6);
+        eligibleItemId = resultSet.getString(7);
+        setForFluids(resultSet.getBoolean(8));
     }
 
     @Override

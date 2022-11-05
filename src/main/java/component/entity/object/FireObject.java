@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IFluid;
 import component.entity.interfaces.IWearable;
@@ -15,12 +14,12 @@ import engine.database.DBManager;
 
 public class FireObject extends AbstractEntity {
 
+    private boolean lit = false;
+
     public FireObject(ResultSet resultSet) throws SQLException {
         super(resultSet);
         lit = resultSet.getBoolean(6);
     }
-
-    private boolean lit = false;
 
     public boolean isLit() {
         return lit;
@@ -82,13 +81,6 @@ public class FireObject extends AbstractEntity {
         }
 
         return outString;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

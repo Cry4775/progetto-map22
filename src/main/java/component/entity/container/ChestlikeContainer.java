@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package component.entity.container;
 
 import java.sql.Connection;
@@ -13,13 +8,19 @@ import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
-import component.entity.pickupable.BasicItem;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.database.DBManager;
 import utility.Triple;
 
 public class ChestlikeContainer extends AbstractContainer implements IOpenable {
+
+    private boolean open = false;
+    private boolean locked = false;
+
+    private AbstractEntity unlockedWithItem;
+    private String unlockedWithItemId;
+
     public ChestlikeContainer(ResultSet resultSet) throws SQLException {
         super(resultSet);
         open = resultSet.getBoolean(6);
@@ -27,12 +28,6 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         unlockedWithItemId = resultSet.getString(8);
         setForFluids(resultSet.getBoolean(9));
     }
-
-    private boolean open = false;
-    private boolean locked = false;
-
-    private AbstractEntity unlockedWithItem;
-    private String unlockedWithItemId;
 
     @Override
     public boolean isOpen() {
@@ -45,6 +40,21 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
+    public boolean isLocked() {
+        return locked;
+    }
+
+    @Override
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    @Override
+    public String getUnlockedWithItemId() {
+        return unlockedWithItemId;
+    }
+
+    @Override
     public StringBuilder open(AbstractEntity key) {
         StringBuilder outString = new StringBuilder();
 
@@ -52,6 +62,8 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
             if (unlockedWithItem.equals(key)) {
                 locked = false;
                 key.setMustDestroyFromInv(true);
+                unlockedWithItem = null;
+                unlockedWithItemId = null;
             } else {
                 outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
                 outString.append(processEvent(EventType.OPEN_LOCKED));
@@ -71,27 +83,6 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
             outString.append(getContentString());
         }
         return outString;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-    }
-
-    @Override
-    public String getUnlockedWithItemId() {
-        return unlockedWithItemId;
-    }
-
-    public AbstractEntity getUnlockedWithItem() {
-        return unlockedWithItem;
-    }
-
-    public void setUnlockedWithItem(BasicItem unlockedWithItem) {
-        this.unlockedWithItem = unlockedWithItem;
     }
 
     @Override

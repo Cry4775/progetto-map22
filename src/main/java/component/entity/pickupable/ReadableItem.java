@@ -11,15 +11,11 @@ import engine.database.DBManager;
 
 public class ReadableItem extends BasicItem implements IReadable {
 
+    private String readText;
+
     public ReadableItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         readText = resultSet.getString(7);
-    }
-
-    private String readText;
-
-    public void setReadText(String readText) {
-        this.readText = readText;
     }
 
     @Override

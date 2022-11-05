@@ -430,8 +430,8 @@ public class MainFrame extends JFrame {
                     doc.insertString(doc.getLength(),
                             String.valueOf(message.charAt(counter.getAndIncrement())),
                             null);
-                } catch (BadLocationException e1) {
-                    e1.printStackTrace();
+                } catch (BadLocationException ex) {
+                    ex.printStackTrace();
                 }
                 txtPane.setCaretPosition(txtPane.getDocument().getLength());
                 if (counter.get() >= message.length()) {

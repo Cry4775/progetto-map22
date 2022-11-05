@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ITalkable;
 import component.event.EventType;
@@ -15,6 +14,8 @@ import component.room.AbstractRoom;
 import engine.database.DBManager;
 
 public class Human extends AbstractEntity implements ITalkable {
+
+    private Queue<String> phrases = new LinkedList<>();
 
     public Human(ResultSet resultSet) throws SQLException {
         super(resultSet);
@@ -32,8 +33,6 @@ public class Human extends AbstractEntity implements ITalkable {
 
         phrsStm.close();
     }
-
-    private Queue<String> phrases = new LinkedList<>();
 
     public void queuePhrase(String phrase) {
         phrases.add(phrase);
@@ -60,13 +59,6 @@ public class Human extends AbstractEntity implements ITalkable {
         outString.append(processEvent(EventType.TALK_WITH));
         setActionPerformed(true);
         return outString;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

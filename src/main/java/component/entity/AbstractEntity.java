@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,31 +76,6 @@ public abstract class AbstractEntity extends GameComponent {
         stm.close();
     }
 
-    public void loadObjEvents() throws SQLException {
-        PreparedStatement stm;
-
-        if (closestRoomParentId != null) {
-            stm = DBManager.getConnection()
-                    .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId()
-                            + "' AND ROOMID = '" + closestRoomParentId + "'");
-        } else {
-            stm = DBManager.getConnection()
-                    .prepareStatement(
-                            "SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId() + "'");
-        }
-        ResultSet rs = stm.executeQuery();
-
-        while (rs.next()) {
-            events.add(new ObjectEvent(rs));
-        }
-
-        stm.close();
-    }
-
-    public String getClosestRoomParentId() {
-        return closestRoomParentId;
-    }
-
     public void setClosestRoomParentId(String closestRoomParentId) {
         this.closestRoomParentId = closestRoomParentId;
     }
@@ -118,20 +92,8 @@ public abstract class AbstractEntity extends GameComponent {
         return failedInteractionMessage;
     }
 
-    public void setFailedInteractionMessage(String failedInteractionMessage) {
-        this.failedInteractionMessage = failedInteractionMessage;
-    }
-
     public Set<String> getAlias() {
         return alias;
-    }
-
-    public void setAlias(Set<String> alias) {
-        this.alias = alias;
-    }
-
-    public void setAlias(String[] alias) {
-        this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
     public void addAlias(String alias) {
@@ -146,8 +108,97 @@ public abstract class AbstractEntity extends GameComponent {
         this.closestRoomParent = closestRoomParent;
     }
 
-    public abstract void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms);
+    public List<ObjectEvent> getEvents() {
+        return events;
+    }
+
+    public boolean isMustDestroyFromInv() {
+        return mustDestroyFromInv;
+    }
+
+    public void setMustDestroyFromInv(boolean mustDestroyFromInv) {
+        this.mustDestroyFromInv = mustDestroyFromInv;
+    }
+
+    public GameComponent getParent() {
+        return parent;
+    }
+
+    public void setParent(GameComponent parent) {
+        this.parent = parent;
+    }
+
+    public List<String> getRequiredWearedItemsIdToInteract() {
+        return requiredWearedItemsIdToInteract;
+    }
+
+    public List<IWearable> getRequiredWearedItemsToInteract() {
+        return requiredWearedItemsToInteract;
+    }
+
+    public void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
+        this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
+    }
+
+    public ObjectEvent getEvent(EventType type) {
+        if (getEvents() != null) {
+            for (ObjectEvent evt : getEvents()) {
+                if (evt.getEventType() == type) {
+                    if (!evt.isTriggered()) {
+                        return evt;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public StringBuilder getLookMessage() {
+        StringBuilder outString = new StringBuilder();
+
+        if (getDescription() != null) {
+            outString.append(getDescription());
+        }
+
+        if (this instanceof IOpenable) {
+            IOpenable openableObj = (IOpenable) this;
+            if (openableObj.isLocked()) {
+                outString.append("È chiuso a chiave.");
+            } else if (!openableObj.isOpen()) {
+                outString.append("È chiuso.");
+            } else if (openableObj.isOpen()) {
+                outString.append("È aperto.");
+                if (openableObj instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) openableObj;
+                    outString.append(container.getContentString());
+                }
+            }
+        } else if (this instanceof AbstractContainer) {
+            AbstractContainer container = (AbstractContainer) this;
+            outString.append(container.getContentString());
+        } else if (this instanceof IFillable) {
+            IFillable fillable = (IFillable) this;
+            if (fillable.isFilled()) {
+                outString.append("\nÉ pieno di: " + fillable.getEligibleItem().getName());
+            } else {
+                outString.append("\nÈ vuoto.");
+            }
+        }
+
+        if (outString.toString().isEmpty()) {
+            outString.append("Nulla di particolare.");
+        } else {
+            outString.append(processEvent(EventType.LOOK_AT));
+        }
+
+        return outString;
+    }
+
+    public void processReferences(Multimap<String, AbstractEntity> objects,
+            List<AbstractRoom> rooms) {
+        processRoomParent(rooms);
+        processEventReferences(objects, rooms);
+    }
 
     public void processRoomParent(List<AbstractRoom> rooms) {
         for (AbstractRoom room : rooms) {
@@ -278,21 +329,25 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public List<ObjectEvent> getEvents() {
-        return events;
-    }
+    public void loadObjEvents() throws SQLException {
+        PreparedStatement stm;
 
-    public ObjectEvent getEvent(EventType type) {
-        if (getEvents() != null) {
-            for (ObjectEvent evt : getEvents()) {
-                if (evt.getEventType() == type) {
-                    if (!evt.isTriggered()) {
-                        return evt;
-                    }
-                }
-            }
+        if (closestRoomParentId != null) {
+            stm = DBManager.getConnection()
+                    .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId()
+                            + "' AND ROOMID = '" + closestRoomParentId + "'");
+        } else {
+            stm = DBManager.getConnection()
+                    .prepareStatement(
+                            "SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId() + "'");
         }
-        return null;
+        ResultSet rs = stm.executeQuery();
+
+        while (rs.next()) {
+            events.add(new ObjectEvent(rs));
+        }
+
+        stm.close();
     }
 
     public StringBuilder processEvent(EventType eventType) {
@@ -332,83 +387,6 @@ public abstract class AbstractEntity extends GameComponent {
             evt.setTriggered(true);
         }
         return outString;
-    }
-
-    public boolean isMustDestroyFromInv() {
-        return mustDestroyFromInv;
-    }
-
-    public void setMustDestroyFromInv(boolean mustDestroyFromInv) {
-        this.mustDestroyFromInv = mustDestroyFromInv;
-    }
-
-    public GameComponent getParent() {
-        return parent;
-    }
-
-    public void setParent(GameComponent parent) {
-        this.parent = parent;
-    }
-
-    public List<String> getRequiredWearedItemsIdToInteract() {
-        return requiredWearedItemsIdToInteract;
-    }
-
-    public List<IWearable> getRequiredWearedItemsToInteract() {
-        return requiredWearedItemsToInteract;
-    }
-
-    public StringBuilder getLookMessage() {
-        StringBuilder outString = new StringBuilder();
-
-        if (getDescription() != null) {
-            outString.append(getDescription());
-        }
-
-        if (this instanceof IOpenable) {
-            IOpenable openableObj = (IOpenable) this;
-            if (openableObj.isLocked()) {
-                outString.append("È chiuso a chiave.");
-            } else if (!openableObj.isOpen()) {
-                outString.append("È chiuso.");
-            } else if (openableObj.isOpen()) {
-                outString.append("È aperto.");
-                if (openableObj instanceof AbstractContainer) {
-                    AbstractContainer container = (AbstractContainer) openableObj;
-                    outString.append(container.getContentString());
-                }
-            }
-        } else if (this instanceof AbstractContainer) {
-            AbstractContainer container = (AbstractContainer) this;
-            outString.append(container.getContentString());
-        } else if (this instanceof IFillable) {
-            IFillable fillable = (IFillable) this;
-            if (fillable.isFilled()) {
-                outString.append("\nÉ pieno di: " + fillable.getEligibleItem().getName());
-            } else {
-                outString.append("\nÈ vuoto.");
-            }
-        }
-
-        if (outString.toString().isEmpty()) {
-            outString.append("Nulla di particolare.");
-        } else {
-            outString.append(processEvent(EventType.LOOK_AT));
-        }
-
-        return outString;
-    }
-
-    public void setEvents(List<ObjectEvent> events) {
-        this.events = events;
-    }
-
-    public void setRequiredWearedItemsIdToInteract(List<String> requiredWearedItemsIdToInteract) {
-        this.requiredWearedItemsIdToInteract = requiredWearedItemsIdToInteract;
-    }
-
-    public void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
-        this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
     public void saveEventsOnDB() throws SQLException {

@@ -17,24 +17,16 @@ import utility.Triple;
 
 public class WearableContainer extends AbstractContainer implements IWearable {
 
+    private boolean worn = false;
+    private boolean pickedUp = false;
+    private int maxSlots;
+
     public WearableContainer(ResultSet resultSet) throws SQLException {
         super(resultSet);
         pickedUp = resultSet.getBoolean(6);
         worn = resultSet.getBoolean(7);
         maxSlots = resultSet.getInt(8);
         setForFluids(resultSet.getBoolean(9));
-    }
-
-    private boolean worn = false;
-    private boolean pickedUp = false;
-    private int maxSlots;
-
-    public int getMaxSlots() {
-        return maxSlots;
-    }
-
-    public void setMaxSlots(int maxSlots) {
-        this.maxSlots = maxSlots;
     }
 
     @Override
@@ -96,7 +88,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         StringBuilder outString = new StringBuilder();
 
         pickedUp = true;
-        inventory.add(this);
+        inventory.add(this); // TODO porting a static
 
         // Check if it's an obj inside something and remove it from its list
         if (getParent() != null) {
@@ -110,8 +102,9 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         }
 
         setParent(null);
+        setClosestRoomParent(null);
 
-        for (AbstractEntity obj : getAllObjects()) {
+        for (AbstractEntity obj : getAllObjectsInside(this)) {
             obj.setClosestRoomParent(null);
         }
 

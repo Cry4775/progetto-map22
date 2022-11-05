@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IPushable;
 import component.entity.interfaces.IWearable;
@@ -15,12 +14,12 @@ import engine.database.DBManager;
 
 public class PushableObject extends AbstractEntity implements IPushable {
 
+    private boolean pushed = false;
+
     public PushableObject(ResultSet resultSet) throws SQLException {
         super(resultSet);
         pushed = resultSet.getBoolean(6);
     }
-
-    private boolean pushed = false;
 
     @Override
     public boolean isPushed() {
@@ -56,13 +55,6 @@ public class PushableObject extends AbstractEntity implements IPushable {
             outString.append("È stato già premuto.");
         }
         return outString;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

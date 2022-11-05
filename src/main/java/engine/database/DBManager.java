@@ -466,11 +466,7 @@ public class DBManager {
 
         for (AbstractEntity obj : GameManager.getInventory()) {
             obj.saveOnDB(connection);
-            if (obj instanceof AbstractContainer) {
-                AbstractContainer container = (AbstractContainer) obj;
-
-                inventory.addAll(container.getAllObjects());
-            }
+            inventory.addAll(AbstractContainer.getAllObjectsInside(obj));
         }
 
         for (AbstractEntity abstractEntity : inventory) {

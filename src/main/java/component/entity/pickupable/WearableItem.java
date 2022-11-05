@@ -12,12 +12,12 @@ import engine.database.DBManager;
 
 public class WearableItem extends BasicItem implements IWearable {
 
+    private boolean worn = false;
+
     public WearableItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         worn = resultSet.getBoolean(7);
     }
-
-    private boolean worn = false;
 
     @Override
     public boolean isWorn() {

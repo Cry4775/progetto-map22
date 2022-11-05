@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IMovable;
 import component.entity.interfaces.IWearable;
@@ -15,12 +14,12 @@ import engine.database.DBManager;
 
 public class MovableObject extends AbstractEntity implements IMovable {
 
+    private boolean moved = false;
+
     public MovableObject(ResultSet resultSet) throws SQLException {
         super(resultSet);
         moved = resultSet.getBoolean(6);
     }
-
-    private boolean moved = false;
 
     @Override
     public boolean isMoved() {
@@ -56,13 +55,6 @@ public class MovableObject extends AbstractEntity implements IMovable {
             outString.append("È stato già spostato.");
         }
         return outString;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

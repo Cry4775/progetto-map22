@@ -5,33 +5,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.room.AbstractRoom;
 import engine.database.DBManager;
 
 public class UnopenableDoor extends AbstractEntity {
 
+    private String openEventText;
+
     public UnopenableDoor(ResultSet resultSet) throws SQLException {
         super(resultSet);
         openEventText = resultSet.getString(6);
     }
 
-    private String openEventText; // TODO porting a evento
-
     public String getOpenEventText() {
         return openEventText;
-    }
-
-    public void setOpenEventText(String openEventText) {
-        this.openEventText = openEventText;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

@@ -13,6 +13,11 @@ import engine.database.DBManager;
 
 public class FillableItem extends BasicItem implements IFillable {
 
+    private boolean filled;
+
+    private AbstractEntity eligibleItem;
+    private String eligibleItemId;
+
     public FillableItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         filled = resultSet.getBoolean(7);
@@ -34,11 +39,6 @@ public class FillableItem extends BasicItem implements IFillable {
 
         }
     }
-
-    private boolean filled;
-
-    private AbstractEntity eligibleItem;
-    private String eligibleItemId;
 
     public boolean isFilled() {
         return filled;
@@ -66,9 +66,8 @@ public class FillableItem extends BasicItem implements IFillable {
 
     @Override
     public boolean fill(AbstractEntity obj) {
-        if (eligibleItem.equals(obj)) {
+        if (obj.equals(eligibleItem)) {
             filled = true;
-            // TODO distinzione tra riempi e prendi
             return true;
         } else {
             return false;

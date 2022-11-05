@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFluid;
@@ -20,21 +19,11 @@ import sound.SoundManager.Mode;
 
 public class BasicItem extends AbstractEntity implements IPickupable {
 
-    private String inventoryDescription; // TODO implementare
-
     private boolean pickedUp = false;
 
     public BasicItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         pickedUp = resultSet.getBoolean(6);
-    }
-
-    public String getInventoryDescription() {
-        return inventoryDescription;
-    }
-
-    public void setInventoryDescription(String inventoryDescription) {
-        this.inventoryDescription = inventoryDescription;
     }
 
     public boolean isPickedUp() {
@@ -78,13 +67,6 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         }
 
         return outString;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

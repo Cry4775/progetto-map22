@@ -199,7 +199,7 @@ public class PlayableRoom extends AbstractRoom {
         if (mode == Mode.UNPACK_CONTAINERS) {
             if (objects != null) {
                 for (AbstractEntity obj : objects) {
-                    result.addAll(AbstractContainer.getAllObjects(obj));
+                    result.addAll(AbstractContainer.getAllObjectsInside(obj));
                     result.add(obj);
                 }
             }
@@ -220,7 +220,7 @@ public class PlayableRoom extends AbstractRoom {
             }
 
             for (AbstractEntity obj : result) {
-                buffer.addAll(AbstractContainer.getAllObjects(obj));
+                buffer.addAll(AbstractContainer.getAllObjectsInside(obj));
             }
 
             result.addAll(buffer);

@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IPullable;
 import component.entity.interfaces.IWearable;
@@ -15,12 +14,12 @@ import engine.database.DBManager;
 
 public class PullableObject extends AbstractEntity implements IPullable {
 
+    private boolean pulled = false;
+
     public PullableObject(ResultSet resultSet) throws SQLException {
         super(resultSet);
         pulled = resultSet.getBoolean(6);
     }
-
-    private boolean pulled = false;
 
     @Override
     public boolean isPulled() {
@@ -57,13 +56,6 @@ public class PullableObject extends AbstractEntity implements IPullable {
             outString.append("È stato già tirato.");
         }
         return outString;
-    }
-
-    @Override
-    public void processReferences(Multimap<String, AbstractEntity> objects,
-            List<AbstractRoom> rooms) {
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override

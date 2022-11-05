@@ -43,7 +43,8 @@ public class Parser {
                     AbstractContainer container = (AbstractContainer) obj;
 
                     if (container.isContentRevealed()) {
-                        for (AbstractEntity _obj : container.getAllObjects()) {
+                        for (AbstractEntity _obj : AbstractContainer
+                                .getAllObjectsInside(container)) {
                             if (_obj.getName().equals(token)
                                     || (_obj.getAlias() != null
                                             && _obj.getAlias().contains(token))) {

@@ -17,15 +17,15 @@ import utility.Triple;
 
 public abstract class AbstractContainer extends AbstractEntity {
 
-    public AbstractContainer(ResultSet resultSet) throws SQLException {
-        super(resultSet);
-    }
-
     protected boolean contentRevealed = false;
 
     private List<AbstractEntity> list = new ArrayList<>();
 
     private boolean forFluids;
+
+    public AbstractContainer(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+    }
 
     public void setForFluids(boolean forFluids) {
         this.forFluids = forFluids;
@@ -37,10 +37,6 @@ public abstract class AbstractContainer extends AbstractEntity {
 
     public List<AbstractEntity> getList() {
         return list;
-    }
-
-    public void setList(List<AbstractEntity> list) {
-        this.list = list;
     }
 
     public void add(AbstractEntity o) {
@@ -132,42 +128,11 @@ public abstract class AbstractContainer extends AbstractEntity {
         return outString;
     }
 
-    public List<AbstractEntity> getAllObjects() {
-        List<AbstractEntity> result = new ArrayList<>();
-
-        if (list != null) {
-            for (AbstractEntity obj : list) {
-                if (obj instanceof AbstractContainer) {
-                    result.addAll(getAllObjects((AbstractContainer) obj));
-                }
-                result.add(obj);
-            }
-        }
-        return result;
-    }
-
-    public static List<AbstractEntity> getAllObjects(AbstractEntity obj) {
-        List<AbstractEntity> result = new ArrayList<>();
-
-        if (obj instanceof AbstractContainer) {
-            AbstractContainer container = (AbstractContainer) obj;
-
-            if (container.getList() != null) {
-                for (AbstractEntity _obj : container.getList()) {
-                    if (_obj instanceof AbstractContainer) {
-                        result.addAll(getAllObjects(_obj));
-                    }
-                    result.add(_obj);
-                }
-            }
-        }
-
-        return result;
-    }
-
     @Override
     public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
+        super.processReferences(objects, rooms);
+
         if (list != null) {
             for (AbstractEntity item : list) {
                 item.setParent(this);
@@ -175,9 +140,6 @@ public abstract class AbstractContainer extends AbstractEntity {
         } else {
             list = new ArrayList<>();
         }
-
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     public Triple<AbstractEntity, String, String> loadRoomLocation(ResultSet resultSet,
@@ -200,6 +162,23 @@ public abstract class AbstractContainer extends AbstractEntity {
         }
 
         return null;
+    }
+
+    public static List<AbstractEntity> getAllObjectsInside(AbstractEntity obj) {
+        List<AbstractEntity> result = new ArrayList<>();
+
+        if (obj instanceof AbstractContainer) {
+            AbstractContainer container = (AbstractContainer) obj;
+
+            if (container.getList() != null) {
+                for (AbstractEntity _obj : container.getList()) {
+                    result.addAll(getAllObjectsInside(obj));
+                    result.add(_obj);
+                }
+            }
+        }
+
+        return result;
     }
 
     public static void addObjectToContainerId(AbstractEntity object,

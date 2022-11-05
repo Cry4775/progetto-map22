@@ -185,12 +185,8 @@ public class RoomsLoader implements Runnable {
         result.putAll(objects);
 
         for (AbstractEntity obj : objects.values()) {
-            if (obj instanceof AbstractContainer) {
-                AbstractContainer container = (AbstractContainer) obj;
-
-                for (AbstractEntity cObj : container.getAllObjects()) {
-                    result.put(cObj.getId(), cObj);
-                }
+            for (AbstractEntity cObj : AbstractContainer.getAllObjectsInside(obj)) {
+                result.put(cObj.getId(), cObj);
             }
         }
 
@@ -217,12 +213,8 @@ public class RoomsLoader implements Runnable {
         result.putAll(objects);
 
         for (AbstractEntity obj : objects.values()) {
-            if (obj instanceof AbstractContainer) {
-                AbstractContainer container = (AbstractContainer) obj;
-
-                for (AbstractEntity cObj : container.getAllObjects()) {
-                    result.put(cObj.getId(), cObj);
-                }
+            for (AbstractEntity cObj : AbstractContainer.getAllObjectsInside(obj)) {
+                result.put(cObj.getId(), cObj);
             }
         }
 

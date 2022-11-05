@@ -13,16 +13,16 @@ import engine.database.DBManager;
 
 public class LightSourceItem extends BasicItem implements ILightSource {
 
+    private boolean on = false;
+
+    private BasicItem requiredItem;
+    private String requiredItemId;
+
     public LightSourceItem(ResultSet resultSet) throws SQLException {
         super(resultSet);
         on = resultSet.getBoolean(7);
         requiredItemId = resultSet.getString(8);
     }
-
-    private boolean on = false;
-
-    private BasicItem requiredItem;
-    private String requiredItemId;
 
     @Override
     public boolean isOn() {

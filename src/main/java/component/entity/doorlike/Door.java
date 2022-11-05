@@ -16,6 +16,13 @@ import sound.SoundManager.Mode;
 
 public class Door extends AbstractEntity implements IOpenable {
 
+    private boolean open = false;
+    private boolean locked = false;
+    private AbstractEntity unlockedWithItem;
+    private String unlockedWithItemId;
+    private String blockedRoomId;
+    private AbstractRoom blockedRoom;
+
     public Door(ResultSet resultSet) throws SQLException {
         super(resultSet);
         open = resultSet.getBoolean(6);
@@ -24,44 +31,19 @@ public class Door extends AbstractEntity implements IOpenable {
         blockedRoomId = resultSet.getString(9);
     }
 
-    private boolean open = false;
-    private boolean locked = false;
-    private AbstractEntity unlockedWithItem;
-    private String unlockedWithItemId;
-    private String blockedRoomId;
-    private AbstractRoom blockedRoom;
-
+    @Override
     public boolean isOpen() {
         return open;
     }
 
+    @Override
     public void setOpen(boolean open) {
         this.open = open;
-    }
-
-    public AbstractEntity getUnlockedWithItem() {
-        return unlockedWithItem;
-    }
-
-    public void setUnlockedWithItem(AbstractEntity unlockedWithItem) {
-        this.unlockedWithItem = unlockedWithItem;
     }
 
     @Override
     public String getUnlockedWithItemId() {
         return unlockedWithItemId;
-    }
-
-    public void setUnlockedWithItemId(String unlockedWithItemId) {
-        this.unlockedWithItemId = unlockedWithItemId;
-    }
-
-    public String getBlockedRoomId() {
-        return blockedRoomId;
-    }
-
-    public void setBlockedRoomId(String blockedRoomId) {
-        this.blockedRoomId = blockedRoomId;
     }
 
     @Override
@@ -72,6 +54,10 @@ public class Door extends AbstractEntity implements IOpenable {
     @Override
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public String getBlockedRoomId() {
+        return blockedRoomId;
     }
 
     @Override
@@ -112,17 +98,11 @@ public class Door extends AbstractEntity implements IOpenable {
         return outString;
     }
 
-    public AbstractRoom getBlockedRoom() {
-        return blockedRoom;
-    }
-
-    public void setBlockedRoom(AbstractRoom blockedRoom) {
-        this.blockedRoom = blockedRoom;
-    }
-
     @Override
     public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
+        super.processReferences(objects, rooms);
+
         if (blockedRoomId != null) {
             rooms.stream()
                     .filter(room -> blockedRoomId.equals(room.getId()))
@@ -141,9 +121,6 @@ public class Door extends AbstractEntity implements IOpenable {
                 unlockedWithItem = reqItem;
             }
         }
-
-        processRoomParent(rooms);
-        processEventReferences(objects, rooms);
     }
 
     @Override
