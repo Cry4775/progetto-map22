@@ -171,9 +171,9 @@ public abstract class AbstractContainer extends AbstractEntity {
             AbstractContainer container = (AbstractContainer) obj;
 
             if (container.getList() != null) {
-                for (AbstractEntity _obj : container.getList()) {
-                    result.addAll(getAllObjectsInside(obj));
-                    result.add(_obj);
+                for (AbstractEntity insideObj : container.getList()) {
+                    result.addAll(getAllObjectsInside(insideObj));
+                    result.add(insideObj);
                 }
             }
         }
