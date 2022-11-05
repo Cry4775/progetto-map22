@@ -94,9 +94,7 @@ public class Engine {
         }
 
         if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
-            ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
-                    GameManager.getInventory());
+            ParserOutput p = parser.parse(command);
             if (p == null || p.getCommand() == null) {
                 gui.appendText("Non capisco quello che mi vuoi dire.");
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {

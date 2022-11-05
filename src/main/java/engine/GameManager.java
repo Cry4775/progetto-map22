@@ -43,7 +43,7 @@ public class GameManager {
 
     private static final List<AbstractRoom> rooms = new ArrayList<>();
 
-    private final List<Command> commands = new ArrayList<>();
+    private static final List<Command> commands = new ArrayList<>();
 
     private static final List<AbstractEntity> inventory = new ArrayList<>();
 
@@ -51,9 +51,9 @@ public class GameManager {
 
     private static AbstractRoom previousRoom;
 
-    private Status status = new Status();
+    private static Status status = new Status();
 
-    private StringBuilder outString;
+    private static StringBuilder outString;
 
     public Status getStatus() {
         return status;
@@ -71,7 +71,7 @@ public class GameManager {
         return rooms;
     }
 
-    public List<Command> getCommands() {
+    public static List<Command> getCommands() {
         return commands;
     }
 
@@ -186,7 +186,7 @@ public class GameManager {
     public void init() throws IOException {
         outString = new StringBuilder();
 
-        CommandsLoader commandsLoader = new CommandsLoader(getCommands());
+        CommandsLoader commandsLoader = new CommandsLoader();
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
         RoomsLoader roomsLoader;

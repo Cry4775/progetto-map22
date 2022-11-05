@@ -22,10 +22,7 @@ public abstract class AbstractRoom extends GameComponent {
 
         if (room instanceof MutableRoom) {
             MutableRoom mRoom = (MutableRoom) room;
-
-            if (mRoom.getNewRoom() != null) {
-                result.addAll(getAllRooms(mRoom.getNewRoom()));
-            }
+            result.addAll(mRoom.getAllRooms());
         }
 
         return result;

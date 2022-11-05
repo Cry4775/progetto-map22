@@ -9,6 +9,8 @@ import java.util.Set;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
+import component.room.PlayableRoom;
+import engine.GameManager;
 import engine.command.Command;
 import utility.Utils;
 
@@ -82,11 +84,13 @@ public class Parser {
      * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
-    public ParserOutput parse(String command, List<Command> commands, List<AbstractEntity> objects,
-            List<AbstractEntity> inventory) {
+    public ParserOutput parse(String command) {
+        List<AbstractEntity> objects = ((PlayableRoom) GameManager.getCurrentRoom()).getObjects();
+        List<AbstractEntity> inventory = GameManager.getInventory();
         List<String> tokens = Utils.parseString(command, stopwords);
+
         if (!tokens.isEmpty()) {
-            Command cmd = checkForCommand(tokens.get(0), commands);
+            Command cmd = checkForCommand(tokens.get(0), GameManager.getCommands());
             if (cmd != null) {
                 if (tokens.size() > 1) {
                     AbstractEntity objRoom = checkForObject(tokens.get(1), objects);
