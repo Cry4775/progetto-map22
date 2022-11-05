@@ -609,7 +609,7 @@ public class GameManager {
         }
 
         if (outString.length() > 0) {
-            gui.appendText(outString.toString(), false);
+            gui.appendText(outString.toString());
         }
 
         outString.setLength(0);

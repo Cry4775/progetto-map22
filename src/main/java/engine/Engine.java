@@ -42,7 +42,7 @@ public class Engine {
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
                     e.printStackTrace();
-                    gui.showFatalError(e.getMessage());
+                    MainFrame.showFatalError(gui, e.getMessage());
                     crashed.set(true);
                 }
             });
@@ -56,7 +56,7 @@ public class Engine {
         } catch (Exception ex) {
             ex.printStackTrace();
             gui.setVisible(false);
-            gui.showFatalError(ex.getMessage());
+            MainFrame.showFatalError(gui, ex.getMessage());
         }
     }
 
@@ -73,14 +73,14 @@ public class Engine {
             PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
 
             if (currentRoom.isCurrentlyDark()) {
-                gui.appendText("È completamente buio e non riesci a vedere niente.", false);
+                gui.appendText("È completamente buio e non riesci a vedere niente.");
                 updateGUI("Buio", "resources/img/buio.jpg");
             } else {
-                gui.appendText(GameManager.getCurrentRoom().getDescription(), false);
+                gui.appendText(GameManager.getCurrentRoom().getDescription());
                 updateGUI();
             }
         } else {
-            gui.appendText(GameManager.getCurrentRoom().getDescription(), false);
+            gui.appendText(GameManager.getCurrentRoom().getDescription());
             updateGUI();
             gui.waitForEnterKey();
         }
@@ -98,7 +98,7 @@ public class Engine {
             ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
                     GameManager.getInventory());
             if (p == null || p.getCommand() == null) {
-                gui.appendText("Non capisco quello che mi vuoi dire.", false);
+                gui.appendText("Non capisco quello che mi vuoi dire.");
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
                 gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
             } else {
@@ -110,7 +110,7 @@ public class Engine {
             if (!currentRoom.isFinalRoom()) {
                 if (currentRoom.getNextRoom() != null) {
                     GameManager.setCurrentRoom(currentRoom.getNextRoom());
-                    gui.appendText(GameManager.getCurrentRoom().getDescription(), false);
+                    gui.appendText(GameManager.getCurrentRoom().getDescription());
                 } else {
                     throw new Error(
                             "Couldn't find the next room of " + currentRoom.getName()

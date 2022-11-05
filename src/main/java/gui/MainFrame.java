@@ -194,8 +194,8 @@ public class MainFrame extends JFrame {
             lblCompassSouthEastImage
                     .setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
         } catch (IOException e) {
-            showFatalError(
-                    "Error occurred on loading of compass images. Details: " + e.getMessage());
+            showFatalError(this, "Error occurred on loading of compass images. Details: "
+                    + e.getMessage());
         }
 
         gridBagConstraints = new GridBagConstraints();
@@ -340,8 +340,8 @@ public class MainFrame extends JFrame {
             lblCompassNorthWestText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
             lblCompassSouthEastText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
             lblCompassSouthWestText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
-        } catch (Exception ex) {
-            showFatalError(ex.getMessage());
+        } catch (Exception e) {
+            showFatalError(this, e.getMessage());
         }
 
         lypRoomImage.add(noisePanel, new Integer(1));
@@ -370,17 +370,17 @@ public class MainFrame extends JFrame {
         pack();
     }
 
-    private ImageIcon getResourceAsImageIcon(String path) throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream(path);
+    private static ImageIcon getResourceAsImageIcon(String path) throws IOException {
+        InputStream inputStream = MainFrame.class.getResourceAsStream(path);
 
         return new ImageIcon(ImageIO.read(inputStream));
     }
 
-    public void appendText(String text, boolean isInputText) {
+    public void appendText(String text, boolean inputText) {
         StyledDocument doc = txtPane.getStyledDocument();
 
         try {
-            if (isInputText) {
+            if (inputText) {
                 doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
             } else {
                 printSlowly(text, 15);
@@ -390,13 +390,18 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void showFatalError(String message) {
-        WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+    public void appendText(String text) {
+        appendText(text, false);
+    }
+
+    public static void showFatalError(MainFrame gui, String message) {
+        WindowEvent event = new WindowEvent(gui, WindowEvent.WINDOW_CLOSING);
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JOptionPane.showMessageDialog(null, message, "Fatal Error",
                         JOptionPane.ERROR_MESSAGE);
-                dispatchEvent(event);
+                gui.dispatchEvent(event);
             }
         });
     }
@@ -408,7 +413,7 @@ public class MainFrame extends JFrame {
                 JOptionPane.YES_NO_OPTION);
     }
 
-    public void printSlowly(String message, int millisPerChar) throws BadLocationException {
+    private void printSlowly(String message, int millisPerChar) throws BadLocationException {
         txtInput.setEditable(false);
         txtInput.setFocusable(false);
 
@@ -483,7 +488,7 @@ public class MainFrame extends JFrame {
                     }
                 }
 
-                EventQueue.invokeLater(new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         txtInput.setText("Premere INVIO per continuare...");
                         txtInput.setFocusable(false);
