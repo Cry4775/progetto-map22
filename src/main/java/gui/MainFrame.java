@@ -408,8 +408,8 @@ public class MainFrame extends JFrame {
 
     public static int askLoadingConfirmation() {
         return JOptionPane.showConfirmDialog(null,
-                "É stato trovata una partita precedentemente salvata. Desideri caricarla?",
-                "Caricamento salvataggio",
+                "An existing savegame has been found. Do you wish to load it?",
+                "Loading savegame",
                 JOptionPane.YES_NO_OPTION);
     }
 
