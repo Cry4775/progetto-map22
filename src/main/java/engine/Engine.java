@@ -73,14 +73,14 @@ public class Engine {
             PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
 
             if (currentRoom.isCurrentlyDark()) {
-                gui.appendTxtPane("È completamente buio e non riesci a vedere niente.", false);
+                gui.appendText("È completamente buio e non riesci a vedere niente.", false);
                 updateGUI("Buio", "resources/img/buio.jpg");
             } else {
-                gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
+                gui.appendText(GameManager.getCurrentRoom().getDescription(), false);
                 updateGUI();
             }
         } else {
-            gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
+            gui.appendText(GameManager.getCurrentRoom().getDescription(), false);
             updateGUI();
             gui.waitForEnterKey();
         }
@@ -98,7 +98,7 @@ public class Engine {
             ParserOutput p = parser.parse(command, game.getCommands(), currentRoom.getObjects(),
                     GameManager.getInventory());
             if (p == null || p.getCommand() == null) {
-                gui.appendTxtPane("Non capisco quello che mi vuoi dire.", false);
+                gui.appendText("Non capisco quello che mi vuoi dire.", false);
             } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
                 gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
             } else {
@@ -110,7 +110,7 @@ public class Engine {
             if (!currentRoom.isFinalRoom()) {
                 if (currentRoom.getNextRoom() != null) {
                     GameManager.setCurrentRoom(currentRoom.getNextRoom());
-                    gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
+                    gui.appendText(GameManager.getCurrentRoom().getDescription(), false);
                 } else {
                     throw new Error(
                             "Couldn't find the next room of " + currentRoom.getName()

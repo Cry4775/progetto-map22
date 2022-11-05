@@ -1,16 +1,16 @@
 package gui;
 
-import java.awt.GridBagLayout;
-import java.awt.FlowLayout;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -39,7 +39,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
@@ -53,86 +52,50 @@ public class MainFrame extends JFrame {
 
     private boolean isSlowlyWriting = false;
 
-    private NoiseFXPanel noisePanel;
-    private JTextPane txtPane;
-    private JLabel lblActions;
-    private JLabel lblCompassCenterImage;
-    private JLabel lblCompassEastImage;
-    private JLabel lblCompassEastText;
-    private JLabel lblCompassNorthEastImage;
-    private JLabel lblCompassNorthEastText;
-    private JLabel lblCompassNorthImage;
-    private JLabel lblCompassNorthText;
-    private JLabel lblCompassNorthWestImage;
-    private JLabel lblCompassNorthWestText;
-    private JLabel lblCompassSouthEastImage;
-    private JLabel lblCompassSouthEastText;
-    private JLabel lblCompassSouthImage;
-    private JLabel lblCompassSouthText;
-    private JLabel lblCompassSouthWestImage;
-    private JLabel lblCompassSouthWestText;
-    private JLabel lblCompassWestImage;
-    private JLabel lblCompassWestText;
-    private JLabel lblInput;
-    private JLabel lblRoomImage;
-    private JLabel lblRoomName;
-    private JLayeredPane lypRoomImage;
-    private JPanel pnlActions;
-    private JPanel pnlCompass;
-    private JPanel pnlCompassNorthEast;
-    private JPanel pnlCompassNorthWest;
-    private JPanel pnlCompassSouthEast;
-    private JPanel pnlCompassSouthWest;
-    private JPanel pnlHeader;
-    private JPanel pnlInOut;
-    private JPanel pnlInput;
-    private JScrollPane scrOutput;
-    private JTextField txtInput;
+    private NoiseFXPanel noisePanel = new NoiseFXPanel();
+    private JTextPane txtPane = new JTextPane();
+    private JLabel lblActions = new JLabel();
+    private JLabel lblCompassCenterImage = new JLabel();
+    private JLabel lblCompassEastImage = new JLabel();
+    private JLabel lblCompassEastText = new JLabel();
+    private JLabel lblCompassNorthEastImage = new JLabel();
+    private JLabel lblCompassNorthEastText = new RotatedJLabel(0.8);
+    private JLabel lblCompassNorthImage = new JLabel();
+    private JLabel lblCompassNorthText = new JLabel();
+    private JLabel lblCompassNorthWestImage = new JLabel();
+    private JLabel lblCompassNorthWestText = new RotatedJLabel(-0.7);
+    private JLabel lblCompassSouthEastImage = new JLabel();
+    private JLabel lblCompassSouthEastText = new RotatedJLabel(2.4);
+    private JLabel lblCompassSouthImage = new JLabel();
+    private JLabel lblCompassSouthText = new JLabel();
+    private JLabel lblCompassSouthWestImage = new JLabel();
+    private JLabel lblCompassSouthWestText = new RotatedJLabel(-2.3);
+    private JLabel lblCompassWestImage = new JLabel();
+    private JLabel lblCompassWestText = new JLabel();
+    private JLabel lblInput = new JLabel();
+    private JLabel lblRoomImage = new JLabel();
+    private JLabel lblRoomName = new JLabel();
+    private JLayeredPane lypRoomImage = new JLayeredPane();
+    private JPanel pnlActions = new JPanel();
+    private JPanel pnlCompass = new JPanel();
+    private JPanel pnlCompassNorthEast = new JPanel();
+    private JPanel pnlCompassNorthWest = new JPanel();
+    private JPanel pnlCompassSouthEast = new JPanel();
+    private JPanel pnlCompassSouthWest = new JPanel();
+    private JPanel pnlHeader = new JPanel();
+    private JPanel pnlInOut = new JPanel();
+    private JPanel pnlInput = new JPanel();
+    private JScrollPane scrOutput = new ModernScrollPane(txtPane);
+    private JTextField txtInput = new JTextField();
 
     public MainFrame() {
         initComponents();
-        init();
         GameManager game = new GameManager();
         engine = new Engine(game, this);
     }
 
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
-
-        pnlHeader = new JPanel();
-        lblRoomName = new JLabel();
-        pnlActions = new JPanel();
-        lblActions = new JLabel();
-        pnlInOut = new JPanel();
-        scrOutput = new ModernScrollPane(txtPane);
-        txtPane = new JTextPane();
-        pnlInput = new JPanel();
-        lblInput = new JLabel();
-        txtInput = new JTextField();
-        pnlCompass = new JPanel();
-        lblCompassNorthImage = new JLabel();
-        lblCompassWestImage = new JLabel();
-        lblCompassCenterImage = new JLabel();
-        lblCompassEastImage = new JLabel();
-        lblCompassSouthImage = new JLabel();
-        pnlCompassNorthWest = new JPanel();
-        lblCompassNorthWestImage = new JLabel();
-        lblCompassNorthWestText = new RotatedJLabel(-0.7);
-        pnlCompassNorthEast = new JPanel();
-        lblCompassNorthEastText = new RotatedJLabel(0.8);
-        lblCompassNorthEastImage = new JLabel();
-        pnlCompassSouthWest = new JPanel();
-        lblCompassSouthWestImage = new JLabel();
-        lblCompassSouthWestText = new RotatedJLabel(-2.3);
-        pnlCompassSouthEast = new JPanel();
-        lblCompassSouthEastImage = new JLabel();
-        lblCompassSouthEastText = new RotatedJLabel(2.4);
-        lblCompassSouthText = new JLabel();
-        lblCompassNorthText = new JLabel();
-        lblCompassWestText = new JLabel();
-        lblCompassEastText = new JLabel();
-        lypRoomImage = new JLayeredPane();
-        lblRoomImage = new JLabel();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -199,7 +162,7 @@ public class MainFrame extends JFrame {
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                     String txt = txtInput.getText();
                     if (txt != null && !txt.isEmpty()) {
-                        appendTxtPane(txt, true);
+                        appendText(txt, true);
                         txtInput.setText("");
                         engine.commandPerformed(txt);
                     }
@@ -312,9 +275,7 @@ public class MainFrame extends JFrame {
         pnlCompass.add(pnlCompassSouthWest, gridBagConstraints);
 
         pnlCompassSouthEast.setLayout(new OverlayLayout(pnlCompassSouthEast));
-
         lblCompassSouthEastImage.setFont(new Font("Segoe UI", 0, 24));
-
         lblCompassSouthEastImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthEast.add(lblCompassSouthEastImage);
 
@@ -362,18 +323,11 @@ public class MainFrame extends JFrame {
 
         lypRoomImage.setLayout(new OverlayLayout(lypRoomImage));
 
-        lblRoomImage
-                .setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
+        lblRoomImage.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
         lblRoomImage.setName("");
         lblRoomImage.setPreferredSize(new Dimension(581, 300));
         lypRoomImage.add(lblRoomImage);
 
-        getContentPane().add(lypRoomImage, BorderLayout.CENTER);
-
-        pack();
-    }
-
-    private void init() {
         try {
             Font compassFont = Font.createFont(Font.TRUETYPE_FONT,
                     getClass().getResourceAsStream(
@@ -389,8 +343,10 @@ public class MainFrame extends JFrame {
         } catch (Exception ex) {
             showFatalError(ex.getMessage());
         }
-        noisePanel = new NoiseFXPanel();
+
         lypRoomImage.add(noisePanel, new Integer(1));
+
+        getContentPane().add(lypRoomImage, BorderLayout.CENTER);
 
         txtInput.requestFocus();
         txtInput.setCaretPosition(txtInput.getText().length());
@@ -410,6 +366,8 @@ public class MainFrame extends JFrame {
                 max = model.getMaximum();
             }
         });
+
+        pack();
     }
 
     private ImageIcon getResourceAsImageIcon(String path) throws IOException {
@@ -418,7 +376,7 @@ public class MainFrame extends JFrame {
         return new ImageIcon(ImageIO.read(inputStream));
     }
 
-    public void appendTxtPane(String text, boolean isInputText) {
+    public void appendText(String text, boolean isInputText) {
         StyledDocument doc = txtPane.getStyledDocument();
 
         try {
@@ -561,28 +519,15 @@ public class MainFrame extends JFrame {
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
-        // (optional)
         try {
-            for (UIManager.LookAndFeelInfo info : UIManager
-                    .getInstalledLookAndFeels()) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName())
-                    .log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName())
-                    .log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName())
-                    .log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName())
-                    .log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         /* Create and display the form */
@@ -591,10 +536,6 @@ public class MainFrame extends JFrame {
                 new MainFrame().setVisible(true);
             }
         });
-    }
-
-    public JTextPane getEdtOutput() {
-        return txtPane;
     }
 
     public JLabel getLblCompassEastText() {
@@ -639,9 +580,5 @@ public class MainFrame extends JFrame {
 
     public JLabel getLblRoomName() {
         return lblRoomName;
-    }
-
-    public JTextField getTxtInput() {
-        return txtInput;
     }
 }
