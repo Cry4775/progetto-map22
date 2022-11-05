@@ -10,6 +10,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
 import utility.Wrapper;
 
 public class SoundManager {
@@ -93,11 +94,15 @@ public class SoundManager {
         if (defaultSounds.containsKey(wavPath)) {
             Clip defaultSoundClip = defaultSounds.get(wavPath).getObj();
 
-            if (defaultSoundClip.isRunning())
+            if (defaultSoundClip.isActive() || defaultSoundClip.isRunning())
                 defaultSoundClip.stop();
 
             defaultSoundClip.flush();
-            defaultSoundClip.setFramePosition(0);
+            defaultSoundClip.addLineListener(event -> {
+                if (event.getType().equals(LineEvent.Type.STOP)) {
+                    defaultSoundClip.setFramePosition(0);
+                }
+            });
 
             defaultSoundClip.start();
         } else {
