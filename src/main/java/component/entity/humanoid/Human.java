@@ -25,7 +25,7 @@ public class Human extends AbstractEntity implements ITalkable {
         ResultSet rs = phrsStm.executeQuery();
 
         while (rs.next()) {
-            String text = resultSet.getString(2);
+            String text = rs.getString(2);
 
             queuePhrase(text);
         }

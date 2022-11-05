@@ -17,6 +17,22 @@ public class FillableItem extends BasicItem implements IFillable {
         super(resultSet);
         filled = resultSet.getBoolean(7);
         eligibleItemId = resultSet.getString(8);
+
+        if (filled) {
+            PreparedStatement stm =
+                    DBManager.getConnection()
+                            .prepareStatement("SELECT * FROM SAVEDATA.FluidItem WHERE ID = '"
+                                    + eligibleItemId + "'");
+            ResultSet fluidResultSet = stm.executeQuery();
+
+            while (fluidResultSet.next()) {
+                eligibleItem = new FluidItem(fluidResultSet);
+                eligibleItem.loadObjEvents();
+            }
+
+            stm.close();
+
+        }
     }
 
     private boolean filled;
@@ -64,7 +80,7 @@ public class FillableItem extends BasicItem implements IFillable {
             List<AbstractRoom> rooms) {
         super.processReferences(objects, rooms);
 
-        if (eligibleItemId != null) {
+        if (eligibleItemId != null && eligibleItem == null) {
             if (!objects.containsKey(eligibleItemId)) {
                 throw new Error(
                         "Couldn't find the requested \"eligibleItem\" ID on " + getName()
@@ -87,6 +103,10 @@ public class FillableItem extends BasicItem implements IFillable {
         stm.setBoolean(7, filled);
         stm.setString(8, eligibleItemId);
         stm.executeUpdate();
+
+        if (filled) {
+            eligibleItem.saveOnDB(connection);
+        }
 
         saveExternalsOnDB();
     }

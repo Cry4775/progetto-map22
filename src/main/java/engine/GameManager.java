@@ -47,7 +47,7 @@ public class GameManager {
 
     private static AbstractRoom currentRoom;
 
-    private AbstractRoom previousRoom;
+    private static AbstractRoom previousRoom;
 
     private Status status = new Status();
 
@@ -57,12 +57,12 @@ public class GameManager {
         return status;
     }
 
-    public AbstractRoom getPreviousRoom() {
+    public static AbstractRoom getPreviousRoom() {
         return previousRoom;
     }
 
-    public void setPreviousRoom(AbstractRoom previousRoom) {
-        this.previousRoom = previousRoom;
+    public static void setPreviousRoom(AbstractRoom previousRoom) {
+        GameManager.previousRoom = previousRoom;
     }
 
     public List<AbstractRoom> getRooms() {
@@ -209,6 +209,9 @@ public class GameManager {
         try {
             tCommands.join();
             tRooms.join();
+            if (currentRoom instanceof PlayableRoom) {
+                processRoomLighting((PlayableRoom) currentRoom);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

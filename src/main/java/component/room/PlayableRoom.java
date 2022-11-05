@@ -61,7 +61,7 @@ public class PlayableRoom extends AbstractRoom {
     private AbstractRoom down;
     private String downId;
 
-    private final List<AbstractEntity> objects = new ArrayList<>();
+    private List<AbstractEntity> objects = new ArrayList<>();
 
     private RoomEvent event;
 
@@ -188,6 +188,8 @@ public class PlayableRoom extends AbstractRoom {
     }
 
     public List<AbstractEntity> getObjects() {
+        if (objects == null)
+            objects = new ArrayList<>();
         return objects;
     }
 

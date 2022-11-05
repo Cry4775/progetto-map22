@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
@@ -18,6 +19,19 @@ public class InvisibleWall extends AbstractEntity {
     public InvisibleWall(ResultSet resultSet) throws SQLException {
         super(resultSet);
         locked = resultSet.getBoolean(6);
+        blockedRoomId = resultSet.getString(7);
+        trespassingWhenLockedText = resultSet.getString(8);
+        northBlocked = resultSet.getBoolean(9);
+        southBlocked = resultSet.getBoolean(10);
+        eastBlocked = resultSet.getBoolean(11);
+        westBlocked = resultSet.getBoolean(12);
+        northEastBlocked = resultSet.getBoolean(13);
+        northWestBlocked = resultSet.getBoolean(14);
+        southEastBlocked = resultSet.getBoolean(15);
+        southWestBlocked = resultSet.getBoolean(16);
+        upBlocked = resultSet.getBoolean(17);
+        downBlocked = resultSet.getBoolean(18);
+
     }
 
     private boolean locked = true;
@@ -35,7 +49,7 @@ public class InvisibleWall extends AbstractEntity {
     private boolean upBlocked = false;
     private boolean downBlocked = false;
 
-    private String trespassingWhenLockedText; // TODO é possibile rimuoverlo
+    private String trespassingWhenLockedText;
 
     @Override
     public void processReferences(Multimap<String, AbstractEntity> objects,
@@ -49,6 +63,8 @@ public class InvisibleWall extends AbstractEntity {
                                     + " (" + getId()
                                     + "). Check the JSON file for correct object IDs.");
                 }
+
+                setRequiredWearedItemsToInteract(new ArrayList<>());
 
                 for (AbstractEntity obj : objects.get(reqId)) {
                     if (obj instanceof IWearable) {
@@ -64,7 +80,8 @@ public class InvisibleWall extends AbstractEntity {
 
     public void processRequirements(List<AbstractEntity> inventory) {
         if (locked) {
-            if (getRequiredWearedItemsToInteract() != null) {
+            if (getRequiredWearedItemsToInteract() != null
+                    && !getRequiredWearedItemsToInteract().isEmpty()) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         return;
@@ -73,7 +90,8 @@ public class InvisibleWall extends AbstractEntity {
                 locked = false;
             }
         } else {
-            if (getRequiredWearedItemsToInteract() != null) {
+            if (getRequiredWearedItemsToInteract() != null
+                    && !getRequiredWearedItemsToInteract().isEmpty()) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         locked = true;
@@ -231,10 +249,22 @@ public class InvisibleWall extends AbstractEntity {
     @Override
     public void saveOnDB(Connection connection) throws SQLException {
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.InvisibleWall values (?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SAVEDATA.InvisibleWall values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         setKnownValuesOnStatement(stm);
         stm.setBoolean(6, locked);
+        stm.setString(7, blockedRoomId);
+        stm.setString(8, trespassingWhenLockedText);
+        stm.setBoolean(9, northBlocked);
+        stm.setBoolean(10, southBlocked);
+        stm.setBoolean(11, eastBlocked);
+        stm.setBoolean(12, westBlocked);
+        stm.setBoolean(13, northEastBlocked);
+        stm.setBoolean(14, northWestBlocked);
+        stm.setBoolean(15, southEastBlocked);
+        stm.setBoolean(16, southWestBlocked);
+        stm.setBoolean(17, upBlocked);
+        stm.setBoolean(18, downBlocked);
         stm.executeUpdate();
 
         saveExternalsOnDB();

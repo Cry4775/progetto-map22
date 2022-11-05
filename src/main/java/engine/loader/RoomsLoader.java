@@ -104,10 +104,19 @@ public class RoomsLoader implements Runnable {
             }
 
             String currentRoomId = DBManager.getCurrentRoomId();
+            String previousRoomId = DBManager.getPreviousRoomId();
 
             for (AbstractRoom room : rooms) {
                 if (room.getId().equals(currentRoomId)) {
                     GameManager.setCurrentRoom(room);
+                } else if (room.getId().equals(previousRoomId)) {
+                    GameManager.setPreviousRoom(room);
+                }
+
+                if (previousRoomId == null && GameManager.getCurrentRoom() != null) {
+                    break;
+                } else if (GameManager.getPreviousRoom() != null
+                        && GameManager.getCurrentRoom() != null) {
                     break;
                 }
             }

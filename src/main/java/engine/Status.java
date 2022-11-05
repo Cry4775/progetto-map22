@@ -17,6 +17,8 @@ public class Status {
         movementAttempt = false;
         positionChanged = false;
         roomBlockedByDoor = false;
+        roomBlockedByWall = false;
+        wall = null;
         warp = false;
         warpDestination = null;
     }

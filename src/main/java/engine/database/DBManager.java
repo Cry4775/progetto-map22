@@ -104,7 +104,8 @@ public class DBManager {
 
                 createStatement = connection.prepareStatement("CREATE TABLE SAVEDATA.CurrentRoom"
                         + "("
-                        + " id varchar(10)"
+                        + " id varchar(10),"
+                        + " previousRoomId varchar(10)"
                         + ")");
                 createStatement.executeUpdate();
 
@@ -265,7 +266,19 @@ public class DBManager {
                         + " description varchar(8192),"
                         + " locatedInRoomId varchar(10),"
                         + " locatedInContainerId varchar(10),"
-                        + " locked boolean"
+                        + " locked boolean,"
+                        + " blockedRoomId varchar(10),"
+                        + " trespassingWhenLockedText varchar(8192),"
+                        + " northBlocked boolean,"
+                        + " southBlocked boolean,"
+                        + " eastBlocked boolean,"
+                        + " westBlocked boolean,"
+                        + " northEastBlocked boolean,"
+                        + " northWestBlocked boolean,"
+                        + " southEastBlocked boolean,"
+                        + " southWestBlocked boolean,"
+                        + " upBlocked boolean,"
+                        + " downBlocked boolean"
                         + ")");
                 createStatement.executeUpdate();
 
@@ -435,9 +448,12 @@ public class DBManager {
         }
 
         PreparedStatement stm = connection.prepareStatement(
-                "INSERT INTO SAVEDATA.CurrentRoom values (?)");
+                "INSERT INTO SAVEDATA.CurrentRoom values (?, ?)");
 
         stm.setString(1, GameManager.getCurrentRoom().getId());
+        stm.setString(2, GameManager.getPreviousRoom() != null
+                ? GameManager.getPreviousRoom().getId()
+                : null);
         stm.executeUpdate();
     }
 
@@ -617,6 +633,22 @@ public class DBManager {
 
             while (resultSet.next()) {
                 return resultSet.getString(1);
+            }
+        } catch (SQLException e) {
+
+        }
+
+        return null;
+    }
+
+    public static String getPreviousRoomId() {
+        try {
+            PreparedStatement stm =
+                    connection.prepareStatement("SELECT * FROM SAVEDATA.CurrentRoom");
+            ResultSet resultSet = stm.executeQuery();
+
+            while (resultSet.next()) {
+                return resultSet.getString(2);
             }
         } catch (SQLException e) {
 

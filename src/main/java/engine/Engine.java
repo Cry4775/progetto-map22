@@ -69,11 +69,19 @@ public class Engine {
 
         gui.setTitle("The Haunted House - 2021-22");
 
-        updateGUI();
+        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
 
-        gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
-
-        if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
+            if (currentRoom.isCurrentlyDark()) {
+                gui.appendTxtPane("È completamente buio e non riesci a vedere niente.", false);
+                updateGUI("Buio", "resources/img/buio.jpg");
+            } else {
+                gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
+                updateGUI();
+            }
+        } else {
+            gui.appendTxtPane(GameManager.getCurrentRoom().getDescription(), false);
+            updateGUI();
             gui.waitForEnterKey();
         }
     }

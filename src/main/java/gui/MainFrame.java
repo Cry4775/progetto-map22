@@ -1,10 +1,16 @@
 package gui;
 
+import java.awt.GridBagLayout;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -41,16 +47,47 @@ import javax.swing.text.StyledDocument;
 import engine.Engine;
 import engine.GameManager;
 
-/**
- * @author Pierdamiano Zagaria
- */
 public class MainFrame extends JFrame {
-
-    private NoiseFXPanel noisePanel;
 
     private Engine engine;
 
     private boolean isSlowlyWriting = false;
+
+    private NoiseFXPanel noisePanel;
+    private JTextPane txtPane;
+    private JLabel lblActions;
+    private JLabel lblCompassCenterImage;
+    private JLabel lblCompassEastImage;
+    private JLabel lblCompassEastText;
+    private JLabel lblCompassNorthEastImage;
+    private JLabel lblCompassNorthEastText;
+    private JLabel lblCompassNorthImage;
+    private JLabel lblCompassNorthText;
+    private JLabel lblCompassNorthWestImage;
+    private JLabel lblCompassNorthWestText;
+    private JLabel lblCompassSouthEastImage;
+    private JLabel lblCompassSouthEastText;
+    private JLabel lblCompassSouthImage;
+    private JLabel lblCompassSouthText;
+    private JLabel lblCompassSouthWestImage;
+    private JLabel lblCompassSouthWestText;
+    private JLabel lblCompassWestImage;
+    private JLabel lblCompassWestText;
+    private JLabel lblInput;
+    private JLabel lblRoomImage;
+    private JLabel lblRoomName;
+    private JLayeredPane lypRoomImage;
+    private JPanel pnlActions;
+    private JPanel pnlCompass;
+    private JPanel pnlCompassNorthEast;
+    private JPanel pnlCompassNorthWest;
+    private JPanel pnlCompassSouthEast;
+    private JPanel pnlCompassSouthWest;
+    private JPanel pnlHeader;
+    private JPanel pnlInOut;
+    private JPanel pnlInput;
+    private JScrollPane scrOutput;
+    private JTextField txtInput;
 
     public MainFrame() {
         initComponents();
@@ -59,53 +96,8 @@ public class MainFrame extends JFrame {
         engine = new Engine(game, this);
     }
 
-    private void init() {
-        try {
-            java.awt.Font compassFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
-                    getClass().getResourceAsStream(
-                            "/resources/font/LEIXO-DEMO.ttf"));
-            lblCompassNorthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
-            lblCompassSouthText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
-            lblCompassEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
-            lblCompassWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 21f));
-            lblCompassNorthEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
-            lblCompassNorthWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
-            lblCompassSouthEastText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
-            lblCompassSouthWestText.setFont(compassFont.deriveFont(java.awt.Font.PLAIN, 15f));
-        } catch (Exception ex) {
-            showFatalError(ex.getMessage());
-        }
-        noisePanel = new NoiseFXPanel();
-        lypRoomImage.add(noisePanel, new Integer(1));
-
-        txtInput.requestFocus();
-        txtInput.setCaretPosition(txtInput.getText().length());
-        txtPane.setCaretPosition(txtPane.getDocument().getLength());
-
-        ((DefaultCaret) txtPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-        scrOutput.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            private int max = 0;
-            private final BoundedRangeModel model = scrOutput.getVerticalScrollBar().getModel();
-
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (model.getMaximum() != max) {
-                    // Scroll to bottom
-                    model.setValue(model.getMaximum() - model.getExtent());
-                }
-                max = model.getMaximum();
-            }
-        });
-    }
-
-    private ImageIcon getResourceAsImageIcon(String path) throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream(path);
-
-        return new ImageIcon(ImageIO.read(inputStream));
-    }
-
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
         pnlHeader = new JPanel();
         lblRoomName = new JLabel();
@@ -144,35 +136,35 @@ public class MainFrame extends JFrame {
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
-        setSize(new java.awt.Dimension(583, 852));
+        setSize(new Dimension(583, 852));
 
         pnlHeader.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)),
+                BorderFactory.createLineBorder(new Color(0, 0, 0)),
                 BorderFactory.createEmptyBorder(0, 10, 0, 10)));
-        pnlHeader.setPreferredSize(new java.awt.Dimension(583, 35));
-        pnlHeader.setLayout(new java.awt.BorderLayout());
+        pnlHeader.setPreferredSize(new Dimension(583, 35));
+        pnlHeader.setLayout(new BorderLayout());
 
-        lblRoomName.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblRoomName.setFont(new Font("Segoe UI", 0, 18));
         lblRoomName.setText("Nome stanza");
-        lblRoomName.setMaximumSize(new java.awt.Dimension(500, 25));
-        lblRoomName.setMinimumSize(new java.awt.Dimension(450, 25));
+        lblRoomName.setMaximumSize(new Dimension(500, 25));
+        lblRoomName.setMinimumSize(new Dimension(450, 25));
         lblRoomName.setName("");
-        lblRoomName.setPreferredSize(new java.awt.Dimension(700, 35));
-        pnlHeader.add(lblRoomName, java.awt.BorderLayout.WEST);
+        lblRoomName.setPreferredSize(new Dimension(700, 35));
+        pnlHeader.add(lblRoomName, BorderLayout.WEST);
 
-        pnlActions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+        pnlActions.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
-        lblActions.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblActions.setFont(new Font("Segoe UI", 0, 18));
         lblActions.setText("Azioni: 0");
-        lblActions.setPreferredSize(new java.awt.Dimension(106, 35));
+        lblActions.setPreferredSize(new Dimension(106, 35));
         pnlActions.add(lblActions);
 
-        pnlHeader.add(pnlActions, java.awt.BorderLayout.EAST);
+        pnlHeader.add(pnlActions, BorderLayout.EAST);
 
-        getContentPane().add(pnlHeader, java.awt.BorderLayout.NORTH);
+        getContentPane().add(pnlHeader, BorderLayout.NORTH);
 
-        pnlInOut.setPreferredSize(new java.awt.Dimension(583, 517));
-        pnlInOut.setLayout(new java.awt.BorderLayout());
+        pnlInOut.setPreferredSize(new Dimension(583, 517));
+        pnlInOut.setLayout(new BorderLayout());
 
         scrOutput.setBorder(null);
 
@@ -188,20 +180,20 @@ public class MainFrame extends JFrame {
         txtPane.setFont(new Font("Serif", 0, 16));
         scrOutput.setViewportView(txtPane);
 
-        pnlInOut.add(scrOutput, java.awt.BorderLayout.CENTER);
+        pnlInOut.add(scrOutput, BorderLayout.CENTER);
 
-        pnlInput.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING, 5, 0));
+        pnlInput.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 0));
 
-        lblInput.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblInput.setFont(new Font("Segoe UI", 0, 18));
         lblInput.setText(">");
         pnlInput.add(lblInput);
 
-        txtInput.setBackground(java.awt.Color.decode("#d6d9df"));
-        txtInput.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        txtInput.setBackground(Color.decode("#d6d9df"));
+        txtInput.setFont(new Font("Segoe UI", 0, 18));
         txtInput.setText("");
         txtInput.setBorder(null);
         txtInput.setCaret(new CustomCaret());
-        txtInput.setPreferredSize(new java.awt.Dimension(840, 25));
+        txtInput.setPreferredSize(new Dimension(840, 25));
         txtInput.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent evt) {
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -216,13 +208,13 @@ public class MainFrame extends JFrame {
         });
         pnlInput.add(txtInput);
 
-        pnlInOut.add(pnlInput, java.awt.BorderLayout.SOUTH);
+        pnlInOut.add(pnlInput, BorderLayout.SOUTH);
 
-        getContentPane().add(pnlInOut, java.awt.BorderLayout.PAGE_END);
+        getContentPane().add(pnlInOut, BorderLayout.PAGE_END);
 
-        pnlCompass.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlCompass.setPreferredSize(new java.awt.Dimension(300, 300));
-        pnlCompass.setLayout(new java.awt.GridBagLayout());
+        pnlCompass.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
+        pnlCompass.setPreferredSize(new Dimension(300, 300));
+        pnlCompass.setLayout(new GridBagLayout());
 
         try {
             lblCompassNorthImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_02.png"));
@@ -243,27 +235,27 @@ public class MainFrame extends JFrame {
                     "Error occurred on loading of compass images. Details: " + e.getMessage());
         }
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         pnlCompass.add(lblCompassNorthImage, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassWestImage, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassCenterImage, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassEastImage, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         pnlCompass.add(lblCompassSouthImage, gridBagConstraints);
@@ -274,12 +266,12 @@ public class MainFrame extends JFrame {
 
         lblCompassNorthWestText.setHorizontalAlignment(SwingConstants.CENTER);
         lblCompassNorthWestText.setText("NW");
-        lblCompassNorthWestText.setMaximumSize(new java.awt.Dimension(83, 83));
-        lblCompassNorthWestText.setMinimumSize(new java.awt.Dimension(83, 83));
-        lblCompassNorthWestText.setPreferredSize(new java.awt.Dimension(83, 83));
+        lblCompassNorthWestText.setMaximumSize(new Dimension(83, 83));
+        lblCompassNorthWestText.setMinimumSize(new Dimension(83, 83));
+        lblCompassNorthWestText.setPreferredSize(new Dimension(83, 83));
         pnlCompassNorthWest.add(lblCompassNorthWestText);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         pnlCompass.add(pnlCompassNorthWest, gridBagConstraints);
@@ -290,95 +282,140 @@ public class MainFrame extends JFrame {
 
         lblCompassNorthEastText.setHorizontalAlignment(SwingConstants.CENTER);
         lblCompassNorthEastText.setText("NE");
-        lblCompassNorthEastText.setMaximumSize(new java.awt.Dimension(83, 83));
-        lblCompassNorthEastText.setMinimumSize(new java.awt.Dimension(83, 83));
-        lblCompassNorthEastText.setPreferredSize(new java.awt.Dimension(83, 83));
+        lblCompassNorthEastText.setMaximumSize(new Dimension(83, 83));
+        lblCompassNorthEastText.setMinimumSize(new Dimension(83, 83));
+        lblCompassNorthEastText.setPreferredSize(new Dimension(83, 83));
         pnlCompassNorthEast.add(lblCompassNorthEastText);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         pnlCompass.add(pnlCompassNorthEast, gridBagConstraints);
 
         pnlCompassSouthWest.setLayout(new OverlayLayout(pnlCompassSouthWest));
 
-        lblCompassSouthWestImage.setFont(new java.awt.Font("Segoe UI", 0, 24));
+        lblCompassSouthWestImage.setFont(new Font("Segoe UI", 0, 24));
 
         lblCompassSouthWestImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthWest.add(lblCompassSouthWestImage);
 
         lblCompassSouthWestText.setHorizontalAlignment(SwingConstants.CENTER);
         lblCompassSouthWestText.setText("SW");
-        lblCompassSouthWestText.setMaximumSize(new java.awt.Dimension(83, 83));
-        lblCompassSouthWestText.setMinimumSize(new java.awt.Dimension(83, 83));
-        lblCompassSouthWestText.setPreferredSize(new java.awt.Dimension(83, 83));
+        lblCompassSouthWestText.setMaximumSize(new Dimension(83, 83));
+        lblCompassSouthWestText.setMinimumSize(new Dimension(83, 83));
+        lblCompassSouthWestText.setPreferredSize(new Dimension(83, 83));
         pnlCompassSouthWest.add(lblCompassSouthWestText);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         pnlCompass.add(pnlCompassSouthWest, gridBagConstraints);
 
         pnlCompassSouthEast.setLayout(new OverlayLayout(pnlCompassSouthEast));
 
-        lblCompassSouthEastImage.setFont(new java.awt.Font("Segoe UI", 0, 24));
+        lblCompassSouthEastImage.setFont(new Font("Segoe UI", 0, 24));
 
         lblCompassSouthEastImage.setHorizontalTextPosition(SwingConstants.CENTER);
         pnlCompassSouthEast.add(lblCompassSouthEastImage);
 
         lblCompassSouthEastText.setHorizontalAlignment(SwingConstants.CENTER);
         lblCompassSouthEastText.setText("SE");
-        lblCompassSouthEastText.setMaximumSize(new java.awt.Dimension(83, 83));
-        lblCompassSouthEastText.setMinimumSize(new java.awt.Dimension(83, 83));
-        lblCompassSouthEastText.setPreferredSize(new java.awt.Dimension(83, 83));
+        lblCompassSouthEastText.setMaximumSize(new Dimension(83, 83));
+        lblCompassSouthEastText.setMinimumSize(new Dimension(83, 83));
+        lblCompassSouthEastText.setPreferredSize(new Dimension(83, 83));
         pnlCompassSouthEast.add(lblCompassSouthEastText);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 3;
         pnlCompass.add(pnlCompassSouthEast, gridBagConstraints);
 
-        lblCompassSouthText.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblCompassSouthText.setFont(new Font("Segoe UI", 0, 18));
         lblCompassSouthText.setText("s");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
         pnlCompass.add(lblCompassSouthText, gridBagConstraints);
 
-        lblCompassNorthText.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblCompassNorthText.setFont(new Font("Segoe UI", 0, 18));
         lblCompassNorthText.setText("n");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         pnlCompass.add(lblCompassNorthText, gridBagConstraints);
 
-        lblCompassWestText.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblCompassWestText.setFont(new Font("Segoe UI", 0, 18));
         lblCompassWestText.setText("w");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassWestText, gridBagConstraints);
 
-        lblCompassEastText.setFont(new java.awt.Font("Segoe UI", 0, 18));
+        lblCompassEastText.setFont(new Font("Segoe UI", 0, 18));
         lblCompassEastText.setText("e");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
         pnlCompass.add(lblCompassEastText, gridBagConstraints);
 
-        getContentPane().add(pnlCompass, java.awt.BorderLayout.WEST);
+        getContentPane().add(pnlCompass, BorderLayout.WEST);
 
         lypRoomImage.setLayout(new OverlayLayout(lypRoomImage));
 
         lblRoomImage
-                .setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+                .setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
         lblRoomImage.setName("");
-        lblRoomImage.setPreferredSize(new java.awt.Dimension(581, 300));
+        lblRoomImage.setPreferredSize(new Dimension(581, 300));
         lypRoomImage.add(lblRoomImage);
 
-        getContentPane().add(lypRoomImage, java.awt.BorderLayout.CENTER);
+        getContentPane().add(lypRoomImage, BorderLayout.CENTER);
 
         pack();
+    }
+
+    private void init() {
+        try {
+            Font compassFont = Font.createFont(Font.TRUETYPE_FONT,
+                    getClass().getResourceAsStream(
+                            "/resources/font/LEIXO-DEMO.ttf"));
+            lblCompassNorthText.setFont(compassFont.deriveFont(Font.PLAIN, 21f));
+            lblCompassSouthText.setFont(compassFont.deriveFont(Font.PLAIN, 21f));
+            lblCompassEastText.setFont(compassFont.deriveFont(Font.PLAIN, 21f));
+            lblCompassWestText.setFont(compassFont.deriveFont(Font.PLAIN, 21f));
+            lblCompassNorthEastText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
+            lblCompassNorthWestText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
+            lblCompassSouthEastText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
+            lblCompassSouthWestText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
+        } catch (Exception ex) {
+            showFatalError(ex.getMessage());
+        }
+        noisePanel = new NoiseFXPanel();
+        lypRoomImage.add(noisePanel, new Integer(1));
+
+        txtInput.requestFocus();
+        txtInput.setCaretPosition(txtInput.getText().length());
+        txtPane.setCaretPosition(txtPane.getDocument().getLength());
+
+        ((DefaultCaret) txtPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        scrOutput.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            private int max = 0;
+            private final BoundedRangeModel model = scrOutput.getVerticalScrollBar().getModel();
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (model.getMaximum() != max) {
+                    // Scroll to bottom
+                    model.setValue(model.getMaximum() - model.getExtent());
+                }
+                max = model.getMaximum();
+            }
+        });
+    }
+
+    private ImageIcon getResourceAsImageIcon(String path) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(path);
+
+        return new ImageIcon(ImageIO.read(inputStream));
     }
 
     public void appendTxtPane(String text, boolean isInputText) {
@@ -453,7 +490,7 @@ public class MainFrame extends JFrame {
 
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
+                if (e.getKeyCode() == KeyEvent.VK_ENTER
                         && e.getID() == KeyEvent.KEY_RELEASED) {
                     timer.stop();
                     try {
@@ -488,7 +525,7 @@ public class MainFrame extends JFrame {
                     }
                 }
 
-                java.awt.EventQueue.invokeLater(new Runnable() {
+                EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         txtInput.setText("Premere INVIO per continuare...");
                         txtInput.setFocusable(false);
@@ -500,7 +537,7 @@ public class MainFrame extends JFrame {
 
                             @Override
                             public boolean dispatchKeyEvent(KeyEvent e) {
-                                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER
+                                if (e.getKeyCode() == KeyEvent.VK_ENTER
                                         && e.getID() == KeyEvent.KEY_RELEASED) {
                                     txtInput.setText("");
                                     txtInput.setEditable(true);
@@ -516,9 +553,7 @@ public class MainFrame extends JFrame {
 
                 });
             }
-        }.start();;
-
-        // }.start();
+        }.start();
     }
 
     /**
@@ -551,47 +586,12 @@ public class MainFrame extends JFrame {
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MainFrame().setVisible(true);
             }
         });
     }
-
-    private JTextPane txtPane;
-    private JLabel lblActions;
-    private JLabel lblCompassCenterImage;
-    private JLabel lblCompassEastImage;
-    private JLabel lblCompassEastText;
-    private JLabel lblCompassNorthEastImage;
-    private JLabel lblCompassNorthEastText;
-    private JLabel lblCompassNorthImage;
-    private JLabel lblCompassNorthText;
-    private JLabel lblCompassNorthWestImage;
-    private JLabel lblCompassNorthWestText;
-    private JLabel lblCompassSouthEastImage;
-    private JLabel lblCompassSouthEastText;
-    private JLabel lblCompassSouthImage;
-    private JLabel lblCompassSouthText;
-    private JLabel lblCompassSouthWestImage;
-    private JLabel lblCompassSouthWestText;
-    private JLabel lblCompassWestImage;
-    private JLabel lblCompassWestText;
-    private JLabel lblInput;
-    private JLabel lblRoomImage;
-    private JLabel lblRoomName;
-    private JLayeredPane lypRoomImage;
-    private JPanel pnlActions;
-    private JPanel pnlCompass;
-    private JPanel pnlCompassNorthEast;
-    private JPanel pnlCompassNorthWest;
-    private JPanel pnlCompassSouthEast;
-    private JPanel pnlCompassSouthWest;
-    private JPanel pnlHeader;
-    private JPanel pnlInOut;
-    private JPanel pnlInput;
-    private JScrollPane scrOutput;
-    private JTextField txtInput;
 
     public JTextPane getEdtOutput() {
         return txtPane;

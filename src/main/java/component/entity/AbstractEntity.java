@@ -78,9 +78,17 @@ public abstract class AbstractEntity extends GameComponent {
     }
 
     public void loadObjEvents() throws SQLException {
-        PreparedStatement stm = DBManager.getConnection()
-                .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId()
-                        + "' AND ROOMID = '" + closestRoomParentId + "'");
+        PreparedStatement stm;
+
+        if (closestRoomParentId != null) {
+            stm = DBManager.getConnection()
+                    .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId()
+                            + "' AND ROOMID = '" + closestRoomParentId + "'");
+        } else {
+            stm = DBManager.getConnection()
+                    .prepareStatement(
+                            "SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId() + "'");
+        }
         ResultSet rs = stm.executeQuery();
 
         while (rs.next()) {
@@ -411,7 +419,7 @@ public abstract class AbstractEntity extends GameComponent {
         if (getEvents() != null) {
             for (ObjectEvent evt : getEvents()) {
                 stm.setString(1, getId());
-                stm.setString(2, closestRoomParent.getId());
+                stm.setString(2, closestRoomParent != null ? closestRoomParent.getId() : null);
                 stm.setString(3, evt.getEventType().toString());
                 stm.setString(4, evt.getText());
                 stm.setBoolean(5, evt.isUpdatingParentRoom());

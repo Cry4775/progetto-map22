@@ -372,7 +372,6 @@
             {
                 "type": "InvisibleWall",
                 "id": "60",
-                "name": "nebbia",
                 "locked": true,
                 "southBlocked": true,
                 "eastBlocked": true,
@@ -696,7 +695,9 @@
                 "type": "InvisibleWall",
                 "id": "50",
                 "locked": true,
-                "unlockedByWearingItemId": "38",
+                "requiredWearedItemsIdToInteract": [
+                    "38"
+                ],
                 "blockedRoomId": "25",
                 "trespassingWhenLockedText": "Provi ad andare verso nord, ma i tuoi passi si fanno sempre più pesanti, e percepisci una forza maligna che ti respinge indietro, lasciandoti malfermo sulle gambe."
             }

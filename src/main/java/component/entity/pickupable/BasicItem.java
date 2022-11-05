@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
+import component.entity.interfaces.IFluid;
 import component.entity.interfaces.IPickupable;
 import component.event.EventType;
 import component.room.AbstractRoom;
@@ -128,7 +129,8 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms)
             throws SQLException {
         if (pickedUp) {
-            GameManager.getInventory().add(this);
+            if (!(this instanceof IFluid))
+                GameManager.getInventory().add(this);
         } else {
             super.loadLocation(resultSet, allRooms);
         }

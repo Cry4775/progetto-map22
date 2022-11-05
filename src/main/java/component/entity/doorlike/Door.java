@@ -86,6 +86,8 @@ public class Door extends AbstractEntity implements IOpenable {
                     locked = false;
                     unlocked = true;
                     key.setMustDestroyFromInv(true);
+                    unlockedWithItemId = null;
+                    unlockedWithItem = null;
                 } else {
                     outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
                     outString.append(processEvent(EventType.OPEN_LOCKED));
