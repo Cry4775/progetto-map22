@@ -3,7 +3,6 @@ package engine;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,7 +14,6 @@ import component.entity.doorlike.Door;
 import component.entity.doorlike.InvisibleWall;
 import component.entity.doorlike.UnopenableDoor;
 import component.entity.interfaces.IFluid;
-import component.entity.interfaces.ILightSource;
 import component.entity.interfaces.IMovable;
 import component.entity.interfaces.IOpenable;
 import component.entity.interfaces.IPickupable;
@@ -26,8 +24,6 @@ import component.entity.interfaces.ISwitch;
 import component.entity.interfaces.ITalkable;
 import component.entity.interfaces.IWearable;
 import component.entity.object.FireObject;
-import component.event.ObjectEvent;
-import component.event.RoomEvent;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.command.Command;
@@ -53,7 +49,12 @@ public class GameManager {
     private static AbstractRoom previousRoom;
 
     private static Status status = new Status();
+
     private static StringBuilder outString;
+
+    public static Status getStatus() {
+        return status;
+    }
 
     public static AbstractRoom getPreviousRoom() {
         return previousRoom;
@@ -211,7 +212,7 @@ public class GameManager {
             tCommands.join();
             tRooms.join();
             if (currentRoom instanceof PlayableRoom) {
-                processRoomLighting((PlayableRoom) currentRoom);
+                ((PlayableRoom) currentRoom).processRoomLighting(inventory);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -549,9 +550,6 @@ public class GameManager {
                 default:
                     break;
             }
-
-            processTriggeredEvents(roomObj);
-            processTriggeredEvents(invObj);
         }
 
         if (isActionPerformed(p)) {
@@ -569,7 +567,7 @@ public class GameManager {
 
         if (getCurrentRoom() instanceof PlayableRoom) {
             currentPlayableRoom = (PlayableRoom) getCurrentRoom();
-            processRoomLighting(currentPlayableRoom);
+            currentPlayableRoom.processRoomLighting(inventory);
         } else {
             currentPlayableRoom = null;
         }
@@ -587,7 +585,7 @@ public class GameManager {
                     outString.append("È completamente buio e non riesci a vedere niente.");
                 } else {
                     outString.append(getCurrentRoom().getDescription());
-                    outString.append(handleRoomEvent());
+                    outString.append(PlayableRoom.processRoomEvent(getCurrentRoom()));
                 }
             } else {
                 outString.append("Da quella parte non si puó andare.");
@@ -600,7 +598,7 @@ public class GameManager {
 
             outString.append(outString.length() > 0 ? "\n\n" : "");
             outString.append(getCurrentRoom().getDescription());
-            outString.append(handleRoomEvent());
+            outString.append(PlayableRoom.processRoomEvent(getCurrentRoom()));
         }
 
         if (outString.length() > 0) {
@@ -609,52 +607,6 @@ public class GameManager {
 
         outString.setLength(0);
         status.reset();
-    }
-
-    private void processRoomLighting(PlayableRoom currentRoom) {
-        if (currentRoom.isDarkByDefault()) {
-            if (currentRoom.isCurrentlyDark()) {
-                for (AbstractEntity obj : getInventory()) {
-                    if (obj instanceof ILightSource) {
-                        ILightSource light = (ILightSource) obj;
-                        if (light.isOn()) {
-                            currentRoom.setCurrentlyDark(false);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for (AbstractEntity obj : getInventory()) {
-                    if (obj instanceof ILightSource) {
-                        ILightSource light = (ILightSource) obj;
-                        if (!light.isOn()) {
-                            currentRoom.setCurrentlyDark(true);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void processTriggeredEvents(AbstractEntity obj) {
-        if (obj != null) {
-            if (obj.getEvents() != null) {
-                Iterator<ObjectEvent> it = obj.getEvents().iterator();
-
-                while (it.hasNext()) {
-                    ObjectEvent evt = it.next();
-
-                    if (evt.isTriggered()) {
-                        if (evt.getTeleportsPlayerToRoom() != null) {
-                            status.setWarp(true);
-                            status.setWarpDestination(evt.getTeleportsPlayerToRoom());
-                        }
-                        it.remove();
-                    }
-                }
-            }
-        }
     }
 
     private boolean isActionPerformed(ParserOutput p) {
@@ -678,28 +630,6 @@ public class GameManager {
             return p.getInvObject();
         }
         return null;
-    }
-
-    private String handleRoomEvent() {
-        PlayableRoom currentRoom;
-        if (getCurrentRoom() instanceof PlayableRoom) {
-            currentRoom = (PlayableRoom) getCurrentRoom();
-            RoomEvent evt = currentRoom.getEvent();
-            if (evt != null) {
-                if (!evt.isTriggered()) {
-                    StringBuilder outString = new StringBuilder();
-
-                    if (evt.getText() != null && !evt.getText().isEmpty()) {
-                        outString.append("\n\n" + evt.getText());
-                    }
-
-                    evt.setTriggered(true);
-
-                    return outString.toString();
-                }
-            }
-        }
-        return "";
     }
 
     private void moveTo(AbstractRoom room) {

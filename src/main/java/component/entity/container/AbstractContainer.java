@@ -43,7 +43,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         list.add(o);
     }
 
-    public void remove(AbstractEntity o) {
+    public void removeObject(AbstractEntity o) {
         list.remove(o);
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractContainer extends AbstractEntity {
                 if (obj.getParent() instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj.getParent();
 
-                    container.remove(obj);
+                    container.removeObject(obj);
                 }
 
                 if (obj instanceof IWearable) {

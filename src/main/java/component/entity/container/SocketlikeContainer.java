@@ -44,7 +44,7 @@ public class SocketlikeContainer extends AbstractContainer {
                 if (obj.getParent() instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj.getParent();
 
-                    container.remove(obj);
+                    container.removeObject(obj);
                 }
 
                 itemInside = true;

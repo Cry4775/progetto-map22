@@ -1,6 +1,6 @@
 package component.entity.interfaces;
 
-public interface IPullable {
+public interface IPullable extends IInteractable {
     public boolean isPulled();
 
     public void setPulled(boolean pulled);

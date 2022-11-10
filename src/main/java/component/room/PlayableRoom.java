@@ -8,15 +8,14 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.Entities;
 import component.entity.container.AbstractContainer;
 import component.entity.doorlike.InvisibleWall;
+import component.entity.interfaces.ILightSource;
 import component.event.RoomEvent;
 import engine.command.CommandType;
 import engine.database.DBManager;
 
-/**
- * @author Pierdamiano Zagaria
- */
 public class PlayableRoom extends AbstractRoom {
     public PlayableRoom(ResultSet resultSet) throws SQLException {
         super(resultSet);
@@ -181,6 +180,49 @@ public class PlayableRoom extends AbstractRoom {
 
     public String getEastId() {
         return eastId;
+    }
+
+    public static String processRoomEvent(AbstractRoom room) {
+        if (room instanceof PlayableRoom) {
+            PlayableRoom pRoom;
+            pRoom = (PlayableRoom) room;
+
+            RoomEvent evt = pRoom.getEvent();
+            if (evt != null) {
+                if (!evt.isTriggered()) {
+                    StringBuilder outString = new StringBuilder();
+
+                    if (evt.getText() != null && !evt.getText().isEmpty()) {
+                        outString.append("\n\n" + evt.getText());
+                    }
+
+                    evt.setTriggered(true);
+
+                    return outString.toString();
+                }
+            }
+        }
+        return "";
+    }
+
+    public void processRoomLighting(List<AbstractEntity> inventory) {
+        List<ILightSource> invLightSources = Entities
+                .listCheckedInterfaceEntities(ILightSource.class, inventory);
+
+        if (darkByDefault) {
+            for (ILightSource lightSource : invLightSources) {
+                if (currentlyDark) {
+                    if (lightSource.isOn()) {
+                        setCurrentlyDark(false);
+                        break;
+                    }
+                } else {
+                    if (!lightSource.isOn()) {
+                        setCurrentlyDark(true);
+                    }
+                }
+            }
+        }
     }
 
     public enum Mode {

@@ -2,8 +2,14 @@ package component.event;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 import component.room.AbstractRoom;
 import component.room.MutableRoom;
+import component.room.PlayableRoom;
+import engine.GameManager;
+import engine.Status;
 
 public class ObjectEvent extends AbstractEvent {
     private String updateTargetRoomId;
@@ -80,4 +86,59 @@ public class ObjectEvent extends AbstractEvent {
     public void setTeleportsPlayerToRoom(AbstractRoom teleportsPlayerToRoom) {
         this.teleportsPlayerToRoom = teleportsPlayerToRoom;
     }
+
+    public StringBuilder trigger(AbstractEntity obj) {
+        StringBuilder outString = new StringBuilder();
+
+        if (updatingParentRoom) {
+            parentRoom.updateToNewRoom();
+        }
+
+        if (updateTargetRoom != null) {
+            updateTargetRoom.updateToNewRoom();
+        }
+
+        if (teleportsPlayerToRoom != null) {
+            Status status = GameManager.getStatus();
+            status.setWarp(true);
+            status.setWarpDestination(teleportsPlayerToRoom);
+        }
+
+        if (destroyOnTrigger) {
+            if (obj.getParent() instanceof AbstractContainer) {
+                AbstractContainer container = (AbstractContainer) obj.getParent();
+
+                container.removeObject(obj);
+            } else if (obj.getParent() instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) obj.getParent();
+
+                pRoom.removeObject(obj);
+            } else {
+                throw new Error(
+                        "Couldn't find the parent room of " + obj.getName()
+                                + " (" + obj.getId() + ").");
+            }
+        }
+
+        if (getText() != null && !getText().isEmpty()) {
+            outString.append("\n\n" + getText());
+        }
+
+        setTriggered(true);
+        obj.getEvents().remove(this);
+
+        return outString;
+    }
+
+    public static ObjectEvent getEvent(List<ObjectEvent> events, EventType type) {
+        if (events != null) {
+            for (ObjectEvent evt : events) {
+                if (evt.getEventType() == type) {
+                    return evt;
+                }
+            }
+        }
+        return null;
+    }
+
 }

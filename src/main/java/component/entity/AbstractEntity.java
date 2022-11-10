@@ -21,6 +21,7 @@ import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.GameManager.InventoryMode;
+import engine.Status;
 import engine.database.DBManager;
 
 public abstract class AbstractEntity extends GameComponent {
@@ -139,19 +140,6 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
-    }
-
-    public ObjectEvent getEvent(EventType type) {
-        if (getEvents() != null) {
-            for (ObjectEvent evt : getEvents()) {
-                if (evt.getEventType() == type) {
-                    if (!evt.isTriggered()) {
-                        return evt;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     public StringBuilder getLookMessage() {
@@ -354,7 +342,7 @@ public abstract class AbstractEntity extends GameComponent {
     public StringBuilder processEvent(EventType eventType) {
         StringBuilder outString = new StringBuilder();
 
-        ObjectEvent evt = getEvent(eventType);
+        ObjectEvent evt = ObjectEvent.getEvent(events, eventType);
 
         if (evt != null) {
             if (evt.isUpdatingParentRoom()) {
@@ -365,11 +353,17 @@ public abstract class AbstractEntity extends GameComponent {
                 evt.getUpdateTargetRoom().updateToNewRoom();
             }
 
+            if (evt.getTeleportsPlayerToRoom() != null) {
+                Status status = GameManager.getStatus();
+                status.setWarp(true);
+                status.setWarpDestination(evt.getTeleportsPlayerToRoom());
+            }
+
             if (evt.mustDestroyOnTrigger()) {
                 if (parent instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) parent;
 
-                    container.remove(this);
+                    container.removeObject(this);
                 } else if (parent instanceof PlayableRoom) {
                     PlayableRoom pRoom = (PlayableRoom) parent;
 
@@ -386,6 +380,8 @@ public abstract class AbstractEntity extends GameComponent {
             }
 
             evt.setTriggered(true);
+
+            events.remove(evt);
         }
         return outString;
     }

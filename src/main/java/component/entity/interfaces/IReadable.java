@@ -1,5 +1,5 @@
 package component.entity.interfaces;
 
-public interface IReadable {
+public interface IReadable extends IInteractable {
     public StringBuilder read();
 }

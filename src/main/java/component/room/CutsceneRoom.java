@@ -6,23 +6,20 @@ import java.sql.SQLException;
 import engine.database.DBManager;
 
 public class CutsceneRoom extends AbstractRoom {
-    public CutsceneRoom(ResultSet resultSet) throws SQLException {
-        super(resultSet);
-        nextRoomId = resultSet.getString(5);
-        finalRoom = resultSet.getBoolean(6);
-    }
 
     private AbstractRoom nextRoom;
     private String nextRoomId;
 
     private boolean finalRoom = false;
 
-    public boolean isFinalRoom() {
-        return finalRoom;
+    public CutsceneRoom(ResultSet resultSet) throws SQLException {
+        super(resultSet);
+        nextRoomId = resultSet.getString(5);
+        finalRoom = resultSet.getBoolean(6);
     }
 
-    public void setFinalRoom(boolean finalRoom) {
-        this.finalRoom = finalRoom;
+    public boolean isFinalRoom() {
+        return finalRoom;
     }
 
     public AbstractRoom getNextRoom() {
@@ -35,10 +32,6 @@ public class CutsceneRoom extends AbstractRoom {
 
     public String getNextRoomId() {
         return nextRoomId;
-    }
-
-    public void setNextRoomId(String nextRoomId) {
-        this.nextRoomId = nextRoomId;
     }
 
     @Override

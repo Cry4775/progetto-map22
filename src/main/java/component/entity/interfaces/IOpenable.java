@@ -2,7 +2,7 @@ package component.entity.interfaces;
 
 import component.entity.AbstractEntity;
 
-public interface IOpenable {
+public interface IOpenable extends IInteractable {
     public boolean isOpen();
 
     public void setOpen(boolean open);

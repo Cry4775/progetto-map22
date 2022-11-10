@@ -2,7 +2,7 @@ package component.entity.interfaces;
 
 import component.entity.AbstractEntity;
 
-public interface IFillable {
+public interface IFillable extends IInteractable {
     public boolean isFilled();
 
     public void setFilled(boolean filled);
