@@ -50,10 +50,11 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public void sendLookMessage() {
-        IOpenable.super.sendLookMessage();
+    public void lookAt() {
+        IOpenable.super.lookAt();
 
-        OutputManager.append(getContentString());
+        if (isOpen())
+            OutputManager.append(getContentString());
     }
 
     @Override
@@ -64,6 +65,9 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     @Override
     public void open(AbstractEntity key) {
         if (locked) {
+            if (!canInteract())
+                return;
+
             if (unlockedWithItem.equals(key)) {
                 locked = false;
                 key.setMustDestroyFromInv(true);
@@ -77,6 +81,9 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         }
 
         if (!open) {
+            if (!canInteract())
+                return;
+
             open = true;
             OutputManager.append("Hai aperto: " + getName());
             OutputManager.append(getContentString());

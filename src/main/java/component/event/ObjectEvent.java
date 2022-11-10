@@ -121,7 +121,6 @@ public class ObjectEvent extends AbstractEvent {
 
         OutputManager.append(getText());
 
-        setTriggered(true);
         obj.getEvents().remove(this);
     }
 

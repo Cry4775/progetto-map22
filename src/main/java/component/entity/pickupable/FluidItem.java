@@ -28,40 +28,38 @@ public class FluidItem extends BasicItem implements IFluid {
             return;
         }
 
-        boolean canProceed = false;
+        if (!canInteract())
+            return;
+
+        boolean filled = false;
 
         for (AbstractEntity invObject : GameManager.getInventory()) {
             if (invObject instanceof IFillable) {
                 IFillable invFillable = (IFillable) invObject;
 
-                canProceed = invFillable.fill(this);
+                filled = invFillable.fill(this);
 
-                if (canProceed) {
-                    OutputManager.append("Hai riempito: " + invObject.getName());
-                    triggerEvent((EventType.PICK_UP));
-
-                    setActionPerformed(true);
-
-                    if (getParent() != null) {
-                        if (getParent() instanceof AbstractContainer) {
-                            AbstractContainer parentContainer = (AbstractContainer) getParent();
-                            parentContainer.getList().remove(this);
-                        } else if (getParent() instanceof PlayableRoom) {
-                            PlayableRoom room = (PlayableRoom) getParent();
-                            room.getObjects().remove(this);
-                        }
+                if (filled) {
+                    if (getParent() instanceof AbstractContainer) {
+                        AbstractContainer parentContainer = (AbstractContainer) getParent();
+                        parentContainer.removeObject(this);
+                    } else if (getParent() instanceof PlayableRoom) {
+                        PlayableRoom room = (PlayableRoom) getParent();
+                        room.removeObject(this);
                     }
 
-                    setParent(null);
-                    setClosestRoomParent(null);
-
                     setPickedUp(true);
+
+                    OutputManager.append("Hai riempito: " + invObject.getName());
+                    triggerEvent(EventType.PICK_UP);
+
+                    setActionPerformed(true);
                     break;
                 }
             }
         }
 
-        if (!canProceed) {
+        if (!filled) {
             OutputManager.append("Non puoi prenderlo senza lo strumento adatto.");
         }
     }
@@ -69,10 +67,11 @@ public class FluidItem extends BasicItem implements IFluid {
     @Override
     public void delete() {
         if (getParent() instanceof IFillable) {
-            IFillable container = (IFillable) getParent();
+            IFillable fillable = (IFillable) getParent();
 
-            container.setFilled(false);
+            fillable.setFilled(false);
             setParent(null);
+            setClosestRoomParent(null);
         }
     }
 

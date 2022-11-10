@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IFluid;
-import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.OutputManager;
@@ -29,39 +28,15 @@ public class FireObject extends AbstractEntity {
         this.lit = lit;
     }
 
-    public void extinguish() {
-        if (lit) {
-            if (getRequiredWearedItemsToInteract() != null) {
-                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
-                    if (!wearable.isWorn()) {
-                        OutputManager.append(getFailedInteractionMessage());
-                    }
-                }
-            }
-
-            lit = false;
-
-            triggerEvent((EventType.EXTINGUISH));
-
-            setActionPerformed(true);
-        } else {
-            OutputManager.append("Non ci sono piú fiamme.");
-        }
-    }
-
     public void extinguish(IFluid liquid) {
         if (lit) {
-            if (getRequiredWearedItemsToInteract() != null) {
-                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
-                    if (!wearable.isWorn()) {
-                        OutputManager.append(getFailedInteractionMessage());
-                        return;
-                    }
-                }
-            }
+            if (!canInteract())
+                return;
 
             lit = false;
-            liquid.delete();
+
+            if (liquid != null)
+                liquid.delete();
 
             triggerEvent((EventType.EXTINGUISH));
             setActionPerformed(true);

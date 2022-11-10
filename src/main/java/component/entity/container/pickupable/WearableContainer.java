@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
+import component.entity.interfaces.IPickupable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
@@ -49,9 +50,12 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         pickedUp = value;
     }
 
-    @Override // TODO modo per fattorizzare?
+    @Override
     public void wear() {
         if (!worn) {
+            if (!canInteract())
+                return;
+
             worn = true;
 
             OutputManager.append("Hai indossato: " + getName());
@@ -79,6 +83,9 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
     @Override
     public void pickup() {
+        if (!canInteract())
+            return;
+
         pickedUp = true;
         GameManager.getInventory().add(this);
 
@@ -86,15 +93,12 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         if (getParent() != null) {
             if (getParent() instanceof AbstractContainer) {
                 AbstractContainer parentContainer = (AbstractContainer) getParent();
-                parentContainer.getList().remove(this);
+                parentContainer.removeObject(this);
             } else if (getParent() instanceof PlayableRoom) {
                 PlayableRoom room = (PlayableRoom) getParent();
-                room.getObjects().remove(this);
+                room.removeObject(this);
             }
         }
-
-        setParent(null);
-        setClosestRoomParent(null);
 
         for (AbstractEntity obj : getAllObjectsInside(this)) {
             obj.setClosestRoomParent(null);
@@ -107,7 +111,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public void insert(AbstractEntity obj, List<AbstractEntity> inventory) {
+    public void insert(AbstractEntity obj) {
         if (maxSlots == 0) {
             maxSlots = 999;
         }
@@ -124,7 +128,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
             obj.setClosestRoomParent((PlayableRoom) GameManager.getCurrentRoom());
             obj.setParent(this);
-            inventory.remove(obj);
+            GameManager.getInventory().remove(obj);
+            ((IPickupable) obj).setPickedUp(false);
 
             this.add(obj);
 
@@ -133,8 +138,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
             setActionPerformed(true);
         } else {
-            OutputManager
-                    .append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
+            OutputManager.append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
         }
     }
 

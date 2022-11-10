@@ -53,18 +53,15 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     @Override
     public void turnOn() {
         if (!on) {
+            if (!canInteract())
+                return;
 
-            if (requiredItem != null && requiredItem.isPickedUp()) {
-
-                on = true;
-                OutputManager.append("Hai acceso: " + getName());
-
-                setActionPerformed(true);
-            } else if (requiredItem != null && !requiredItem.isPickedUp()) {
+            if (requiredItem != null && !requiredItem.isPickedUp()) {
                 OutputManager.append("Non puoi farlo senza lo strumento adatto.");
             } else {
                 on = true;
                 OutputManager.append("Hai acceso: " + getName());
+                // TODO EVENTO
 
                 setActionPerformed(true);
             }

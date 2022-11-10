@@ -37,26 +37,24 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     @Override
     public void pickup() {
         if (!pickedUp) {
-            // Check if it's an obj inside something and remove it from its list
-            if (getParent() != null) {
-                if (getParent() instanceof AbstractContainer) {
-                    AbstractContainer parentContainer = (AbstractContainer) getParent();
-                    parentContainer.getList().remove(this);
-                } else if (getParent() instanceof PlayableRoom) {
-                    PlayableRoom room = (PlayableRoom) getParent();
-                    room.getObjects().remove(this);
-                }
-            }
+            if (!canInteract())
+                return;
 
-            setParent(null);
-            setClosestRoomParent(null);
+            // Check if it's an obj inside something and remove it from its list
+            if (getParent() instanceof AbstractContainer) {
+                AbstractContainer parentContainer = (AbstractContainer) getParent();
+                parentContainer.removeObject(this);
+            } else if (getParent() instanceof PlayableRoom) {
+                PlayableRoom room = (PlayableRoom) getParent();
+                room.removeObject(this);
+            }
 
             GameManager.getInventory().add(this);
             SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
             pickedUp = true;
 
             OutputManager.append("Hai raccolto: " + getName());
-            triggerEvent((EventType.PICK_UP));
+            triggerEvent(EventType.PICK_UP);
 
             setActionPerformed(true);
         } else {

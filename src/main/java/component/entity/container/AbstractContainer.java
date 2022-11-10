@@ -13,6 +13,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.GameManager;
 import engine.OutputManager;
 import utility.Triple;
 
@@ -46,6 +47,8 @@ public abstract class AbstractContainer extends AbstractEntity {
 
     public void removeObject(AbstractEntity o) {
         list.remove(o);
+        o.setParent(null);
+        o.setClosestRoomParent(null);
     }
 
     public boolean isContentRevealed() {
@@ -53,8 +56,8 @@ public abstract class AbstractContainer extends AbstractEntity {
     }
 
     @Override
-    public void sendLookMessage() {
-        super.sendLookMessage();
+    public void lookAt() {
+        super.lookAt();
 
         OutputManager.append(getContentString());
     }
@@ -78,7 +81,10 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public void insert(AbstractEntity obj, List<AbstractEntity> inventory) {
+    public void insert(AbstractEntity obj) {
+        if (!canInteract())
+            return;
+
         if (obj instanceof IFluid) {
             if (forFluids) {
                 IFluid fluid = (IFluid) obj;
@@ -116,8 +122,9 @@ public abstract class AbstractContainer extends AbstractEntity {
                     }
                 }
 
+                obj.setClosestRoomParent((PlayableRoom) GameManager.getCurrentRoom());
                 obj.setParent(this);
-                inventory.remove(obj);
+                GameManager.getInventory().remove(obj);
                 ((IPickupable) obj).setPickedUp(false);
 
                 this.add(obj);

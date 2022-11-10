@@ -16,6 +16,7 @@ import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import component.room.Rooms;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.GameManager.InventoryMode;
@@ -140,14 +141,14 @@ public abstract class AbstractEntity extends GameComponent {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
-    public void sendLookMessage() {
+    public void lookAt() {
         OutputManager.append(getDescription());
 
         if (OutputManager.isOutputEmpty()) {
             OutputManager.append("Nulla di particolare.");
-        } else {
-            triggerEvent(EventType.LOOK_AT);
         }
+
+        triggerEvent(EventType.LOOK_AT);
     }
 
     public void triggerEvent(EventType type) {
@@ -155,6 +156,19 @@ public abstract class AbstractEntity extends GameComponent {
 
         if (evt != null)
             evt.trigger(this);
+    }
+
+    public boolean canInteract() {
+        if (getRequiredWearedItemsToInteract() != null) {
+            for (IWearable wearable : getRequiredWearedItemsToInteract()) {
+                if (!wearable.isWorn()) {
+                    OutputManager.append(getFailedInteractionMessage());
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public void processReferences(Multimap<String, AbstractEntity> objects,
@@ -172,7 +186,7 @@ public abstract class AbstractEntity extends GameComponent {
                     if (parent == null)
                         parent = pRoom;
 
-                    for (AbstractRoom _room : AbstractRoom.getAllRooms(pRoom)) {
+                    for (AbstractRoom _room : Rooms.getAllRooms(pRoom)) {
                         if (_room instanceof PlayableRoom) {
                             PlayableRoom _pRoom = (PlayableRoom) _room;
 

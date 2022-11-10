@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IMovable;
-import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.OutputManager;
@@ -34,14 +33,8 @@ public class MovableObject extends AbstractEntity implements IMovable {
     @Override
     public void move() {
         if (!moved) {
-            if (getRequiredWearedItemsToInteract() != null) {
-                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
-                    if (!wearable.isWorn()) {
-                        OutputManager.append(getFailedInteractionMessage());
-                        return;
-                    }
-                }
-            }
+            if (!canInteract())
+                return;
 
             moved = true;
             OutputManager.append("Hai spostato: " + getName());

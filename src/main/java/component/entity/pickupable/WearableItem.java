@@ -32,10 +32,13 @@ public class WearableItem extends BasicItem implements IWearable {
     @Override
     public void wear() {
         if (!worn) {
+            if (!canInteract())
+                return;
+
             worn = true;
 
             OutputManager.append("Hai indossato: " + getName());
-            triggerEvent((EventType.WEAR));
+            triggerEvent(EventType.WEAR);
 
             setActionPerformed(true);
         } else {

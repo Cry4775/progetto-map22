@@ -2,8 +2,6 @@ package component.room;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import component.GameComponent;
 
 public abstract class AbstractRoom extends GameComponent {
@@ -13,19 +11,6 @@ public abstract class AbstractRoom extends GameComponent {
     public AbstractRoom(ResultSet resultSet) throws SQLException {
         super(resultSet);
         imgPath = resultSet.getString(4);
-    }
-
-    public static List<AbstractRoom> getAllRooms(AbstractRoom room) {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        result.add(room);
-
-        if (room instanceof MutableRoom) {
-            MutableRoom mRoom = (MutableRoom) room;
-            result.addAll(mRoom.getAllRooms());
-        }
-
-        return result;
     }
 
     public String getImgPath() {

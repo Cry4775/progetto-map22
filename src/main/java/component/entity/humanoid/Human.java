@@ -40,6 +40,9 @@ public class Human extends AbstractEntity implements ITalkable {
 
     @Override
     public void talk() {
+        if (!canInteract())
+            return;
+
         if (phrases != null) {
             if (!phrases.isEmpty()) {
                 if (phrases.size() > 1) {
@@ -54,7 +57,7 @@ public class Human extends AbstractEntity implements ITalkable {
             OutputManager.append("...");
         }
 
-        triggerEvent((EventType.TALK_WITH));
+        triggerEvent(EventType.TALK_WITH);
         setActionPerformed(true);
     }
 

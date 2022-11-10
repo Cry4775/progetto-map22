@@ -23,7 +23,7 @@ public class MutableRoom extends PlayableRoom {
         List<AbstractRoom> result = new ArrayList<>();
 
         if (newRoom != null) {
-            result.addAll(getAllRooms(newRoom));
+            result.addAll(Rooms.getAllRooms(newRoom));
         }
 
         for (int i = 0; i < result.size(); i++) {

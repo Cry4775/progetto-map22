@@ -81,8 +81,7 @@ public class InvisibleWall extends AbstractEntity {
 
     public void processRequirements(List<AbstractEntity> inventory) {
         if (locked) {
-            if (getRequiredWearedItemsToInteract() != null
-                    && !getRequiredWearedItemsToInteract().isEmpty()) {
+            if (getRequiredWearedItemsToInteract() != null && !getRequiredWearedItemsToInteract().isEmpty()) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         return;
@@ -91,8 +90,7 @@ public class InvisibleWall extends AbstractEntity {
                 locked = false;
             }
         } else {
-            if (getRequiredWearedItemsToInteract() != null
-                    && !getRequiredWearedItemsToInteract().isEmpty()) {
+            if (getRequiredWearedItemsToInteract() != null && !getRequiredWearedItemsToInteract().isEmpty()) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
                         locked = true;

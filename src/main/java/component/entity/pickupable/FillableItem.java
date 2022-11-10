@@ -64,9 +64,9 @@ public class FillableItem extends BasicItem implements IFillable {
     }
 
     @Override
-    public void sendLookMessage() {
-        super.sendLookMessage();
-        IFillable.super.sendLookMessage();
+    public void lookAt() {
+        super.lookAt();
+        IFillable.super.lookAt();
     }
 
     @Override

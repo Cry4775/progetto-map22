@@ -248,7 +248,7 @@ public class PlayableRoom extends AbstractRoom {
                 }
             }
         } else if (mode == Mode.INCLUDE_NEW_ROOMS) {
-            for (AbstractRoom room : getAllRooms(this)) {
+            for (AbstractRoom room : Rooms.getAllRooms(this)) {
                 if (room instanceof PlayableRoom) {
                     result.addAll(((PlayableRoom) room).getObjects());
                 }
@@ -257,7 +257,7 @@ public class PlayableRoom extends AbstractRoom {
         } else if (mode == Mode.INCLUDE_EVERYTHING) {
             List<AbstractEntity> buffer = new ArrayList<>();
 
-            for (AbstractRoom room : getAllRooms(this)) {
+            for (AbstractRoom room : Rooms.getAllRooms(this)) {
                 if (room instanceof PlayableRoom) {
                     result.addAll(((PlayableRoom) room).getObjects());
                 }
@@ -357,6 +357,8 @@ public class PlayableRoom extends AbstractRoom {
 
     public void removeObject(AbstractEntity obj) {
         objects.remove(obj);
+        obj.setParent(null);
+        obj.setClosestRoomParent(null);
     }
 
     public InvisibleWall getMagicWall(CommandType direction) {

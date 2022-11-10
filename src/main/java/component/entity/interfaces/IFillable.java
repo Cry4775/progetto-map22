@@ -14,7 +14,7 @@ public interface IFillable extends IInteractable {
 
     public boolean fill(AbstractEntity obj);
 
-    public default void sendLookMessage() {
+    public default void lookAt() {
         if (isFilled()) {
             OutputManager.append("É pieno di: " + getEligibleItem().getName());
         } else {

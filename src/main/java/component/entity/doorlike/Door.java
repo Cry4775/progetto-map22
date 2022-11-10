@@ -57,9 +57,9 @@ public class Door extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public void sendLookMessage() {
-        super.sendLookMessage();
-        IOpenable.super.sendLookMessage();
+    public void lookAt() {
+        super.lookAt();
+        IOpenable.super.lookAt();
     }
 
     public String getBlockedRoomId() {
@@ -69,6 +69,9 @@ public class Door extends AbstractEntity implements IOpenable {
     @Override
     public void open(AbstractEntity key) {
         boolean unlocked = false;
+
+        if (!canInteract())
+            return;
 
         if (locked) {
             if (blockedRoom != null) {
@@ -80,7 +83,7 @@ public class Door extends AbstractEntity implements IOpenable {
                     unlockedWithItem = null;
                 } else {
                     OutputManager.append(key == null ? "É chiusa a chiave." : "Non funziona.");
-                    triggerEvent((EventType.OPEN_LOCKED));
+                    triggerEvent(EventType.OPEN_LOCKED);
 
                     return;
                 }
@@ -91,8 +94,9 @@ public class Door extends AbstractEntity implements IOpenable {
             open = true;
             SoundManager.playWav(unlocked ? SoundManager.DOOR_UNLOCK_OPEN_SOUND_PATH
                     : SoundManager.DOOR_OPEN_SOUND_PATH, Mode.SOUND);
+
             OutputManager.append("Hai aperto: " + getName());
-            triggerEvent((EventType.OPEN_UNLOCKED));
+            triggerEvent(EventType.OPEN_UNLOCKED);
 
             setActionPerformed(true);
         } else {

@@ -34,6 +34,7 @@ import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
+import component.room.Rooms;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.GameManager.InventoryMode;
@@ -655,7 +656,7 @@ public class DBManager {
 
     private static void loadObjects() throws SQLException {
         List<Triple<AbstractEntity, String, String>> pendingList = new ArrayList<>();
-        List<AbstractRoom> allRooms = GameManager.listAllRooms(loadedRooms);
+        List<AbstractRoom> allRooms = Rooms.listAllRooms(loadedRooms);
 
         BasicContainer.loadFromDB(allRooms, pendingList);
         ChestlikeContainer.loadFromDB(allRooms, pendingList);

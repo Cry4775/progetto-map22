@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.IPullable;
-import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.OutputManager;
@@ -34,15 +33,8 @@ public class PullableObject extends AbstractEntity implements IPullable {
     @Override
     public void pull() {
         if (!pulled) {
-
-            if (getRequiredWearedItemsToInteract() != null) {
-                for (IWearable wearable : getRequiredWearedItemsToInteract()) {
-                    if (!wearable.isWorn()) {
-                        OutputManager.append(getFailedInteractionMessage());
-                        return;
-                    }
-                }
-            }
+            if (!canInteract())
+                return;
 
             pulled = true;
 

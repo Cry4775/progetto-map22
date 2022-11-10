@@ -20,11 +20,16 @@ public class ReadableItem extends BasicItem implements IReadable {
 
     @Override
     public void read() {
+        if (!canInteract())
+            return;
+
         if (readText != null && !readText.isEmpty()) {
             OutputManager.append(readText);
         } else {
             OutputManager.append("Non c'é scritto nulla.");
         }
+
+        // TODO EVENTO
     }
 
     @Override

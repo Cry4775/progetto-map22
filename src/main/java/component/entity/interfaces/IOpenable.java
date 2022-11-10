@@ -16,7 +16,7 @@ public interface IOpenable extends IInteractable {
 
     public void open(AbstractEntity key);
 
-    public default void sendLookMessage() {
+    public default void lookAt() {
         if (isLocked()) {
             OutputManager.append("È chiuso a chiave.");
         } else if (!isOpen()) {

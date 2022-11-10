@@ -6,9 +6,12 @@ import java.sql.SQLException;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.interfaces.IPickupable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import component.room.PlayableRoom;
+import engine.GameManager;
 import engine.OutputManager;
 import engine.database.DBManager;
 import utility.Triple;
@@ -28,8 +31,11 @@ public class SocketlikeContainer extends AbstractContainer {
     }
 
     @Override
-    public void insert(AbstractEntity obj, List<AbstractEntity> inventory) {
+    public void insert(AbstractEntity obj) {
         if (!itemInside) {
+            if (!canInteract())
+                return;
+
             if (eligibleItem.equals(obj)) {
                 if (obj instanceof IWearable) {
                     IWearable wearable = (IWearable) obj;
@@ -47,8 +53,10 @@ public class SocketlikeContainer extends AbstractContainer {
                 }
 
                 itemInside = true;
+                obj.setClosestRoomParent((PlayableRoom) GameManager.getCurrentRoom());
                 obj.setParent(this);
-                inventory.remove(obj);
+                GameManager.getInventory().remove(obj);
+                ((IPickupable) obj).setPickedUp(false);
 
                 this.add(obj);
 

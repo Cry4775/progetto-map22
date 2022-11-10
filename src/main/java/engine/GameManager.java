@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.Entities;
 import component.entity.container.AbstractContainer;
 import component.entity.doorlike.Door;
 import component.entity.doorlike.InvisibleWall;
@@ -26,6 +27,7 @@ import component.entity.interfaces.IWearable;
 import component.entity.object.FireObject;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import component.room.Rooms;
 import engine.command.Command;
 import engine.command.CommandType;
 import engine.database.DBManager;
@@ -36,14 +38,12 @@ import engine.parser.ParserOutput;
 import gui.MainFrame;
 
 public class GameManager {
-
     private static final List<AbstractRoom> rooms = new ArrayList<>();
     private static final List<Command> commands = new ArrayList<>();
     private static final List<AbstractEntity> inventory = new ArrayList<>();
 
     private static final List<AbstractRoom> allRooms = new ArrayList<>();
-    private static final Multimap<String, AbstractEntity> allRoomsObjects =
-            ArrayListMultimap.create();
+    private static final Multimap<String, AbstractEntity> allRoomsObjects = ArrayListMultimap.create();
 
     private static AbstractRoom currentRoom;
     private static AbstractRoom previousRoom;
@@ -215,48 +215,6 @@ public class GameManager {
         }
     }
 
-    private boolean isMovementGranted(CommandType direction) {
-        PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
-
-        status.setMovementAttempt(true);
-
-        InvisibleWall wall = currentRoom.getMagicWall(direction);
-        if (wall != null) {
-            status.setRoomBlockedByWall(true);
-            status.setWall(wall);
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean isMovementCommand(CommandType commandType) {
-        switch (commandType) {
-            case NORTH:
-                return true;
-            case NORTH_EAST:
-                return true;
-            case NORTH_WEST:
-                return true;
-            case SOUTH:
-                return true;
-            case SOUTH_EAST:
-                return true;
-            case SOUTH_WEST:
-                return true;
-            case EAST:
-                return true;
-            case WEST:
-                return true;
-            case UP:
-                return true;
-            case DOWN:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     public void nextMove(ParserOutput p, MainFrame gui) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
 
@@ -305,7 +263,7 @@ public class GameManager {
 
                 case LOOK_AT: {
                     if (anyObj != null) {
-                        anyObj.sendLookMessage();
+                        anyObj.lookAt();
                     } else {
                         OutputManager.append("Non trovo cosa esaminare.");
                     }
@@ -396,7 +354,7 @@ public class GameManager {
                         if (roomObj instanceof AbstractContainer) {
                             AbstractContainer container = (AbstractContainer) roomObj;
 
-                            container.insert(invObj, getInventory());
+                            container.insert(invObj);
                         }
                     } else if (roomObj == null && invObj != null) {
                         OutputManager.append("Non ho capito dove inserire.");
@@ -477,8 +435,7 @@ public class GameManager {
                             } else if (invObj != null) {
                                 OutputManager.append("Non puoi spegnerlo con quello. ");
                             } else {
-                                OutputManager
-                                        .append("Non puoi spegnerlo senza qualcosa di adatto.");
+                                OutputManager.append("Non puoi spegnerlo senza qualcosa di adatto.");
                             }
                         } else {
                             OutputManager.append("Non puoi spegnerlo.");
@@ -516,7 +473,7 @@ public class GameManager {
                                 } else if (roomObj instanceof AbstractContainer) {
                                     AbstractContainer container = (AbstractContainer) roomObj;
 
-                                    container.insert(invObj, getInventory());
+                                    container.insert(invObj);
                                 } else {
                                     OutputManager.append("Non puoi versarci il liquido.");
                                 }
@@ -573,8 +530,7 @@ public class GameManager {
         }
 
         if (status.isMovementAttempt()) {
-            if (!status.isPositionChanged() && currentPlayableRoom != null
-                    && currentPlayableRoom.isCurrentlyDark()) {
+            if (!status.isPositionChanged() && currentPlayableRoom != null && currentPlayableRoom.isCurrentlyDark()) {
                 OutputManager.append("Meglio non avventurarsi nel buio.");
             } else if (status.isRoomBlockedByDoor()) {
                 OutputManager.append("La porta é chiusa.");
@@ -619,6 +575,48 @@ public class GameManager {
         }
     }
 
+    private boolean isMovementGranted(CommandType direction) {
+        PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
+
+        status.setMovementAttempt(true);
+
+        InvisibleWall wall = currentRoom.getMagicWall(direction);
+        if (wall != null) {
+            status.setRoomBlockedByWall(true);
+            status.setWall(wall);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isMovementCommand(CommandType commandType) {
+        switch (commandType) {
+            case NORTH:
+                return true;
+            case NORTH_EAST:
+                return true;
+            case NORTH_WEST:
+                return true;
+            case SOUTH:
+                return true;
+            case SOUTH_EAST:
+                return true;
+            case SOUTH_WEST:
+                return true;
+            case EAST:
+                return true;
+            case WEST:
+                return true;
+            case UP:
+                return true;
+            case DOWN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private AbstractEntity getObjectFromParser(ParserOutput p) {
         if (p.getObject() != null) {
             return p.getObject();
@@ -642,8 +640,7 @@ public class GameManager {
                                 setCurrentRoom(room);
                                 status.setPositionChanged(true);
                                 return;
-                            } else if (door.getBlockedRoomId().equals(room.getId())
-                                    && !door.isOpen()) {
+                            } else if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
                                 status.setPositionChanged(false, true);
                                 return;
                             }
@@ -674,46 +671,22 @@ public class GameManager {
 
     public static List<AbstractRoom> listAllRooms() {
         if (allRooms.isEmpty()) {
-            allRooms.addAll(listAllRooms(rooms));
+            allRooms.addAll(Rooms.listAllRooms(rooms));
         }
 
         return allRooms;
     }
 
-    public static List<AbstractRoom> listAllRooms(List<AbstractRoom> rooms) {
-        List<AbstractRoom> result = new ArrayList<>();
-
-        for (AbstractRoom room : rooms) {
-            result.addAll(AbstractRoom.getAllRooms(room));
-        }
-
-        return result;
-    }
-
     public static Multimap<String, AbstractEntity> mapAllRoomsObjects() {
         if (allRoomsObjects.isEmpty()) {
-            allRoomsObjects.putAll(mapAllRoomsObjects(rooms));
+            allRoomsObjects.putAll(Entities.mapRoomsObjects(rooms));
         } else {
-            for (AbstractEntity obj : getInventory()) {
+            for (AbstractEntity obj : getInventory(InventoryMode.UNPACK_CONTAINERS)) {
                 allRoomsObjects.remove(obj.getId(), obj);
             }
         }
 
         return allRoomsObjects;
-    }
-
-    public static Multimap<String, AbstractEntity> mapAllRoomsObjects(List<AbstractRoom> rooms) {
-        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
-
-        for (AbstractRoom room : rooms) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-
-                result.putAll(pRoom.getObjectsAsMap(PlayableRoom.Mode.INCLUDE_EVERYTHING));
-            }
-        }
-
-        return result;
     }
 
     public static Multimap<String, AbstractEntity> mapAllInventoryObjects() {
