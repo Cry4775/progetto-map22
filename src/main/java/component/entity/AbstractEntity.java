@@ -146,17 +146,15 @@ public abstract class AbstractEntity extends GameComponent {
         if (OutputManager.isOutputEmpty()) {
             OutputManager.append("Nulla di particolare.");
         } else {
-            OutputManager.append(triggerEvent(EventType.LOOK_AT));
+            triggerEvent(EventType.LOOK_AT);
         }
     }
 
-    public StringBuilder triggerEvent(EventType type) {
+    public void triggerEvent(EventType type) {
         ObjectEvent evt = ObjectEvent.getEvent(events, type);
 
         if (evt != null)
-            return evt.trigger(this);
-        else
-            return new StringBuilder();
+            evt.trigger(this);
     }
 
     public void processReferences(Multimap<String, AbstractEntity> objects,

@@ -9,6 +9,7 @@ import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
+import engine.OutputManager;
 import engine.Status;
 
 public class ObjectEvent extends AbstractEvent {
@@ -87,9 +88,7 @@ public class ObjectEvent extends AbstractEvent {
         this.teleportsPlayerToRoom = teleportsPlayerToRoom;
     }
 
-    public StringBuilder trigger(AbstractEntity obj) {
-        StringBuilder outString = new StringBuilder();
-
+    public void trigger(AbstractEntity obj) {
         if (updatingParentRoom) {
             parentRoom.updateToNewRoom();
         }
@@ -120,14 +119,10 @@ public class ObjectEvent extends AbstractEvent {
             }
         }
 
-        if (getText() != null && !getText().isEmpty()) {
-            outString.append("\n\n" + getText());
-        }
+        OutputManager.append(getText());
 
         setTriggered(true);
         obj.getEvents().remove(this);
-
-        return outString;
     }
 
     public static ObjectEvent getEvent(List<ObjectEvent> events, EventType type) {

@@ -9,6 +9,7 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 import utility.Triple;
 
@@ -27,17 +28,15 @@ public class SocketlikeContainer extends AbstractContainer {
     }
 
     @Override
-    public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
-        StringBuilder outString = new StringBuilder();
-
+    public void insert(AbstractEntity obj, List<AbstractEntity> inventory) {
         if (!itemInside) {
             if (eligibleItem.equals(obj)) {
                 if (obj instanceof IWearable) {
                     IWearable wearable = (IWearable) obj;
 
                     if (wearable.isWorn()) {
-                        outString.append("Devi prima toglierlo di dosso.");
-                        return outString;
+                        OutputManager.append("Devi prima toglierlo di dosso.");
+                        return;
                     }
                 }
 
@@ -53,15 +52,14 @@ public class SocketlikeContainer extends AbstractContainer {
 
                 this.add(obj);
 
-                outString.append("Hai inserito: " + obj.getName());
-                outString.append(triggerEvent(EventType.INSERT));
+                OutputManager.append("Hai inserito: " + obj.getName());
+                triggerEvent((EventType.INSERT));
             } else {
-                outString.append("Non puoi inserirci questo oggetto.");
+                OutputManager.append("Non puoi inserirci questo oggetto.");
             }
         } else {
-            outString.append("Non puoi inserirci altri oggetti.");
+            OutputManager.append("Non puoi inserirci altri oggetti.");
         }
-        return outString;
     }
 
     @Override

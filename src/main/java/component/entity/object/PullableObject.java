@@ -9,6 +9,7 @@ import component.entity.interfaces.IPullable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class PullableObject extends AbstractEntity implements IPullable {
@@ -31,30 +32,27 @@ public class PullableObject extends AbstractEntity implements IPullable {
     }
 
     @Override
-    public StringBuilder pull() {
-        StringBuilder outString = new StringBuilder();
-
+    public void pull() {
         if (!pulled) {
 
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
-                        outString.append(getFailedInteractionMessage());
-                        return outString;
+                        OutputManager.append(getFailedInteractionMessage());
+                        return;
                     }
                 }
             }
 
             pulled = true;
 
-            outString.append("Hai tirato: " + getName());
-            outString.append(triggerEvent(EventType.PULL));
+            OutputManager.append("Hai tirato: " + getName());
+            triggerEvent((EventType.PULL));
 
             setActionPerformed(true);
         } else {
-            outString.append("È stato già tirato.");
+            OutputManager.append("È stato già tirato.");
         }
-        return outString;
     }
 
     @Override

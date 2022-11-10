@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.interfaces.IReadable;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class ReadableItem extends BasicItem implements IReadable {
@@ -18,16 +19,12 @@ public class ReadableItem extends BasicItem implements IReadable {
     }
 
     @Override
-    public StringBuilder read() {
-        StringBuilder outString = new StringBuilder();
-
+    public void read() {
         if (readText != null && !readText.isEmpty()) {
-            outString.append(readText);
+            OutputManager.append(readText);
         } else {
-            outString.append("Non c'é scritto nulla.");
+            OutputManager.append("Non c'é scritto nulla.");
         }
-
-        return outString;
     }
 
     @Override

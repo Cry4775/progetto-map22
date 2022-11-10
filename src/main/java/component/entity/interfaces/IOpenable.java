@@ -14,7 +14,7 @@ public interface IOpenable extends IInteractable {
 
     public String getUnlockedWithItemId();
 
-    public StringBuilder open(AbstractEntity key);
+    public void open(AbstractEntity key);
 
     public default void sendLookMessage() {
         if (isLocked()) {

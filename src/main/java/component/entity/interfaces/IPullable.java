@@ -5,5 +5,5 @@ public interface IPullable extends IInteractable {
 
     public void setPulled(boolean pulled);
 
-    public StringBuilder pull();
+    public void pull();
 }

@@ -9,6 +9,7 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 import sound.SoundManager;
 import sound.SoundManager.Mode;
@@ -66,9 +67,7 @@ public class Door extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public StringBuilder open(AbstractEntity key) {
-        StringBuilder outString = new StringBuilder();
-
+    public void open(AbstractEntity key) {
         boolean unlocked = false;
 
         if (locked) {
@@ -80,10 +79,10 @@ public class Door extends AbstractEntity implements IOpenable {
                     unlockedWithItemId = null;
                     unlockedWithItem = null;
                 } else {
-                    outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
-                    outString.append(triggerEvent(EventType.OPEN_LOCKED));
+                    OutputManager.append(key == null ? "É chiusa a chiave." : "Non funziona.");
+                    triggerEvent((EventType.OPEN_LOCKED));
 
-                    return outString;
+                    return;
                 }
             }
         }
@@ -92,15 +91,13 @@ public class Door extends AbstractEntity implements IOpenable {
             open = true;
             SoundManager.playWav(unlocked ? SoundManager.DOOR_UNLOCK_OPEN_SOUND_PATH
                     : SoundManager.DOOR_OPEN_SOUND_PATH, Mode.SOUND);
-            outString.append("Hai aperto: " + getName());
-            outString.append(triggerEvent(EventType.OPEN_UNLOCKED));
+            OutputManager.append("Hai aperto: " + getName());
+            triggerEvent((EventType.OPEN_UNLOCKED));
 
             setActionPerformed(true);
         } else {
-            outString.append("É giá aperta.");
+            OutputManager.append("É giá aperta.");
         }
-
-        return outString;
     }
 
     @Override

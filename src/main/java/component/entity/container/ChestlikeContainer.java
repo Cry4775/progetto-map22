@@ -62,9 +62,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public StringBuilder open(AbstractEntity key) {
-        StringBuilder outString = new StringBuilder();
-
+    public void open(AbstractEntity key) {
         if (locked) {
             if (unlockedWithItem.equals(key)) {
                 locked = false;
@@ -72,24 +70,23 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
                 unlockedWithItem = null;
                 unlockedWithItemId = null;
             } else {
-                outString.append(key == null ? "É chiusa a chiave." : "Non funziona.");
-                outString.append(triggerEvent(EventType.OPEN_LOCKED));
-                return outString;
+                OutputManager.append(key == null ? "É chiusa a chiave." : "Non funziona.");
+                triggerEvent((EventType.OPEN_LOCKED));
+                return;
             }
         }
 
         if (!open) {
             open = true;
-            outString.append("Hai aperto: " + getName());
-            outString.append(getContentString());
-            outString.append(triggerEvent(EventType.OPEN_CONTAINER));
+            OutputManager.append("Hai aperto: " + getName());
+            OutputManager.append(getContentString());
+            triggerEvent((EventType.OPEN_CONTAINER));
 
             setActionPerformed(true);
         } else {
-            outString.append("É giá aperta. ");
-            outString.append(getContentString());
+            OutputManager.append("É giá aperta. ");
+            OutputManager.append(getContentString());
         }
-        return outString;
     }
 
     @Override

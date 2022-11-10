@@ -5,5 +5,5 @@ public interface IPushable extends IInteractable {
 
     public void setPushed(boolean pushed);
 
-    public StringBuilder push();
+    public void push();
 }

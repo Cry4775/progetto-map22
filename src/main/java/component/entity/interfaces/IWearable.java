@@ -5,7 +5,7 @@ public interface IWearable extends IPickupable {
 
     public void setWorn(boolean worn);
 
-    public StringBuilder wear();
+    public void wear();
 
-    public StringBuilder unwear();
+    public void unwear();
 }

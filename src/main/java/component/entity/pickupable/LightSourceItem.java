@@ -8,6 +8,7 @@ import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ILightSource;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class LightSourceItem extends BasicItem implements ILightSource {
@@ -50,44 +51,38 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     }
 
     @Override
-    public StringBuilder turnOn() {
-        StringBuilder outString = new StringBuilder();
-
+    public void turnOn() {
         if (!on) {
 
             if (requiredItem != null && requiredItem.isPickedUp()) {
 
                 on = true;
-                outString.append("Hai acceso: " + getName());
+                OutputManager.append("Hai acceso: " + getName());
 
                 setActionPerformed(true);
             } else if (requiredItem != null && !requiredItem.isPickedUp()) {
-                outString.append("Non puoi farlo senza lo strumento adatto.");
+                OutputManager.append("Non puoi farlo senza lo strumento adatto.");
             } else {
                 on = true;
-                outString.append("Hai acceso: " + getName());
+                OutputManager.append("Hai acceso: " + getName());
 
                 setActionPerformed(true);
             }
         } else {
-            outString.append(getName() + " é giá acceso.");
+            OutputManager.append(getName() + " é giá acceso.");
         }
-        return outString;
     }
 
     @Override
-    public StringBuilder turnOff() {
-        StringBuilder outString = new StringBuilder();
-
+    public void turnOff() {
         if (on) {
             on = false;
-            outString.append("Hai spento: " + getName());
+            OutputManager.append("Hai spento: " + getName());
 
             setActionPerformed(true);
         } else {
-            outString.append(getName() + " é giá spento.");
+            OutputManager.append(getName() + " é giá spento.");
         }
-        return outString;
     }
 
     @Override

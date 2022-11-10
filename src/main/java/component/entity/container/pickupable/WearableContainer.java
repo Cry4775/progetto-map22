@@ -11,6 +11,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
+import engine.OutputManager;
 import engine.database.DBManager;
 import utility.Triple;
 
@@ -48,44 +49,36 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         pickedUp = value;
     }
 
-    @Override
-    public StringBuilder wear() {
-        StringBuilder outString = new StringBuilder();
-
+    @Override // TODO modo per fattorizzare?
+    public void wear() {
         if (!worn) {
             worn = true;
 
-            outString.append("Hai indossato: " + getName());
-            outString.append(triggerEvent(EventType.UNWEAR));
+            OutputManager.append("Hai indossato: " + getName());
+            triggerEvent((EventType.UNWEAR));
 
             setActionPerformed(true);
         } else {
-            outString.append("L'hai giá indossato.");
+            OutputManager.append("L'hai giá indossato.");
         }
-        return outString;
     }
 
     @Override
-    public StringBuilder unwear() {
-        StringBuilder outString = new StringBuilder();
-
+    public void unwear() {
         if (worn) {
             worn = false;
 
-            outString.append("Hai tolto: " + getName());
-            outString.append(triggerEvent(EventType.UNWEAR));
+            OutputManager.append("Hai tolto: " + getName());
+            triggerEvent((EventType.UNWEAR));
 
             setActionPerformed(true);
         } else {
-            outString.append("Non ce l'hai addosso.");
+            OutputManager.append("Non ce l'hai addosso.");
         }
-        return outString;
     }
 
     @Override
-    public StringBuilder pickup() {
-        StringBuilder outString = new StringBuilder();
-
+    public void pickup() {
         pickedUp = true;
         GameManager.getInventory().add(this);
 
@@ -107,17 +100,14 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             obj.setClosestRoomParent(null);
         }
 
-        outString.append("Hai raccolto: " + getName());
-        outString.append(triggerEvent(EventType.PICK_UP));
+        OutputManager.append("Hai raccolto: " + getName());
+        triggerEvent((EventType.PICK_UP));
 
         setActionPerformed(true);
-        return outString;
     }
 
     @Override
-    public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
-        StringBuilder outString = new StringBuilder();
-
+    public void insert(AbstractEntity obj, List<AbstractEntity> inventory) {
         if (maxSlots == 0) {
             maxSlots = 999;
         }
@@ -127,8 +117,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
                 IWearable wearable = (IWearable) obj;
 
                 if (wearable.isWorn()) {
-                    outString.append("Devi prima toglierlo di dosso.");
-                    return outString;
+                    OutputManager.append("Devi prima toglierlo di dosso.");
+                    return;
                 }
             }
 
@@ -138,14 +128,14 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
             this.add(obj);
 
-            outString.append("Hai lasciato: " + obj.getName());
-            outString.append(triggerEvent(EventType.INSERT));
+            OutputManager.append("Hai lasciato: " + obj.getName());
+            triggerEvent((EventType.INSERT));
 
             setActionPerformed(true);
         } else {
-            outString.append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
+            OutputManager
+                    .append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
         }
-        return outString;
     }
 
     @Override

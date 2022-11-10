@@ -50,8 +50,6 @@ public class GameManager {
 
     private static Status status = new Status();
 
-    private static StringBuilder outString = new StringBuilder();
-
     public static Status getStatus() {
         return status;
     }
@@ -188,8 +186,6 @@ public class GameManager {
     }
 
     public void init() throws IOException {
-        outString = new StringBuilder();
-
         CommandsLoader commandsLoader = new CommandsLoader();
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
@@ -282,23 +278,26 @@ public class GameManager {
                 case SAVE: {
                     DBManager.save();
 
-                    outString.append("Partita salvata correttamente!");
+                    OutputManager.append("Partita salvata correttamente!");
                     break;
                 }
                 case INVENTORY: {
                     if (!getInventory().isEmpty()) {
-                        outString.append("Nel tuo inventario ci sono:");
+                        StringBuilder stringBuilder = new StringBuilder(
+                                "Nel tuo inventario ci sono:");
 
                         for (AbstractEntity obj : getInventory()) {
-                            outString.append("\n - " + obj.getName());
+                            stringBuilder.append("\n - " + obj.getName());
                             if (obj instanceof IWearable) {
                                 IWearable wearable = (IWearable) obj;
 
-                                outString.append(wearable.isWorn() ? " (INDOSSATO)" : "");
+                                stringBuilder.append(wearable.isWorn() ? " (INDOSSATO)" : "");
                             }
                         }
+
+                        OutputManager.append(stringBuilder);
                     } else {
-                        outString.append("Il tuo inventario è vuoto.");
+                        OutputManager.append("Il tuo inventario è vuoto.");
                     }
 
                     break;
@@ -308,7 +307,7 @@ public class GameManager {
                     if (anyObj != null) {
                         anyObj.sendLookMessage();
                     } else {
-                        outString.append("Non trovo cosa esaminare.");
+                        OutputManager.append("Non trovo cosa esaminare.");
                     }
 
                     break;
@@ -318,12 +317,12 @@ public class GameManager {
                         if (anyObj instanceof IPickupable) {
                             IPickupable pickupObj = (IPickupable) anyObj;
 
-                            outString.append(pickupObj.pickup());
+                            pickupObj.pickup();
                         } else {
-                            outString.append("Non puoi raccogliere questo oggetto.");
+                            OutputManager.append("Non puoi raccogliere questo oggetto.");
                         }
                     } else {
-                        outString.append("Non trovo cosa raccogliere.");
+                        OutputManager.append("Non trovo cosa raccogliere.");
                     }
 
                     break;
@@ -333,16 +332,16 @@ public class GameManager {
                         if (anyObj instanceof IOpenable) {
                             IOpenable openableObj = (IOpenable) anyObj;
 
-                            outString.append(openableObj.open(invObj));
+                            openableObj.open(invObj);
                         } else if (anyObj instanceof UnopenableDoor) {
                             UnopenableDoor fakeDoor = (UnopenableDoor) anyObj;
 
-                            outString.append(fakeDoor.getOpenEventText());
+                            OutputManager.append(fakeDoor.getOpenEventText());
                         } else {
-                            outString.append("Non puoi aprire " + anyObj.getName());
+                            OutputManager.append("Non puoi aprire " + anyObj.getName());
                         }
                     } else {
-                        outString.append("Non trovo cosa aprire.");
+                        OutputManager.append("Non trovo cosa aprire.");
                     }
 
                     break;
@@ -352,12 +351,12 @@ public class GameManager {
                         if (anyObj instanceof IPushable) {
                             IPushable pushableObj = (IPushable) anyObj;
 
-                            outString.append(pushableObj.push());
+                            pushableObj.push();
                         } else {
-                            outString.append("Non puoi premere " + anyObj.getName());
+                            OutputManager.append("Non puoi premere " + anyObj.getName());
                         }
                     } else {
-                        outString.append("Non trovo cosa premere.");
+                        OutputManager.append("Non trovo cosa premere.");
                     }
 
                     break;
@@ -367,12 +366,12 @@ public class GameManager {
                         if (anyObj instanceof IPullable) {
                             IPullable pullableObj = (IPullable) anyObj;
 
-                            outString.append(pullableObj.pull());
+                            pullableObj.pull();
                         } else {
-                            outString.append("Non puoi tirare " + anyObj.getName());
+                            OutputManager.append("Non puoi tirare " + anyObj.getName());
                         }
                     } else {
-                        outString.append("Non trovo cosa tirare.");
+                        OutputManager.append("Non trovo cosa tirare.");
                     }
 
                     break;
@@ -382,12 +381,12 @@ public class GameManager {
                         if (roomObj instanceof IMovable) {
                             IMovable movableObj = (IMovable) roomObj;
 
-                            outString.append(movableObj.move());
+                            movableObj.move();
                         } else {
-                            outString.append("Non puoi spostare " + roomObj.getName());
+                            OutputManager.append("Non puoi spostare " + roomObj.getName());
                         }
                     } else {
-                        outString.append("Non trovo l'oggetto da spostare.");
+                        OutputManager.append("Non trovo l'oggetto da spostare.");
                     }
 
                     break;
@@ -397,14 +396,14 @@ public class GameManager {
                         if (roomObj instanceof AbstractContainer) {
                             AbstractContainer container = (AbstractContainer) roomObj;
 
-                            outString.append(container.insert(invObj, getInventory()));
+                            container.insert(invObj, getInventory());
                         }
                     } else if (roomObj == null && invObj != null) {
-                        outString.append("Non ho capito dove inserire.");
+                        OutputManager.append("Non ho capito dove inserire.");
                     } else if (roomObj != null && invObj == null) {
-                        outString.append("Non ho capito cosa inserire.");
+                        OutputManager.append("Non ho capito cosa inserire.");
                     } else {
-                        outString.append("Non ho capito cosa devo fare.");
+                        OutputManager.append("Non ho capito cosa devo fare.");
                     }
 
                     break;
@@ -412,37 +411,37 @@ public class GameManager {
                 case WEAR: {
                     if (roomObj != null) {
                         if (roomObj instanceof IWearable) {
-                            outString.append("Devi prima prenderlo per poterlo indossare.");
+                            OutputManager.append("Devi prima prenderlo per poterlo indossare.");
                         } else {
-                            outString.append("Non puoi indossarlo.");
+                            OutputManager.append("Non puoi indossarlo.");
                         }
                     } else if (invObj != null) {
                         if (invObj instanceof IWearable) {
                             IWearable wearable = (IWearable) invObj;
 
-                            outString.append(wearable.wear());
+                            wearable.wear();
                         } else {
-                            outString.append("Non puoi indossarlo.");
+                            OutputManager.append("Non puoi indossarlo.");
                         }
                     } else {
-                        outString.append("Non trovo l'oggetto da indossare.");
+                        OutputManager.append("Non trovo l'oggetto da indossare.");
                     }
 
                     break;
                 }
                 case UNWEAR: {
                     if (roomObj != null) {
-                        outString.append("Non posso togliermi qualcosa che non ho addosso.");
+                        OutputManager.append("Non posso togliermi qualcosa che non ho addosso.");
                     } else if (invObj != null) {
                         if (invObj instanceof IWearable) {
                             IWearable wearable = (IWearable) invObj;
 
-                            outString.append(wearable.unwear());
+                            wearable.unwear();
                         } else {
-                            outString.append("Non puoi farlo.");
+                            OutputManager.append("Non puoi farlo.");
                         }
                     } else {
-                        outString.append("Non trovo l'oggetto da togliere.");
+                        OutputManager.append("Non trovo l'oggetto da togliere.");
                     }
 
                     break;
@@ -452,12 +451,12 @@ public class GameManager {
                         if (anyObj instanceof ISwitch) {
                             ISwitch switchObj = (ISwitch) anyObj;
 
-                            outString.append(switchObj.turnOn());
+                            switchObj.turnOn();
                         } else {
-                            outString.append("Non puoi accenderlo.");
+                            OutputManager.append("Non puoi accenderlo.");
                         }
                     } else {
-                        outString.append("Non trovo l'oggetto da accendere.");
+                        OutputManager.append("Non trovo l'oggetto da accendere.");
                     }
 
                     break;
@@ -467,24 +466,25 @@ public class GameManager {
                         if (anyObj instanceof ISwitch) {
                             ISwitch switchObj = (ISwitch) anyObj;
 
-                            outString.append(switchObj.turnOff());
+                            switchObj.turnOff();
                         } else if (anyObj instanceof FireObject) {
                             FireObject fire = (FireObject) anyObj;
 
                             if (invObj instanceof IFluid) {
                                 IFluid fluid = (IFluid) invObj;
 
-                                outString.append(fire.extinguish(fluid));
+                                fire.extinguish(fluid);
                             } else if (invObj != null) {
-                                outString.append("Non puoi spegnerlo con quello. ");
+                                OutputManager.append("Non puoi spegnerlo con quello. ");
                             } else {
-                                outString.append("Non puoi spegnerlo senza qualcosa di adatto.");
+                                OutputManager
+                                        .append("Non puoi spegnerlo senza qualcosa di adatto.");
                             }
                         } else {
-                            outString.append("Non puoi spegnerlo.");
+                            OutputManager.append("Non puoi spegnerlo.");
                         }
                     } else {
-                        outString.append("Non trovo l'oggetto da spegnere.");
+                        OutputManager.append("Non trovo l'oggetto da spegnere.");
                     }
 
                     break;
@@ -494,12 +494,12 @@ public class GameManager {
                         if (roomObj instanceof ITalkable) {
                             ITalkable talkableObj = (ITalkable) roomObj;
 
-                            outString.append(talkableObj.talk());
+                            talkableObj.talk();
                         } else {
-                            outString.append("Non puoi parlarci.");
+                            OutputManager.append("Non puoi parlarci.");
                         }
                     } else {
-                        outString.append("Non trovo con chi parlare.");
+                        OutputManager.append("Non trovo con chi parlare.");
                     }
 
                     break;
@@ -512,22 +512,22 @@ public class GameManager {
                                     IFluid fluid = (IFluid) invObj;
                                     FireObject fire = (FireObject) roomObj;
 
-                                    outString.append(fire.extinguish(fluid));
+                                    fire.extinguish(fluid);
                                 } else if (roomObj instanceof AbstractContainer) {
                                     AbstractContainer container = (AbstractContainer) roomObj;
 
-                                    outString.append(container.insert(invObj, getInventory()));
+                                    container.insert(invObj, getInventory());
                                 } else {
-                                    outString.append("Non puoi versarci il liquido.");
+                                    OutputManager.append("Non puoi versarci il liquido.");
                                 }
                             } else {
-                                outString.append("Non trovo dove versare il liquido.");
+                                OutputManager.append("Non trovo dove versare il liquido.");
                             }
                         } else {
-                            outString.append("Non posso versare qualcosa che non sia liquido.");
+                            OutputManager.append("Non posso versare qualcosa che non sia liquido.");
                         }
                     } else {
-                        outString.append("Non trovo cosa versare.");
+                        OutputManager.append("Non trovo cosa versare.");
                     }
 
                     break;
@@ -537,12 +537,12 @@ public class GameManager {
                         if (anyObj instanceof IReadable) {
                             IReadable readableObj = (IReadable) anyObj;
 
-                            outString.append(readableObj.read());
+                            readableObj.read();
                         } else {
-                            outString.append("Non posso leggerlo.");
+                            OutputManager.append("Non posso leggerlo.");
                         }
                     } else {
-                        outString.append("Non trovo cosa leggere.");
+                        OutputManager.append("Non trovo cosa leggere.");
                     }
 
                     break;
@@ -575,20 +575,20 @@ public class GameManager {
         if (status.isMovementAttempt()) {
             if (!status.isPositionChanged() && currentPlayableRoom != null
                     && currentPlayableRoom.isCurrentlyDark()) {
-                outString.append("Meglio non avventurarsi nel buio.");
+                OutputManager.append("Meglio non avventurarsi nel buio.");
             } else if (status.isRoomBlockedByDoor()) {
-                outString.append("La porta é chiusa.");
+                OutputManager.append("La porta é chiusa.");
             } else if (status.isRoomBlockedByWall()) {
-                outString.append(status.getWall().getTrespassingWhenLockedText());
+                OutputManager.append(status.getWall().getTrespassingWhenLockedText());
             } else if (status.isPositionChanged()) {
                 if (currentPlayableRoom != null && currentPlayableRoom.isCurrentlyDark()) {
-                    outString.append("È completamente buio e non riesci a vedere niente.");
+                    OutputManager.append("È completamente buio e non riesci a vedere niente.");
                 } else {
-                    outString.append(getCurrentRoom().getDescription());
-                    outString.append(PlayableRoom.processRoomEvent(getCurrentRoom()));
+                    OutputManager.append(getCurrentRoom().getDescription());
+                    OutputManager.append(PlayableRoom.processRoomEvent(getCurrentRoom()));
                 }
             } else {
-                outString.append("Da quella parte non si puó andare.");
+                OutputManager.append("Da quella parte non si puó andare.");
             }
         }
 
@@ -596,18 +596,12 @@ public class GameManager {
             setPreviousRoom(getCurrentRoom());
             setCurrentRoom(status.getWarpDestination());
 
-            outString.append(outString.length() > 0 ? "\n\n" : "");
-            outString.append(getCurrentRoom().getDescription());
-            outString.append(PlayableRoom.processRoomEvent(getCurrentRoom()));
-        }
-
-        if (outString.length() > 0) {
-            // gui.appendText(outString.toString());
+            OutputManager.append(getCurrentRoom().getDescription());
+            OutputManager.append(PlayableRoom.processRoomEvent(getCurrentRoom()));
         }
 
         OutputManager.print();
 
-        outString.setLength(0);
         status.reset();
     }
 

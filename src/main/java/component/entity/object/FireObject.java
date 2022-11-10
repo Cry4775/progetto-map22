@@ -9,6 +9,7 @@ import component.entity.interfaces.IFluid;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class FireObject extends AbstractEntity {
@@ -28,44 +29,33 @@ public class FireObject extends AbstractEntity {
         this.lit = lit;
     }
 
-    public StringBuilder extinguish() {
-        StringBuilder outString = new StringBuilder();
-
+    public void extinguish() {
         if (lit) {
-
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
-                        outString.append(getFailedInteractionMessage()); // TODO check per null e
-                                                                         // default message
-                        return outString;
+                        OutputManager.append(getFailedInteractionMessage());
                     }
                 }
             }
 
             lit = false;
 
-            outString.append(triggerEvent(EventType.EXTINGUISH));
+            triggerEvent((EventType.EXTINGUISH));
 
             setActionPerformed(true);
         } else {
-            outString.append("Non ci sono piú fiamme.");
+            OutputManager.append("Non ci sono piú fiamme.");
         }
-
-        return outString;
     }
 
-    public StringBuilder extinguish(IFluid liquid) {
-        StringBuilder outString = new StringBuilder();
-
+    public void extinguish(IFluid liquid) {
         if (lit) {
-
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
-                        outString.append(getFailedInteractionMessage()); // TODO check per null e
-                                                                         // default message
-                        return outString;
+                        OutputManager.append(getFailedInteractionMessage());
+                        return;
                     }
                 }
             }
@@ -73,13 +63,11 @@ public class FireObject extends AbstractEntity {
             lit = false;
             liquid.delete();
 
-            outString.append(triggerEvent(EventType.EXTINGUISH));
+            triggerEvent((EventType.EXTINGUISH));
             setActionPerformed(true);
         } else {
-            outString.append("Non ci sono piú fiamme.");
+            OutputManager.append("Non ci sono piú fiamme.");
         }
-
-        return outString;
     }
 
     @Override

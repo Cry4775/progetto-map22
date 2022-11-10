@@ -12,6 +12,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class FluidItem extends BasicItem implements IFluid {
@@ -21,12 +22,10 @@ public class FluidItem extends BasicItem implements IFluid {
     }
 
     @Override
-    public StringBuilder pickup() {
-        StringBuilder outString = new StringBuilder();
-
+    public void pickup() {
         if (isPickedUp()) {
-            outString.append("É giá nel tuo inventario.");
-            return outString;
+            OutputManager.append("É giá nel tuo inventario.");
+            return;
         }
 
         boolean canProceed = false;
@@ -38,8 +37,8 @@ public class FluidItem extends BasicItem implements IFluid {
                 canProceed = invFillable.fill(this);
 
                 if (canProceed) {
-                    outString.append("Hai riempito: " + invObject.getName());
-                    outString.append(triggerEvent(EventType.PICK_UP));
+                    OutputManager.append("Hai riempito: " + invObject.getName());
+                    triggerEvent((EventType.PICK_UP));
 
                     setActionPerformed(true);
 
@@ -63,10 +62,8 @@ public class FluidItem extends BasicItem implements IFluid {
         }
 
         if (!canProceed) {
-            outString.append("Non puoi prenderlo senza lo strumento adatto.");
+            OutputManager.append("Non puoi prenderlo senza lo strumento adatto.");
         }
-
-        return outString;
     }
 
     @Override

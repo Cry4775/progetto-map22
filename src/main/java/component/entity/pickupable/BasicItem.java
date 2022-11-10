@@ -12,6 +12,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
+import engine.OutputManager;
 import engine.database.DBManager;
 import sound.SoundManager;
 import sound.SoundManager.Mode;
@@ -34,10 +35,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public StringBuilder pickup() {
-
-        StringBuilder outString = new StringBuilder();
-
+    public void pickup() {
         if (!pickedUp) {
             // Check if it's an obj inside something and remove it from its list
             if (getParent() != null) {
@@ -57,15 +55,13 @@ public class BasicItem extends AbstractEntity implements IPickupable {
             SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
             pickedUp = true;
 
-            outString.append("Hai raccolto: " + getName());
-            outString.append(triggerEvent(EventType.PICK_UP));
+            OutputManager.append("Hai raccolto: " + getName());
+            triggerEvent((EventType.PICK_UP));
 
             setActionPerformed(true);
         } else {
-            outString.append("É giá nel tuo inventario.");
+            OutputManager.append("É giá nel tuo inventario.");
         }
-
-        return outString;
     }
 
     @Override

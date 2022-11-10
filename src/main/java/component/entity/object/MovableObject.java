@@ -9,6 +9,7 @@ import component.entity.interfaces.IMovable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class MovableObject extends AbstractEntity implements IMovable {
@@ -31,29 +32,25 @@ public class MovableObject extends AbstractEntity implements IMovable {
     }
 
     @Override
-    public StringBuilder move() {
-        StringBuilder outString = new StringBuilder();
-
+    public void move() {
         if (!moved) {
-
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
-                        outString.append(getFailedInteractionMessage());
-                        return outString;
+                        OutputManager.append(getFailedInteractionMessage());
+                        return;
                     }
                 }
             }
 
             moved = true;
-            outString.append("Hai spostato: " + getName());
-            outString.append(triggerEvent(EventType.MOVE));
+            OutputManager.append("Hai spostato: " + getName());
+            triggerEvent((EventType.MOVE));
 
             setActionPerformed(true);
         } else {
-            outString.append("È stato già spostato.");
+            OutputManager.append("È stato già spostato.");
         }
-        return outString;
     }
 
     @Override

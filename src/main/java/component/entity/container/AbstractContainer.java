@@ -78,9 +78,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public StringBuilder insert(AbstractEntity obj, List<AbstractEntity> inventory) {
-        StringBuilder outString = new StringBuilder();
-
+    public void insert(AbstractEntity obj, List<AbstractEntity> inventory) {
         if (obj instanceof IFluid) {
             if (forFluids) {
                 IFluid fluid = (IFluid) obj;
@@ -93,13 +91,13 @@ public abstract class AbstractContainer extends AbstractEntity {
                     fluid.setPickedUp(false);
                     this.add(obj);
 
-                    outString.append("Hai versato: " + obj.getName());
-                    outString.append(triggerEvent(EventType.INSERT));
+                    OutputManager.append("Hai versato: " + obj.getName());
+                    triggerEvent((EventType.INSERT));
 
                     setActionPerformed(true);
                 }
             } else {
-                outString.append("Non puoi versare liquidi qui.");
+                OutputManager.append("Non puoi versare liquidi qui.");
             }
         } else {
             if (!forFluids) {
@@ -113,8 +111,8 @@ public abstract class AbstractContainer extends AbstractEntity {
                     IWearable wearable = (IWearable) obj;
 
                     if (wearable.isWorn()) {
-                        outString.append("Devi prima toglierlo di dosso.");
-                        return outString;
+                        OutputManager.append("Devi prima toglierlo di dosso.");
+                        return;
                     }
                 }
 
@@ -124,16 +122,14 @@ public abstract class AbstractContainer extends AbstractEntity {
 
                 this.add(obj);
 
-                outString.append("Hai lasciato: " + obj.getName());
-                outString.append(triggerEvent(EventType.INSERT));
+                OutputManager.append("Hai lasciato: " + obj.getName());
+                triggerEvent((EventType.INSERT));
 
                 setActionPerformed(true);
             } else {
-                outString.append("Non puoi lasciare oggetti qui.");
+                OutputManager.append("Non puoi lasciare oggetti qui.");
             }
         }
-
-        return outString;
     }
 
     @Override

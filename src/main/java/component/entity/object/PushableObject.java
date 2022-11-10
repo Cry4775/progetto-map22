@@ -9,6 +9,7 @@ import component.entity.interfaces.IPushable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public class PushableObject extends AbstractEntity implements IPushable {
@@ -31,29 +32,26 @@ public class PushableObject extends AbstractEntity implements IPushable {
     }
 
     @Override
-    public StringBuilder push() {
-        StringBuilder outString = new StringBuilder();
-
+    public void push() {
         if (!pushed) {
             if (getRequiredWearedItemsToInteract() != null) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                     if (!wearable.isWorn()) {
-                        outString.append(getFailedInteractionMessage());
-                        return outString;
+                        OutputManager.append(getFailedInteractionMessage());
+                        return;
                     }
                 }
             }
 
             pushed = true;
 
-            outString.append("Hai premuto: " + getName());
-            outString.append(triggerEvent(EventType.PUSH));
+            OutputManager.append("Hai premuto: " + getName());
+            triggerEvent((EventType.PUSH));
 
             setActionPerformed(true);
         } else {
-            outString.append("È stato già premuto.");
+            OutputManager.append("È stato già premuto.");
         }
-        return outString;
     }
 
     @Override
