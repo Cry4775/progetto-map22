@@ -39,7 +39,7 @@ public class FluidItem extends BasicItem implements IFluid {
 
                 if (canProceed) {
                     outString.append("Hai riempito: " + invObject.getName());
-                    outString.append(processEvent(EventType.PICK_UP));
+                    outString.append(triggerEvent(EventType.PICK_UP));
 
                     setActionPerformed(true);
 

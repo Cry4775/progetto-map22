@@ -45,7 +45,7 @@ public class FireObject extends AbstractEntity {
 
             lit = false;
 
-            outString.append(processEvent(EventType.EXTINGUISH));
+            outString.append(triggerEvent(EventType.EXTINGUISH));
 
             setActionPerformed(true);
         } else {
@@ -73,7 +73,7 @@ public class FireObject extends AbstractEntity {
             lit = false;
             liquid.delete();
 
-            outString.append(processEvent(EventType.EXTINGUISH));
+            outString.append(triggerEvent(EventType.EXTINGUISH));
             setActionPerformed(true);
         } else {
             outString.append("Non ci sono piú fiamme.");

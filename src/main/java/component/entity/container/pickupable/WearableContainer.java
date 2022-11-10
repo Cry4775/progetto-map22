@@ -56,7 +56,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             worn = true;
 
             outString.append("Hai indossato: " + getName());
-            outString.append(processEvent(EventType.UNWEAR));
+            outString.append(triggerEvent(EventType.UNWEAR));
 
             setActionPerformed(true);
         } else {
@@ -73,7 +73,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             worn = false;
 
             outString.append("Hai tolto: " + getName());
-            outString.append(processEvent(EventType.UNWEAR));
+            outString.append(triggerEvent(EventType.UNWEAR));
 
             setActionPerformed(true);
         } else {
@@ -108,7 +108,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         }
 
         outString.append("Hai raccolto: " + getName());
-        outString.append(processEvent(EventType.PICK_UP));
+        outString.append(triggerEvent(EventType.PICK_UP));
 
         setActionPerformed(true);
         return outString;
@@ -139,7 +139,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             this.add(obj);
 
             outString.append("Hai lasciato: " + obj.getName());
-            outString.append(processEvent(EventType.INSERT));
+            outString.append(triggerEvent(EventType.INSERT));
 
             setActionPerformed(true);
         } else {

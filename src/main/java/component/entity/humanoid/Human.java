@@ -55,7 +55,7 @@ public class Human extends AbstractEntity implements ITalkable {
             outString.append("...");
         }
 
-        outString.append(processEvent(EventType.TALK_WITH));
+        outString.append(triggerEvent(EventType.TALK_WITH));
         setActionPerformed(true);
         return outString;
     }

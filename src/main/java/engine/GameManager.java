@@ -50,7 +50,7 @@ public class GameManager {
 
     private static Status status = new Status();
 
-    private static StringBuilder outString;
+    private static StringBuilder outString = new StringBuilder();
 
     public static Status getStatus() {
         return status;
@@ -306,7 +306,7 @@ public class GameManager {
 
                 case LOOK_AT: {
                     if (anyObj != null) {
-                        outString.append(anyObj.getLookMessage());
+                        anyObj.sendLookMessage();
                     } else {
                         outString.append("Non trovo cosa esaminare.");
                     }
@@ -602,8 +602,10 @@ public class GameManager {
         }
 
         if (outString.length() > 0) {
-            gui.appendText(outString.toString());
+            // gui.appendText(outString.toString());
         }
+
+        OutputManager.print();
 
         outString.setLength(0);
         status.reset();
@@ -696,7 +698,7 @@ public class GameManager {
 
     public static Multimap<String, AbstractEntity> mapAllRoomsObjects() {
         if (allRoomsObjects.isEmpty()) {
-            allRoomsObjects.putAll(mapAllRoomsObjects(listAllRooms()));
+            allRoomsObjects.putAll(mapAllRoomsObjects(rooms));
         } else {
             for (AbstractEntity obj : getInventory()) {
                 allRoomsObjects.remove(obj.getId(), obj);
@@ -712,6 +714,7 @@ public class GameManager {
         for (AbstractRoom room : rooms) {
             if (room instanceof PlayableRoom) {
                 PlayableRoom pRoom = (PlayableRoom) room;
+
                 result.putAll(pRoom.getObjectsAsMap(PlayableRoom.Mode.INCLUDE_EVERYTHING));
             }
         }

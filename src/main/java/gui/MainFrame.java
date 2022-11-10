@@ -45,6 +45,7 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyledDocument;
 import engine.Engine;
 import engine.GameManager;
+import engine.OutputManager;
 
 public class MainFrame extends JFrame {
 
@@ -90,6 +91,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         initComponents();
+        OutputManager.registerGUI(this);
         GameManager game = new GameManager();
         engine = new Engine(game, this);
     }

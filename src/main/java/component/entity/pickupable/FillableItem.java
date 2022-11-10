@@ -64,6 +64,12 @@ public class FillableItem extends BasicItem implements IFillable {
     }
 
     @Override
+    public void sendLookMessage() {
+        super.sendLookMessage();
+        IFillable.super.sendLookMessage();
+    }
+
+    @Override
     public boolean fill(AbstractEntity obj) {
         if (obj.equals(eligibleItem)) {
             filled = true;

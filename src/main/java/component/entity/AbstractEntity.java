@@ -10,8 +10,6 @@ import java.util.Set;
 import com.google.common.collect.Multimap;
 import component.GameComponent;
 import component.entity.container.AbstractContainer;
-import component.entity.interfaces.IFillable;
-import component.entity.interfaces.IOpenable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.event.ObjectEvent;
@@ -21,7 +19,7 @@ import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.GameManager.InventoryMode;
-import engine.Status;
+import engine.OutputManager;
 import engine.database.DBManager;
 
 public abstract class AbstractEntity extends GameComponent {
@@ -142,45 +140,23 @@ public abstract class AbstractEntity extends GameComponent {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
-    public StringBuilder getLookMessage() {
-        StringBuilder outString = new StringBuilder();
+    public void sendLookMessage() {
+        OutputManager.append(getDescription());
 
-        if (getDescription() != null) {
-            outString.append(getDescription());
-        }
-
-        if (this instanceof IOpenable) {
-            IOpenable openableObj = (IOpenable) this;
-            if (openableObj.isLocked()) {
-                outString.append("È chiuso a chiave.");
-            } else if (!openableObj.isOpen()) {
-                outString.append("È chiuso.");
-            } else if (openableObj.isOpen()) {
-                outString.append("È aperto.");
-                if (openableObj instanceof AbstractContainer) {
-                    AbstractContainer container = (AbstractContainer) openableObj;
-                    outString.append(container.getContentString());
-                }
-            }
-        } else if (this instanceof AbstractContainer) {
-            AbstractContainer container = (AbstractContainer) this;
-            outString.append(container.getContentString());
-        } else if (this instanceof IFillable) {
-            IFillable fillable = (IFillable) this;
-            if (fillable.isFilled()) {
-                outString.append("\nÉ pieno di: " + fillable.getEligibleItem().getName());
-            } else {
-                outString.append("\nÈ vuoto.");
-            }
-        }
-
-        if (outString.toString().isEmpty()) {
-            outString.append("Nulla di particolare.");
+        if (OutputManager.isOutputEmpty()) {
+            OutputManager.append("Nulla di particolare.");
         } else {
-            outString.append(processEvent(EventType.LOOK_AT));
+            OutputManager.append(triggerEvent(EventType.LOOK_AT));
         }
+    }
 
-        return outString;
+    public StringBuilder triggerEvent(EventType type) {
+        ObjectEvent evt = ObjectEvent.getEvent(events, type);
+
+        if (evt != null)
+            return evt.trigger(this);
+        else
+            return new StringBuilder();
     }
 
     public void processReferences(Multimap<String, AbstractEntity> objects,
@@ -337,53 +313,6 @@ public abstract class AbstractEntity extends GameComponent {
         }
 
         stm.close();
-    }
-
-    public StringBuilder processEvent(EventType eventType) {
-        StringBuilder outString = new StringBuilder();
-
-        ObjectEvent evt = ObjectEvent.getEvent(events, eventType);
-
-        if (evt != null) {
-            if (evt.isUpdatingParentRoom()) {
-                evt.getParentRoom().updateToNewRoom();
-            }
-
-            if (evt.getUpdateTargetRoom() != null) {
-                evt.getUpdateTargetRoom().updateToNewRoom();
-            }
-
-            if (evt.getTeleportsPlayerToRoom() != null) {
-                Status status = GameManager.getStatus();
-                status.setWarp(true);
-                status.setWarpDestination(evt.getTeleportsPlayerToRoom());
-            }
-
-            if (evt.mustDestroyOnTrigger()) {
-                if (parent instanceof AbstractContainer) {
-                    AbstractContainer container = (AbstractContainer) parent;
-
-                    container.removeObject(this);
-                } else if (parent instanceof PlayableRoom) {
-                    PlayableRoom pRoom = (PlayableRoom) parent;
-
-                    pRoom.removeObject(this);
-                } else {
-                    throw new Error(
-                            "Couldn't find the parent room of " + getName()
-                                    + " (" + getId() + ").");
-                }
-            }
-
-            if (evt.getText() != null && !evt.getText().isEmpty()) {
-                outString.append("\n\n" + evt.getText());
-            }
-
-            evt.setTriggered(true);
-
-            events.remove(evt);
-        }
-        return outString;
     }
 
     public void saveEventsOnDB() throws SQLException {

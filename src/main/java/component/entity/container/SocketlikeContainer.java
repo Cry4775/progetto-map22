@@ -54,7 +54,7 @@ public class SocketlikeContainer extends AbstractContainer {
                 this.add(obj);
 
                 outString.append("Hai inserito: " + obj.getName());
-                outString.append(processEvent(EventType.INSERT));
+                outString.append(triggerEvent(EventType.INSERT));
             } else {
                 outString.append("Non puoi inserirci questo oggetto.");
             }

@@ -36,7 +36,7 @@ public class WearableItem extends BasicItem implements IWearable {
             worn = true;
 
             outString.append("Hai indossato: " + getName());
-            outString.append(processEvent(EventType.WEAR));
+            outString.append(triggerEvent(EventType.WEAR));
 
             setActionPerformed(true);
         } else {
@@ -53,7 +53,7 @@ public class WearableItem extends BasicItem implements IWearable {
             worn = false;
 
             outString.append("Hai tolto: " + getName());
-            outString.append(processEvent(EventType.WEAR));
+            outString.append(triggerEvent(EventType.WEAR));
 
             setActionPerformed(true);
         } else {

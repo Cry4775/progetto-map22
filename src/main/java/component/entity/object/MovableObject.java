@@ -47,7 +47,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
 
             moved = true;
             outString.append("Hai spostato: " + getName());
-            outString.append(processEvent(EventType.MOVE));
+            outString.append(triggerEvent(EventType.MOVE));
 
             setActionPerformed(true);
         } else {

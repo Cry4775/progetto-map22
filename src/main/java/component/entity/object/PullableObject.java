@@ -48,7 +48,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
             pulled = true;
 
             outString.append("Hai tirato: " + getName());
-            outString.append(processEvent(EventType.PULL));
+            outString.append(triggerEvent(EventType.PULL));
 
             setActionPerformed(true);
         } else {

@@ -13,6 +13,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
+import engine.OutputManager;
 import utility.Triple;
 
 public abstract class AbstractContainer extends AbstractEntity {
@@ -51,6 +52,13 @@ public abstract class AbstractContainer extends AbstractEntity {
         return contentRevealed;
     }
 
+    @Override
+    public void sendLookMessage() {
+        super.sendLookMessage();
+
+        OutputManager.append(getContentString());
+    }
+
     public StringBuilder getContentString() {
         if (!contentRevealed) {
             contentRevealed = true;
@@ -86,7 +94,7 @@ public abstract class AbstractContainer extends AbstractEntity {
                     this.add(obj);
 
                     outString.append("Hai versato: " + obj.getName());
-                    outString.append(processEvent(EventType.INSERT));
+                    outString.append(triggerEvent(EventType.INSERT));
 
                     setActionPerformed(true);
                 }
@@ -117,7 +125,7 @@ public abstract class AbstractContainer extends AbstractEntity {
                 this.add(obj);
 
                 outString.append("Hai lasciato: " + obj.getName());
-                outString.append(processEvent(EventType.INSERT));
+                outString.append(triggerEvent(EventType.INSERT));
 
                 setActionPerformed(true);
             } else {

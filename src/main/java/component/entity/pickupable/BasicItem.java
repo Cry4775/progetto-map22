@@ -58,7 +58,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
             pickedUp = true;
 
             outString.append("Hai raccolto: " + getName());
-            outString.append(processEvent(EventType.PICK_UP));
+            outString.append(triggerEvent(EventType.PICK_UP));
 
             setActionPerformed(true);
         } else {
