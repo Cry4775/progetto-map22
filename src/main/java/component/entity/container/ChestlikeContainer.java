@@ -9,8 +9,8 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 import utility.Triple;
 
 public class ChestlikeContainer extends AbstractContainer implements IOpenable {
@@ -54,7 +54,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         IOpenable.super.lookAt();
 
         if (isOpen())
-            OutputManager.append(getContentString());
+            GUIManager.appendOutput(getContentString());
     }
 
     @Override
@@ -63,10 +63,10 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public void open(AbstractEntity key) {
+    public boolean open(AbstractEntity key) {
         if (locked) {
             if (!canInteract())
-                return;
+                return false;
 
             if (unlockedWithItem.equals(key)) {
                 locked = false;
@@ -74,26 +74,27 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
                 unlockedWithItem = null;
                 unlockedWithItemId = null;
             } else {
-                OutputManager.append(key == null ? "É chiusa a chiave." : "Non funziona.");
-                triggerEvent((EventType.OPEN_LOCKED));
-                return;
+                GUIManager.appendOutput(key == null ? "É chiusa a chiave." : "Non funziona.");
+                triggerEvent(EventType.OPEN_LOCKED);
+                return false;
             }
         }
 
         if (!open) {
             if (!canInteract())
-                return;
+                return false;
 
             open = true;
-            OutputManager.append("Hai aperto: " + getName());
-            OutputManager.append(getContentString());
-            triggerEvent((EventType.OPEN_CONTAINER));
-
-            setActionPerformed(true);
+            GUIManager.appendOutput("Hai aperto: " + getName());
+            GUIManager.appendOutput(getContentString());
+            triggerEvent(EventType.OPEN_CONTAINER);
+            return true;
         } else {
-            OutputManager.append("É giá aperta. ");
-            OutputManager.append(getContentString());
+            GUIManager.appendOutput("É giá aperta. ");
+            GUIManager.appendOutput(getContentString());
         }
+
+        return false;
     }
 
     @Override

@@ -8,8 +8,8 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IPullable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class PullableObject extends AbstractEntity implements IPullable {
 
@@ -31,20 +31,21 @@ public class PullableObject extends AbstractEntity implements IPullable {
     }
 
     @Override
-    public void pull() {
+    public boolean pull() {
         if (!pulled) {
             if (!canInteract())
-                return;
+                return false;
 
             pulled = true;
 
-            OutputManager.append("Hai tirato: " + getName());
+            GUIManager.appendOutput("Hai tirato: " + getName());
             triggerEvent((EventType.PULL));
-
-            setActionPerformed(true);
+            return true;
         } else {
-            OutputManager.append("È stato già tirato.");
+            GUIManager.appendOutput("È stato già tirato.");
         }
+
+        return false;
     }
 
     @Override

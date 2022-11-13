@@ -5,7 +5,7 @@ public interface ISwitch extends IInteractable {
 
     public void setOn(boolean on);
 
-    public void turnOn();
+    public boolean turnOn();
 
-    public void turnOff();
+    public boolean turnOff();
 }

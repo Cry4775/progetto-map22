@@ -8,8 +8,8 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IFluid;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class FireObject extends AbstractEntity {
 
@@ -28,10 +28,10 @@ public class FireObject extends AbstractEntity {
         this.lit = lit;
     }
 
-    public void extinguish(IFluid liquid) {
+    public boolean extinguish(IFluid liquid) {
         if (lit) {
             if (!canInteract())
-                return;
+                return false;
 
             lit = false;
 
@@ -39,10 +39,12 @@ public class FireObject extends AbstractEntity {
                 liquid.delete();
 
             triggerEvent((EventType.EXTINGUISH));
-            setActionPerformed(true);
+            return true;
         } else {
-            OutputManager.append("Non ci sono piú fiamme.");
+            GUIManager.appendOutput("Non ci sono piú fiamme.");
         }
+
+        return false;
     }
 
     @Override

@@ -14,7 +14,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
-import engine.OutputManager;
+import gui.GUIManager;
 import utility.Triple;
 
 public abstract class AbstractContainer extends AbstractEntity {
@@ -59,7 +59,7 @@ public abstract class AbstractContainer extends AbstractEntity {
     public void lookAt() {
         super.lookAt();
 
-        OutputManager.append(getContentString());
+        GUIManager.appendOutput(getContentString());
     }
 
     public StringBuilder getContentString() {
@@ -81,9 +81,9 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public void insert(AbstractEntity obj) {
+    public boolean insert(AbstractEntity obj) {
         if (!canInteract())
-            return;
+            return false;
 
         if (obj instanceof IFluid) {
             if (forFluids) {
@@ -97,13 +97,12 @@ public abstract class AbstractContainer extends AbstractEntity {
                     fluid.setPickedUp(false);
                     this.add(obj);
 
-                    OutputManager.append("Hai versato: " + obj.getName());
-                    triggerEvent((EventType.INSERT));
-
-                    setActionPerformed(true);
+                    GUIManager.appendOutput("Hai versato: " + obj.getName());
+                    triggerEvent(EventType.INSERT);
+                    return true;
                 }
             } else {
-                OutputManager.append("Non puoi versare liquidi qui.");
+                GUIManager.appendOutput("Non puoi versare liquidi qui.");
             }
         } else {
             if (!forFluids) {
@@ -117,8 +116,8 @@ public abstract class AbstractContainer extends AbstractEntity {
                     IWearable wearable = (IWearable) obj;
 
                     if (wearable.isWorn()) {
-                        OutputManager.append("Devi prima toglierlo di dosso.");
-                        return;
+                        GUIManager.appendOutput("Devi prima toglierlo di dosso.");
+                        return false;
                     }
                 }
 
@@ -129,14 +128,15 @@ public abstract class AbstractContainer extends AbstractEntity {
 
                 this.add(obj);
 
-                OutputManager.append("Hai lasciato: " + obj.getName());
+                GUIManager.appendOutput("Hai lasciato: " + obj.getName());
                 triggerEvent((EventType.INSERT));
-
-                setActionPerformed(true);
+                return true;
             } else {
-                OutputManager.append("Non puoi lasciare oggetti qui.");
+                GUIManager.appendOutput("Non puoi lasciare oggetti qui.");
             }
         }
+
+        return false;
     }
 
     @Override

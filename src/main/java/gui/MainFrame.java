@@ -9,10 +9,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
@@ -20,7 +16,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
@@ -36,22 +31,16 @@ import javax.swing.JTextPane;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.StyledDocument;
 import engine.Engine;
 import engine.GameManager;
-import engine.OutputManager;
 
 public class MainFrame extends JFrame {
 
     private Engine engine;
-
-    private boolean isSlowlyWriting = false;
 
     private NoiseFXPanel noisePanel = new NoiseFXPanel();
     private JTextPane txtPane = new JTextPane();
@@ -91,7 +80,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         initComponents();
-        OutputManager.registerGUI(this);
+        GUIManager.registerGUI(this);
         GameManager game = new GameManager();
         engine = new Engine(game, this);
     }
@@ -164,7 +153,7 @@ public class MainFrame extends JFrame {
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                     String txt = txtInput.getText();
                     if (txt != null && !txt.isEmpty()) {
-                        appendText(txt, true);
+                        GUIManager.printInput(txt);
                         txtInput.setText("");
                         engine.commandPerformed(txt);
                     }
@@ -187,17 +176,12 @@ public class MainFrame extends JFrame {
             lblCompassCenterImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_05.png"));
             lblCompassEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_06.png"));
             lblCompassSouthImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_08.png"));
-            lblCompassNorthWestImage
-                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_01.png"));
-            lblCompassNorthEastImage
-                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_03.png"));
-            lblCompassSouthWestImage
-                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_07.png"));
-            lblCompassSouthEastImage
-                    .setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
+            lblCompassNorthWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_01.png"));
+            lblCompassNorthEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_03.png"));
+            lblCompassSouthWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_07.png"));
+            lblCompassSouthEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
         } catch (IOException e) {
-            showFatalError(this, "Error occurred on loading of compass images. Details: "
-                    + e.getMessage());
+            showFatalError(this, "Error occurred on loading of compass images. Details: " + e.getMessage());
         }
 
         gridBagConstraints = new GridBagConstraints();
@@ -378,24 +362,6 @@ public class MainFrame extends JFrame {
         return new ImageIcon(ImageIO.read(inputStream));
     }
 
-    public void appendText(String text, boolean inputText) {
-        StyledDocument doc = txtPane.getStyledDocument();
-
-        try {
-            if (inputText) {
-                doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
-            } else {
-                printSlowly(text, 15);
-            }
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void appendText(String text) {
-        appendText(text, false);
-    }
-
     public static void showFatalError(MainFrame gui, String message) {
         WindowEvent event = new WindowEvent(gui, WindowEvent.WINDOW_CLOSING);
 
@@ -413,109 +379,6 @@ public class MainFrame extends JFrame {
                 "An existing savegame has been found. Do you wish to load it?",
                 "Loading savegame",
                 JOptionPane.YES_NO_OPTION);
-    }
-
-    private void printSlowly(String message, int millisPerChar) throws BadLocationException {
-        txtInput.setEditable(false);
-        txtInput.setFocusable(false);
-
-        StyledDocument doc = txtPane.getStyledDocument();
-        doc.insertString(doc.getLength(), "\n\n", null);
-
-        Timer timer = new Timer(millisPerChar, null);
-        AtomicInteger counter = new AtomicInteger(0);
-
-        timer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    doc.insertString(doc.getLength(),
-                            String.valueOf(message.charAt(counter.getAndIncrement())),
-                            null);
-                } catch (BadLocationException ex) {
-                    ex.printStackTrace();
-                }
-                txtPane.setCaretPosition(txtPane.getDocument().getLength());
-                if (counter.get() >= message.length()) {
-                    timer.stop();
-                    txtInput.setEditable(true);
-                    txtInput.setFocusable(true);
-                    txtInput.requestFocusInWindow();
-                    isSlowlyWriting = false;
-                }
-            }
-        });
-
-        timer.start();
-        isSlowlyWriting = true;
-
-        // Skip writing animation
-        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new KeyEventDispatcher() {
-
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER
-                        && e.getID() == KeyEvent.KEY_RELEASED) {
-                    timer.stop();
-                    try {
-                        doc.insertString(doc.getLength(), message.substring(counter.get()), null);
-                        txtInput.setEditable(true);
-                        txtInput.setFocusable(true);
-                        txtInput.requestFocusInWindow();
-                        isSlowlyWriting = false;
-                    } catch (BadLocationException e1) {
-                        e1.printStackTrace();
-                    }
-                    manager.removeKeyEventDispatcher(this);
-                } else if (counter.get() >= message.length()) {
-                    manager.removeKeyEventDispatcher(this);
-                }
-
-                return true;
-            }
-
-        });
-
-    }
-
-    public void waitForEnterKey() {
-        new Thread("WaitForInputThread") {
-            public void run() {
-                while (isSlowlyWriting) {
-                    try {
-                        sleep(30);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                SwingUtilities.invokeLater(() -> {
-                    txtInput.setText("Premere INVIO per continuare...");
-                    txtInput.setFocusable(false);
-                    txtInput.setEditable(false);
-
-                    KeyboardFocusManager manager =
-                            KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                    manager.addKeyEventDispatcher(new KeyEventDispatcher() {
-
-                        @Override
-                        public boolean dispatchKeyEvent(KeyEvent e) {
-                            if (e.getKeyCode() == KeyEvent.VK_ENTER
-                                    && e.getID() == KeyEvent.KEY_RELEASED) {
-                                txtInput.setText("");
-                                txtInput.setEditable(true);
-                                txtInput.setFocusable(true);
-                                txtInput.requestFocusInWindow();
-                                manager.removeKeyEventDispatcher(this);
-                                engine.commandPerformed("");
-                            }
-                            return true;
-                        }
-                    });
-                });
-            }
-        }.start();
     }
 
     /**
@@ -584,5 +447,13 @@ public class MainFrame extends JFrame {
 
     public JLabel getLblRoomName() {
         return lblRoomName;
+    }
+
+    public JTextPane getTxtPane() {
+        return txtPane;
+    }
+
+    public JTextField getTxtInput() {
+        return txtInput;
     }
 }

@@ -9,8 +9,8 @@ import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
-import engine.OutputManager;
 import engine.Status;
+import gui.GUIManager;
 
 public class ObjectEvent extends AbstractEvent {
     private String updateTargetRoomId;
@@ -119,7 +119,7 @@ public class ObjectEvent extends AbstractEvent {
             }
         }
 
-        OutputManager.append(getText());
+        GUIManager.appendOutput(getText());
 
         obj.getEvents().remove(this);
     }

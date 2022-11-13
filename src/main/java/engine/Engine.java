@@ -4,25 +4,23 @@
  */
 package engine;
 
-import java.awt.Image;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.ImageIcon;
 import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
-import engine.command.CommandType;
 import engine.database.DBManager;
 import engine.parser.Parser;
 import engine.parser.ParserOutput;
+import gui.GUIManager;
 import gui.MainFrame;
 import rest.WeatherFetcher;
 import sound.SoundManager;
 import sound.SoundManager.Mode;
 import utility.Utils;
 
-public class Engine {
+public class Engine extends Thread {
 
     private final GameManager game;
 
@@ -52,7 +50,7 @@ public class Engine {
             this.game.init();
 
             if (!crashed.get())
-                execute();
+                commandPerformed(null);
         } catch (Exception ex) {
             ex.printStackTrace();
             gui.setVisible(false);
@@ -60,96 +58,56 @@ public class Engine {
         }
     }
 
-    public void execute() {
-        if (!WeatherFetcher.isRaining()) {
-            SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
-        } else {
-            SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
-        }
-
-        gui.setTitle("The Haunted House - 2021-22");
-
-        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
-
-            if (currentRoom.isCurrentlyDark()) {
-                gui.appendText("È completamente buio e non riesci a vedere niente.");
-                updateGUI("Buio", "resources/img/buio.jpg");
-            } else {
-                gui.appendText(GameManager.getCurrentRoom().getDescription());
-                updateGUI();
-            }
-        } else {
-            gui.appendText(GameManager.getCurrentRoom().getDescription());
-            updateGUI();
-            gui.waitForEnterKey();
-        }
-    }
-
     public void commandPerformed(String command) {
-        if (!WeatherFetcher.isRaining()) {
-            SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
-        } else {
-            SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
-        }
-
-        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-            ParserOutput p = parser.parse(command);
-            if (p == null || p.getCommand() == null) {
-                gui.appendText("Non capisco quello che mi vuoi dire.");
-            } else if (p.getCommand() != null && p.getCommand().getType() == CommandType.END) {
-                gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
-            } else {
-                game.nextMove(p, gui);
-            }
-        } else if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
-            CutsceneRoom currentRoom = (CutsceneRoom) GameManager.getCurrentRoom();
-
-            if (!currentRoom.isFinalRoom()) {
-                if (currentRoom.getNextRoom() != null) {
-                    GameManager.setCurrentRoom(currentRoom.getNextRoom());
-                    gui.appendText(GameManager.getCurrentRoom().getDescription());
+        new Thread("Engine") {
+            public void run() {
+                if (!WeatherFetcher.isRaining()) {
+                    SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
                 } else {
-                    throw new Error(
-                            "Couldn't find the next room of " + currentRoom.getName()
-                                    + " (" + currentRoom.getId()
-                                    + "). Check the JSON file for correct room IDs.");
+                    SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
                 }
-            } else {
-                gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+
+                if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+                    ParserOutput p = parser.parse(command);
+                    if (command == null) {
+                    } else if (p == null || p.getCommand() == null) {
+                        GUIManager.appendOutput("Non capisco quello che mi vuoi dire.");
+                        GUIManager.printOutput();
+                    } else {
+                        game.nextMove(p, gui);
+                    }
+                } else if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
+                    CutsceneRoom currentRoom = (CutsceneRoom) GameManager.getCurrentRoom();
+
+                    if (command == null) {
+                        GUIManager.updateRoomInformations();
+                    }
+
+                    GUIManager.waitUntilEnterIsPressed();
+
+                    if (!currentRoom.isFinalRoom()) {
+                        if (currentRoom.getNextRoom() != null) {
+                            GameManager.setCurrentRoom(currentRoom.getNextRoom());
+                        } else {
+                            throw new Error(
+                                    "Couldn't find the next room of " + currentRoom.getName()
+                                            + " (" + currentRoom.getId()
+                                            + "). Check the JSON file for correct room IDs.");
+                        }
+                    } else {
+                        gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+                    }
+                }
+
+                // After the move
+                if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+                    PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
+                    GUIManager.updateRoomInformations(currentRoom.isCurrentlyDark() ? true : false);
+                } else {
+                    commandPerformed(null);
+                }
             }
-        }
+        }.start();
 
-        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
-
-            if (currentRoom.isCurrentlyDark()) {
-                updateGUI("Buio", "resources/img/buio.jpg");
-            } else {
-                updateGUI();
-            }
-        } else {
-            updateGUI();
-        }
-
-        if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
-            gui.waitForEnterKey();
-        }
-    }
-
-    public void updateGUI() {
-        gui.getLblRoomName().setText(GameManager.getCurrentRoom().getName());
-        Image roomImg = new ImageIcon(GameManager.getCurrentRoom().getImgPath()).getImage()
-                .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
-        gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
-        game.setCompassLabels(gui);
-    }
-
-    public void updateGUI(String roomName, String imageURL) {
-        gui.getLblRoomName().setText(roomName);
-        Image roomImg = new ImageIcon(imageURL).getImage()
-                .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
-        gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
-        game.setCompassLabels(gui);
     }
 }

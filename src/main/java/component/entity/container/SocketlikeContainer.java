@@ -12,8 +12,8 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 import utility.Triple;
 
 public class SocketlikeContainer extends AbstractContainer {
@@ -31,18 +31,18 @@ public class SocketlikeContainer extends AbstractContainer {
     }
 
     @Override
-    public void insert(AbstractEntity obj) {
+    public boolean insert(AbstractEntity obj) {
         if (!itemInside) {
             if (!canInteract())
-                return;
+                return false;
 
             if (eligibleItem.equals(obj)) {
                 if (obj instanceof IWearable) {
                     IWearable wearable = (IWearable) obj;
 
                     if (wearable.isWorn()) {
-                        OutputManager.append("Devi prima toglierlo di dosso.");
-                        return;
+                        GUIManager.appendOutput("Devi prima toglierlo di dosso.");
+                        return false;
                     }
                 }
 
@@ -60,14 +60,17 @@ public class SocketlikeContainer extends AbstractContainer {
 
                 this.add(obj);
 
-                OutputManager.append("Hai inserito: " + obj.getName());
-                triggerEvent((EventType.INSERT));
+                GUIManager.appendOutput("Hai inserito: " + obj.getName());
+                triggerEvent(EventType.INSERT);
+                return true;
             } else {
-                OutputManager.append("Non puoi inserirci questo oggetto.");
+                GUIManager.appendOutput("Non puoi inserirci questo oggetto.");
             }
         } else {
-            OutputManager.append("Non puoi inserirci altri oggetti.");
+            GUIManager.appendOutput("Non puoi inserirci altri oggetti.");
         }
+
+        return false;
     }
 
     @Override

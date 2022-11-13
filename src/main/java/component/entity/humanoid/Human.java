@@ -10,8 +10,8 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.ITalkable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class Human extends AbstractEntity implements ITalkable {
 
@@ -39,26 +39,26 @@ public class Human extends AbstractEntity implements ITalkable {
     }
 
     @Override
-    public void talk() {
+    public boolean talk() {
         if (!canInteract())
-            return;
+            return false;
 
         if (phrases != null) {
             if (!phrases.isEmpty()) {
                 if (phrases.size() > 1) {
-                    OutputManager.append(phrases.poll());
+                    GUIManager.appendOutput(phrases.poll());
                 } else {
-                    OutputManager.append(phrases.peek());
+                    GUIManager.appendOutput(phrases.peek());
                 }
             } else {
-                OutputManager.append("...");
+                GUIManager.appendOutput("...");
             }
         } else {
-            OutputManager.append("...");
+            GUIManager.appendOutput("...");
         }
 
         triggerEvent(EventType.TALK_WITH);
-        setActionPerformed(true);
+        return true;
     }
 
     @Override

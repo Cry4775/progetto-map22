@@ -87,7 +87,7 @@ public class Parser {
     public ParserOutput parse(String command) {
         List<AbstractEntity> objects = ((PlayableRoom) GameManager.getCurrentRoom()).getObjects();
         List<AbstractEntity> inventory = GameManager.getInventory();
-        List<String> tokens = Utils.parseString(command, stopwords);
+        List<String> tokens = Utils.parseString(command == null ? "" : command, stopwords);
 
         if (!tokens.isEmpty()) {
             Command cmd = checkForCommand(tokens.get(0), GameManager.getCommands());

@@ -1,7 +1,7 @@
 package component.entity.interfaces;
 
 import component.entity.AbstractEntity;
-import engine.OutputManager;
+import gui.GUIManager;
 
 public interface IOpenable extends IInteractable {
     public boolean isOpen();
@@ -14,15 +14,15 @@ public interface IOpenable extends IInteractable {
 
     public String getUnlockedWithItemId();
 
-    public void open(AbstractEntity key);
+    public boolean open(AbstractEntity key);
 
     public default void lookAt() {
         if (isLocked()) {
-            OutputManager.append("È chiuso a chiave.");
+            GUIManager.appendOutput("È chiuso a chiave.");
         } else if (!isOpen()) {
-            OutputManager.append("È chiuso.");
+            GUIManager.appendOutput("È chiuso.");
         } else if (isOpen()) {
-            OutputManager.append("È aperto.");
+            GUIManager.appendOutput("È aperto.");
         }
     }
 }

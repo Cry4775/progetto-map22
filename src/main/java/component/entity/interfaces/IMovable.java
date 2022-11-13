@@ -5,5 +5,5 @@ public interface IMovable extends IInteractable {
 
     public void setMoved(boolean moved);
 
-    public void move();
+    public boolean move();
 }

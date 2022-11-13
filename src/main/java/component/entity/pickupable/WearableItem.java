@@ -7,8 +7,8 @@ import java.util.List;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class WearableItem extends BasicItem implements IWearable {
 
@@ -30,34 +30,36 @@ public class WearableItem extends BasicItem implements IWearable {
     }
 
     @Override
-    public void wear() {
+    public boolean wear() {
         if (!worn) {
             if (!canInteract())
-                return;
+                return false;
 
             worn = true;
 
-            OutputManager.append("Hai indossato: " + getName());
+            GUIManager.appendOutput("Hai indossato: " + getName());
             triggerEvent(EventType.WEAR);
-
-            setActionPerformed(true);
+            return true;
         } else {
-            OutputManager.append("L'hai giá indossato.");
+            GUIManager.appendOutput("L'hai giá indossato.");
         }
+
+        return false;
     }
 
     @Override
-    public void unwear() {
+    public boolean unwear() {
         if (worn) {
             worn = false;
 
-            OutputManager.append("Hai tolto: " + getName());
+            GUIManager.appendOutput("Hai tolto: " + getName());
             triggerEvent((EventType.WEAR));
-
-            setActionPerformed(true);
+            return true;
         } else {
-            OutputManager.append("Non ce l'hai addosso.");
+            GUIManager.appendOutput("Non ce l'hai addosso.");
         }
+
+        return false;
     }
 
     @Override

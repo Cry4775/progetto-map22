@@ -1,7 +1,7 @@
 package component.entity.interfaces;
 
 import component.entity.AbstractEntity;
-import engine.OutputManager;
+import gui.GUIManager;
 
 public interface IFillable extends IInteractable {
     public boolean isFilled();
@@ -16,9 +16,9 @@ public interface IFillable extends IInteractable {
 
     public default void lookAt() {
         if (isFilled()) {
-            OutputManager.append("É pieno di: " + getEligibleItem().getName());
+            GUIManager.appendOutput("É pieno di: " + getEligibleItem().getName());
         } else {
-            OutputManager.append("È vuoto.");
+            GUIManager.appendOutput("È vuoto.");
         }
     }
 }

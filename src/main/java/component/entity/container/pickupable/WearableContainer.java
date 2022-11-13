@@ -12,8 +12,8 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 import utility.Triple;
 
 public class WearableContainer extends AbstractContainer implements IWearable {
@@ -51,40 +51,42 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public void wear() {
+    public boolean wear() {
         if (!worn) {
             if (!canInteract())
-                return;
+                return false;
 
             worn = true;
 
-            OutputManager.append("Hai indossato: " + getName());
-            triggerEvent((EventType.UNWEAR));
-
-            setActionPerformed(true);
+            GUIManager.appendOutput("Hai indossato: " + getName());
+            triggerEvent(EventType.UNWEAR);
+            return true;
         } else {
-            OutputManager.append("L'hai giá indossato.");
+            GUIManager.appendOutput("L'hai giá indossato.");
         }
+
+        return false;
     }
 
     @Override
-    public void unwear() {
+    public boolean unwear() {
         if (worn) {
             worn = false;
 
-            OutputManager.append("Hai tolto: " + getName());
-            triggerEvent((EventType.UNWEAR));
-
-            setActionPerformed(true);
+            GUIManager.appendOutput("Hai tolto: " + getName());
+            triggerEvent(EventType.UNWEAR);
+            return true;
         } else {
-            OutputManager.append("Non ce l'hai addosso.");
+            GUIManager.appendOutput("Non ce l'hai addosso.");
         }
+
+        return false;
     }
 
     @Override
-    public void pickup() {
+    public boolean pickup() {
         if (!canInteract())
-            return;
+            return false;
 
         pickedUp = true;
         GameManager.getInventory().add(this);
@@ -104,14 +106,13 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             obj.setClosestRoomParent(null);
         }
 
-        OutputManager.append("Hai raccolto: " + getName());
-        triggerEvent((EventType.PICK_UP));
-
-        setActionPerformed(true);
+        GUIManager.appendOutput("Hai raccolto: " + getName());
+        triggerEvent(EventType.PICK_UP);
+        return true;
     }
 
     @Override
-    public void insert(AbstractEntity obj) {
+    public boolean insert(AbstractEntity obj) {
         if (maxSlots == 0) {
             maxSlots = 999;
         }
@@ -121,8 +122,8 @@ public class WearableContainer extends AbstractContainer implements IWearable {
                 IWearable wearable = (IWearable) obj;
 
                 if (wearable.isWorn()) {
-                    OutputManager.append("Devi prima toglierlo di dosso.");
-                    return;
+                    GUIManager.appendOutput("Devi prima toglierlo di dosso.");
+                    return false;
                 }
             }
 
@@ -133,13 +134,14 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
             this.add(obj);
 
-            OutputManager.append("Hai lasciato: " + obj.getName());
-            triggerEvent((EventType.INSERT));
-
-            setActionPerformed(true);
+            GUIManager.appendOutput("Hai lasciato: " + obj.getName());
+            triggerEvent(EventType.INSERT);
+            return true;
         } else {
-            OutputManager.append("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
+            GUIManager.appendOutput("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
         }
+
+        return false;
     }
 
     @Override

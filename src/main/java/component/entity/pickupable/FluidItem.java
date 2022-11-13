@@ -12,8 +12,8 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class FluidItem extends BasicItem implements IFluid {
 
@@ -22,14 +22,14 @@ public class FluidItem extends BasicItem implements IFluid {
     }
 
     @Override
-    public void pickup() {
+    public boolean pickup() {
         if (isPickedUp()) {
-            OutputManager.append("É giá nel tuo inventario.");
-            return;
+            GUIManager.appendOutput("É giá nel tuo inventario.");
+            return false;
         }
 
         if (!canInteract())
-            return;
+            return false;
 
         boolean filled = false;
 
@@ -50,18 +50,15 @@ public class FluidItem extends BasicItem implements IFluid {
 
                     setPickedUp(true);
 
-                    OutputManager.append("Hai riempito: " + invObject.getName());
+                    GUIManager.appendOutput("Hai riempito: " + invObject.getName());
                     triggerEvent(EventType.PICK_UP);
-
-                    setActionPerformed(true);
-                    break;
+                    return true;
                 }
             }
         }
 
-        if (!filled) {
-            OutputManager.append("Non puoi prenderlo senza lo strumento adatto.");
-        }
+        GUIManager.appendOutput("Non puoi prenderlo senza lo strumento adatto.");
+        return false;
     }
 
     @Override

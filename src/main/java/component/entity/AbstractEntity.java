@@ -16,12 +16,12 @@ import component.event.ObjectEvent;
 import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
-import component.room.Rooms;
 import component.room.PlayableRoom.Mode;
+import component.room.Rooms;
 import engine.GameManager;
 import engine.GameManager.InventoryMode;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public abstract class AbstractEntity extends GameComponent {
 
@@ -44,8 +44,6 @@ public abstract class AbstractEntity extends GameComponent {
     private List<IWearable> requiredWearedItemsToInteract = new ArrayList<>();
 
     private String failedInteractionMessage;
-
-    private boolean actionPerformed;
 
     public AbstractEntity(ResultSet resultSet) throws SQLException {
         super(resultSet);
@@ -79,14 +77,6 @@ public abstract class AbstractEntity extends GameComponent {
 
     public void setClosestRoomParentId(String closestRoomParentId) {
         this.closestRoomParentId = closestRoomParentId;
-    }
-
-    public boolean isActionPerformed() {
-        return actionPerformed;
-    }
-
-    public void setActionPerformed(boolean actionPerformed) {
-        this.actionPerformed = actionPerformed;
     }
 
     public String getFailedInteractionMessage() {
@@ -142,10 +132,10 @@ public abstract class AbstractEntity extends GameComponent {
     }
 
     public void lookAt() {
-        OutputManager.append(getDescription());
+        GUIManager.appendOutput(getDescription());
 
-        if (OutputManager.isOutputEmpty()) {
-            OutputManager.append("Nulla di particolare.");
+        if (GUIManager.isOutputEmpty()) {
+            GUIManager.appendOutput("Nulla di particolare.");
         }
 
         triggerEvent(EventType.LOOK_AT);
@@ -162,7 +152,7 @@ public abstract class AbstractEntity extends GameComponent {
         if (getRequiredWearedItemsToInteract() != null) {
             for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                 if (!wearable.isWorn()) {
-                    OutputManager.append(getFailedInteractionMessage());
+                    GUIManager.appendOutput(getFailedInteractionMessage());
                     return false;
                 }
             }

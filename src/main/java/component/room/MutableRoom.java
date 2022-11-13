@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 import engine.database.DBManager;
 import utility.Utils;
 
@@ -68,6 +69,13 @@ public class MutableRoom extends PlayableRoom {
                         for (AbstractEntity obj : tempList) {
                             obj.setClosestRoomParentId(getId());
                             obj.setClosestRoomParent(this);
+
+                            if (obj instanceof AbstractContainer) {
+                                for (AbstractEntity insideObj : AbstractContainer.getAllObjectsInside(obj)) {
+                                    insideObj.setClosestRoomParentId(getId());
+                                    insideObj.setClosestRoomParent(this);
+                                }
+                            }
                         }
                     } else {
                         f.set(this, Utils.getField(newRoom.getClass(), f.getName()).get(newRoom));

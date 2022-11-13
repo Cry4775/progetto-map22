@@ -8,8 +8,8 @@ import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ILightSource;
 import component.room.AbstractRoom;
-import engine.OutputManager;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class LightSourceItem extends BasicItem implements ILightSource {
 
@@ -51,35 +51,39 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     }
 
     @Override
-    public void turnOn() {
+    public boolean turnOn() {
         if (!on) {
             if (!canInteract())
-                return;
+                return false;
 
             if (requiredItem != null && !requiredItem.isPickedUp()) {
-                OutputManager.append("Non puoi farlo senza lo strumento adatto.");
+                GUIManager.appendOutput("Non puoi farlo senza lo strumento adatto.");
             } else {
                 on = true;
-                OutputManager.append("Hai acceso: " + getName());
+                GUIManager.appendOutput("Hai acceso: " + getName());
                 // TODO EVENTO
 
-                setActionPerformed(true);
+                return true;
             }
         } else {
-            OutputManager.append(getName() + " é giá acceso.");
+            GUIManager.appendOutput(getName() + " é giá acceso.");
         }
+
+        return false;
     }
 
     @Override
-    public void turnOff() {
+    public boolean turnOff() {
         if (on) {
             on = false;
-            OutputManager.append("Hai spento: " + getName());
+            GUIManager.appendOutput("Hai spento: " + getName());
 
-            setActionPerformed(true);
+            return true;
         } else {
-            OutputManager.append(getName() + " é giá spento.");
+            GUIManager.appendOutput(getName() + " é giá spento.");
         }
+
+        return false;
     }
 
     @Override

@@ -5,5 +5,5 @@ public interface IPickupable extends IInteractable {
 
     public void setPickedUp(boolean pickedUp);
 
-    public void pickup();
+    public boolean pickup();
 }
