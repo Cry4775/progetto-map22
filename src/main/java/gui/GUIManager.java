@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Image;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
@@ -134,6 +135,7 @@ public class GUIManager {
     public static void createWeatherProgressMonitor() {
         ProgressMonitor monitor = new ProgressMonitor(gui, "Processing...", "", 0, 100);
         monitor.setProgress(0);
+
         AtomicInteger progress = new AtomicInteger();
 
         new SwingWorker<Void, Boolean>() {
@@ -142,6 +144,9 @@ public class GUIManager {
                 while (WeatherFetcher.getState().equals(currentState)) {
                     if (progress.get() == 0) {
                         for (int i = 0; i < maxPercentage; i++) {
+                            if (monitor.isCanceled())
+                                gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+
                             Thread.sleep(sleepTime);
                             publish(true);
                             progress.incrementAndGet();
@@ -154,6 +159,9 @@ public class GUIManager {
                         if (progress.get() < maxPercentage) {
                             int maxIt = maxPercentage - progress.get();
                             for (int i = 0; i < maxIt; i++) {
+                                if (monitor.isCanceled())
+                                    gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+
                                 Thread.sleep(sleepTime);
                                 publish(true);
                                 progress.incrementAndGet();
@@ -166,6 +174,9 @@ public class GUIManager {
                     }
                     if (progress.get() >= 100)
                         return;
+
+                    if (monitor.isCanceled())
+                        gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
                 }
             }
 

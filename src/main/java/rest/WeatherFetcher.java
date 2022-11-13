@@ -37,10 +37,6 @@ public class WeatherFetcher {
 
     private static State state;
 
-    public static State getState() {
-        return state;
-    }
-
     static {
         state = State.FETCHING_IP;
         try {
@@ -77,6 +73,10 @@ public class WeatherFetcher {
         DONE
     }
 
+    public static State getState() {
+        return state;
+    }
+
     public static boolean isRaining() {
         if (latestFetchTime == 0 || (System.currentTimeMillis() - latestFetchTime >= FETCH_INTERVAL)) {
             state = State.FETCHING_WEATHER;
@@ -100,6 +100,7 @@ public class WeatherFetcher {
 
         state = State.DONE;
         latestFetchTime = System.currentTimeMillis();
+
         return latestFetchRaining;
     }
 
