@@ -34,10 +34,10 @@ import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
-import component.room.Rooms;
 import component.room.PlayableRoom.Mode;
+import component.room.Rooms;
 import engine.GameManager;
-import engine.GameManager.InventoryMode;
+import engine.Inventory;
 import utility.Triple;
 
 public class DBManager {
@@ -444,28 +444,32 @@ public class DBManager {
     }
 
     public static void saveRooms() throws SQLException {
-        for (AbstractRoom room : GameManager.listAllRooms()) {
+        GameManager gameManager = GameManager.getInstance();
+
+        for (AbstractRoom room : gameManager.listAllRooms()) {
             room.saveOnDB();
         }
 
         PreparedStatement stm = connection.prepareStatement(
                 "INSERT INTO SAVEDATA.CurrentRoom values (?, ?)");
 
-        stm.setString(1, GameManager.getCurrentRoom().getId());
-        stm.setString(2, GameManager.getPreviousRoom() != null
-                ? GameManager.getPreviousRoom().getId()
+        stm.setString(1, gameManager.getCurrentRoom().getId());
+        stm.setString(2, gameManager.getPreviousRoom() != null
+                ? gameManager.getPreviousRoom().getId()
                 : null);
         stm.executeUpdate();
     }
 
     public static void saveObjects() throws SQLException {
-        for (AbstractEntity obj : GameManager.mapAllRoomsObjects().values()) {
+        GameManager gameManager = GameManager.getInstance();
+
+        for (AbstractEntity obj : gameManager.mapAllRoomsObjects().values()) {
             obj.saveOnDB();
         }
 
         List<AbstractEntity> inventory = new ArrayList<>();
 
-        for (AbstractEntity obj : GameManager.getInventory()) {
+        for (AbstractEntity obj : gameManager.getInventory()) {
             obj.saveOnDB();
             inventory.addAll(AbstractContainer.getAllObjectsInside(obj));
         }
@@ -669,9 +673,8 @@ public class DBManager {
             String containerId = pending.getThird();
 
             if (roomId == null && containerId != null) {
-                AbstractContainer.addObjectToContainerId(object,
-                        GameManager.getInventory(InventoryMode.UNPACK_CONTAINERS),
-                        containerId);
+                AbstractContainer.addObjectToContainerId(
+                        object, GameManager.getInstance().getInventory(Inventory.Mode.UNPACK_CONTAINERS), containerId);
                 break;
             }
 
@@ -681,9 +684,8 @@ public class DBManager {
                     object.setClosestRoomParentId(roomId);
 
                     if (containerId != null) {
-                        AbstractContainer.addObjectToContainerId(object,
-                                pRoom.getObjects(Mode.UNPACK_CONTAINERS),
-                                containerId);
+                        AbstractContainer.addObjectToContainerId(
+                                object, pRoom.getObjects(Mode.UNPACK_CONTAINERS), containerId);
                         break;
                     }
 

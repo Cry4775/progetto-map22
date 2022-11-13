@@ -16,9 +16,10 @@ import sound.SoundManager;
 import sound.SoundManager.Mode;
 import utility.Utils;
 
-public class Engine extends Thread {
+public class Engine {
     private static Parser parser;
     private static MainFrame gui;
+    private static GameManager gameManager;
     private static boolean firstExecution = true;
 
     private Engine() {}
@@ -41,7 +42,7 @@ public class Engine extends Thread {
             });
 
             DBManager.createDB();
-            GameManager.initialize();
+            gameManager = GameManager.getInstance();
 
             if (!crashed.get())
                 commandPerformed(null);
@@ -66,11 +67,11 @@ public class Engine extends Thread {
                     SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
                 }
 
-                if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+                if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
                     ParserOutput p = parser.parse(command);
 
                     if (command == null) {
-                        PlayableRoom currentRoom = (PlayableRoom) GameManager.getCurrentRoom();
+                        PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
                         GUIManager.updateRoomInformations(currentRoom.isCurrentlyDark() ? true : false);
                         return;
                     }
@@ -79,16 +80,16 @@ public class Engine extends Thread {
                         GUIManager.appendOutput("Non capisco quello che mi vuoi dire.");
                         GUIManager.printOutput();
                     } else {
-                        GameManager.nextMove(p);
+                        gameManager.nextMove(p);
                     }
-                } else if (GameManager.getCurrentRoom() instanceof CutsceneRoom) {
-                    CutsceneRoom currentRoom = (CutsceneRoom) GameManager.getCurrentRoom();
+                } else if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
+                    CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
 
                     GUIManager.updateRoomInformations();
                     GUIManager.waitUntilEnterIsPressed();
 
                     if (!currentRoom.isFinalRoom()) {
-                        GameManager.nextRoom();
+                        gameManager.nextRoom();
                     } else {
                         gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
                     }

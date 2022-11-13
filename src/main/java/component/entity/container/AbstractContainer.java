@@ -121,9 +121,9 @@ public abstract class AbstractContainer extends AbstractEntity {
                     }
                 }
 
-                obj.setClosestRoomParent((PlayableRoom) GameManager.getCurrentRoom());
+                obj.setClosestRoomParent((PlayableRoom) GameManager.getInstance().getCurrentRoom());
                 obj.setParent(this);
-                GameManager.getInventory().remove(obj);
+                GameManager.getInstance().removeObjectFromInventory(obj);
                 ((IPickupable) obj).setPickedUp(false);
 
                 this.add(obj);

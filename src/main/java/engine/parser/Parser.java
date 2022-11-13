@@ -85,12 +85,12 @@ public class Parser {
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
     public ParserOutput parse(String command) {
-        List<AbstractEntity> objects = ((PlayableRoom) GameManager.getCurrentRoom()).getObjects();
-        List<AbstractEntity> inventory = GameManager.getInventory();
+        List<AbstractEntity> objects = ((PlayableRoom) GameManager.getInstance().getCurrentRoom()).getObjects();
+        List<AbstractEntity> inventory = GameManager.getInstance().getInventory();
         List<String> tokens = Utils.parseString(command == null ? "" : command, stopwords);
 
         if (!tokens.isEmpty()) {
-            Command cmd = checkForCommand(tokens.get(0), GameManager.getCommands());
+            Command cmd = checkForCommand(tokens.get(0), GameManager.getInstance().getCommands());
             if (cmd != null) {
                 if (tokens.size() > 1) {
                     AbstractEntity objRoom = checkForObject(tokens.get(1), objects);

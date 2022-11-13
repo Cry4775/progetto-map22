@@ -1,34 +1,50 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package engine;
 
 import java.util.ArrayList;
 import java.util.List;
 import component.entity.AbstractEntity;
+import component.entity.container.AbstractContainer;
 
-/**
- * @author pierpaolo
- */
 public class Inventory {
+    private List<AbstractEntity> objects = new ArrayList<>();
 
-    private List<AbstractEntity> list = new ArrayList<>();
-
-    public List<AbstractEntity> getList() {
-        return list;
+    public enum Mode {
+        NORMAL,
+        UNPACK_CONTAINERS
     }
 
-    public void setList(List<AbstractEntity> list) {
-        this.list = list;
+    List<AbstractEntity> getObjects(Mode mode) {
+        switch (mode) {
+            case NORMAL:
+                return objects;
+            case UNPACK_CONTAINERS:
+                List<AbstractEntity> result = new ArrayList<>();
+
+                for (AbstractEntity obj : objects) {
+                    result.add(obj);
+                    result.addAll(AbstractContainer.getAllObjectsInside(obj));
+                }
+
+                return result;
+            default:
+                return objects;
+        }
     }
 
-    public void add(AbstractEntity o) {
-        list.add(o);
+    void addObject(AbstractEntity obj) {
+        objects.add(obj);
     }
 
-    public void remove(AbstractEntity o) {
-        list.remove(o);
+    void removeObject(AbstractEntity obj) {
+        if (objects.contains(obj)) {
+            objects.remove(obj);
+        } else {
+            if (obj.getParent() instanceof AbstractContainer) {
+                AbstractContainer container = (AbstractContainer) obj.getParent();
+                container.removeObject(obj);
+            } else {
+                throw new Error("Couldn't destroy item " + obj.getName() + " (" + obj.getId() + ")");
+            }
+        }
     }
 }

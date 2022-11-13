@@ -19,7 +19,7 @@ import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import component.room.Rooms;
 import engine.GameManager;
-import engine.GameManager.InventoryMode;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -385,9 +385,8 @@ public abstract class AbstractEntity extends GameComponent {
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
         if (roomId == null && containerId != null) {
-            AbstractContainer.addObjectToContainerId(this,
-                    GameManager.getInventory(InventoryMode.UNPACK_CONTAINERS),
-                    containerId);
+            AbstractContainer.addObjectToContainerId(
+                    this, GameManager.getInstance().getInventory(Inventory.Mode.UNPACK_CONTAINERS), containerId);
             return;
         } else {
             for (AbstractRoom room : allRooms) {
@@ -396,8 +395,8 @@ public abstract class AbstractEntity extends GameComponent {
                     closestRoomParentId = roomId;
 
                     if (containerId != null) {
-                        AbstractContainer.addObjectToContainerId(this,
-                                pRoom.getObjects(Mode.UNPACK_CONTAINERS), containerId);
+                        AbstractContainer.addObjectToContainerId(
+                                this, pRoom.getObjects(Mode.UNPACK_CONTAINERS), containerId);
                         return;
                     }
 

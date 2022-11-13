@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class Utils {
 
@@ -67,6 +69,19 @@ public class Utils {
             field.setAccessible(true);
         }
         return result;
+    }
+
+    public static JsonElement getJsonField(String json, String fieldName) {
+        JsonElement element = JsonParser.parseString(json);
+
+        if (element.isJsonObject()) {
+            return element.getAsJsonObject().get(fieldName);
+        } else if (element.isJsonArray()) {
+            if (!element.getAsJsonArray().isEmpty())
+                return element.getAsJsonArray().get(0).getAsJsonObject().get(fieldName);
+        }
+
+        return null;
     }
 
 }

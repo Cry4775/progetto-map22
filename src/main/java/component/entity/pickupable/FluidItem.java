@@ -33,7 +33,7 @@ public class FluidItem extends BasicItem implements IFluid {
 
         boolean filled = false;
 
-        for (AbstractEntity invObject : GameManager.getInventory()) {
+        for (AbstractEntity invObject : GameManager.getInstance().getInventory()) {
             if (invObject instanceof IFillable) {
                 IFillable invFillable = (IFillable) invObject;
 

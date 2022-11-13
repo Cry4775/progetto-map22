@@ -1,6 +1,5 @@
 package engine;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -37,18 +36,20 @@ import engine.parser.ParserOutput;
 import gui.GUIManager;
 
 public class GameManager {
-    private static final List<AbstractRoom> rooms = new ArrayList<>();
-    private static final List<Command> commands = new ArrayList<>();
-    private static final List<AbstractEntity> inventory = new ArrayList<>();
+    private static GameManager instance;
 
-    private static AbstractRoom currentRoom;
-    private static AbstractRoom previousRoom;
+    private final List<AbstractRoom> rooms = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
+    private final Inventory inventory = new Inventory();
 
-    private static Status status = new Status();
+    private AbstractRoom currentRoom;
+    private AbstractRoom previousRoom;
+
+    private Status status = new Status();
 
     private GameManager() {}
 
-    public static void initialize() throws IOException {
+    private void initialize() {
         CommandsLoader commandsLoader = new CommandsLoader();
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
@@ -69,66 +70,61 @@ public class GameManager {
         try {
             tCommands.join();
             tRooms.join();
-            if (currentRoom instanceof PlayableRoom) {
-                ((PlayableRoom) currentRoom).processRoomLighting(inventory);
-            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public static Status getStatus() {
+    public static GameManager getInstance() {
+        if (instance == null) {
+            instance = new GameManager();
+            instance.initialize();
+        }
+
+        return instance;
+    }
+
+    public Status getStatus() {
         return status;
     }
 
-    public static AbstractRoom getPreviousRoom() {
+    public AbstractRoom getPreviousRoom() {
         return previousRoom;
     }
 
-    public static void setPreviousRoom(AbstractRoom previousRoom) {
-        GameManager.previousRoom = previousRoom;
+    public void setPreviousRoom(AbstractRoom previousRoom) {
+        this.previousRoom = previousRoom;
     }
 
-    public static List<Command> getCommands() {
+    public List<Command> getCommands() {
         return commands;
     }
 
-    public static AbstractRoom getCurrentRoom() {
+    public AbstractRoom getCurrentRoom() {
         return currentRoom;
     }
 
-    public static void setCurrentRoom(AbstractRoom currentRoom) {
-        GameManager.currentRoom = currentRoom;
+    public void setCurrentRoom(AbstractRoom currentRoom) {
+        this.currentRoom = currentRoom;
     }
 
-    public enum InventoryMode {
-        NORMAL,
-        UNPACK_CONTAINERS
+    public List<AbstractEntity> getInventory() {
+        return inventory.getObjects(Inventory.Mode.NORMAL);
     }
 
-    public static List<AbstractEntity> getInventory() {
-        return inventory;
+    public List<AbstractEntity> getInventory(Inventory.Mode mode) {
+        return inventory.getObjects(mode);
     }
 
-    public static List<AbstractEntity> getInventory(InventoryMode mode) {
-        switch (mode) {
-            case NORMAL:
-                return inventory;
-            case UNPACK_CONTAINERS:
-                List<AbstractEntity> result = new ArrayList<>();
-
-                for (AbstractEntity obj : inventory) {
-                    result.add(obj);
-                    result.addAll(AbstractContainer.getAllObjectsInside(obj));
-                }
-
-                return result;
-            default:
-                return inventory;
-        }
+    public void addObjectInInventory(AbstractEntity obj) {
+        inventory.addObject(obj);
     }
 
-    public static void nextMove(ParserOutput p) {
+    public void removeObjectFromInventory(AbstractEntity obj) {
+        inventory.removeObject(obj);
+    }
+
+    void nextMove(ParserOutput p) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
         boolean actionPerformed = false;
 
@@ -156,8 +152,7 @@ public class GameManager {
                 }
                 case INVENTORY: {
                     if (!getInventory().isEmpty()) {
-                        StringBuilder stringBuilder = new StringBuilder(
-                                "Nel tuo inventario ci sono:");
+                        StringBuilder stringBuilder = new StringBuilder("Nel tuo inventario ci sono:");
 
                         for (AbstractEntity obj : getInventory()) {
                             stringBuilder.append("\n - " + obj.getName());
@@ -426,30 +421,21 @@ public class GameManager {
             }
         }
 
+        if (getCurrentRoom() instanceof PlayableRoom) {
+            currentPlayableRoom = (PlayableRoom) getCurrentRoom();
+            currentPlayableRoom.processRoomLighting(getInventory());
+        } else {
+            currentPlayableRoom = null;
+        }
+
         if (actionPerformed) {
             GUIManager.increaseActionsCounter();
 
-            for (AbstractEntity obj : getInventory(InventoryMode.UNPACK_CONTAINERS)) {
+            for (AbstractEntity obj : getInventory(Inventory.Mode.UNPACK_CONTAINERS)) {
                 if (obj.isMustDestroyFromInv()) {
-                    if (getInventory().contains(obj)) {
-                        getInventory().remove(obj);
-                    } else {
-                        if (obj.getParent() instanceof AbstractContainer) {
-                            AbstractContainer container = (AbstractContainer) obj.getParent();
-                            container.removeObject(obj);
-                        } else {
-                            throw new Error("Couldn't destroy item " + obj.getName() + " (" + obj.getId() + ")");
-                        }
-                    }
+                    removeObjectFromInventory(obj);
                 }
             }
-        }
-
-        if (getCurrentRoom() instanceof PlayableRoom) {
-            currentPlayableRoom = (PlayableRoom) getCurrentRoom();
-            currentPlayableRoom.processRoomLighting(inventory);
-        } else {
-            currentPlayableRoom = null;
         }
 
         if (status.isMovementAttempt()) {
@@ -478,7 +464,7 @@ public class GameManager {
         status.reset();
     }
 
-    public static void nextRoom() {
+    void nextRoom() {
         if (getCurrentRoom() instanceof CutsceneRoom) {
             CutsceneRoom currentRoom = (CutsceneRoom) getCurrentRoom();
 
@@ -491,7 +477,7 @@ public class GameManager {
         }
     }
 
-    private static boolean isMovementGranted(CommandType direction) {
+    private boolean isMovementGranted(CommandType direction) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         status.setMovementAttempt(true);
@@ -506,7 +492,7 @@ public class GameManager {
         return true;
     }
 
-    private static boolean isMovementCommand(CommandType commandType) {
+    private boolean isMovementCommand(CommandType commandType) {
         switch (commandType) {
             case NORTH:
                 return true;
@@ -533,7 +519,7 @@ public class GameManager {
         }
     }
 
-    private static AbstractEntity getObjectFromParser(ParserOutput p) {
+    private AbstractEntity getObjectFromParser(ParserOutput p) {
         if (p.getObject() != null) {
             return p.getObject();
         } else if (p.getInvObject() != null) {
@@ -542,7 +528,7 @@ public class GameManager {
         return null;
     }
 
-    private static void moveTo(AbstractRoom room) {
+    private void moveTo(AbstractRoom room) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         if (!currentRoom.isCurrentlyDark()) {
@@ -585,24 +571,24 @@ public class GameManager {
         }
     }
 
-    public static List<AbstractRoom> listAllRooms() {
+    public List<AbstractRoom> listAllRooms() {
         List<AbstractRoom> result = new ArrayList<>();
         result.addAll(Rooms.listAllRooms(rooms));
 
         return result;
     }
 
-    public static Multimap<String, AbstractEntity> mapAllRoomsObjects() {
+    public Multimap<String, AbstractEntity> mapAllRoomsObjects() {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
         result.putAll(Entities.mapRoomsObjects(rooms));
 
         return result;
     }
 
-    public static Multimap<String, AbstractEntity> mapAllInventoryObjects() {
+    public Multimap<String, AbstractEntity> mapAllInventoryObjects() {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
-        for (AbstractEntity obj : getInventory(InventoryMode.UNPACK_CONTAINERS)) {
+        for (AbstractEntity obj : getInventory(Inventory.Mode.UNPACK_CONTAINERS)) {
             result.put(obj.getId(), obj);
         }
 

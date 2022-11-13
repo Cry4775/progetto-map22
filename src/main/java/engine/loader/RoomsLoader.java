@@ -25,6 +25,7 @@ import engine.loader.json.TypeAdapterHolder.AdapterType;
 public class RoomsLoader implements Runnable {
 
     private static List<AbstractRoom> rooms;
+    private static GameManager gameManager = GameManager.getInstance();
     private boolean exceptionThrown = false;
     private Mode mode;
 
@@ -47,21 +48,20 @@ public class RoomsLoader implements Runnable {
     @Override
     public void run() {
         if (mode == Mode.JSON) {
-            Gson gson = new GsonBuilder()
-                    .setExclusionStrategies(new ExclusionStrategy() {
-                        @Override
-                        public boolean shouldSkipField(FieldAttributes f) {
-                            // For performance
-                            return AbstractRoom.class.equals(f.getDeclaredClass())
-                                    || AbstractEntity.class.equals(f.getDeclaredClass());
-                        }
+            Gson gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    // For performance
+                    return AbstractRoom.class.equals(f.getDeclaredClass())
+                            || AbstractEntity.class.equals(f.getDeclaredClass());
+                }
 
-                        @Override
-                        public boolean shouldSkipClass(Class<?> clazz) {
-                            // Never
-                            return false;
-                        }
-                    })
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    // Never
+                    return false;
+                }
+            })
                     .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ENTITIES))
                     .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ROOMS))
                     .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.EVENTS))
@@ -77,18 +77,18 @@ public class RoomsLoader implements Runnable {
                 throw new Error(e);
             }
 
-            Multimap<String, AbstractEntity> objects = GameManager.mapAllRoomsObjects();
+            Multimap<String, AbstractEntity> objects = gameManager.mapAllRoomsObjects();
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
             }
 
-            GameManager.setCurrentRoom(rooms.get(0));
+            gameManager.setCurrentRoom(rooms.get(0));
         } else {
             rooms.addAll(DBManager.load());
 
-            Multimap<String, AbstractEntity> objects = GameManager.mapAllRoomsObjects();
-            objects.putAll(GameManager.mapAllInventoryObjects());
+            Multimap<String, AbstractEntity> objects = gameManager.mapAllRoomsObjects();
+            objects.putAll(gameManager.mapAllInventoryObjects());
 
             for (AbstractEntity obj : objects.values()) {
                 obj.processReferences(objects, rooms);
@@ -99,15 +99,14 @@ public class RoomsLoader implements Runnable {
 
             for (AbstractRoom room : rooms) {
                 if (room.getId().equals(currentRoomId)) {
-                    GameManager.setCurrentRoom(room);
+                    gameManager.setCurrentRoom(room);
                 } else if (room.getId().equals(previousRoomId)) {
-                    GameManager.setPreviousRoom(room);
+                    gameManager.setPreviousRoom(room);
                 }
 
-                if (previousRoomId == null && GameManager.getCurrentRoom() != null) {
+                if (previousRoomId == null && gameManager.getCurrentRoom() != null) {
                     break;
-                } else if (GameManager.getPreviousRoom() != null
-                        && GameManager.getCurrentRoom() != null) {
+                } else if (gameManager.getPreviousRoom() != null && gameManager.getCurrentRoom() != null) {
                     break;
                 }
             }
@@ -124,10 +123,14 @@ public class RoomsLoader implements Runnable {
                 throw new Error(e);
             }
         }
+
+        if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
+            ((PlayableRoom) gameManager.getCurrentRoom()).processRoomLighting(gameManager.getInventory());
+        }
     }
 
     private void linkRooms() {
-        List<AbstractRoom> allRooms = GameManager.listAllRooms();
+        List<AbstractRoom> allRooms = gameManager.listAllRooms();
 
         Thread east = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getEastId,
                 PlayableRoom::setEast, PlayableRoom.class));

@@ -50,12 +50,14 @@ public class CompassManager {
             @Override
             protected Color doInBackground() throws Exception {
                 if (room != null) {
-                    if (room.equals(GameManager.getPreviousRoom())) {
+                    AbstractRoom previousRoom = GameManager.getInstance().getPreviousRoom();
+                    if (room.equals(previousRoom)) {
                         return Color.BLUE;
                     }
 
-                    if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-                        PlayableRoom pRoom = (PlayableRoom) GameManager.getCurrentRoom();
+                    AbstractRoom currentRoom = GameManager.getInstance().getCurrentRoom();
+                    if (currentRoom instanceof PlayableRoom) {
+                        PlayableRoom pRoom = (PlayableRoom) currentRoom;
                         for (Door door : Entities.listCheckedEntities(Door.class, pRoom.getObjects())) {
                             if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
                                 return Color.ORANGE;
@@ -96,8 +98,8 @@ public class CompassManager {
     protected static void updateCompass() {
         requireNonNullLabels();
 
-        if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentPlayableRoom = (PlayableRoom) GameManager.getCurrentRoom();
+        if (GameManager.getInstance().getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentPlayableRoom = (PlayableRoom) GameManager.getInstance().getCurrentRoom();
 
             if (!currentPlayableRoom.isCurrentlyDark()) {
                 updateCompassLabel(currentPlayableRoom.getNorth(), northLbl);
@@ -110,7 +112,7 @@ public class CompassManager {
                 updateCompassLabel(currentPlayableRoom.getNorthWest(), northWestLbl);
             } else {
                 resetCompass();
-                AbstractRoom previousRoom = GameManager.getPreviousRoom();
+                AbstractRoom previousRoom = GameManager.getInstance().getPreviousRoom();
 
                 if (previousRoom.equals(currentPlayableRoom.getSouth())) {
                     updateCompassLabel(currentPlayableRoom.getSouth(), southLbl);

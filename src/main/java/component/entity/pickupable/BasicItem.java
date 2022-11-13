@@ -49,7 +49,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
                 room.removeObject(this);
             }
 
-            GameManager.getInventory().add(this);
+            GameManager.getInstance().addObjectInInventory(this);
             SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
             pickedUp = true;
 
@@ -106,7 +106,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
             throws SQLException {
         if (pickedUp) {
             if (!(this instanceof IFluid))
-                GameManager.getInventory().add(this);
+                GameManager.getInstance().addObjectInInventory(this);
         } else {
             super.loadLocation(resultSet, allRooms);
         }

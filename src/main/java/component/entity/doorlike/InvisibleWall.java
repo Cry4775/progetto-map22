@@ -104,7 +104,7 @@ public class InvisibleWall extends AbstractEntity {
     public boolean isBlocking(CommandType direction) {
         PlayableRoom parentRoom = (PlayableRoom) getParent();
         AbstractRoom nextRoom = parentRoom.getRoomAt(direction);
-        processRequirements(GameManager.getInventory());
+        processRequirements(GameManager.getInstance().getInventory());
 
         if (locked) {
             if (blockedRoomId != null) {

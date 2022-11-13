@@ -8,8 +8,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import utility.Utils;
 
 public class WeatherFetcher {
 
@@ -56,7 +55,7 @@ public class WeatherFetcher {
 
             if (response.getStatus() == 200) {
                 String json = response.readEntity(String.class);
-                locationKey = getJsonField(json, "Key").getAsString();
+                locationKey = Utils.getJsonField(json, "Key").getAsString();
             } else {
                 locationKey = DEFAULT_LOCATION_KEY;
             }
@@ -90,7 +89,7 @@ public class WeatherFetcher {
 
                 if (response.getStatus() == 200) {
                     String json = response.readEntity(String.class);
-                    latestFetchRaining = getJsonField(json, "HasPrecipitation").getAsBoolean();
+                    latestFetchRaining = Utils.getJsonField(json, "HasPrecipitation").getAsBoolean();
                 }
             } catch (Exception e) {
                 // Set default value
@@ -104,16 +103,4 @@ public class WeatherFetcher {
         return latestFetchRaining;
     }
 
-    private static JsonElement getJsonField(String json, String fieldName) {
-        JsonElement element = JsonParser.parseString(json);
-
-        if (element.isJsonObject()) {
-            return element.getAsJsonObject().get(fieldName);
-        } else if (element.isJsonArray()) {
-            if (!element.getAsJsonArray().isEmpty())
-                return element.getAsJsonArray().get(0).getAsJsonObject().get(fieldName);
-        }
-
-        return null;
-    }
 }

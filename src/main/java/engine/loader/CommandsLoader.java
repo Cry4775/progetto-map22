@@ -139,7 +139,7 @@ public class CommandsLoader implements Runnable {
         Command save = new Command(CommandType.SAVE, "salva");
         save.addAlias("save");
 
-        List<Command> commands = GameManager.getCommands();
+        List<Command> commands = GameManager.getInstance().getCommands();
 
         commands.add(north);
         commands.add(northWest);

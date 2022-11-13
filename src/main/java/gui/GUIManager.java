@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import component.room.AbstractRoom;
 import engine.GameManager;
 import rest.WeatherFetcher;
 
@@ -62,8 +63,9 @@ public class GUIManager {
             updateRoomInformations("Buio", "resources/img/buio.jpg");
             description = "È completamente buio e non riesci a vedere niente.";
         } else {
-            updateRoomInformations(GameManager.getCurrentRoom().getName(), GameManager.getCurrentRoom().getImgPath());
-            description = GameManager.getCurrentRoom().getDescription();
+            AbstractRoom currentRoom = GameManager.getInstance().getCurrentRoom();
+            updateRoomInformations(currentRoom.getName(), currentRoom.getImgPath());
+            description = currentRoom.getDescription();
         }
 
         if (!description.equals(lastDescription)) {

@@ -89,7 +89,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             return false;
 
         pickedUp = true;
-        GameManager.getInventory().add(this);
+        GameManager.getInstance().addObjectInInventory(this);
 
         // Check if it's an obj inside something and remove it from its list
         if (getParent() != null) {
@@ -127,9 +127,9 @@ public class WearableContainer extends AbstractContainer implements IWearable {
                 }
             }
 
-            obj.setClosestRoomParent((PlayableRoom) GameManager.getCurrentRoom());
+            obj.setClosestRoomParent((PlayableRoom) GameManager.getInstance().getCurrentRoom());
             obj.setParent(this);
-            GameManager.getInventory().remove(obj);
+            GameManager.getInstance().removeObjectFromInventory(obj);
             ((IPickupable) obj).setPickedUp(false);
 
             this.add(obj);
@@ -180,7 +180,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             WearableContainer obj = new WearableContainer(resultSet);
 
             if (obj.isPickedUp()) {
-                GameManager.getInventory().add(obj);
+                GameManager.getInstance().addObjectInInventory(obj);
             } else {
                 Triple<AbstractEntity, String, String> pending =
                         obj.loadRoomLocation(resultSet, allRooms);
