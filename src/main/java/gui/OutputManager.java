@@ -5,6 +5,7 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -89,14 +90,29 @@ public class OutputManager {
     private static void write(String text, boolean inputText) {
         StyledDocument doc = txtPane.getStyledDocument();
 
-        try {
-            if (inputText) {
-                doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
-            } else {
-                printSlowly(text, 15);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (inputText) {
+                        doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
+                    } else {
+                        printSlowly(text, 15);
+                    }
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (BadLocationException e) {
-            e.printStackTrace();
+        };
+
+        if (!SwingUtilities.isEventDispatchThread()) {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            } catch (InvocationTargetException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            runnable.run();
         }
     }
 
@@ -104,6 +120,7 @@ public class OutputManager {
         if (message == null || message.isEmpty())
             return;
 
+        currentlyPrinting = true;
         txtInput.setEditable(false);
         txtInput.setFocusable(false);
 
@@ -117,9 +134,7 @@ public class OutputManager {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    doc.insertString(doc.getLength(),
-                            String.valueOf(message.charAt(counter.getAndIncrement())),
-                            null);
+                    doc.insertString(doc.getLength(), String.valueOf(message.charAt(counter.getAndIncrement())), null);
                 } catch (BadLocationException ex) {
                     ex.printStackTrace();
                 }
@@ -135,7 +150,6 @@ public class OutputManager {
         });
 
         timer.start();
-        currentlyPrinting = true;
 
         // Skip writing animation
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -172,51 +186,47 @@ public class OutputManager {
             public void run() {
                 AtomicBoolean waiting = new AtomicBoolean(true);
 
-                while (currentlyPrinting) {
-                    try {
+                try {
+                    while (currentlyPrinting) {
                         sleep(30);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                }
 
-                SwingUtilities.invokeLater(() -> {
-                    txtInput.setText("Premere INVIO per continuare...");
-                    txtInput.setFocusable(false);
-                    txtInput.setEditable(false);
+                    SwingUtilities.invokeLater(() -> {
+                        txtInput.setText("Premere INVIO per continuare...");
+                        txtInput.setFocusable(false);
+                        txtInput.setEditable(false);
 
-                    KeyboardFocusManager manager =
-                            KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                    manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+                        KeyboardFocusManager manager =
+                                KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                        manager.addKeyEventDispatcher(new KeyEventDispatcher() {
 
-                        @Override
-                        public boolean dispatchKeyEvent(KeyEvent e) {
-                            if (e.getKeyCode() == KeyEvent.VK_ENTER
-                                    && e.getID() == KeyEvent.KEY_RELEASED) {
-                                txtInput.setText("");
-                                txtInput.setEditable(true);
-                                txtInput.setFocusable(true);
-                                txtInput.requestFocusInWindow();
-                                manager.removeKeyEventDispatcher(this);
-                                waiting.set(false);
+                            @Override
+                            public boolean dispatchKeyEvent(KeyEvent e) {
+                                if (e.getKeyCode() == KeyEvent.VK_ENTER
+                                        && e.getID() == KeyEvent.KEY_RELEASED) {
+                                    txtInput.setText("");
+                                    txtInput.setEditable(true);
+                                    txtInput.setFocusable(true);
+                                    txtInput.requestFocusInWindow();
+                                    manager.removeKeyEventDispatcher(this);
+                                    waiting.set(false);
+                                }
+                                return true;
                             }
-                            return true;
-                        }
+                        });
                     });
-                });
 
-                while (waiting.get()) {
-                    try {
+                    while (waiting.get()) {
                         sleep(30);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         };
 
-        thread.start();
         try {
+            thread.start();
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -2,8 +2,10 @@ package gui;
 
 import java.awt.Color;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JLabel;
-import component.entity.AbstractEntity;
+import javax.swing.SwingWorker;
+import component.entity.Entities;
 import component.entity.doorlike.Door;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
@@ -44,30 +46,38 @@ public class CompassManager {
     }
 
     private static void updateCompassLabel(AbstractRoom room, JLabel directionLbl) {
-        if (room != null) {
-            if (room.equals(GameManager.getPreviousRoom())) {
-                directionLbl.setForeground(Color.BLUE);
-            } else {
-                directionLbl.setForeground(Color.GREEN);
-            }
+        new SwingWorker<Color, Void>() {
+            @Override
+            protected Color doInBackground() throws Exception {
+                if (room != null) {
+                    if (room.equals(GameManager.getPreviousRoom())) {
+                        return Color.BLUE;
+                    }
 
-            if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
-                PlayableRoom playableRoom = (PlayableRoom) GameManager.getCurrentRoom();
-                if (playableRoom.getObjects() != null) {
-                    for (AbstractEntity obj : playableRoom.getObjects()) {
-                        if (obj instanceof Door) {
-                            Door door = (Door) obj;
+                    if (GameManager.getCurrentRoom() instanceof PlayableRoom) {
+                        PlayableRoom pRoom = (PlayableRoom) GameManager.getCurrentRoom();
+                        for (Door door : Entities.listCheckedEntities(Door.class, pRoom.getObjects())) {
                             if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
-                                directionLbl.setForeground(Color.ORANGE);
-                                break;
+                                return Color.ORANGE;
                             }
                         }
                     }
+
+                    return Color.GREEN;
+                }
+
+                return Color.RED;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    directionLbl.setForeground(get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
-        } else {
-            directionLbl.setForeground(Color.RED);
-        }
+        }.execute();
     }
 
     private static void resetCompass() {

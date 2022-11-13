@@ -1,8 +1,12 @@
 package gui;
 
 import java.awt.Image;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import engine.GameManager;
 
 public class GUIManager {
@@ -65,11 +69,55 @@ public class GUIManager {
         printOutput();
     }
 
-    public static void updateRoomInformations(String roomName, String imageURL) {
-        gui.getLblRoomName().setText(roomName);
-        Image roomImg = new ImageIcon(imageURL).getImage()
-                .getScaledInstance(581, 300, Image.SCALE_SMOOTH);
-        gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
+    private static void updateRoomInformations(String roomName, String imageURL) {
         CompassManager.updateCompass();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                gui.getLblRoomName().setText(roomName);
+                Image roomImg = new ImageIcon(imageURL).getImage().getScaledInstance(581, 300, Image.SCALE_SMOOTH);
+                gui.getLblRoomImage().setIcon(new ImageIcon(roomImg));
+            }
+        });
+    }
+
+    public static void showFatalError(String message) {
+        gui.showFatalError(message);
+    }
+
+    public static int askLoadingConfirmation() {
+        AtomicInteger chosenOption = new AtomicInteger();
+
+        try {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    chosenOption.set(JOptionPane.showConfirmDialog(null,
+                            "An existing savegame has been found. Do you wish to load it?",
+                            "Loading savegame",
+                            JOptionPane.YES_NO_OPTION));
+                }
+            };
+
+            if (!SwingUtilities.isEventDispatchThread()) {
+                SwingUtilities.invokeAndWait(runnable);
+            } else {
+                runnable.run();
+            }
+        } catch (InvocationTargetException | InterruptedException e) {
+            throw new Error(e);
+        }
+
+        return chosenOption.get();
+
+    }
+
+    public static void increaseActionsCounter() {
+        String[] strings = gui.getLblActions().getText().split(".*: ");
+        for (String string : strings) {
+            if (string.matches("[0-9]+")) {
+                int oldCounterVal = Integer.parseInt(string);
+                gui.getLblActions().setText("Azioni: " + Integer.toString(oldCounterVal + 1));
+                return;
+            }
+        }
     }
 }

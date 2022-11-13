@@ -15,9 +15,11 @@ public final class Entities {
             List<AbstractEntity> list) {
         List<T> result = new ArrayList<>();
 
-        for (AbstractEntity obj : list) {
-            if (clazz.isInstance(obj)) {
-                result.add(clazz.cast(obj));
+        if (list != null) {
+            for (AbstractEntity obj : list) {
+                if (clazz.isInstance(obj)) {
+                    result.add(clazz.cast(obj));
+                }
             }
         }
 

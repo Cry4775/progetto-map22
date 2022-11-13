@@ -24,6 +24,7 @@ import component.entity.interfaces.ITalkable;
 import component.entity.interfaces.IWearable;
 import component.entity.object.FireObject;
 import component.room.AbstractRoom;
+import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
 import component.room.Rooms;
 import engine.command.Command;
@@ -34,7 +35,6 @@ import engine.loader.RoomsLoader;
 import engine.loader.RoomsLoader.Mode;
 import engine.parser.ParserOutput;
 import gui.GUIManager;
-import gui.MainFrame;
 
 public class GameManager {
     private static final List<AbstractRoom> rooms = new ArrayList<>();
@@ -45,6 +45,37 @@ public class GameManager {
     private static AbstractRoom previousRoom;
 
     private static Status status = new Status();
+
+    private GameManager() {}
+
+    public static void initialize() throws IOException {
+        CommandsLoader commandsLoader = new CommandsLoader();
+        Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
+
+        RoomsLoader roomsLoader;
+
+        if (DBManager.existsSaving()) {
+            roomsLoader = new RoomsLoader(rooms,
+                    GUIManager.askLoadingConfirmation() == JOptionPane.YES_OPTION ? Mode.DB : Mode.JSON);
+        } else {
+            roomsLoader = new RoomsLoader(rooms, Mode.JSON);
+        }
+
+        Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
+
+        tCommands.start();
+        tRooms.start();
+
+        try {
+            tCommands.join();
+            tRooms.join();
+            if (currentRoom instanceof PlayableRoom) {
+                ((PlayableRoom) currentRoom).processRoomLighting(inventory);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static Status getStatus() {
         return status;
@@ -97,37 +128,7 @@ public class GameManager {
         }
     }
 
-    public void init() throws IOException {
-        CommandsLoader commandsLoader = new CommandsLoader();
-        Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
-
-        RoomsLoader roomsLoader;
-
-        if (DBManager.existsSaving()) {
-            roomsLoader = new RoomsLoader(rooms,
-                    MainFrame.askLoadingConfirmation() == JOptionPane.YES_OPTION ? Mode.DB
-                            : Mode.JSON);
-        } else {
-            roomsLoader = new RoomsLoader(rooms, Mode.JSON);
-        }
-
-        Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
-
-        tCommands.start();
-        tRooms.start();
-
-        try {
-            tCommands.join();
-            tRooms.join();
-            if (currentRoom instanceof PlayableRoom) {
-                ((PlayableRoom) currentRoom).processRoomLighting(inventory);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void nextMove(ParserOutput p, MainFrame gui) {
+    public static void nextMove(ParserOutput p) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
         boolean actionPerformed = false;
 
@@ -426,14 +427,7 @@ public class GameManager {
         }
 
         if (actionPerformed) {
-            String[] strings = gui.getLblActions().getText().split(".*: ");
-            for (String string : strings) {
-                if (string.matches("[0-9]+")) {
-                    int oldCounterVal = Integer.parseInt(string);
-                    gui.getLblActions().setText("Azioni: " + Integer.toString(oldCounterVal + 1));
-                    break;
-                }
-            }
+            GUIManager.increaseActionsCounter();
 
             for (AbstractEntity obj : getInventory(InventoryMode.UNPACK_CONTAINERS)) {
                 if (obj.isMustDestroyFromInv()) {
@@ -444,7 +438,7 @@ public class GameManager {
                             AbstractContainer container = (AbstractContainer) obj.getParent();
                             container.removeObject(obj);
                         } else {
-                            System.out.println("Couldn't destroy item " + obj.getName() + " (" + obj.getId() + ")");
+                            throw new Error("Couldn't destroy item " + obj.getName() + " (" + obj.getId() + ")");
                         }
                     }
                 }
@@ -484,7 +478,20 @@ public class GameManager {
         status.reset();
     }
 
-    private boolean isMovementGranted(CommandType direction) {
+    public static void nextRoom() {
+        if (getCurrentRoom() instanceof CutsceneRoom) {
+            CutsceneRoom currentRoom = (CutsceneRoom) getCurrentRoom();
+
+            if (currentRoom.getNextRoom() != null) {
+                setCurrentRoom(currentRoom.getNextRoom());
+            } else {
+                throw new Error("Couldn't find the next room of " + currentRoom.getName()
+                        + " (" + currentRoom.getId() + "). Check the JSON file for correct room setup.");
+            }
+        }
+    }
+
+    private static boolean isMovementGranted(CommandType direction) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         status.setMovementAttempt(true);
@@ -499,7 +506,7 @@ public class GameManager {
         return true;
     }
 
-    private boolean isMovementCommand(CommandType commandType) {
+    private static boolean isMovementCommand(CommandType commandType) {
         switch (commandType) {
             case NORTH:
                 return true;
@@ -526,7 +533,7 @@ public class GameManager {
         }
     }
 
-    private AbstractEntity getObjectFromParser(ParserOutput p) {
+    private static AbstractEntity getObjectFromParser(ParserOutput p) {
         if (p.getObject() != null) {
             return p.getObject();
         } else if (p.getInvObject() != null) {
@@ -535,7 +542,7 @@ public class GameManager {
         return null;
     }
 
-    private void moveTo(AbstractRoom room) {
+    private static void moveTo(AbstractRoom room) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         if (!currentRoom.isCurrentlyDark()) {

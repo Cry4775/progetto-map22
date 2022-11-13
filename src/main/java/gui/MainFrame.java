@@ -36,12 +36,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.text.DefaultCaret;
 import engine.Engine;
-import engine.GameManager;
 
 public class MainFrame extends JFrame {
-
-    private Engine engine;
-
     private NoiseFXPanel noisePanel = new NoiseFXPanel();
     private JTextPane txtPane = new JTextPane();
     private JLabel lblActions = new JLabel();
@@ -81,8 +77,7 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         initComponents();
         GUIManager.registerGUI(this);
-        GameManager game = new GameManager();
-        engine = new Engine(game, this);
+        Engine.initialize(this);
     }
 
     private void initComponents() {
@@ -155,7 +150,7 @@ public class MainFrame extends JFrame {
                     if (txt != null && !txt.isEmpty()) {
                         GUIManager.printInput(txt);
                         txtInput.setText("");
-                        engine.commandPerformed(txt);
+                        Engine.commandPerformed(txt);
                     }
                 }
             }
@@ -181,7 +176,7 @@ public class MainFrame extends JFrame {
             lblCompassSouthWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_07.png"));
             lblCompassSouthEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
         } catch (IOException e) {
-            showFatalError(this, "Error occurred on loading of compass images. Details: " + e.getMessage());
+            showFatalError("Error occurred on loading of compass images. Details: " + e.getMessage());
         }
 
         gridBagConstraints = new GridBagConstraints();
@@ -327,7 +322,7 @@ public class MainFrame extends JFrame {
             lblCompassSouthEastText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
             lblCompassSouthWestText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
         } catch (Exception e) {
-            showFatalError(this, e.getMessage());
+            showFatalError(e.getMessage());
         }
 
         lypRoomImage.add(noisePanel, new Integer(1));
@@ -362,23 +357,16 @@ public class MainFrame extends JFrame {
         return new ImageIcon(ImageIO.read(inputStream));
     }
 
-    public static void showFatalError(MainFrame gui, String message) {
-        WindowEvent event = new WindowEvent(gui, WindowEvent.WINDOW_CLOSING);
+    protected void showFatalError(String message) {
+        WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JOptionPane.showMessageDialog(null, message, "Fatal Error",
-                        JOptionPane.ERROR_MESSAGE);
-                gui.dispatchEvent(event);
+                dispose();
+                JOptionPane.showMessageDialog(null, message, "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                dispatchEvent(event);
             }
         });
-    }
-
-    public static int askLoadingConfirmation() {
-        return JOptionPane.showConfirmDialog(null,
-                "An existing savegame has been found. Do you wish to load it?",
-                "Loading savegame",
-                JOptionPane.YES_NO_OPTION);
     }
 
     /**
