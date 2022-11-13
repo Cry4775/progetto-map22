@@ -2,12 +2,16 @@ package gui;
 
 import java.awt.Image;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import engine.GameManager;
+import rest.WeatherFetcher;
 
 public class GUIManager {
     private static MainFrame gui;
@@ -111,13 +115,80 @@ public class GUIManager {
     }
 
     public static void increaseActionsCounter() {
-        String[] strings = gui.getLblActions().getText().split(".*: ");
-        for (String string : strings) {
-            if (string.matches("[0-9]+")) {
-                int oldCounterVal = Integer.parseInt(string);
-                gui.getLblActions().setText("Azioni: " + Integer.toString(oldCounterVal + 1));
-                return;
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                String[] strings = gui.getLblActions().getText().split(".*: ");
+                for (String string : strings) {
+                    if (string.matches("[0-9]+")) {
+                        int oldCounterVal = Integer.parseInt(string);
+                        gui.getLblActions().setText("Azioni: " + Integer.toString(oldCounterVal + 1));
+                        return;
+                    }
+                }
             }
-        }
+        });
+    }
+
+    public static void createWeatherProgressMonitor() {
+        ProgressMonitor monitor = new ProgressMonitor(gui, "Processing...", "", 0, 100);
+        monitor.setProgress(0);
+        AtomicInteger progress = new AtomicInteger();
+
+        new SwingWorker<Void, Boolean>() {
+            private void cycle(int sleepTime, int maxPercentage, WeatherFetcher.State currentState)
+                    throws InterruptedException {
+                while (WeatherFetcher.getState().equals(currentState)) {
+                    if (progress.get() == 0) {
+                        for (int i = 0; i < maxPercentage; i++) {
+                            Thread.sleep(sleepTime);
+                            publish(true);
+                            progress.incrementAndGet();
+
+                            if (!WeatherFetcher.getState().equals(currentState)) {
+                                return;
+                            }
+                        }
+                    } else {
+                        if (progress.get() < maxPercentage) {
+                            int maxIt = maxPercentage - progress.get();
+                            for (int i = 0; i < maxIt; i++) {
+                                Thread.sleep(sleepTime);
+                                publish(true);
+                                progress.incrementAndGet();
+
+                                if (!WeatherFetcher.getState().equals(currentState)) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    if (progress.get() >= 100)
+                        return;
+                }
+            }
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                cycle(2, 10, WeatherFetcher.State.FETCHING_IP);
+                cycle(2, 30, WeatherFetcher.State.FETCHING_LOCATION_KEY);
+                cycle(5, 90, WeatherFetcher.State.FETCHING_WEATHER);
+                cycle(5, 100, WeatherFetcher.State.DONE);
+
+                return null;
+            }
+
+            @Override
+            protected void process(List<Boolean> chunks) {
+                monitor.setProgress(progress.get());
+            }
+
+            @Override
+            protected void done() {
+                gui.setVisible(true);
+            }
+
+        }.execute();
     }
 }

@@ -35,7 +35,14 @@ public class WeatherFetcher {
 
     private static boolean latestFetchRaining = false;
 
+    private static State state;
+
+    public static State getState() {
+        return state;
+    }
+
     static {
+        state = State.FETCHING_IP;
         try {
             String ipAddress = "";
             URL url = new URL(URL_GET_IP);
@@ -45,6 +52,7 @@ public class WeatherFetcher {
             }
 
             // If no exceptions are thrown above, continue
+            state = State.FETCHING_LOCATION_KEY;
             WebTarget target = CLIENT.target(URL_GET_LOCATION);
             Response response =
                     target.queryParam("apikey", API_KEY).queryParam("q", ipAddress)
@@ -57,13 +65,21 @@ public class WeatherFetcher {
                 locationKey = DEFAULT_LOCATION_KEY;
             }
         } catch (Exception e) {
+            state = State.FETCHING_LOCATION_KEY;
             locationKey = DEFAULT_LOCATION_KEY;
         }
     }
 
+    public enum State {
+        FETCHING_IP,
+        FETCHING_LOCATION_KEY,
+        FETCHING_WEATHER,
+        DONE
+    }
+
     public static boolean isRaining() {
-        if (latestFetchTime == 0
-                || (System.currentTimeMillis() - latestFetchTime >= FETCH_INTERVAL)) {
+        if (latestFetchTime == 0 || (System.currentTimeMillis() - latestFetchTime >= FETCH_INTERVAL)) {
+            state = State.FETCHING_WEATHER;
             WebTarget target = CLIENT.target(URL_GET_WEATHER + locationKey);
 
             try {
@@ -82,6 +98,7 @@ public class WeatherFetcher {
             }
         }
 
+        state = State.DONE;
         latestFetchTime = System.currentTimeMillis();
         return latestFetchRaining;
     }

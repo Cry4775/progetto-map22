@@ -19,6 +19,7 @@ import utility.Utils;
 public class Engine extends Thread {
     private static Parser parser;
     private static MainFrame gui;
+    private static boolean firstExecution = true;
 
     private Engine() {}
 
@@ -51,6 +52,12 @@ public class Engine extends Thread {
     }
 
     public static void commandPerformed(String command) {
+
+        if (firstExecution) {
+            firstExecution = false;
+            GUIManager.createWeatherProgressMonitor();
+        }
+
         new Thread("Engine") {
             public void run() {
                 if (!WeatherFetcher.isRaining()) {
