@@ -2,6 +2,8 @@ package engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 
@@ -54,5 +56,23 @@ public class Inventory {
                 throw new Error("Couldn't destroy item " + obj.getName() + " (" + obj.getId() + ")");
             }
         }
+    }
+
+    public void checkForDestroyableItems() {
+        for (AbstractEntity obj : getObjects(Mode.UNPACK_CONTAINERS)) {
+            if (obj.isMustDestroyFromInv()) {
+                removeObject(obj);
+            }
+        }
+    }
+
+    public Multimap<String, AbstractEntity> mapAllObjects() {
+        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
+
+        for (AbstractEntity obj : getObjects(Inventory.Mode.UNPACK_CONTAINERS)) {
+            result.put(obj.getId(), obj);
+        }
+
+        return result;
     }
 }

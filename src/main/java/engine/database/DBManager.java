@@ -463,16 +463,10 @@ public class DBManager {
             obj.saveOnDB();
         }
 
-        List<AbstractEntity> inventory = new ArrayList<>();
+        List<AbstractEntity> inventory = gameManager.getInventory().getObjects(Inventory.Mode.UNPACK_CONTAINERS);
 
-        // TODO spostare in Inventory
-        for (AbstractEntity obj : gameManager.getInventory().getObjects()) {
+        for (AbstractEntity obj : inventory) {
             obj.saveOnDB();
-            inventory.addAll(AbstractContainer.getAllObjectsInside(obj));
-        }
-
-        for (AbstractEntity abstractEntity : inventory) {
-            abstractEntity.saveOnDB();
         }
     }
 

@@ -123,14 +123,6 @@ public class GameManager {
         return inventory;
     }
 
-    public void addObjectInInventory(AbstractEntity obj) {
-        inventory.addObject(obj);
-    }
-
-    public void removeObjectFromInventory(AbstractEntity obj) {
-        inventory.removeObject(obj);
-    }
-
     void nextMove(ParserOutput p) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
         boolean actionPerformed = false;
@@ -144,7 +136,6 @@ public class GameManager {
                 actionPerformed = true;
             }
         } else {
-
             AbstractEntity roomObj = p.getObject();
             AbstractEntity invObj = p.getInvObject();
 
@@ -437,13 +428,7 @@ public class GameManager {
 
         if (actionPerformed) {
             GUIManager.increaseActionsCounter();
-
-            // TODO sposta in Inventory
-            for (AbstractEntity obj : inventory.getObjects(Inventory.Mode.UNPACK_CONTAINERS)) {
-                if (obj.isMustDestroyFromInv()) {
-                    removeObjectFromInventory(obj);
-                }
-            }
+            inventory.checkForDestroyableItems();
         }
 
         if (status.isMovementAttempt()) {
@@ -592,16 +577,4 @@ public class GameManager {
 
         return result;
     }
-
-    // TODO sposta in Inventory
-    public Multimap<String, AbstractEntity> mapAllInventoryObjects() {
-        Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
-
-        for (AbstractEntity obj : inventory.getObjects(Inventory.Mode.UNPACK_CONTAINERS)) {
-            result.put(obj.getId(), obj);
-        }
-
-        return result;
-    }
-
 }
