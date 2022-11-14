@@ -11,7 +11,7 @@ import component.entity.interfaces.IFluid;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -22,7 +22,7 @@ public class FluidItem extends BasicItem implements IFluid {
     }
 
     @Override
-    public boolean pickup() {
+    public boolean pickup(Inventory inventory) {
         if (isPickedUp()) {
             GUIManager.appendOutput("É giá nel tuo inventario.");
             return false;
@@ -33,7 +33,7 @@ public class FluidItem extends BasicItem implements IFluid {
 
         boolean filled = false;
 
-        for (AbstractEntity invObject : GameManager.getInstance().getInventory()) {
+        for (AbstractEntity invObject : inventory.getObjects()) {
             if (invObject instanceof IFillable) {
                 IFillable invFillable = (IFillable) invObject;
 
@@ -83,7 +83,7 @@ public class FluidItem extends BasicItem implements IFluid {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.FluidItem");
@@ -92,7 +92,7 @@ public class FluidItem extends BasicItem implements IFluid {
         while (resultSet.next()) {
             FluidItem obj = new FluidItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms);
+            obj.loadLocation(resultSet, allRooms, inventory);
             obj.loadObjEvents();
         }
 

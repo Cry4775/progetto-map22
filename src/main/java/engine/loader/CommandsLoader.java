@@ -1,11 +1,16 @@
 package engine.loader;
 
 import java.util.List;
-import engine.GameManager;
 import engine.command.Command;
 import engine.command.CommandType;
 
 public class CommandsLoader implements Runnable {
+    List<Command> commands;
+
+    public CommandsLoader(List<Command> commands) {
+        this.commands = commands;
+    }
+
     @Override
     public void run() {
         Command north = new Command(CommandType.NORTH, "nord");
@@ -138,8 +143,6 @@ public class CommandsLoader implements Runnable {
 
         Command save = new Command(CommandType.SAVE, "salva");
         save.addAlias("save");
-
-        List<Command> commands = GameManager.getInstance().getCommands();
 
         commands.add(north);
         commands.add(northWest);

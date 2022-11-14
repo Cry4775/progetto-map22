@@ -9,7 +9,6 @@ import component.entity.Entities;
 import component.entity.doorlike.Door;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import engine.GameManager;
 
 public class CompassManager {
     private static JLabel northLbl;
@@ -20,6 +19,9 @@ public class CompassManager {
     private static JLabel northWestLbl;
     private static JLabel southEastLbl;
     private static JLabel southWestLbl;
+
+    private static AbstractRoom currentRoom;
+    private static AbstractRoom previousRoom;
 
     protected static void registerGUI(MainFrame mainFrame) {
         Objects.requireNonNull(mainFrame);
@@ -45,21 +47,19 @@ public class CompassManager {
         Objects.requireNonNull(southWestLbl);
     }
 
-    private static void updateCompassLabel(AbstractRoom room, JLabel directionLbl) {
+    private static void updateCompassLabel(AbstractRoom roomToCheck, JLabel directionLbl) {
         new SwingWorker<Color, Void>() {
             @Override
             protected Color doInBackground() throws Exception {
-                if (room != null) {
-                    AbstractRoom previousRoom = GameManager.getInstance().getPreviousRoom();
-                    if (room.equals(previousRoom)) {
+                if (roomToCheck != null) {
+                    if (roomToCheck.equals(previousRoom)) {
                         return Color.BLUE;
                     }
 
-                    AbstractRoom currentRoom = GameManager.getInstance().getCurrentRoom();
                     if (currentRoom instanceof PlayableRoom) {
                         PlayableRoom pRoom = (PlayableRoom) currentRoom;
                         for (Door door : Entities.listCheckedEntities(Door.class, pRoom.getObjects())) {
-                            if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
+                            if (door.getBlockedRoomId().equals(roomToCheck.getId()) && !door.isOpen()) {
                                 return Color.ORANGE;
                             }
                         }
@@ -95,41 +95,42 @@ public class CompassManager {
         updateCompassLabel(null, northWestLbl);
     }
 
-    protected static void updateCompass() {
+    protected static void updateCompass(AbstractRoom currentRoom, AbstractRoom previousRoom) {
         requireNonNullLabels();
+        CompassManager.currentRoom = currentRoom;
+        CompassManager.previousRoom = previousRoom;
 
-        if (GameManager.getInstance().getCurrentRoom() instanceof PlayableRoom) {
-            PlayableRoom currentPlayableRoom = (PlayableRoom) GameManager.getInstance().getCurrentRoom();
+        if (currentRoom instanceof PlayableRoom) {
+            PlayableRoom currentPRoom = (PlayableRoom) currentRoom;
 
-            if (!currentPlayableRoom.isCurrentlyDark()) {
-                updateCompassLabel(currentPlayableRoom.getNorth(), northLbl);
-                updateCompassLabel(currentPlayableRoom.getSouth(), southLbl);
-                updateCompassLabel(currentPlayableRoom.getWest(), westLbl);
-                updateCompassLabel(currentPlayableRoom.getEast(), eastLbl);
-                updateCompassLabel(currentPlayableRoom.getSouthWest(), southWestLbl);
-                updateCompassLabel(currentPlayableRoom.getSouthEast(), southEastLbl);
-                updateCompassLabel(currentPlayableRoom.getNorthEast(), northEastLbl);
-                updateCompassLabel(currentPlayableRoom.getNorthWest(), northWestLbl);
+            if (!currentPRoom.isCurrentlyDark()) {
+                updateCompassLabel(currentPRoom.getNorth(), northLbl);
+                updateCompassLabel(currentPRoom.getSouth(), southLbl);
+                updateCompassLabel(currentPRoom.getWest(), westLbl);
+                updateCompassLabel(currentPRoom.getEast(), eastLbl);
+                updateCompassLabel(currentPRoom.getSouthWest(), southWestLbl);
+                updateCompassLabel(currentPRoom.getSouthEast(), southEastLbl);
+                updateCompassLabel(currentPRoom.getNorthEast(), northEastLbl);
+                updateCompassLabel(currentPRoom.getNorthWest(), northWestLbl);
             } else {
                 resetCompass();
-                AbstractRoom previousRoom = GameManager.getInstance().getPreviousRoom();
 
-                if (previousRoom.equals(currentPlayableRoom.getSouth())) {
-                    updateCompassLabel(currentPlayableRoom.getSouth(), southLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getNorth())) {
-                    updateCompassLabel(currentPlayableRoom.getNorth(), northLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getEast())) {
-                    updateCompassLabel(currentPlayableRoom.getEast(), eastLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getWest())) {
-                    updateCompassLabel(currentPlayableRoom.getWest(), westLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getNorthWest())) {
-                    updateCompassLabel(currentPlayableRoom.getNorthWest(), northWestLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getNorthEast())) {
-                    updateCompassLabel(currentPlayableRoom.getNorthEast(), northEastLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getSouthWest())) {
-                    updateCompassLabel(currentPlayableRoom.getSouthWest(), southWestLbl);
-                } else if (previousRoom.equals(currentPlayableRoom.getSouthEast())) {
-                    updateCompassLabel(currentPlayableRoom.getSouthEast(), southEastLbl);
+                if (previousRoom.equals(currentPRoom.getSouth())) {
+                    updateCompassLabel(currentPRoom.getSouth(), southLbl);
+                } else if (previousRoom.equals(currentPRoom.getNorth())) {
+                    updateCompassLabel(currentPRoom.getNorth(), northLbl);
+                } else if (previousRoom.equals(currentPRoom.getEast())) {
+                    updateCompassLabel(currentPRoom.getEast(), eastLbl);
+                } else if (previousRoom.equals(currentPRoom.getWest())) {
+                    updateCompassLabel(currentPRoom.getWest(), westLbl);
+                } else if (previousRoom.equals(currentPRoom.getNorthWest())) {
+                    updateCompassLabel(currentPRoom.getNorthWest(), northWestLbl);
+                } else if (previousRoom.equals(currentPRoom.getNorthEast())) {
+                    updateCompassLabel(currentPRoom.getNorthEast(), northEastLbl);
+                } else if (previousRoom.equals(currentPRoom.getSouthWest())) {
+                    updateCompassLabel(currentPRoom.getSouthWest(), southWestLbl);
+                } else if (previousRoom.equals(currentPRoom.getSouthEast())) {
+                    updateCompassLabel(currentPRoom.getSouthEast(), southEastLbl);
                 }
             }
         } else {

@@ -45,21 +45,21 @@ public class GameManager {
     private AbstractRoom currentRoom;
     private AbstractRoom previousRoom;
 
-    private Status status = new Status();
+    private static Status status = new Status();
 
     private GameManager() {}
 
-    private void initialize() {
-        CommandsLoader commandsLoader = new CommandsLoader();
+    protected void initialize() {
+        CommandsLoader commandsLoader = new CommandsLoader(commands);
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
 
         RoomsLoader roomsLoader;
 
         if (DBManager.existsSaving()) {
-            roomsLoader = new RoomsLoader(rooms,
+            roomsLoader = new RoomsLoader(this,
                     GUIManager.askLoadingConfirmation() == JOptionPane.YES_OPTION ? Mode.DB : Mode.JSON);
         } else {
-            roomsLoader = new RoomsLoader(rooms, Mode.JSON);
+            roomsLoader = new RoomsLoader(this, Mode.JSON);
         }
 
         Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
@@ -75,16 +75,27 @@ public class GameManager {
         }
     }
 
-    public static GameManager getInstance() {
+    protected static synchronized GameManager getInstance() {
         if (instance == null) {
             instance = new GameManager();
-            instance.initialize();
         }
 
         return instance;
     }
 
-    public Status getStatus() {
+    public void addRoom(AbstractRoom room) {
+        rooms.add(room);
+    }
+
+    public void addRooms(List<AbstractRoom> rooms) {
+        this.rooms.addAll(rooms);
+    }
+
+    public List<AbstractRoom> getRooms() {
+        return rooms;
+    }
+
+    public static Status getStatus() {
         return status;
     }
 
@@ -108,12 +119,8 @@ public class GameManager {
         this.currentRoom = currentRoom;
     }
 
-    public List<AbstractEntity> getInventory() {
-        return inventory.getObjects(Inventory.Mode.NORMAL);
-    }
-
-    public List<AbstractEntity> getInventory(Inventory.Mode mode) {
-        return inventory.getObjects(mode);
+    public Inventory getInventory() {
+        return inventory;
     }
 
     public void addObjectInInventory(AbstractEntity obj) {
@@ -145,16 +152,16 @@ public class GameManager {
 
             switch (commandType) {
                 case SAVE: {
-                    DBManager.save();
+                    DBManager.save(this);
 
                     GUIManager.appendOutput("Partita salvata correttamente!");
                     break;
                 }
                 case INVENTORY: {
-                    if (!getInventory().isEmpty()) {
+                    if (!inventory.isEmpty()) {
                         StringBuilder stringBuilder = new StringBuilder("Nel tuo inventario ci sono:");
 
-                        for (AbstractEntity obj : getInventory()) {
+                        for (AbstractEntity obj : inventory.getObjects()) {
                             stringBuilder.append("\n - " + obj.getName());
                             if (obj instanceof IWearable) {
                                 IWearable wearable = (IWearable) obj;
@@ -185,7 +192,7 @@ public class GameManager {
                         if (anyObj instanceof IPickupable) {
                             IPickupable pickupObj = (IPickupable) anyObj;
 
-                            actionPerformed = pickupObj.pickup();
+                            actionPerformed = pickupObj.pickup(inventory);
                         } else {
                             GUIManager.appendOutput("Non puoi raccogliere questo oggetto.");
                         }
@@ -264,7 +271,7 @@ public class GameManager {
                         if (roomObj instanceof AbstractContainer) {
                             AbstractContainer container = (AbstractContainer) roomObj;
 
-                            actionPerformed = container.insert(invObj);
+                            actionPerformed = container.insert(invObj, inventory);
                         } else {
                             GUIManager.appendOutput("Non puoi farlo.");
                         }
@@ -385,7 +392,7 @@ public class GameManager {
                                 } else if (roomObj instanceof AbstractContainer) {
                                     AbstractContainer container = (AbstractContainer) roomObj;
 
-                                    actionPerformed = container.insert(invObj);
+                                    actionPerformed = container.insert(invObj, inventory);
                                 } else {
                                     GUIManager.appendOutput("Non puoi versarci il liquido.");
                                 }
@@ -423,7 +430,7 @@ public class GameManager {
 
         if (getCurrentRoom() instanceof PlayableRoom) {
             currentPlayableRoom = (PlayableRoom) getCurrentRoom();
-            currentPlayableRoom.processRoomLighting(getInventory());
+            currentPlayableRoom.processRoomLighting(inventory.getObjects());
         } else {
             currentPlayableRoom = null;
         }
@@ -431,7 +438,8 @@ public class GameManager {
         if (actionPerformed) {
             GUIManager.increaseActionsCounter();
 
-            for (AbstractEntity obj : getInventory(Inventory.Mode.UNPACK_CONTAINERS)) {
+            // TODO sposta in Inventory
+            for (AbstractEntity obj : inventory.getObjects(Inventory.Mode.UNPACK_CONTAINERS)) {
                 if (obj.isMustDestroyFromInv()) {
                     removeObjectFromInventory(obj);
                 }
@@ -585,10 +593,11 @@ public class GameManager {
         return result;
     }
 
+    // TODO sposta in Inventory
     public Multimap<String, AbstractEntity> mapAllInventoryObjects() {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
-        for (AbstractEntity obj : getInventory(Inventory.Mode.UNPACK_CONTAINERS)) {
+        for (AbstractEntity obj : inventory.getObjects(Inventory.Mode.UNPACK_CONTAINERS)) {
             result.put(obj.getId(), obj);
         }
 

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.interfaces.IReadable;
 import component.room.AbstractRoom;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -45,7 +46,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.ReadableItem");
@@ -54,7 +55,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         while (resultSet.next()) {
             ReadableItem obj = new ReadableItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms);
+            obj.loadLocation(resultSet, allRooms, inventory);
             obj.loadObjEvents();
         }
 

@@ -13,7 +13,15 @@ public class Inventory {
         UNPACK_CONTAINERS
     }
 
-    List<AbstractEntity> getObjects(Mode mode) {
+    public boolean isEmpty() {
+        return objects.isEmpty();
+    }
+
+    public List<AbstractEntity> getObjects() {
+        return objects;
+    }
+
+    public List<AbstractEntity> getObjects(Mode mode) {
         switch (mode) {
             case NORMAL:
                 return objects;
@@ -31,11 +39,11 @@ public class Inventory {
         }
     }
 
-    void addObject(AbstractEntity obj) {
+    public void addObject(AbstractEntity obj) {
         objects.add(obj);
     }
 
-    void removeObject(AbstractEntity obj) {
+    public void removeObject(AbstractEntity obj) {
         if (objects.contains(obj)) {
             objects.remove(obj);
         } else {

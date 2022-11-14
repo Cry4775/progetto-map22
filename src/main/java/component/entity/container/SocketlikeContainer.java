@@ -10,8 +10,7 @@ import component.entity.interfaces.IPickupable;
 import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
-import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 import utility.Triple;
@@ -31,7 +30,7 @@ public class SocketlikeContainer extends AbstractContainer {
     }
 
     @Override
-    public boolean insert(AbstractEntity obj) {
+    public boolean insert(AbstractEntity obj, Inventory inventory) {
         if (!itemInside) {
             if (!canInteract())
                 return false;
@@ -53,9 +52,9 @@ public class SocketlikeContainer extends AbstractContainer {
                 }
 
                 itemInside = true;
-                obj.setClosestRoomParent((PlayableRoom) GameManager.getInstance().getCurrentRoom());
+                obj.setClosestRoomParent(getClosestRoomParent());
                 obj.setParent(this);
-                GameManager.getInstance().removeObjectFromInventory(obj);
+                inventory.removeObject(obj);
                 ((IPickupable) obj).setPickedUp(false);
 
                 this.add(obj);

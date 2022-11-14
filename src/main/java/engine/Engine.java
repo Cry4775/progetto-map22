@@ -27,8 +27,6 @@ public class Engine {
     public static void initialize(MainFrame gui) {
         try {
             Engine.gui = gui;
-            Set<String> stopwords = Utils.loadFileListInSet(new File("resources/stopwords"));
-            parser = new Parser(stopwords);
 
             AtomicBoolean crashed = new AtomicBoolean(false);
             Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -43,6 +41,10 @@ public class Engine {
 
             DBManager.createDB();
             gameManager = GameManager.getInstance();
+            gameManager.initialize();
+
+            Set<String> stopwords = Utils.loadFileListInSet(new File("resources/stopwords"));
+            parser = new Parser(stopwords, gameManager.getCommands());
 
             if (!crashed.get())
                 commandPerformed(null);
@@ -68,11 +70,11 @@ public class Engine {
                 }
 
                 if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
-                    ParserOutput p = parser.parse(command);
+                    PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
+                    ParserOutput p = parser.parse(command, currentRoom.getObjects(), gameManager.getInventory());
 
                     if (command == null) {
-                        PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
-                        GUIManager.updateRoomInformations(currentRoom.isCurrentlyDark() ? true : false);
+                        GUIManager.updateRoomInformations(currentRoom, gameManager.getPreviousRoom());
                         return;
                     }
 
@@ -85,7 +87,7 @@ public class Engine {
                 } else if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
                     CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
 
-                    GUIManager.updateRoomInformations();
+                    GUIManager.updateRoomInformations(currentRoom, gameManager.getPreviousRoom());
                     GUIManager.waitUntilEnterIsPressed();
 
                     if (!currentRoom.isFinalRoom()) {

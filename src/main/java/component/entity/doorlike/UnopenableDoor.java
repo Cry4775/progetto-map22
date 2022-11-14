@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import component.entity.AbstractEntity;
 import component.room.AbstractRoom;
+import engine.Inventory;
 import engine.database.DBManager;
 
 public class UnopenableDoor extends AbstractEntity {
@@ -33,7 +34,7 @@ public class UnopenableDoor extends AbstractEntity {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.UnopenableDoor");
@@ -42,7 +43,7 @@ public class UnopenableDoor extends AbstractEntity {
         while (resultSet.next()) {
             UnopenableDoor obj = new UnopenableDoor(resultSet);
 
-            obj.loadLocation(resultSet, allRooms);
+            obj.loadLocation(resultSet, allRooms, inventory);
             obj.loadObjEvents();
         }
 

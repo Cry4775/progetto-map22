@@ -12,7 +12,7 @@ import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import component.room.AbstractRoom;
-import engine.GameManager;
+import component.room.PlayableRoom;
 import rest.WeatherFetcher;
 
 public class GUIManager {
@@ -52,18 +52,24 @@ public class GUIManager {
         return OutputManager.isOutputEmpty();
     }
 
-    public static void updateRoomInformations() {
-        updateRoomInformations(false);
+    public static void updateRoomInformations(AbstractRoom currentRoom, AbstractRoom previousRoom) {
+        if (currentRoom instanceof PlayableRoom) {
+            PlayableRoom pRoom = (PlayableRoom) currentRoom;
+            updateRoomInformations(currentRoom, previousRoom, pRoom.isCurrentlyDark() ? true : false);
+        } else {
+            updateRoomInformations(currentRoom, previousRoom, false);
+        }
     }
 
-    public static void updateRoomInformations(boolean dark) {
+    private static void updateRoomInformations(AbstractRoom currentRoom, AbstractRoom previousRoom, boolean dark) {
         // TODO é hardcoded, bisogna permettere la personalizzazione
         String description;
         if (dark) {
+            CompassManager.updateCompass(currentRoom, previousRoom);
             updateRoomInformations("Buio", "resources/img/buio.jpg");
             description = "È completamente buio e non riesci a vedere niente.";
         } else {
-            AbstractRoom currentRoom = GameManager.getInstance().getCurrentRoom();
+            CompassManager.updateCompass(currentRoom, previousRoom);
             updateRoomInformations(currentRoom.getName(), currentRoom.getImgPath());
             description = currentRoom.getDescription();
         }
@@ -77,7 +83,6 @@ public class GUIManager {
     }
 
     private static void updateRoomInformations(String roomName, String imageURL) {
-        CompassManager.updateCompass();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 gui.getLblRoomName().setText(roomName);

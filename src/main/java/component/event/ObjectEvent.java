@@ -98,7 +98,7 @@ public class ObjectEvent extends AbstractEvent {
         }
 
         if (teleportsPlayerToRoom != null) {
-            Status status = GameManager.getInstance().getStatus();
+            Status status = GameManager.getStatus();
             status.setWarp(true);
             status.setWarpDestination(teleportsPlayerToRoom);
         }

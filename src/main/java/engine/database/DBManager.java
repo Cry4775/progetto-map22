@@ -35,9 +35,9 @@ import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
-import component.room.Rooms;
 import engine.GameManager;
 import engine.Inventory;
+import component.room.Rooms;
 import utility.Triple;
 
 public class DBManager {
@@ -443,9 +443,7 @@ public class DBManager {
         }
     }
 
-    public static void saveRooms() throws SQLException {
-        GameManager gameManager = GameManager.getInstance();
-
+    public static void saveRooms(GameManager gameManager) throws SQLException {
         for (AbstractRoom room : gameManager.listAllRooms()) {
             room.saveOnDB();
         }
@@ -460,16 +458,15 @@ public class DBManager {
         stm.executeUpdate();
     }
 
-    public static void saveObjects() throws SQLException {
-        GameManager gameManager = GameManager.getInstance();
-
+    public static void saveObjects(GameManager gameManager) throws SQLException {
         for (AbstractEntity obj : gameManager.mapAllRoomsObjects().values()) {
             obj.saveOnDB();
         }
 
         List<AbstractEntity> inventory = new ArrayList<>();
 
-        for (AbstractEntity obj : gameManager.getInventory()) {
+        // TODO spostare in Inventory
+        for (AbstractEntity obj : gameManager.getInventory().getObjects()) {
             obj.saveOnDB();
             inventory.addAll(AbstractContainer.getAllObjectsInside(obj));
         }
@@ -592,13 +589,13 @@ public class DBManager {
         }
     }
 
-    public static void save() {
+    public static void save(GameManager gameManager) {
         try {
             openConnection();
             wipeExistingDB();
 
-            saveRooms();
-            saveObjects();
+            saveRooms(gameManager);
+            saveObjects(gameManager);
             // TODO counter azioni
         } catch (SQLException e) {
             closeConnection();
@@ -609,12 +606,12 @@ public class DBManager {
         }
     }
 
-    public static List<AbstractRoom> load() {
+    public static List<AbstractRoom> load(Inventory inventory) {
         try {
             openConnection();
 
             loadRooms();
-            loadObjects();
+            loadObjects(inventory);
 
             return loadedRooms;
         } catch (SQLException e) {
@@ -658,14 +655,14 @@ public class DBManager {
         return null;
     }
 
-    private static void loadObjects() throws SQLException {
+    private static void loadObjects(Inventory inventory) throws SQLException {
         List<Triple<AbstractEntity, String, String>> pendingList = new ArrayList<>();
         List<AbstractRoom> allRooms = Rooms.listAllRooms(loadedRooms);
 
         BasicContainer.loadFromDB(allRooms, pendingList);
         ChestlikeContainer.loadFromDB(allRooms, pendingList);
         SocketlikeContainer.loadFromDB(allRooms, pendingList);
-        WearableContainer.loadFromDB(allRooms, pendingList);
+        WearableContainer.loadFromDB(allRooms, inventory, pendingList);
 
         for (Triple<AbstractEntity, String, String> pending : pendingList) {
             AbstractEntity object = pending.getFirst();
@@ -674,7 +671,7 @@ public class DBManager {
 
             if (roomId == null && containerId != null) {
                 AbstractContainer.addObjectToContainerId(
-                        object, GameManager.getInstance().getInventory(Inventory.Mode.UNPACK_CONTAINERS), containerId);
+                        object, inventory.getObjects(Inventory.Mode.UNPACK_CONTAINERS), containerId);
                 break;
             }
 
@@ -695,21 +692,21 @@ public class DBManager {
             }
         }
 
-        BasicItem.loadFromDB(allRooms);
-        BasicObject.loadFromDB(allRooms);
-        Door.loadFromDB(allRooms);
-        FillableItem.loadFromDB(allRooms);
-        FireObject.loadFromDB(allRooms);
-        FluidItem.loadFromDB(allRooms);
-        Human.loadFromDB(allRooms);
-        InvisibleWall.loadFromDB(allRooms);
-        LightSourceItem.loadFromDB(allRooms);
-        MovableObject.loadFromDB(allRooms);
-        PullableObject.loadFromDB(allRooms);
-        PushableObject.loadFromDB(allRooms);
-        ReadableItem.loadFromDB(allRooms);
-        UnopenableDoor.loadFromDB(allRooms);
-        WearableItem.loadFromDB(allRooms);
+        BasicItem.loadFromDB(allRooms, inventory);
+        BasicObject.loadFromDB(allRooms, inventory);
+        Door.loadFromDB(allRooms, inventory);
+        FillableItem.loadFromDB(allRooms, inventory);
+        FireObject.loadFromDB(allRooms, inventory);
+        FluidItem.loadFromDB(allRooms, inventory);
+        Human.loadFromDB(allRooms, inventory);
+        InvisibleWall.loadFromDB(allRooms, inventory);
+        LightSourceItem.loadFromDB(allRooms, inventory);
+        MovableObject.loadFromDB(allRooms, inventory);
+        PullableObject.loadFromDB(allRooms, inventory);
+        PushableObject.loadFromDB(allRooms, inventory);
+        ReadableItem.loadFromDB(allRooms, inventory);
+        UnopenableDoor.loadFromDB(allRooms, inventory);
+        WearableItem.loadFromDB(allRooms, inventory);
     }
 
     private static void loadRooms() throws SQLException {

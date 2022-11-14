@@ -18,7 +18,6 @@ import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import component.room.Rooms;
-import engine.GameManager;
 import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
@@ -351,9 +350,8 @@ public abstract class AbstractEntity extends GameComponent {
     }
 
     public void saveRequiredWearedItemsOnDB() throws SQLException {
-        PreparedStatement stm =
-                DBManager.getConnection().prepareStatement(
-                        "INSERT INTO SAVEDATA.RequiredWearedItem values (?, ?, ?)");
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
+                "INSERT INTO SAVEDATA.RequiredWearedItem values (?, ?, ?)");
 
         if (requiredWearedItemsIdToInteract != null) {
             for (String string : requiredWearedItemsIdToInteract) {
@@ -374,20 +372,18 @@ public abstract class AbstractEntity extends GameComponent {
     @Override
     public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
         super.setKnownValuesOnStatement(stm);
-        stm.setString(4,
-                getClosestRoomParent() != null ? getClosestRoomParent().getId() : null);
-        stm.setString(5,
-                getParent() instanceof AbstractContainer ? getParent().getId() : null);
+        stm.setString(4, getClosestRoomParent() != null ? getClosestRoomParent().getId() : null);
+        stm.setString(5, getParent() instanceof AbstractContainer ? getParent().getId() : null);
     }
 
-    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms) throws SQLException {
+    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms, Inventory inventory)
+            throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);
 
         if (roomId == null && containerId != null) {
-            AbstractContainer.addObjectToContainerId(
-                    this, GameManager.getInstance().getInventory(Inventory.Mode.UNPACK_CONTAINERS), containerId);
-            return;
+            AbstractContainer
+                    .addObjectToContainerId(this, inventory.getObjects(Inventory.Mode.UNPACK_CONTAINERS), containerId);
         } else {
             for (AbstractRoom room : allRooms) {
                 if (room.getId().equals(roomId)) {
@@ -395,8 +391,8 @@ public abstract class AbstractEntity extends GameComponent {
                     closestRoomParentId = roomId;
 
                     if (containerId != null) {
-                        AbstractContainer.addObjectToContainerId(
-                                this, pRoom.getObjects(Mode.UNPACK_CONTAINERS), containerId);
+                        AbstractContainer
+                                .addObjectToContainerId(this, pRoom.getObjects(Mode.UNPACK_CONTAINERS), containerId);
                         return;
                     }
 

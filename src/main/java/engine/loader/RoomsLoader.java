@@ -24,8 +24,7 @@ import engine.loader.json.TypeAdapterHolder.AdapterType;
 
 public class RoomsLoader implements Runnable {
 
-    private static List<AbstractRoom> rooms;
-    private static GameManager gameManager = GameManager.getInstance();
+    private GameManager gameManager;
     private boolean exceptionThrown = false;
     private Mode mode;
 
@@ -40,8 +39,8 @@ public class RoomsLoader implements Runnable {
         return exceptionThrown;
     }
 
-    public RoomsLoader(List<AbstractRoom> rooms, Mode mode) {
-        RoomsLoader.rooms = rooms;
+    public RoomsLoader(GameManager gameManager, Mode mode) {
+        this.gameManager = gameManager;
         this.mode = mode;
     }
 
@@ -70,7 +69,7 @@ public class RoomsLoader implements Runnable {
 
             try (BufferedReader in = new BufferedReader(new InputStreamReader(
                     new FileInputStream("resources/rooms.json"), StandardCharsets.UTF_8))) {
-                rooms.addAll(gson.fromJson(in, roomsType));
+                gameManager.addRooms(gson.fromJson(in, roomsType));
 
             } catch (Exception e) {
                 exceptionThrown = true;
@@ -80,24 +79,24 @@ public class RoomsLoader implements Runnable {
             Multimap<String, AbstractEntity> objects = gameManager.mapAllRoomsObjects();
 
             for (AbstractEntity obj : objects.values()) {
-                obj.processReferences(objects, rooms);
+                obj.processReferences(objects, gameManager.getRooms());
             }
 
-            gameManager.setCurrentRoom(rooms.get(0));
+            gameManager.setCurrentRoom(gameManager.getRooms().get(0));
         } else {
-            rooms.addAll(DBManager.load());
+            gameManager.addRooms(DBManager.load(gameManager.getInventory()));
 
             Multimap<String, AbstractEntity> objects = gameManager.mapAllRoomsObjects();
             objects.putAll(gameManager.mapAllInventoryObjects());
 
             for (AbstractEntity obj : objects.values()) {
-                obj.processReferences(objects, rooms);
+                obj.processReferences(objects, gameManager.getRooms());
             }
 
             String currentRoomId = DBManager.getCurrentRoomId();
             String previousRoomId = DBManager.getPreviousRoomId();
 
-            for (AbstractRoom room : rooms) {
+            for (AbstractRoom room : gameManager.getRooms()) {
                 if (room.getId().equals(currentRoomId)) {
                     gameManager.setCurrentRoom(room);
                 } else if (room.getId().equals(previousRoomId)) {
@@ -125,7 +124,8 @@ public class RoomsLoader implements Runnable {
         }
 
         if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
-            ((PlayableRoom) gameManager.getCurrentRoom()).processRoomLighting(gameManager.getInventory());
+            PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
+            currentRoom.processRoomLighting(gameManager.getInventory().getObjects());
         }
     }
 

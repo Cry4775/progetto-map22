@@ -11,7 +11,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 import utility.Triple;
@@ -84,12 +84,12 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public boolean pickup() {
+    public boolean pickup(Inventory inventory) {
         if (!canInteract())
             return false;
 
         pickedUp = true;
-        GameManager.getInstance().addObjectInInventory(this);
+        inventory.addObject(this);
 
         // Check if it's an obj inside something and remove it from its list
         if (getParent() != null) {
@@ -112,7 +112,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public boolean insert(AbstractEntity obj) {
+    public boolean insert(AbstractEntity obj, Inventory inventory) {
         if (maxSlots == 0) {
             maxSlots = 999;
         }
@@ -127,9 +127,9 @@ public class WearableContainer extends AbstractContainer implements IWearable {
                 }
             }
 
-            obj.setClosestRoomParent((PlayableRoom) GameManager.getInstance().getCurrentRoom());
+            obj.setClosestRoomParent(getClosestRoomParent());
             obj.setParent(this);
-            GameManager.getInstance().removeObjectFromInventory(obj);
+            inventory.removeObject(obj);
             ((IPickupable) obj).setPickedUp(false);
 
             this.add(obj);
@@ -169,7 +169,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         stm.setBoolean(6, pickedUp);
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms,
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory,
             List<Triple<AbstractEntity, String, String>> pendingList) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
@@ -180,10 +180,10 @@ public class WearableContainer extends AbstractContainer implements IWearable {
             WearableContainer obj = new WearableContainer(resultSet);
 
             if (obj.isPickedUp()) {
-                GameManager.getInstance().addObjectInInventory(obj);
+                inventory.addObject(obj);
             } else {
-                Triple<AbstractEntity, String, String> pending =
-                        obj.loadRoomLocation(resultSet, allRooms);
+                Triple<AbstractEntity, String, String> pending;
+                pending = obj.loadRoomLocation(resultSet, allRooms);
                 obj.loadObjEvents();
 
                 if (pending != null)

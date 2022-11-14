@@ -13,7 +13,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import gui.GUIManager;
 import utility.Triple;
 
@@ -81,7 +81,7 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public boolean insert(AbstractEntity obj) {
+    public boolean insert(AbstractEntity obj, Inventory inventory) {
         if (!canInteract())
             return false;
 
@@ -93,6 +93,7 @@ public abstract class AbstractContainer extends AbstractEntity {
                     IFillable fluidContainer = (IFillable) obj.getParent();
 
                     fluidContainer.setFilled(false);
+                    obj.setClosestRoomParent(getClosestRoomParent());
                     obj.setParent(this);
                     fluid.setPickedUp(false);
                     this.add(obj);
@@ -121,9 +122,9 @@ public abstract class AbstractContainer extends AbstractEntity {
                     }
                 }
 
-                obj.setClosestRoomParent((PlayableRoom) GameManager.getInstance().getCurrentRoom());
+                obj.setClosestRoomParent(getClosestRoomParent());
                 obj.setParent(this);
-                GameManager.getInstance().removeObjectFromInventory(obj);
+                inventory.removeObject(obj);
                 ((IPickupable) obj).setPickedUp(false);
 
                 this.add(obj);

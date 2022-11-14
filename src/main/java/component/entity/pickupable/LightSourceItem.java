@@ -8,6 +8,7 @@ import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ILightSource;
 import component.room.AbstractRoom;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -118,7 +119,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.LightSourceItem");
@@ -127,7 +128,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         while (resultSet.next()) {
             LightSourceItem obj = new LightSourceItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms);
+            obj.loadLocation(resultSet, allRooms, inventory);
             obj.loadObjEvents();
         }
 

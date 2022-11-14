@@ -10,7 +10,7 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IWearable;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import engine.command.CommandType;
 import engine.database.DBManager;
 
@@ -79,7 +79,7 @@ public class InvisibleWall extends AbstractEntity {
         }
     }
 
-    public void processRequirements(List<AbstractEntity> inventory) {
+    public void processRequirements() {
         if (locked) {
             if (getRequiredWearedItemsToInteract() != null && !getRequiredWearedItemsToInteract().isEmpty()) {
                 for (IWearable wearable : getRequiredWearedItemsToInteract()) {
@@ -104,7 +104,7 @@ public class InvisibleWall extends AbstractEntity {
     public boolean isBlocking(CommandType direction) {
         PlayableRoom parentRoom = (PlayableRoom) getParent();
         AbstractRoom nextRoom = parentRoom.getRoomAt(direction);
-        processRequirements(GameManager.getInstance().getInventory());
+        processRequirements();
 
         if (locked) {
             if (blockedRoomId != null) {
@@ -167,7 +167,7 @@ public class InvisibleWall extends AbstractEntity {
         saveExternalsOnDB();
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.InvisibleWall");
@@ -176,7 +176,7 @@ public class InvisibleWall extends AbstractEntity {
         while (resultSet.next()) {
             InvisibleWall obj = new InvisibleWall(resultSet);
 
-            obj.loadLocation(resultSet, allRooms);
+            obj.loadLocation(resultSet, allRooms, inventory);
             obj.loadObjEvents();
         }
 

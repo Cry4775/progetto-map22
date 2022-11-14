@@ -9,74 +9,18 @@ import java.util.Set;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
-import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import engine.command.Command;
 import utility.Utils;
 
-/**
- * @author pierpaolo
- */
 public class Parser {
 
     private final Set<String> stopwords;
+    private final List<Command> commands;
 
-    public Parser(Set<String> stopwords) {
+    public Parser(Set<String> stopwords, List<Command> commands) {
         this.stopwords = stopwords;
-    }
-
-    private Command checkForCommand(String token, List<Command> commands) {
-        for (Command command : commands) {
-            if (command.getName().equals(token)
-                    || command.getAlias() != null && command.getAlias().contains(token)) {
-                return command;
-            }
-        }
-        return null;
-    }
-
-    private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
-        if (objects != null) {
-            for (AbstractEntity obj : objects) {
-                if ((obj.getName() != null && obj.getName().equals(token))
-                        || (obj.getAlias() != null && obj.getAlias().contains(token))) {
-                    return obj;
-                } else if (obj instanceof AbstractContainer) {
-                    AbstractContainer container = (AbstractContainer) obj;
-
-                    if (container.isContentRevealed()) {
-                        for (AbstractEntity _obj : AbstractContainer
-                                .getAllObjectsInside(container)) {
-                            if (_obj.getName().equals(token)
-                                    || (_obj.getAlias() != null
-                                            && _obj.getAlias().contains(token))) {
-                                if (_obj.getParent() instanceof AbstractContainer) {
-                                    AbstractContainer parentContainer =
-                                            (AbstractContainer) _obj.getParent();
-
-                                    if (parentContainer.isContentRevealed()) {
-                                        return _obj;
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                } else if (obj instanceof IFillable) {
-                    IFillable fillable = (IFillable) obj;
-
-                    if (fillable.isFilled()) {
-                        if (fillable.getEligibleItem().getName().equals(token)
-                                || fillable.getEligibleItem().getAlias() != null
-                                        && fillable.getEligibleItem().getAlias()
-                                                .contains(token)) {
-                            return fillable.getEligibleItem();
-                        }
-                    }
-                }
-            }
-        }
-        return null;
+        this.commands = commands;
     }
 
     /*
@@ -84,13 +28,11 @@ public class Parser {
      * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
-    public ParserOutput parse(String command) {
-        List<AbstractEntity> objects = ((PlayableRoom) GameManager.getInstance().getCurrentRoom()).getObjects();
-        List<AbstractEntity> inventory = GameManager.getInstance().getInventory();
+    public ParserOutput parse(String command, List<AbstractEntity> objects, Inventory inventory) {
         List<String> tokens = Utils.parseString(command == null ? "" : command, stopwords);
 
         if (!tokens.isEmpty()) {
-            Command cmd = checkForCommand(tokens.get(0), GameManager.getInstance().getCommands());
+            Command cmd = checkForCommand(tokens.get(0));
             if (cmd != null) {
                 if (tokens.size() > 1) {
                     AbstractEntity objRoom = checkForObject(tokens.get(1), objects);
@@ -126,6 +68,60 @@ public class Parser {
         } else {
             return null;
         }
+    }
+
+    private Command checkForCommand(String token) {
+        for (Command command : commands) {
+            if (command.getName().equals(token)
+                    || command.getAlias() != null && command.getAlias().contains(token)) {
+                return command;
+            }
+        }
+        return null;
+    }
+
+    private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
+        if (objects != null) {
+            for (AbstractEntity obj : objects) {
+                if ((obj.getName() != null && obj.getName().equals(token))
+                        || (obj.getAlias() != null && obj.getAlias().contains(token))) {
+                    return obj;
+                } else if (obj instanceof AbstractContainer) {
+                    AbstractContainer container = (AbstractContainer) obj;
+
+                    if (container.isContentRevealed()) {
+                        for (AbstractEntity _obj : AbstractContainer.getAllObjectsInside(container)) {
+                            if (_obj.getName().equals(token)
+                                    || (_obj.getAlias() != null && _obj.getAlias().contains(token))) {
+                                if (_obj.getParent() instanceof AbstractContainer) {
+                                    AbstractContainer parentContainer = (AbstractContainer) _obj.getParent();
+
+                                    if (parentContainer.isContentRevealed()) {
+                                        return _obj;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                } else if (obj instanceof IFillable) {
+                    IFillable fillable = (IFillable) obj;
+
+                    if (fillable.isFilled()) {
+                        if (fillable.getEligibleItem().getName().equals(token)
+                                || (fillable.getEligibleItem().getAlias() != null
+                                        && fillable.getEligibleItem().getAlias().contains(token))) {
+                            return fillable.getEligibleItem();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private AbstractEntity checkForObject(String token, Inventory inventory) {
+        return checkForObject(token, inventory.getObjects());
     }
 
 }

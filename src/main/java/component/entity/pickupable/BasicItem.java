@@ -11,7 +11,7 @@ import component.entity.interfaces.IPickupable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
-import engine.GameManager;
+import engine.Inventory;
 import engine.database.DBManager;
 import gui.GUIManager;
 import sound.SoundManager;
@@ -35,7 +35,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public boolean pickup() {
+    public boolean pickup(Inventory inventory) {
         if (!pickedUp) {
             if (!canInteract())
                 return false;
@@ -49,7 +49,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
                 room.removeObject(this);
             }
 
-            GameManager.getInstance().addObjectInInventory(this);
+            inventory.addObject(this);
             SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
             pickedUp = true;
 
@@ -85,7 +85,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         stm.setBoolean(6, pickedUp);
     }
 
-    public static void loadFromDB(List<AbstractRoom> allRooms) throws SQLException {
+    public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()
                         .prepareStatement("SELECT * FROM SAVEDATA.BasicItem");
@@ -94,7 +94,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         while (resultSet.next()) {
             BasicItem obj = new BasicItem(resultSet);
 
-            obj.loadLocation(resultSet, allRooms);
+            obj.loadLocation(resultSet, allRooms, inventory);
             obj.loadObjEvents();
         }
 
@@ -102,13 +102,13 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms)
+    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms, Inventory inventory)
             throws SQLException {
         if (pickedUp) {
             if (!(this instanceof IFluid))
-                GameManager.getInstance().addObjectInInventory(this);
+                inventory.addObject(this);
         } else {
-            super.loadLocation(resultSet, allRooms);
+            super.loadLocation(resultSet, allRooms, inventory);
         }
     }
 }
