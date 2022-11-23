@@ -47,6 +47,10 @@ public class Door extends AbstractEntity implements IOpenable {
         return unlockedWithItemId;
     }
 
+    public AbstractEntity getUnlockedWithItem() {
+        return unlockedWithItem;
+    }
+
     @Override
     public boolean isLocked() {
         return locked;
@@ -65,6 +69,10 @@ public class Door extends AbstractEntity implements IOpenable {
 
     public String getBlockedRoomId() {
         return blockedRoomId;
+    }
+
+    public AbstractRoom getBlockedRoom() {
+        return blockedRoom;
     }
 
     @Override

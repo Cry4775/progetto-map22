@@ -9,7 +9,7 @@ import component.room.AbstractRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
-import engine.Status;
+import engine.MoveInformations;
 import gui.GUIManager;
 
 public class ObjectEvent extends AbstractEvent {
@@ -98,7 +98,7 @@ public class ObjectEvent extends AbstractEvent {
         }
 
         if (teleportsPlayerToRoom != null) {
-            Status status = GameManager.getStatus();
+            MoveInformations status = GameManager.getInstanceCurrentMoveInfos();
             status.setWarp(true);
             status.setWarpDestination(teleportsPlayerToRoom);
         }

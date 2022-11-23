@@ -3,7 +3,7 @@ package engine;
 import component.entity.doorlike.InvisibleWall;
 import component.room.AbstractRoom;
 
-public class Status {
+public class MoveInformations {
     private boolean movementAttempt = false;
     private boolean positionChanged = false;
     private boolean roomBlockedByDoor = false;
