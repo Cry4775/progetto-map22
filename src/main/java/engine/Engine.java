@@ -8,7 +8,7 @@ import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
 import engine.database.DBManager;
 import engine.parser.Parser;
-import engine.parser.ParserOutput;
+import engine.parser.ParserResult;
 import gui.GUIManager;
 import gui.MainFrame;
 import rest.WeatherFetcher;
@@ -71,7 +71,7 @@ public class Engine {
 
                 if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
                     PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
-                    ParserOutput p = parser.parse(command, currentRoom.getObjects(), gameManager.getInventory());
+                    ParserResult p = parser.parse(command, currentRoom.getObjects(), gameManager.getInventory());
 
                     if (command == null) {
                         GUIManager.updateRoomInformations(currentRoom, gameManager.getPreviousRoom());

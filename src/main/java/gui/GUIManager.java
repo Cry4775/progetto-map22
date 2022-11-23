@@ -122,21 +122,29 @@ public class GUIManager {
 
     }
 
-    public static void increaseActionsCounter() {
-        SwingUtilities.invokeLater(new Runnable() {
+    public static int getCurrentActionsCounterValue() {
+        String[] strings = gui.getLblActions().getText().split(".*: ");
+        for (String string : strings) {
+            if (string.matches("[0-9]+")) {
+                return Integer.parseInt(string);
+            }
+        }
 
+        return 0;
+    }
+
+    public static void setCurrentActionsCounterValue(int value) {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                String[] strings = gui.getLblActions().getText().split(".*: ");
-                for (String string : strings) {
-                    if (string.matches("[0-9]+")) {
-                        int oldCounterVal = Integer.parseInt(string);
-                        gui.getLblActions().setText("Azioni: " + Integer.toString(oldCounterVal + 1));
-                        return;
-                    }
-                }
+                gui.getLblActions().setText("Azioni: " + Integer.toString(value));
             }
         });
+    }
+
+    public static void increaseActionsCounter() {
+        int currentValue = getCurrentActionsCounterValue();
+        setCurrentActionsCounterValue(currentValue + 1);
     }
 
     public static void createWeatherProgressMonitor() {

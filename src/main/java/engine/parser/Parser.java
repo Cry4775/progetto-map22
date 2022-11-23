@@ -28,7 +28,7 @@ public class Parser {
      * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
-    public ParserOutput parse(String command, List<AbstractEntity> objects, Inventory inventory) {
+    public ParserResult parse(String command, List<AbstractEntity> objects, Inventory inventory) {
         List<String> tokens = Utils.parseString(command == null ? "" : command, stopwords);
 
         if (!tokens.isEmpty()) {
@@ -51,19 +51,19 @@ public class Parser {
                     }
 
                     if (objRoom != null && objInv != null) {
-                        return new ParserOutput(cmd, objRoom, objInv);
+                        return new ParserResult(cmd, objRoom, objInv);
                     } else if (objRoom != null) {
-                        return new ParserOutput(cmd, objRoom, null);
+                        return new ParserResult(cmd, objRoom);
                     } else if (objInv != null) {
-                        return new ParserOutput(cmd, null, objInv);
+                        return new ParserResult(cmd, null, objInv);
                     } else {
-                        return new ParserOutput(cmd, null, null);
+                        return new ParserResult(cmd);
                     }
                 } else {
-                    return new ParserOutput(cmd, null);
+                    return new ParserResult(cmd);
                 }
             } else {
-                return new ParserOutput(null, null);
+                return new ParserResult();
             }
         } else {
             return null;

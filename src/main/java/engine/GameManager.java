@@ -32,7 +32,7 @@ import engine.database.DBManager;
 import engine.loader.CommandsLoader;
 import engine.loader.RoomsLoader;
 import engine.loader.RoomsLoader.Mode;
-import engine.parser.ParserOutput;
+import engine.parser.ParserResult;
 import gui.GUIManager;
 
 public class GameManager {
@@ -123,7 +123,7 @@ public class GameManager {
         return inventory;
     }
 
-    void nextMove(ParserOutput p) {
+    void nextMove(ParserResult p) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) getCurrentRoom();
         boolean actionPerformed = false;
 
@@ -132,14 +132,13 @@ public class GameManager {
 
         if (isMovementCommand(commandType)) {
             if (isMovementGranted(commandType)) {
-                moveTo(currentPlayableRoom.getRoomAt(commandType));
-                actionPerformed = true;
+                actionPerformed = moveTo(currentPlayableRoom.getRoomAt(commandType));
             }
         } else {
-            AbstractEntity roomObj = p.getObject();
+            AbstractEntity roomObj = p.getRoomObject();
             AbstractEntity invObj = p.getInvObject();
 
-            AbstractEntity anyObj = getObjectFromParser(p);
+            AbstractEntity anyObj = p.getObject();
 
             switch (commandType) {
                 case SAVE: {
@@ -512,16 +511,7 @@ public class GameManager {
         }
     }
 
-    private AbstractEntity getObjectFromParser(ParserOutput p) {
-        if (p.getObject() != null) {
-            return p.getObject();
-        } else if (p.getInvObject() != null) {
-            return p.getInvObject();
-        }
-        return null;
-    }
-
-    private void moveTo(AbstractRoom room) {
+    private boolean moveTo(AbstractRoom room) {
         PlayableRoom currentRoom = (PlayableRoom) getCurrentRoom();
 
         if (!currentRoom.isCurrentlyDark()) {
@@ -534,10 +524,10 @@ public class GameManager {
                                 setPreviousRoom(currentRoom);
                                 setCurrentRoom(room);
                                 status.setPositionChanged(true);
-                                return;
+                                return true;
                             } else if (door.getBlockedRoomId().equals(room.getId()) && !door.isOpen()) {
                                 status.setPositionChanged(false, true);
-                                return;
+                                return false;
                             }
                         }
                     }
@@ -545,10 +535,10 @@ public class GameManager {
                 setPreviousRoom(currentRoom);
                 setCurrentRoom(room);
                 status.setPositionChanged(true);
-                return;
+                return true;
             } else {
                 status.setPositionChanged(false);
-                return;
+                return false;
             }
         } else {
             if (room != null) {
@@ -556,12 +546,15 @@ public class GameManager {
                     setPreviousRoom(currentRoom);
                     setCurrentRoom(room);
                     status.setPositionChanged(true);
-                    return;
+                    return true;
                 }
             } else {
                 status.setPositionChanged(false);
+                return false;
             }
         }
+
+        return false;
     }
 
     public List<AbstractRoom> listAllRooms() {

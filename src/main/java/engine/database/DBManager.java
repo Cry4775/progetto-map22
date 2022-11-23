@@ -37,6 +37,7 @@ import component.room.PlayableRoom;
 import component.room.PlayableRoom.Mode;
 import engine.GameManager;
 import engine.Inventory;
+import gui.GUIManager;
 import component.room.Rooms;
 import utility.Triple;
 
@@ -433,6 +434,12 @@ public class DBManager {
                         + " destroyOnTrigger boolean"
                         + ")");
                 createStatement.executeUpdate();
+
+                createStatement = connection.prepareStatement("CREATE TABLE SAVEDATA.ActionsCounter"
+                        + "("
+                        + " currentValue int"
+                        + ")");
+                createStatement.executeUpdate();
             }
 
         } catch (SQLException e) {
@@ -553,6 +560,9 @@ public class DBManager {
 
         stm = connection.prepareStatement("DELETE FROM SAVEDATA.WearableItem");
         stm.executeUpdate();
+
+        stm = connection.prepareStatement("DELETE FROM SAVEDATA.ActionsCounter");
+        stm.executeUpdate();
     }
 
     public static boolean existsSaving() {
@@ -590,7 +600,12 @@ public class DBManager {
 
             saveRooms(gameManager);
             saveObjects(gameManager);
-            // TODO counter azioni
+
+            PreparedStatement stm = connection.prepareStatement(
+                    "INSERT INTO SAVEDATA.ActionsCounter values (?)");
+
+            stm.setInt(1, GUIManager.getCurrentActionsCounterValue());
+            stm.executeUpdate();
         } catch (SQLException e) {
             closeConnection();
             e.printStackTrace();
@@ -606,6 +621,19 @@ public class DBManager {
 
             loadRooms();
             loadObjects(inventory);
+
+            PreparedStatement stm =
+                    connection.prepareStatement("SELECT * FROM SAVEDATA.ActionsCounter");
+            ResultSet stmResultSet = stm.executeQuery();
+
+            while (stmResultSet.next()) {
+                int value = stmResultSet.getInt(1);
+
+                if (value != 0) {
+                    GUIManager.setCurrentActionsCounterValue(value);
+                }
+            }
+            stm.close();
 
             return loadedRooms;
         } catch (SQLException e) {
