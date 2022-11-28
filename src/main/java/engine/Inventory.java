@@ -60,7 +60,7 @@ public class Inventory {
 
     public void checkForDestroyableItems() {
         for (AbstractEntity obj : getObjects(Mode.UNPACK_CONTAINERS)) {
-            if (obj.isMustDestroyFromInv()) {
+            if (obj.mustDestroyFromInventory()) {
                 removeObject(obj);
             }
         }

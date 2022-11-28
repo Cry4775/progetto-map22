@@ -90,7 +90,7 @@ public class Door extends AbstractEntity implements IOpenable {
                 if (unlockedWithItem.equals(key)) {
                     locked = false;
                     unlocked = true;
-                    key.setMustDestroyFromInv(true);
+                    key.setDestroyFromInventory(true);
                     unlockedWithItemId = null;
                     unlockedWithItem = null;
                 } else {

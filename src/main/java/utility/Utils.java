@@ -25,22 +25,6 @@ public class Utils {
         return set;
     }
 
-    public static List<String> parseString(String string, Set<String> stopwords) {
-        List<String> tokens = new ArrayList<>();
-        String[] split = string.toLowerCase().split("\\s+");
-
-        if (split.length > 1) {
-            for (String t : split) {
-                if (!stopwords.contains(t)) {
-                    tokens.add(t);
-                }
-            }
-        } else if (split.length == 1) {
-            tokens.add(split[0]);
-        }
-        return tokens;
-    }
-
     public static Field getField(Class<?> clazz, String fieldName) {
         Class<?> tmpClass = clazz;
         do {

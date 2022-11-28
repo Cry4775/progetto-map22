@@ -71,7 +71,7 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
 
             if (unlockedWithItem.equals(key)) {
                 locked = false;
-                key.setMustDestroyFromInv(true);
+                key.setDestroyFromInventory(true);
                 unlockedWithItem = null;
                 unlockedWithItemId = null;
             } else {

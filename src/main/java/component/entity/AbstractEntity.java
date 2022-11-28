@@ -29,7 +29,7 @@ public abstract class AbstractEntity extends GameComponent {
 
     private Set<String> alias = new HashSet<>();
 
-    private boolean mustDestroyFromInv = false;
+    private boolean destroyFromInventory = false;
 
     private GameComponent parent;
 
@@ -102,12 +102,12 @@ public abstract class AbstractEntity extends GameComponent {
         return events;
     }
 
-    public boolean isMustDestroyFromInv() {
-        return mustDestroyFromInv;
+    public boolean mustDestroyFromInventory() {
+        return destroyFromInventory;
     }
 
-    public void setMustDestroyFromInv(boolean mustDestroyFromInv) {
-        this.mustDestroyFromInv = mustDestroyFromInv;
+    public void setDestroyFromInventory(boolean destroyFromInventory) {
+        this.destroyFromInventory = destroyFromInventory;
     }
 
     public GameComponent getParent() {

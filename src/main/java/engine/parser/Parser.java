@@ -4,6 +4,7 @@
  */
 package engine.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import component.entity.AbstractEntity;
@@ -11,7 +12,6 @@ import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
 import engine.Inventory;
 import engine.command.Command;
-import utility.Utils;
 
 public class Parser {
 
@@ -23,30 +23,46 @@ public class Parser {
         this.commands = commands;
     }
 
+    private static List<String> parseString(String string, Set<String> stopwords) {
+        List<String> tokens = new ArrayList<>();
+        String[] split = string.toLowerCase().split("\\s+");
+
+        if (split.length > 1) {
+            for (String t : split) {
+                if (!stopwords.contains(t)) {
+                    tokens.add(t);
+                }
+            }
+        } else if (split.length == 1) {
+            tokens.add(split[0]);
+        }
+        return tokens;
+    }
+
     /*
      * ATTENZIONE: il parser è implementato in modo abbastanza independete dalla lingua, ma
      * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
     public Result parse(String command, List<AbstractEntity> objects, Inventory inventory) {
-        List<String> tokens = Utils.parseString(command == null ? "" : command, stopwords);
+        List<String> tokens = parseString(command == null ? "" : command, stopwords);
 
         if (!tokens.isEmpty()) {
-            Command cmd = checkForCommand(tokens.get(0));
+            Command cmd = getRequestedCommand(tokens.get(0));
             if (cmd != null) {
                 if (tokens.size() > 1) {
-                    AbstractEntity objRoom = checkForObject(tokens.get(1), objects);
+                    AbstractEntity objRoom = getRequestedObject(tokens.get(1), objects);
                     AbstractEntity objInv = null;
                     if (objRoom == null && tokens.size() > 2) {
-                        objRoom = checkForObject(tokens.get(2), objects);
+                        objRoom = getRequestedObject(tokens.get(2), objects);
                     }
                     if (objRoom == null) {
-                        objInv = checkForObject(tokens.get(1), inventory);
+                        objInv = getRequestedObject(tokens.get(1), inventory);
                     }
                     if (objInv == null && tokens.size() > 2) {
-                        objInv = checkForObject(tokens.get(2), inventory);
+                        objInv = getRequestedObject(tokens.get(2), inventory);
                         if (objInv == null) {
-                            objInv = checkForObject(tokens.get(1), inventory);
+                            objInv = getRequestedObject(tokens.get(1), inventory);
                         }
                     }
 
@@ -70,7 +86,7 @@ public class Parser {
         }
     }
 
-    private Command checkForCommand(String token) {
+    private Command getRequestedCommand(String token) {
         for (Command command : commands) {
             if (command.getName().equals(token)
                     || command.getAlias() != null && command.getAlias().contains(token)) {
@@ -80,17 +96,17 @@ public class Parser {
         return null;
     }
 
-    private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
+    private AbstractEntity getRequestedObject(String token, List<AbstractEntity> objects) {
         if (objects != null) {
             for (AbstractEntity obj : objects) {
-                if (tokenEqualsObjName(token, obj)) {
+                if (equalsObjectName(token, obj)) {
                     return obj;
                 } else if (obj instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj;
 
                     if (container.isContentRevealed()) {
                         for (AbstractEntity _obj : AbstractContainer.getAllObjectsInside(container)) {
-                            if (tokenEqualsObjName(token, _obj)) {
+                            if (equalsObjectName(token, _obj)) {
                                 // Check if the object is inside another container and if that's opened
                                 if (_obj.getParent() instanceof AbstractContainer) {
                                     AbstractContainer parentContainer = (AbstractContainer) _obj.getParent();
@@ -106,7 +122,7 @@ public class Parser {
                     IFillable fillable = (IFillable) obj;
 
                     if (fillable.isFilled()) {
-                        if (tokenEqualsObjName(token, fillable.getEligibleItem()))
+                        if (equalsObjectName(token, fillable.getEligibleItem()))
                             return fillable.getEligibleItem();
                     }
                 }
@@ -115,11 +131,12 @@ public class Parser {
         return null;
     }
 
-    private AbstractEntity checkForObject(String token, Inventory inventory) {
-        return checkForObject(token, inventory.getObjects());
+    private AbstractEntity getRequestedObject(String token, Inventory inventory) {
+        return getRequestedObject(token, inventory.getObjects());
     }
 
-    private boolean tokenEqualsObjName(String token, AbstractEntity obj) {
+    private boolean equalsObjectName(String token, AbstractEntity obj) {
+        // Object name must be lower-case
         if (obj != null && token != null) {
             if (token.equals(obj.getName()) || (obj.getAlias() != null && obj.getAlias().contains(token))) {
                 return true;
