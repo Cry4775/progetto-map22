@@ -41,7 +41,7 @@ public class PushableObject extends AbstractEntity implements IPushable {
             pushed = true;
 
             GUIManager.appendOutput("Hai premuto: " + getName());
-            triggerEvent((EventType.PUSH));
+            triggerEvent(EventType.PUSH);
             return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("È stato già premuto.");

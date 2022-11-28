@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import component.entity.interfaces.IReadable;
+import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
 import engine.MoveInformations.ActionState;
@@ -31,7 +32,7 @@ public class ReadableItem extends BasicItem implements IReadable {
             GUIManager.appendOutput("Non c'é scritto nulla.");
         }
 
-        // TODO EVENTO
+        triggerEvent(EventType.READ);
         return ActionState.NORMAL_ACTION;
     }
 

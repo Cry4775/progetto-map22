@@ -132,7 +132,7 @@ public abstract class AbstractContainer extends AbstractEntity {
                 this.add(obj);
 
                 GUIManager.appendOutput("Hai lasciato: " + obj.getName());
-                triggerEvent((EventType.INSERT));
+                triggerEvent(EventType.INSERT);
                 return ActionState.NORMAL_ACTION;
             } else {
                 GUIManager.appendOutput("Non puoi lasciare oggetti qui.");

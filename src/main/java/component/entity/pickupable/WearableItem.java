@@ -55,7 +55,7 @@ public class WearableItem extends BasicItem implements IWearable {
             worn = false;
 
             GUIManager.appendOutput("Hai tolto: " + getName());
-            triggerEvent((EventType.WEAR));
+            triggerEvent(EventType.WEAR);
             return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("Non ce l'hai addosso.");

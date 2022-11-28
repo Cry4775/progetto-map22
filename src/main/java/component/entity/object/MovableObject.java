@@ -40,7 +40,7 @@ public class MovableObject extends AbstractEntity implements IMovable {
 
             moved = true;
             GUIManager.appendOutput("Hai spostato: " + getName());
-            triggerEvent((EventType.MOVE));
+            triggerEvent(EventType.MOVE);
             return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("È stato già spostato.");

@@ -40,7 +40,7 @@ public class FireObject extends AbstractEntity {
             if (liquid != null)
                 liquid.delete();
 
-            triggerEvent((EventType.EXTINGUISH));
+            triggerEvent(EventType.EXTINGUISH);
             return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("Non ci sono piú fiamme.");

@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
 import component.entity.interfaces.ILightSource;
+import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
 import engine.MoveInformations.ActionState;
@@ -63,7 +64,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
             } else {
                 on = true;
                 GUIManager.appendOutput("Hai acceso: " + getName());
-                // TODO EVENTO
+                triggerEvent(EventType.TURN_ON);
 
                 return ActionState.NORMAL_ACTION;
             }
@@ -79,6 +80,7 @@ public class LightSourceItem extends BasicItem implements ILightSource {
         if (on) {
             on = false;
             GUIManager.appendOutput("Hai spento: " + getName());
+            triggerEvent(EventType.TURN_OFF);
 
             return ActionState.NORMAL_ACTION;
         } else {
