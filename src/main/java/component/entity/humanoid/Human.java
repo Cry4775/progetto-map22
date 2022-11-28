@@ -11,6 +11,7 @@ import component.entity.interfaces.ITalkable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -40,9 +41,9 @@ public class Human extends AbstractEntity implements ITalkable {
     }
 
     @Override
-    public boolean talk() {
+    public ActionState talk() {
         if (!canInteract())
-            return false;
+            return ActionState.NO_MOVE;
 
         if (phrases != null) {
             if (!phrases.isEmpty()) {
@@ -59,7 +60,7 @@ public class Human extends AbstractEntity implements ITalkable {
         }
 
         triggerEvent(EventType.TALK_WITH);
-        return true;
+        return ActionState.NORMAL_ACTION;
     }
 
     @Override

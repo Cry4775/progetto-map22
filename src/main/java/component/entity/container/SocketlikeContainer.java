@@ -11,6 +11,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import utility.Triple;
@@ -30,10 +31,10 @@ public class SocketlikeContainer extends AbstractContainer {
     }
 
     @Override
-    public boolean insert(AbstractEntity obj, Inventory inventory) {
+    public ActionState insert(AbstractEntity obj, Inventory inventory) {
         if (!itemInside) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             if (eligibleItem.equals(obj)) {
                 if (obj instanceof IWearable) {
@@ -41,7 +42,7 @@ public class SocketlikeContainer extends AbstractContainer {
 
                     if (wearable.isWorn()) {
                         GUIManager.appendOutput("Devi prima toglierlo di dosso.");
-                        return false;
+                        return ActionState.NO_MOVE;
                     }
                 }
 
@@ -61,7 +62,7 @@ public class SocketlikeContainer extends AbstractContainer {
 
                 GUIManager.appendOutput("Hai inserito: " + obj.getName());
                 triggerEvent(EventType.INSERT);
-                return true;
+                return ActionState.NORMAL_ACTION;
             } else {
                 GUIManager.appendOutput("Non puoi inserirci questo oggetto.");
             }
@@ -69,7 +70,7 @@ public class SocketlikeContainer extends AbstractContainer {
             GUIManager.appendOutput("Non puoi inserirci altri oggetti.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

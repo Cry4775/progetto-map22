@@ -12,6 +12,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import sound.SoundManager;
@@ -35,10 +36,10 @@ public class BasicItem extends AbstractEntity implements IPickupable {
     }
 
     @Override
-    public boolean pickup(Inventory inventory) {
+    public ActionState pickup(Inventory inventory) {
         if (!pickedUp) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             // Check if it's an obj inside something and remove it from its list
             if (getParent() instanceof AbstractContainer) {
@@ -55,12 +56,12 @@ public class BasicItem extends AbstractEntity implements IPickupable {
 
             GUIManager.appendOutput("Hai raccolto: " + getName());
             triggerEvent(EventType.PICK_UP);
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("É giá nel tuo inventario.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

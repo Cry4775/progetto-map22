@@ -9,6 +9,7 @@ import component.entity.interfaces.IMovable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -32,20 +33,20 @@ public class MovableObject extends AbstractEntity implements IMovable {
     }
 
     @Override
-    public boolean move() {
+    public ActionState move() {
         if (!moved) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             moved = true;
             GUIManager.appendOutput("Hai spostato: " + getName());
             triggerEvent((EventType.MOVE));
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("È stato già spostato.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

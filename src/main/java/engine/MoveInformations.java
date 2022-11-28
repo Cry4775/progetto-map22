@@ -4,90 +4,78 @@ import component.entity.doorlike.InvisibleWall;
 import component.room.AbstractRoom;
 
 public class MoveInformations {
-    private boolean movementAttempt = false;
-    private boolean positionChanged = false;
-    private boolean roomBlockedByDoor = false;
-    private boolean roomBlockedByWall = false;
-    private InvisibleWall wall;
+    public enum ActionState {
+        NO_MOVE,
+        NORMAL_ACTION
+    }
 
-    private boolean warp = false;
-    private AbstractRoom warpDestination;
+    public enum MovementState {
+        POSITION_CHANGED,
+        BLOCKED_DOOR,
+        BLOCKED_WALL,
+        TELEPORT,
+        DARK_ROOM,
+        NO_ROOM
+    }
+
+    private ActionState actionState = null;
+    private MovementState movementState = null;
+    private boolean actionPerformed = false;
+    private InvisibleWall wall;
+    private AbstractRoom teleportDestination;
 
     public void reset() {
-        movementAttempt = false;
-        positionChanged = false;
-        roomBlockedByDoor = false;
-        roomBlockedByWall = false;
+        actionState = null;
+        movementState = null;
+        actionPerformed = false;
         wall = null;
-        warp = false;
-        warpDestination = null;
+        teleportDestination = null;
     }
 
-    public boolean isRoomBlockedByDoor() {
-        return roomBlockedByDoor;
-    }
+    public void setState(ActionState actionState, MovementState movementState) {
+        reset();
 
-    public void setRoomBlockedByDoor(boolean roomBlockedByDoor) {
-        this.roomBlockedByDoor = roomBlockedByDoor;
-    }
+        if (actionState == null && movementState == null) {
+            throw new Error("Move state can't be null for both.");
+        }
 
-    public boolean isMovementAttempt() {
-        return movementAttempt;
-    }
+        this.actionState = actionState;
+        this.movementState = movementState;
 
-    public void setMovementAttempt(boolean movementAttempt) {
-        this.movementAttempt = movementAttempt;
-    }
+        if (actionState != null) {
+            switch (actionState) {
+                case NORMAL_ACTION:
+                    actionPerformed = true;
+                    break;
+                default:
+                    break;
+            }
+        }
 
-    public boolean isPositionChanged() {
-        return positionChanged;
-    }
-
-    public void setPositionChanged(boolean positionChanged) {
-        if (positionChanged) {
-            this.movementAttempt = true;
-            this.positionChanged = true;
-            this.roomBlockedByDoor = false;
-        } else {
-            this.movementAttempt = true;
-            this.positionChanged = false;
-            this.roomBlockedByDoor = false;
+        if (movementState != null) {
+            switch (movementState) {
+                case POSITION_CHANGED:
+                    actionPerformed = true;
+                    break;
+                case TELEPORT:
+                    actionPerformed = true;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    public void setPositionChanged(boolean positionChanged, boolean roomBlockedByDoor) {
-        if (positionChanged && !roomBlockedByDoor) {
-            setPositionChanged(true);
-        } else if (!positionChanged && !roomBlockedByDoor) {
-            setPositionChanged(false);
-        } else if (!positionChanged && roomBlockedByDoor) {
-            setPositionChanged(false);
-            this.roomBlockedByDoor = true;
-        }
+    public ActionState getActionState() {
+        return actionState;
     }
 
-    public boolean isWarp() {
-        return warp;
+    public MovementState getMovementState() {
+        return movementState;
     }
 
-    public void setWarp(boolean warp) {
-        this.warp = warp;
-    }
-
-    public AbstractRoom getWarpDestination() {
-        return warpDestination;
-    }
-
-    public void setWarpDestination(AbstractRoom warpDestination) {
-        this.warpDestination = warpDestination;
-    }
-
-    public boolean isRoomBlockedByWall() {
-        return roomBlockedByWall;
-    }
-
-    public void setRoomBlockedByWall(boolean roomBlockedByWall) {
-        this.roomBlockedByWall = roomBlockedByWall;
+    public boolean isActionPerformed() {
+        return actionPerformed;
     }
 
     public InvisibleWall getWall() {
@@ -96,5 +84,13 @@ public class MoveInformations {
 
     public void setWall(InvisibleWall wall) {
         this.wall = wall;
+    }
+
+    public AbstractRoom getTeleportDestination() {
+        return teleportDestination;
+    }
+
+    public void setTeleportDestination(AbstractRoom teleportDestination) {
+        this.teleportDestination = teleportDestination;
     }
 }

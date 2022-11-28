@@ -9,6 +9,7 @@ import component.entity.interfaces.IPushable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -32,21 +33,21 @@ public class PushableObject extends AbstractEntity implements IPushable {
     }
 
     @Override
-    public boolean push() {
+    public ActionState push() {
         if (!pushed) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             pushed = true;
 
             GUIManager.appendOutput("Hai premuto: " + getName());
             triggerEvent((EventType.PUSH));
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("È stato già premuto.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

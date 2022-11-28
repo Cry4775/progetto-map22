@@ -12,6 +12,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import utility.Triple;
@@ -51,42 +52,42 @@ public class WearableContainer extends AbstractContainer implements IWearable {
     }
 
     @Override
-    public boolean wear() {
+    public ActionState wear() {
         if (!worn) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             worn = true;
 
             GUIManager.appendOutput("Hai indossato: " + getName());
             triggerEvent(EventType.UNWEAR);
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("L'hai giá indossato.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override
-    public boolean unwear() {
+    public ActionState unwear() {
         if (worn) {
             worn = false;
 
             GUIManager.appendOutput("Hai tolto: " + getName());
             triggerEvent(EventType.UNWEAR);
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("Non ce l'hai addosso.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override
-    public boolean pickup(Inventory inventory) {
+    public ActionState pickup(Inventory inventory) {
         if (!canInteract())
-            return false;
+            return ActionState.NO_MOVE;
 
         pickedUp = true;
         inventory.addObject(this);
@@ -108,11 +109,11 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
         GUIManager.appendOutput("Hai raccolto: " + getName());
         triggerEvent(EventType.PICK_UP);
-        return true;
+        return ActionState.NORMAL_ACTION;
     }
 
     @Override
-    public boolean insert(AbstractEntity obj, Inventory inventory) {
+    public ActionState insert(AbstractEntity obj, Inventory inventory) {
         if (maxSlots == 0) {
             maxSlots = 999;
         }
@@ -123,7 +124,7 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
                 if (wearable.isWorn()) {
                     GUIManager.appendOutput("Devi prima toglierlo di dosso.");
-                    return false;
+                    return ActionState.NO_MOVE;
                 }
             }
 
@@ -136,12 +137,12 @@ public class WearableContainer extends AbstractContainer implements IWearable {
 
             GUIManager.appendOutput("Hai lasciato: " + obj.getName());
             triggerEvent(EventType.INSERT);
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("Non ci entra piú nulla. Libera spazio o tienilo nell'inventario!");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

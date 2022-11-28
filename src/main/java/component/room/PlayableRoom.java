@@ -182,24 +182,22 @@ public class PlayableRoom extends AbstractRoom {
         return eastId;
     }
 
-    public static String processRoomEvent(AbstractRoom room) {
-        if (room instanceof PlayableRoom) {
-            PlayableRoom pRoom;
-            pRoom = (PlayableRoom) room;
+    public String processRoomEvent() {
+        if (currentlyDark)
+            return "";
 
-            RoomEvent evt = pRoom.getEvent();
-            if (evt != null) {
-                if (!evt.isTriggered()) {
-                    StringBuilder outString = new StringBuilder();
+        RoomEvent evt = getEvent();
+        if (evt != null) {
+            if (!evt.isTriggered()) {
+                StringBuilder outString = new StringBuilder();
 
-                    if (evt.getText() != null && !evt.getText().isEmpty()) {
-                        outString.append("\n\n" + evt.getText());
-                    }
-
-                    evt.setTriggered(true);
-
-                    return outString.toString();
+                if (evt.getText() != null && !evt.getText().isEmpty()) {
+                    outString.append("\n\n" + evt.getText());
                 }
+
+                evt.setTriggered(true);
+
+                return outString.toString();
             }
         }
         return "";

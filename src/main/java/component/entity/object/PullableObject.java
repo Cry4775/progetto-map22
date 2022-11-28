@@ -9,6 +9,7 @@ import component.entity.interfaces.IPullable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -32,21 +33,21 @@ public class PullableObject extends AbstractEntity implements IPullable {
     }
 
     @Override
-    public boolean pull() {
+    public ActionState pull() {
         if (!pulled) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             pulled = true;
 
             GUIManager.appendOutput("Hai tirato: " + getName());
             triggerEvent((EventType.PULL));
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("È stato già tirato.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

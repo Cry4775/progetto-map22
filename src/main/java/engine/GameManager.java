@@ -2,6 +2,7 @@ package engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntSupplier;
 import javax.swing.JOptionPane;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -9,13 +10,14 @@ import component.entity.AbstractEntity;
 import component.entity.Entities;
 import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
+import component.room.PlayableRoom;
 import component.room.Rooms;
+import engine.MoveInformations.MovementState;
 import engine.command.Command;
 import engine.database.DBManager;
 import engine.loader.CommandsLoader;
 import engine.loader.RoomsLoader;
 import engine.loader.RoomsLoader.Mode;
-import gui.GUIManager;
 
 public class GameManager {
     private static GameManager instance;
@@ -31,29 +33,32 @@ public class GameManager {
 
     private GameManager() {}
 
-    protected void initialize() {
+    protected void initialize(IntSupplier loadSaveDialog) {
+        if (loadSaveDialog == null)
+            throw new Error("Invalid IntSupplier for the loading savedata confirmation dialog.");
+
         CommandsLoader commandsLoader = new CommandsLoader(commands);
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
+        tCommands.start();
 
         RoomsLoader roomsLoader;
 
         if (DBManager.existsSaving()) {
-            roomsLoader = new RoomsLoader(this,
-                    GUIManager.askLoadingConfirmation() == JOptionPane.YES_OPTION ? Mode.DB : Mode.JSON);
+            roomsLoader =
+                    new RoomsLoader(this, loadSaveDialog.getAsInt() == JOptionPane.YES_OPTION ? Mode.DB : Mode.JSON);
         } else {
             roomsLoader = new RoomsLoader(this, Mode.JSON);
         }
 
         Thread tRooms = new Thread(roomsLoader, "RoomsLoader");
 
-        tCommands.start();
         tRooms.start();
 
         try {
             tCommands.join();
             tRooms.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new Error(e);
         }
     }
 
@@ -126,7 +131,12 @@ public class GameManager {
         if (room != null) {
             setPreviousRoom(currentRoom);
             setCurrentRoom(room);
-            currentMoveInfos.setPositionChanged(true);
+
+            if (room instanceof PlayableRoom) {
+                PlayableRoom pRoom = (PlayableRoom) room;
+                pRoom.processRoomLighting(getInventory().getObjects());
+            }
+            currentMoveInfos.setState(currentMoveInfos.getActionState(), MovementState.POSITION_CHANGED);
         }
     }
 

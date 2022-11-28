@@ -2,6 +2,7 @@ package component.entity.interfaces;
 
 import component.entity.AbstractEntity;
 import gui.GUIManager;
+import engine.MoveInformations.ActionState;
 
 public interface IOpenable extends IInteractable {
     public boolean isOpen();
@@ -14,7 +15,7 @@ public interface IOpenable extends IInteractable {
 
     public String getUnlockedWithItemId();
 
-    public boolean open(AbstractEntity key);
+    public ActionState open(AbstractEntity key);
 
     public default void lookAt() {
         if (isLocked()) {

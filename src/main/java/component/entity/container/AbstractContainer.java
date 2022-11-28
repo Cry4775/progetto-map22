@@ -14,6 +14,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import gui.GUIManager;
 import utility.Triple;
 
@@ -81,9 +82,9 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
-    public boolean insert(AbstractEntity obj, Inventory inventory) {
+    public ActionState insert(AbstractEntity obj, Inventory inventory) {
         if (!canInteract())
-            return false;
+            return ActionState.NO_MOVE;
 
         if (obj instanceof IFluid) {
             if (forFluids) {
@@ -100,7 +101,7 @@ public abstract class AbstractContainer extends AbstractEntity {
 
                     GUIManager.appendOutput("Hai versato: " + obj.getName());
                     triggerEvent(EventType.INSERT);
-                    return true;
+                    return ActionState.NORMAL_ACTION;
                 }
             } else {
                 GUIManager.appendOutput("Non puoi versare liquidi qui.");
@@ -118,7 +119,7 @@ public abstract class AbstractContainer extends AbstractEntity {
 
                     if (wearable.isWorn()) {
                         GUIManager.appendOutput("Devi prima toglierlo di dosso.");
-                        return false;
+                        return ActionState.NO_MOVE;
                     }
                 }
 
@@ -131,13 +132,13 @@ public abstract class AbstractContainer extends AbstractEntity {
 
                 GUIManager.appendOutput("Hai lasciato: " + obj.getName());
                 triggerEvent((EventType.INSERT));
-                return true;
+                return ActionState.NORMAL_ACTION;
             } else {
                 GUIManager.appendOutput("Non puoi lasciare oggetti qui.");
             }
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

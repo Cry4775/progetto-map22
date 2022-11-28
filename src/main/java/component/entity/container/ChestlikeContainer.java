@@ -9,6 +9,7 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.IOpenable;
 import component.event.EventType;
 import component.room.AbstractRoom;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import utility.Triple;
@@ -63,10 +64,10 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
     }
 
     @Override
-    public boolean open(AbstractEntity key) {
+    public ActionState open(AbstractEntity key) {
         if (locked) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             if (unlockedWithItem.equals(key)) {
                 locked = false;
@@ -76,25 +77,25 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
             } else {
                 GUIManager.appendOutput(key == null ? "É chiusa a chiave." : "Non funziona.");
                 triggerEvent(EventType.OPEN_LOCKED);
-                return false;
+                return ActionState.NO_MOVE;
             }
         }
 
         if (!open) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             open = true;
             GUIManager.appendOutput("Hai aperto: " + getName());
             GUIManager.appendOutput(getContentString());
             triggerEvent(EventType.OPEN_CONTAINER);
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("É giá aperta. ");
             GUIManager.appendOutput(getContentString());
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

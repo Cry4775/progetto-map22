@@ -9,6 +9,7 @@ import component.entity.interfaces.IFluid;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -29,10 +30,10 @@ public class FireObject extends AbstractEntity {
         this.lit = lit;
     }
 
-    public boolean extinguish(IFluid liquid) {
+    public ActionState extinguish(IFluid liquid) {
         if (lit) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             lit = false;
 
@@ -40,12 +41,12 @@ public class FireObject extends AbstractEntity {
                 liquid.delete();
 
             triggerEvent((EventType.EXTINGUISH));
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("Non ci sono piú fiamme.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

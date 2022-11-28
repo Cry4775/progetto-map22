@@ -12,6 +12,7 @@ import component.event.EventType;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -22,14 +23,14 @@ public class FluidItem extends BasicItem implements IFluid {
     }
 
     @Override
-    public boolean pickup(Inventory inventory) {
+    public ActionState pickup(Inventory inventory) {
         if (isPickedUp()) {
             GUIManager.appendOutput("É giá nel tuo inventario.");
-            return false;
+            return ActionState.NO_MOVE;
         }
 
         if (!canInteract())
-            return false;
+            return ActionState.NO_MOVE;
 
         boolean filled = false;
 
@@ -52,13 +53,13 @@ public class FluidItem extends BasicItem implements IFluid {
 
                     GUIManager.appendOutput("Hai riempito: " + invObject.getName());
                     triggerEvent(EventType.PICK_UP);
-                    return true;
+                    return ActionState.NORMAL_ACTION;
                 }
             }
         }
 
         GUIManager.appendOutput("Non puoi prenderlo senza lo strumento adatto.");
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

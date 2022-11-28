@@ -1,5 +1,7 @@
 package component.entity.doorlike;
 
+import static engine.MoveInformations.ActionState.NORMAL_ACTION;
+import static engine.MoveInformations.ActionState.NO_MOVE;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +12,7 @@ import component.entity.interfaces.IOpenable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import sound.SoundManager;
@@ -76,11 +79,11 @@ public class Door extends AbstractEntity implements IOpenable {
     }
 
     @Override
-    public boolean open(AbstractEntity key) {
+    public ActionState open(AbstractEntity key) {
         boolean unlocked = false;
 
         if (!canInteract())
-            return false;
+            return NO_MOVE;
 
         if (locked) {
             if (blockedRoom != null) {
@@ -94,7 +97,7 @@ public class Door extends AbstractEntity implements IOpenable {
                     GUIManager.appendOutput(key == null ? "É chiusa a chiave." : "Non funziona.");
                     triggerEvent(EventType.OPEN_LOCKED);
 
-                    return false;
+                    return NO_MOVE;
                 }
             }
         }
@@ -106,12 +109,12 @@ public class Door extends AbstractEntity implements IOpenable {
 
             GUIManager.appendOutput("Hai aperto: " + getName());
             triggerEvent(EventType.OPEN_UNLOCKED);
-            return true;
+            return NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("É giá aperta.");
         }
 
-        return false;
+        return NO_MOVE;
     }
 
     @Override

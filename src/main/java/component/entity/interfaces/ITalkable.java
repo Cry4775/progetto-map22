@@ -1,5 +1,7 @@
 package component.entity.interfaces;
 
+import engine.MoveInformations.ActionState;
+
 public interface ITalkable extends IInteractable {
-    public boolean talk();
+    public ActionState talk();
 }

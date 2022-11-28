@@ -9,6 +9,7 @@ import component.entity.AbstractEntity;
 import component.entity.interfaces.ILightSource;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -52,10 +53,10 @@ public class LightSourceItem extends BasicItem implements ILightSource {
     }
 
     @Override
-    public boolean turnOn() {
+    public ActionState turnOn() {
         if (!on) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             if (requiredItem != null && !requiredItem.isPickedUp()) {
                 GUIManager.appendOutput("Non puoi farlo senza lo strumento adatto.");
@@ -64,27 +65,27 @@ public class LightSourceItem extends BasicItem implements ILightSource {
                 GUIManager.appendOutput("Hai acceso: " + getName());
                 // TODO EVENTO
 
-                return true;
+                return ActionState.NORMAL_ACTION;
             }
         } else {
             GUIManager.appendOutput(getName() + " é giá acceso.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override
-    public boolean turnOff() {
+    public ActionState turnOff() {
         if (on) {
             on = false;
             GUIManager.appendOutput("Hai spento: " + getName());
 
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput(getName() + " é giá spento.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

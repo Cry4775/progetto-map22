@@ -10,6 +10,7 @@ import component.room.MutableRoom;
 import component.room.PlayableRoom;
 import engine.GameManager;
 import engine.MoveInformations;
+import engine.MoveInformations.MovementState;
 import gui.GUIManager;
 
 public class ObjectEvent extends AbstractEvent {
@@ -99,8 +100,8 @@ public class ObjectEvent extends AbstractEvent {
 
         if (teleportsPlayerToRoom != null) {
             MoveInformations status = GameManager.getInstanceCurrentMoveInfos();
-            status.setWarp(true);
-            status.setWarpDestination(teleportsPlayerToRoom);
+            status.setState(null, MovementState.TELEPORT);
+            status.setTeleportDestination(teleportsPlayerToRoom);
         }
 
         if (destroyOnTrigger) {

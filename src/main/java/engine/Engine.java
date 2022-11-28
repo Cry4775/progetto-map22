@@ -24,6 +24,8 @@ import component.entity.object.FireObject;
 import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
+import engine.MoveInformations.ActionState;
+import engine.MoveInformations.MovementState;
 import engine.command.CommandType;
 import engine.database.DBManager;
 import engine.parser.Parser;
@@ -58,7 +60,7 @@ public class Engine {
 
             DBManager.createDB();
             gameManager = GameManager.getInstance();
-            gameManager.initialize();
+            gameManager.initialize(GUIManager::askLoadingConfirmation);
 
             Set<String> stopwords = Utils.loadFileListInSet(new File("resources/stopwords"));
             parser = new Parser(stopwords, gameManager.getCommands());
@@ -117,7 +119,7 @@ public class Engine {
 
     private static void processCommand(ParserResult p) {
         PlayableRoom currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
-        boolean actionPerformed = false;
+        ActionState actionState = null;
 
         // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
         CommandType commandType = p.getCommand().getType();
@@ -125,7 +127,12 @@ public class Engine {
         if (isMovementCommand(commandType)) {
             if (isMovementGranted(commandType)) {
                 gameManager.moveTo(currentPlayableRoom.getRoomAt(commandType));
-                actionPerformed = true;
+
+                if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
+                    currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
+                } else {
+                    currentPlayableRoom = null;
+                }
             }
         } else {
             AbstractEntity roomObj = p.getRoomObject();
@@ -174,7 +181,7 @@ public class Engine {
                         if (anyObj instanceof IPickupable) {
                             IPickupable pickupObj = (IPickupable) anyObj;
 
-                            actionPerformed = pickupObj.pickup(gameManager.getInventory());
+                            actionState = pickupObj.pickup(gameManager.getInventory());
                         } else {
                             GUIManager.appendOutput("Non puoi raccogliere questo oggetto.");
                         }
@@ -189,7 +196,7 @@ public class Engine {
                         if (anyObj instanceof IOpenable) {
                             IOpenable openableObj = (IOpenable) anyObj;
 
-                            actionPerformed = openableObj.open(invObj);
+                            actionState = openableObj.open(invObj);
                         } else if (anyObj instanceof UnopenableDoor) {
                             UnopenableDoor fakeDoor = (UnopenableDoor) anyObj;
 
@@ -208,7 +215,7 @@ public class Engine {
                         if (anyObj instanceof IPushable) {
                             IPushable pushableObj = (IPushable) anyObj;
 
-                            actionPerformed = pushableObj.push();
+                            actionState = pushableObj.push();
                         } else {
                             GUIManager.appendOutput("Non puoi premere " + anyObj.getName());
                         }
@@ -223,7 +230,7 @@ public class Engine {
                         if (anyObj instanceof IPullable) {
                             IPullable pullableObj = (IPullable) anyObj;
 
-                            actionPerformed = pullableObj.pull();
+                            actionState = pullableObj.pull();
                         } else {
                             GUIManager.appendOutput("Non puoi tirare " + anyObj.getName());
                         }
@@ -238,7 +245,7 @@ public class Engine {
                         if (roomObj instanceof IMovable) {
                             IMovable movableObj = (IMovable) roomObj;
 
-                            actionPerformed = movableObj.move();
+                            actionState = movableObj.move();
                         } else {
                             GUIManager.appendOutput("Non puoi spostare " + roomObj.getName());
                         }
@@ -253,7 +260,7 @@ public class Engine {
                         if (roomObj instanceof AbstractContainer) {
                             AbstractContainer container = (AbstractContainer) roomObj;
 
-                            actionPerformed = container.insert(invObj, gameManager.getInventory());
+                            actionState = container.insert(invObj, gameManager.getInventory());
                         } else {
                             GUIManager.appendOutput("Non puoi farlo.");
                         }
@@ -278,7 +285,7 @@ public class Engine {
                         if (invObj instanceof IWearable) {
                             IWearable wearable = (IWearable) invObj;
 
-                            actionPerformed = wearable.wear();
+                            actionState = wearable.wear();
                         } else {
                             GUIManager.appendOutput("Non puoi indossarlo.");
                         }
@@ -295,7 +302,7 @@ public class Engine {
                         if (invObj instanceof IWearable) {
                             IWearable wearable = (IWearable) invObj;
 
-                            actionPerformed = wearable.unwear();
+                            actionState = wearable.unwear();
                         } else {
                             GUIManager.appendOutput("Non puoi farlo.");
                         }
@@ -310,7 +317,7 @@ public class Engine {
                         if (anyObj instanceof ISwitch) {
                             ISwitch switchObj = (ISwitch) anyObj;
 
-                            actionPerformed = switchObj.turnOn();
+                            actionState = switchObj.turnOn();
                         } else {
                             GUIManager.appendOutput("Non puoi accenderlo.");
                         }
@@ -325,14 +332,14 @@ public class Engine {
                         if (anyObj instanceof ISwitch) {
                             ISwitch switchObj = (ISwitch) anyObj;
 
-                            actionPerformed = switchObj.turnOff();
+                            actionState = switchObj.turnOff();
                         } else if (anyObj instanceof FireObject) {
                             FireObject fire = (FireObject) anyObj;
 
                             if (invObj instanceof IFluid) {
                                 IFluid fluid = (IFluid) invObj;
 
-                                actionPerformed = fire.extinguish(fluid);
+                                actionState = fire.extinguish(fluid);
                             } else if (invObj != null) {
                                 GUIManager.appendOutput("Non puoi spegnerlo con quello. ");
                             } else {
@@ -352,7 +359,7 @@ public class Engine {
                         if (roomObj instanceof ITalkable) {
                             ITalkable talkableObj = (ITalkable) roomObj;
 
-                            actionPerformed = talkableObj.talk();
+                            actionState = talkableObj.talk();
                         } else {
                             GUIManager.appendOutput("Non puoi parlarci.");
                         }
@@ -370,11 +377,11 @@ public class Engine {
                                     IFluid fluid = (IFluid) invObj;
                                     FireObject fire = (FireObject) roomObj;
 
-                                    actionPerformed = fire.extinguish(fluid);
+                                    actionState = fire.extinguish(fluid);
                                 } else if (roomObj instanceof AbstractContainer) {
                                     AbstractContainer container = (AbstractContainer) roomObj;
 
-                                    actionPerformed = container.insert(invObj, gameManager.getInventory());
+                                    actionState = container.insert(invObj, gameManager.getInventory());
                                 } else {
                                     GUIManager.appendOutput("Non puoi versarci il liquido.");
                                 }
@@ -395,7 +402,7 @@ public class Engine {
                         if (anyObj instanceof IReadable) {
                             IReadable readableObj = (IReadable) anyObj;
 
-                            actionPerformed = readableObj.read();
+                            actionState = readableObj.read();
                         } else {
                             GUIManager.appendOutput("Non posso leggerlo.");
                         }
@@ -410,39 +417,45 @@ public class Engine {
             }
         }
 
-        if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
-            currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
-            currentPlayableRoom.processRoomLighting(gameManager.getInventory().getObjects());
-        } else {
-            currentPlayableRoom = null;
-        }
+        MoveInformations moveInfos = gameManager.getCurrentMoveInfos();
+        if (actionState != null)
+            moveInfos.setState(actionState, moveInfos.getMovementState());
 
-        if (actionPerformed) {
-            GUIManager.increaseActionsCounter();
-            gameManager.getInventory().checkForDestroyableItems();
-        }
+        if (moveInfos.getMovementState() != null) {
+            switch (moveInfos.getMovementState()) {
+                case POSITION_CHANGED:
+                    if (currentPlayableRoom != null) {
+                        GUIManager.appendOutput(currentPlayableRoom.processRoomEvent());
+                    }
+                    break;
+                case BLOCKED_DOOR:
+                    GUIManager.appendOutput("La porta é chiusa, dovrei aprirla prima.");
+                    break;
+                case BLOCKED_WALL:
+                    GUIManager.appendOutput(moveInfos.getWall().getTrespassingWhenLockedText());
+                    break;
+                case DARK_ROOM:
+                    GUIManager.appendOutput("Meglio non avventurarsi nel buio.");
+                    break;
+                case NO_ROOM:
+                    GUIManager.appendOutput("Da quella parte non si puó andare.");
+                    break;
+                case TELEPORT:
+                    gameManager.moveTo(moveInfos.getTeleportDestination());
 
-        if (gameManager.getCurrentMoveInfos().isMovementAttempt()) {
-            if (!gameManager.getCurrentMoveInfos().isPositionChanged() && currentPlayableRoom != null
-                    && currentPlayableRoom.isCurrentlyDark()) {
-                GUIManager.appendOutput("Meglio non avventurarsi nel buio.");
-            } else if (gameManager.getCurrentMoveInfos().isRoomBlockedByDoor()) {
-                GUIManager.appendOutput("La porta é chiusa.");
-            } else if (gameManager.getCurrentMoveInfos().isRoomBlockedByWall()) {
-                GUIManager.appendOutput(gameManager.getCurrentMoveInfos().getWall().getTrespassingWhenLockedText());
-            } else if (gameManager.getCurrentMoveInfos().isPositionChanged()) {
-                if (currentPlayableRoom != null && !currentPlayableRoom.isCurrentlyDark()) {
-                    GUIManager.appendOutput(PlayableRoom.processRoomEvent(gameManager.getCurrentRoom()));
-                }
-            } else {
-                GUIManager.appendOutput("Da quella parte non si puó andare.");
+                    if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
+                        currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
+                        GUIManager.appendOutput(currentPlayableRoom.processRoomEvent());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
-        if (gameManager.getCurrentMoveInfos().isWarp()) {
-            gameManager.moveTo(gameManager.getCurrentMoveInfos().getWarpDestination());
-
-            GUIManager.appendOutput(PlayableRoom.processRoomEvent(gameManager.getCurrentRoom()));
+        if (moveInfos.isActionPerformed()) {
+            GUIManager.increaseActionsCounter();
+            gameManager.getInventory().checkForDestroyableItems();
         }
 
         gameManager.getCurrentMoveInfos().reset();
@@ -453,11 +466,9 @@ public class Engine {
         AbstractRoom requestedRoom = currentRoom.getRoomAt(direction);
         MoveInformations status = gameManager.getCurrentMoveInfos();
 
-        status.setMovementAttempt(true);
-
         InvisibleWall wall = currentRoom.getMagicWall(direction);
         if (wall != null) {
-            status.setRoomBlockedByWall(true);
+            status.setState(null, MovementState.BLOCKED_WALL);
             status.setWall(wall);
             return false;
         }
@@ -469,7 +480,7 @@ public class Engine {
                         if (door.isOpen()) {
                             return true;
                         } else {
-                            status.setRoomBlockedByDoor(true);
+                            status.setState(null, MovementState.BLOCKED_DOOR);
                             return false;
                         }
                     }
@@ -477,6 +488,7 @@ public class Engine {
 
                 return true;
             } else {
+                status.setState(null, MovementState.NO_ROOM);
                 return false;
             }
         } else {
@@ -484,9 +496,11 @@ public class Engine {
                 if (requestedRoom.equals(gameManager.getPreviousRoom())) {
                     return true;
                 } else {
+                    status.setState(null, MovementState.DARK_ROOM);
                     return false;
                 }
             } else {
+                status.setState(null, MovementState.NO_ROOM);
                 return false;
             }
         }

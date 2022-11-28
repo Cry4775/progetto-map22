@@ -8,6 +8,7 @@ import component.entity.interfaces.IWearable;
 import component.event.EventType;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -31,36 +32,36 @@ public class WearableItem extends BasicItem implements IWearable {
     }
 
     @Override
-    public boolean wear() {
+    public ActionState wear() {
         if (!worn) {
             if (!canInteract())
-                return false;
+                return ActionState.NO_MOVE;
 
             worn = true;
 
             GUIManager.appendOutput("Hai indossato: " + getName());
             triggerEvent(EventType.WEAR);
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("L'hai giá indossato.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override
-    public boolean unwear() {
+    public ActionState unwear() {
         if (worn) {
             worn = false;
 
             GUIManager.appendOutput("Hai tolto: " + getName());
             triggerEvent((EventType.WEAR));
-            return true;
+            return ActionState.NORMAL_ACTION;
         } else {
             GUIManager.appendOutput("Non ce l'hai addosso.");
         }
 
-        return false;
+        return ActionState.NO_MOVE;
     }
 
     @Override

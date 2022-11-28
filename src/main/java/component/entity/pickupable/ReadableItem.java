@@ -7,6 +7,7 @@ import java.util.List;
 import component.entity.interfaces.IReadable;
 import component.room.AbstractRoom;
 import engine.Inventory;
+import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 
@@ -20,9 +21,9 @@ public class ReadableItem extends BasicItem implements IReadable {
     }
 
     @Override
-    public boolean read() {
+    public ActionState read() {
         if (!canInteract())
-            return false;
+            return ActionState.NO_MOVE;
 
         if (readText != null && !readText.isEmpty()) {
             GUIManager.appendOutput(readText);
@@ -31,7 +32,7 @@ public class ReadableItem extends BasicItem implements IReadable {
         }
 
         // TODO EVENTO
-        return true;
+        return ActionState.NORMAL_ACTION;
     }
 
     @Override
