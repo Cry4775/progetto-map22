@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.common.collect.Multimap;
 import component.entity.AbstractEntity;
+import component.entity.Entities;
 import component.entity.interfaces.IFillable;
 import component.entity.interfaces.IFluid;
 import component.entity.interfaces.IPickupable;
@@ -194,16 +195,11 @@ public abstract class AbstractContainer extends AbstractEntity {
         return result;
     }
 
-    public static void addObjectToContainerId(AbstractEntity object,
-            List<AbstractEntity> list, String id) {
-        for (AbstractEntity obj : list) {
-            if (obj instanceof AbstractContainer) {
-                if (obj.getId().equals(id)) {
-                    AbstractContainer container = (AbstractContainer) obj;
-
-                    container.add(object);
-                    return;
-                }
+    public static void addObjectToContainerId(AbstractEntity object, List<AbstractEntity> list, String id) {
+        for (AbstractContainer container : Entities.listCheckedEntities(AbstractContainer.class, list)) {
+            if (container.getId().equals(id)) {
+                container.add(object);
+                return;
             }
         }
     }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import component.room.AbstractRoom;
+import component.room.Rooms;
 
 public class RoomsDirectionSetter<T extends AbstractRoom> implements Runnable {
     List<AbstractRoom> rooms;
@@ -21,17 +22,14 @@ public class RoomsDirectionSetter<T extends AbstractRoom> implements Runnable {
 
     @Override
     public void run() {
-        rooms.stream()
-                .filter(clazz::isInstance)
-                .map(clazz::cast)
+        Rooms.listCheckedRooms(clazz, rooms)
+                .stream()
                 .filter(room -> directionIdGetter.apply(room) != null)
                 .forEach(room -> {
-                    if (directionIdGetter.apply(room) != null) {
-                        for (AbstractRoom linkedRoom : rooms) {
-                            if (directionIdGetter.apply(room).equals(linkedRoom.getId())) {
-                                directionSetter.accept(room, linkedRoom);
-                                return;
-                            }
+                    for (AbstractRoom linkedRoom : rooms) {
+                        if (directionIdGetter.apply(room).equals(linkedRoom.getId())) {
+                            directionSetter.accept(room, linkedRoom);
+                            return;
                         }
                     }
 

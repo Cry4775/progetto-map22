@@ -282,6 +282,7 @@ public abstract class AbstractEntity extends GameComponent {
                 for (AbstractEntity reqItem : objects.get(objId)) {
                     if (reqItem instanceof IWearable) {
                         requiredWearedItemsToInteract.add((IWearable) reqItem);
+                        break;
                     }
                 }
             }

@@ -361,13 +361,9 @@ public class PlayableRoom extends AbstractRoom {
 
     public InvisibleWall getMagicWall(Type direction) {
         if (objects != null) {
-            for (AbstractEntity obj : objects) {
-                if (obj instanceof InvisibleWall) {
-                    InvisibleWall wall = (InvisibleWall) obj;
-
-                    if (wall.isBlocking(direction)) {
-                        return wall;
-                    }
+            for (InvisibleWall wall : Entities.listCheckedEntities(InvisibleWall.class, objects)) {
+                if (wall.isBlocking(direction)) {
+                    return wall;
                 }
             }
         }
