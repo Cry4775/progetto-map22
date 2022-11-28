@@ -26,10 +26,10 @@ import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
 import engine.MoveInformations.ActionState;
 import engine.MoveInformations.MovementState;
-import engine.command.CommandType;
+import engine.command.Command.Type;
 import engine.database.DBManager;
 import engine.parser.Parser;
-import engine.parser.ParserResult;
+import engine.parser.Parser.Result;
 import gui.GUIManager;
 import gui.MainFrame;
 import rest.WeatherFetcher;
@@ -43,6 +43,11 @@ public class Engine {
     private static GameManager gameManager;
 
     private Engine() {}
+
+    private static void requireInitialization() {
+        if (gui == null || parser == null | gameManager == null)
+            throw new IllegalStateException("Engine is not initialized. Must be initialized first.");
+    }
 
     public static void initialize(MainFrame gui) {
         try {
@@ -76,6 +81,8 @@ public class Engine {
     }
 
     public static void commandPerformed(String command) {
+        requireInitialization();
+        gameManager.requireInitialization();
         new Thread("Engine") {
             public void run() {
                 if (!WeatherFetcher.isRaining()) {
@@ -86,9 +93,10 @@ public class Engine {
 
                 if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
                     PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
-                    ParserResult p = parser.parse(command, currentRoom.getObjects(), gameManager.getInventory());
+                    Result p = parser.parse(command, currentRoom.getObjects(), gameManager.getInventory());
 
                     if (command == null) {
+                        GUIManager.appendOutput(currentRoom.processRoomEvent());
                         GUIManager.updateRoomInformations(currentRoom, gameManager.getPreviousRoom());
                         return;
                     }
@@ -117,12 +125,13 @@ public class Engine {
         }.start();
     }
 
-    private static void processCommand(ParserResult p) {
+    private static void processCommand(Result p) {
+        requireInitialization();
+        gameManager.requireInitialization();
+
         PlayableRoom currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
         ActionState actionState = null;
-
-        // TODO controlla tutti i getList e il check != null altrimenti da nullPointer
-        CommandType commandType = p.getCommand().getType();
+        Type commandType = p.getCommand().getType();
 
         if (isMovementCommand(commandType)) {
             if (isMovementGranted(commandType)) {
@@ -418,18 +427,16 @@ public class Engine {
         }
 
         MoveInformations moveInfos = gameManager.getCurrentMoveInfos();
+
         if (actionState != null)
             moveInfos.setState(actionState, moveInfos.getMovementState());
 
         if (moveInfos.getMovementState() != null) {
             switch (moveInfos.getMovementState()) {
                 case POSITION_CHANGED:
-                    if (currentPlayableRoom != null) {
-                        GUIManager.appendOutput(currentPlayableRoom.processRoomEvent());
-                    }
                     break;
                 case BLOCKED_DOOR:
-                    GUIManager.appendOutput("La porta é chiusa, dovrei aprirla prima.");
+                    GUIManager.appendOutput("La porta é chiusa, forse posso aprirla.");
                     break;
                 case BLOCKED_WALL:
                     GUIManager.appendOutput(moveInfos.getWall().getTrespassingWhenLockedText());
@@ -442,33 +449,28 @@ public class Engine {
                     break;
                 case TELEPORT:
                     gameManager.moveTo(moveInfos.getTeleportDestination());
-
-                    if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
-                        currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
-                        GUIManager.appendOutput(currentPlayableRoom.processRoomEvent());
-                    }
-                    break;
-                default:
                     break;
             }
         }
 
         if (moveInfos.isActionPerformed()) {
             GUIManager.increaseActionsCounter();
-            gameManager.getInventory().checkForDestroyableItems();
         }
 
-        gameManager.getCurrentMoveInfos().reset();
+        gameManager.getInventory().checkForDestroyableItems();
+        moveInfos.reset();
     }
 
-    private static boolean isMovementGranted(CommandType direction) {
+    private static boolean isMovementGranted(Type direction) {
+        requireInitialization();
+        gameManager.requireInitialization();
         PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
         AbstractRoom requestedRoom = currentRoom.getRoomAt(direction);
         MoveInformations status = gameManager.getCurrentMoveInfos();
 
         InvisibleWall wall = currentRoom.getMagicWall(direction);
         if (wall != null) {
-            status.setState(null, MovementState.BLOCKED_WALL);
+            status.setState(status.getActionState(), MovementState.BLOCKED_WALL);
             status.setWall(wall);
             return false;
         }
@@ -480,7 +482,7 @@ public class Engine {
                         if (door.isOpen()) {
                             return true;
                         } else {
-                            status.setState(null, MovementState.BLOCKED_DOOR);
+                            status.setState(status.getActionState(), MovementState.BLOCKED_DOOR);
                             return false;
                         }
                     }
@@ -488,7 +490,7 @@ public class Engine {
 
                 return true;
             } else {
-                status.setState(null, MovementState.NO_ROOM);
+                status.setState(status.getActionState(), MovementState.NO_ROOM);
                 return false;
             }
         } else {
@@ -496,17 +498,17 @@ public class Engine {
                 if (requestedRoom.equals(gameManager.getPreviousRoom())) {
                     return true;
                 } else {
-                    status.setState(null, MovementState.DARK_ROOM);
+                    status.setState(status.getActionState(), MovementState.DARK_ROOM);
                     return false;
                 }
             } else {
-                status.setState(null, MovementState.NO_ROOM);
+                status.setState(status.getActionState(), MovementState.NO_ROOM);
                 return false;
             }
         }
     }
 
-    private static boolean isMovementCommand(CommandType commandType) {
+    private static boolean isMovementCommand(Type commandType) {
         switch (commandType) {
             case NORTH:
                 return true;

@@ -7,22 +7,24 @@ import java.util.Set;
 
 public class Command {
 
-    private final CommandType type;
+    public enum Type {
+        END, INVENTORY, NORTH, NORTH_EAST, NORTH_WEST,
+        SOUTH, SOUTH_EAST, SOUTH_WEST, EAST, WEST, UP, DOWN,
+        OPEN, CLOSE, PUSH, PULL, WALK_TO, PICK_UP, TALK_TO,
+        GIVE, USE, LOOK_AT, TURN_ON, TURN_OFF, MOVE, INSERT,
+        WEAR, UNWEAR, POUR, READ, SAVE
+    }
+
+    private final Type type;
 
     private final String name;
 
     private Set<String> alias;
 
-    public Command(CommandType type, String name) {
+    public Command(Type type, String name) {
         this.type = type;
         this.name = name;
         alias = new HashSet<>();
-    }
-
-    public Command(CommandType type, String name, Set<String> alias) {
-        this.type = type;
-        this.name = name;
-        this.alias = alias;
     }
 
     public String getName() {
@@ -45,7 +47,7 @@ public class Command {
         this.alias.add(alias);
     }
 
-    public CommandType getType() {
+    public Type getType() {
         return type;
     }
 

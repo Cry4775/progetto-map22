@@ -13,7 +13,7 @@ import component.entity.container.AbstractContainer;
 import component.entity.doorlike.InvisibleWall;
 import component.entity.interfaces.ILightSource;
 import component.event.RoomEvent;
-import engine.command.CommandType;
+import engine.command.Command.Type;
 import engine.database.DBManager;
 
 public class PlayableRoom extends AbstractRoom {
@@ -359,7 +359,7 @@ public class PlayableRoom extends AbstractRoom {
         obj.setClosestRoomParent(null);
     }
 
-    public InvisibleWall getMagicWall(CommandType direction) {
+    public InvisibleWall getMagicWall(Type direction) {
         if (objects != null) {
             for (AbstractEntity obj : objects) {
                 if (obj instanceof InvisibleWall) {
@@ -374,7 +374,7 @@ public class PlayableRoom extends AbstractRoom {
         return null;
     }
 
-    public AbstractRoom getRoomAt(CommandType direction) {
+    public AbstractRoom getRoomAt(Type direction) {
         switch (direction) {
             case NORTH:
                 return north;

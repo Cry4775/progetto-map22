@@ -33,6 +33,11 @@ public class GameManager {
 
     private GameManager() {}
 
+    protected void requireInitialization() {
+        if (rooms.isEmpty() || commands.isEmpty())
+            throw new IllegalStateException("Game manager is not initialized. Must be initialized first.");
+    }
+
     protected void initialize(IntSupplier loadSaveDialog) {
         if (loadSaveDialog == null)
             throw new Error("Invalid IntSupplier for the loading savedata confirmation dialog.");

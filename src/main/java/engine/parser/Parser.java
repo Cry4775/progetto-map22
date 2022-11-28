@@ -28,7 +28,7 @@ public class Parser {
      * riconosce solo frasi semplici del tipo <azione> <oggetto> <oggetto>.
      * Eventuali articoli o preposizioni vengono semplicemente rimossi.
      */
-    public ParserResult parse(String command, List<AbstractEntity> objects, Inventory inventory) {
+    public Result parse(String command, List<AbstractEntity> objects, Inventory inventory) {
         List<String> tokens = Utils.parseString(command == null ? "" : command, stopwords);
 
         if (!tokens.isEmpty()) {
@@ -51,19 +51,19 @@ public class Parser {
                     }
 
                     if (objRoom != null && objInv != null) {
-                        return new ParserResult(cmd, objRoom, objInv);
+                        return new Result(cmd, objRoom, objInv);
                     } else if (objRoom != null) {
-                        return new ParserResult(cmd, objRoom);
+                        return new Result(cmd, objRoom);
                     } else if (objInv != null) {
-                        return new ParserResult(cmd, null, objInv);
+                        return new Result(cmd, null, objInv);
                     } else {
-                        return new ParserResult(cmd);
+                        return new Result(cmd);
                     }
                 } else {
-                    return new ParserResult(cmd);
+                    return new Result(cmd);
                 }
             } else {
-                return new ParserResult();
+                return new Result();
             }
         } else {
             return null;
@@ -83,16 +83,15 @@ public class Parser {
     private AbstractEntity checkForObject(String token, List<AbstractEntity> objects) {
         if (objects != null) {
             for (AbstractEntity obj : objects) {
-                if ((obj.getName() != null && obj.getName().equals(token))
-                        || (obj.getAlias() != null && obj.getAlias().contains(token))) {
+                if (tokenEqualsObjName(token, obj)) {
                     return obj;
                 } else if (obj instanceof AbstractContainer) {
                     AbstractContainer container = (AbstractContainer) obj;
 
                     if (container.isContentRevealed()) {
                         for (AbstractEntity _obj : AbstractContainer.getAllObjectsInside(container)) {
-                            if (_obj.getName().equals(token)
-                                    || (_obj.getAlias() != null && _obj.getAlias().contains(token))) {
+                            if (tokenEqualsObjName(token, _obj)) {
+                                // Check if the object is inside another container and if that's opened
                                 if (_obj.getParent() instanceof AbstractContainer) {
                                     AbstractContainer parentContainer = (AbstractContainer) _obj.getParent();
 
@@ -100,7 +99,6 @@ public class Parser {
                                         return _obj;
                                     }
                                 }
-
                             }
                         }
                     }
@@ -108,11 +106,8 @@ public class Parser {
                     IFillable fillable = (IFillable) obj;
 
                     if (fillable.isFilled()) {
-                        if (fillable.getEligibleItem().getName().equals(token)
-                                || (fillable.getEligibleItem().getAlias() != null
-                                        && fillable.getEligibleItem().getAlias().contains(token))) {
+                        if (tokenEqualsObjName(token, fillable.getEligibleItem()))
                             return fillable.getEligibleItem();
-                        }
                     }
                 }
             }
@@ -122,6 +117,66 @@ public class Parser {
 
     private AbstractEntity checkForObject(String token, Inventory inventory) {
         return checkForObject(token, inventory.getObjects());
+    }
+
+    private boolean tokenEqualsObjName(String token, AbstractEntity obj) {
+        if (obj != null && token != null) {
+            if (token.equals(obj.getName()) || (obj.getAlias() != null && obj.getAlias().contains(token))) {
+                return true;
+            }
+
+            return false;
+        } else {
+            throw new IllegalArgumentException("Invalid argument, token and obj can't be null.");
+        }
+
+    }
+
+    public class Result {
+        private Command command;
+        private AbstractEntity roomObject;
+        private AbstractEntity invObject;
+
+        public Result() {}
+
+        public Result(Command command) {
+            this.command = command;
+        }
+
+        public Result(Command command, AbstractEntity roomObject) {
+            this.command = command;
+            this.roomObject = roomObject;
+        }
+
+        public Result(Command command, AbstractEntity roomObject, AbstractEntity invObject) {
+            this.command = command;
+            this.roomObject = roomObject;
+            this.invObject = invObject;
+        }
+
+        public Command getCommand() {
+            return command;
+        }
+
+        public AbstractEntity getObject() {
+            if (roomObject != null) {
+                return roomObject;
+            }
+
+            if (invObject != null) {
+                return invObject;
+            }
+
+            return null;
+        }
+
+        public AbstractEntity getRoomObject() {
+            return roomObject;
+        }
+
+        public AbstractEntity getInvObject() {
+            return invObject;
+        }
     }
 
 }

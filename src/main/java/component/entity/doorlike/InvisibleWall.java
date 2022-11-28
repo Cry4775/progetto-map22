@@ -11,7 +11,7 @@ import component.entity.interfaces.IWearable;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 import engine.Inventory;
-import engine.command.CommandType;
+import engine.command.Command.Type;
 import engine.database.DBManager;
 
 public class InvisibleWall extends AbstractEntity {
@@ -101,7 +101,7 @@ public class InvisibleWall extends AbstractEntity {
         }
     }
 
-    public boolean isBlocking(CommandType direction) {
+    public boolean isBlocking(Type direction) {
         PlayableRoom parentRoom = (PlayableRoom) getParent();
         AbstractRoom nextRoom = parentRoom.getRoomAt(direction);
         processRequirements();

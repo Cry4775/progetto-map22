@@ -100,7 +100,7 @@ public class ObjectEvent extends AbstractEvent {
 
         if (teleportsPlayerToRoom != null) {
             MoveInformations status = GameManager.getInstanceCurrentMoveInfos();
-            status.setState(null, MovementState.TELEPORT);
+            status.setState(status.getActionState(), MovementState.TELEPORT);
             status.setTeleportDestination(teleportsPlayerToRoom);
         }
 
