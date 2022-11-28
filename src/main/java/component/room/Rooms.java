@@ -2,8 +2,11 @@ package component.room;
 
 import java.util.ArrayList;
 import java.util.List;
+import utility.Utils;
 
 public class Rooms {
+    private Rooms() {}
+
     public static List<AbstractRoom> getAllRooms(AbstractRoom room) {
         List<AbstractRoom> result = new ArrayList<>();
 
@@ -25,5 +28,10 @@ public class Rooms {
         }
 
         return result;
+    }
+
+    public static <T extends AbstractRoom> List<T> listCheckedRooms(Class<T> clazz,
+            List<AbstractRoom> list) {
+        return Utils.listCheckedObjects(clazz, list);
     }
 }

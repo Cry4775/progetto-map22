@@ -84,4 +84,19 @@ public class Utils {
         return null;
     }
 
+    public static <T> List<T> listCheckedObjects(Class<T> clazz,
+            List<?> list) {
+        List<T> result = new ArrayList<>();
+
+        if (list != null) {
+            for (Object obj : list) {
+                if (clazz.isInstance(obj)) {
+                    result.add(clazz.cast(obj));
+                }
+            }
+        }
+
+        return result;
+    }
+
 }

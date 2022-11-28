@@ -38,9 +38,9 @@ public class GameManager {
             throw new IllegalStateException("Game manager is not initialized. Must be initialized first.");
     }
 
-    protected void initialize(IntSupplier loadSaveDialog) {
-        if (loadSaveDialog == null)
-            throw new Error("Invalid IntSupplier for the loading savedata confirmation dialog.");
+    protected void initialize(IntSupplier loadDataDialog) {
+        if (loadDataDialog == null)
+            throw new IllegalArgumentException("Invalid IntSupplier for the loading savedata confirmation dialog.");
 
         CommandsLoader commandsLoader = new CommandsLoader(commands);
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
@@ -50,7 +50,7 @@ public class GameManager {
 
         if (DBManager.existsSaving()) {
             roomsLoader =
-                    new RoomsLoader(this, loadSaveDialog.getAsInt() == JOptionPane.YES_OPTION ? Mode.DB : Mode.JSON);
+                    new RoomsLoader(this, loadDataDialog.getAsInt() == JOptionPane.YES_OPTION ? Mode.DB : Mode.JSON);
         } else {
             roomsLoader = new RoomsLoader(this, Mode.JSON);
         }

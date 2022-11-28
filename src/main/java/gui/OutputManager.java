@@ -125,7 +125,8 @@ public class OutputManager {
         txtInput.setFocusable(false);
 
         StyledDocument doc = txtPane.getStyledDocument();
-        doc.insertString(doc.getLength(), "\n\n", null);
+        if (doc.getLength() > 0)
+            doc.insertString(doc.getLength(), "\n\n", null);
 
         Timer timer = new Timer(millisPerChar, null);
         AtomicInteger counter = new AtomicInteger(0);

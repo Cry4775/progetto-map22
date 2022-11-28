@@ -2,6 +2,7 @@ package engine;
 
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import component.entity.AbstractEntity;
@@ -72,7 +73,17 @@ public class Engine {
 
             if (!crashed.get()) {
                 GUIManager.createWeatherProgressMonitor();
-                commandPerformed(null);
+                new Thread("Engine-FirstExecute") {
+                    public void run() {
+                        updateRoomInformations();
+
+                        if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
+                            CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
+                            processCutscene(currentRoom);
+                        }
+                    }
+                }.start();
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,23 +94,12 @@ public class Engine {
     public static void commandPerformed(String command) {
         requireInitialization();
         gameManager.requireInitialization();
-        new Thread("Engine") {
-            public void run() {
-                if (!WeatherFetcher.isRaining()) {
-                    SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
-                } else {
-                    SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
-                }
 
+        new Thread("Engine-CommandPerformed") {
+            public void run() {
                 if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
                     PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
                     Result p = parser.parse(command, currentRoom.getObjects(), gameManager.getInventory());
-
-                    if (command == null) {
-                        GUIManager.appendOutput(currentRoom.processRoomEvent());
-                        GUIManager.updateRoomInformations(currentRoom, gameManager.getPreviousRoom());
-                        return;
-                    }
 
                     if (p == null || p.getCommand() == null) {
                         GUIManager.appendOutput("Non capisco quello che mi vuoi dire.");
@@ -107,22 +107,51 @@ public class Engine {
                     } else {
                         processCommand(p);
                     }
-                } else if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
-                    CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
-
-                    GUIManager.updateRoomInformations(currentRoom, gameManager.getPreviousRoom());
-                    GUIManager.waitUntilEnterIsPressed();
-
-                    if (!currentRoom.isFinalRoom()) {
-                        gameManager.proceedToNextRoom();
-                    } else {
-                        gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
-                    }
                 }
 
-                commandPerformed(null);
+                // We're doing it here and not while processing the command because it's not always true that you
+                // should update infos when position changes. It could happen even when position doesn't change.
+                updateRoomInformations();
+
+                if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
+                    CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
+                    processCutscene(currentRoom);
+                }
             }
         }.start();
+    }
+
+    private static void updateRoomInformations() {
+        requireInitialization();
+        gameManager.requireInitialization();
+
+        if (!WeatherFetcher.isRaining()) {
+            SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
+        } else {
+            SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
+        }
+
+        if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
+            PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
+            GUIManager.appendOutput(currentRoom.processRoomEvent());
+        }
+
+        GUIManager.updateRoomInformations(gameManager.getCurrentRoom(), gameManager.getPreviousRoom());
+    }
+
+    private static void processCutscene(CutsceneRoom cutscene) {
+        Objects.requireNonNull(cutscene);
+
+        GUIManager.waitUntilEnterIsPressed();
+
+        if (!cutscene.isFinalRoom()) {
+            gameManager.proceedToNextRoom();
+        } else {
+            gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+            return;
+        }
+
+        updateRoomInformations();
     }
 
     private static void processCommand(Result p) {
@@ -141,6 +170,27 @@ public class Engine {
                     currentPlayableRoom = (PlayableRoom) gameManager.getCurrentRoom();
                 } else {
                     currentPlayableRoom = null;
+                }
+            } else {
+                MoveInformations moveInfos = gameManager.getCurrentMoveInfos();
+                MovementState movementState = moveInfos.getMovementState();
+                if (movementState != null) {
+                    switch (movementState) {
+                        case BLOCKED_DOOR:
+                            GUIManager.appendOutput("La porta é chiusa, forse posso aprirla.");
+                            break;
+                        case BLOCKED_WALL:
+                            GUIManager.appendOutput(moveInfos.getWall().getTrespassingWhenLockedText());
+                            break;
+                        case DARK_ROOM:
+                            GUIManager.appendOutput("Meglio non avventurarsi nel buio.");
+                            break;
+                        case NO_ROOM:
+                            GUIManager.appendOutput("Da quella parte non si puó andare.");
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         } else {
@@ -431,26 +481,8 @@ public class Engine {
         if (actionState != null)
             moveInfos.setState(actionState, moveInfos.getMovementState());
 
-        if (moveInfos.getMovementState() != null) {
-            switch (moveInfos.getMovementState()) {
-                case POSITION_CHANGED:
-                    break;
-                case BLOCKED_DOOR:
-                    GUIManager.appendOutput("La porta é chiusa, forse posso aprirla.");
-                    break;
-                case BLOCKED_WALL:
-                    GUIManager.appendOutput(moveInfos.getWall().getTrespassingWhenLockedText());
-                    break;
-                case DARK_ROOM:
-                    GUIManager.appendOutput("Meglio non avventurarsi nel buio.");
-                    break;
-                case NO_ROOM:
-                    GUIManager.appendOutput("Da quella parte non si puó andare.");
-                    break;
-                case TELEPORT:
-                    gameManager.moveTo(moveInfos.getTeleportDestination());
-                    break;
-            }
+        if (MovementState.TELEPORT == moveInfos.getMovementState()) {
+            gameManager.moveTo(moveInfos.getTeleportDestination());
         }
 
         if (moveInfos.isActionPerformed()) {

@@ -167,22 +167,15 @@ public abstract class AbstractEntity extends GameComponent {
     }
 
     public void processRoomParent(List<AbstractRoom> rooms) {
-        for (AbstractRoom room : rooms) {
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
 
-                if (pRoom.getObjects(Mode.INCLUDE_EVERYTHING).contains(this)) {
-                    if (parent == null)
-                        parent = pRoom;
+        for (PlayableRoom room : Rooms.listCheckedRooms(PlayableRoom.class, rooms)) {
+            if (room.getObjects(Mode.INCLUDE_EVERYTHING).contains(this)) {
+                if (parent == null)
+                    parent = room;
 
-                    for (AbstractRoom _room : Rooms.getAllRooms(pRoom)) {
-                        if (_room instanceof PlayableRoom) {
-                            PlayableRoom _pRoom = (PlayableRoom) _room;
-
-                            if (_pRoom.getObjects(Mode.UNPACK_CONTAINERS).contains(this)) {
-                                closestRoomParent = _pRoom;
-                            }
-                        }
+                for (PlayableRoom _room : Rooms.listCheckedRooms(PlayableRoom.class, Rooms.getAllRooms(room))) {
+                    if (_room.getObjects(Mode.UNPACK_CONTAINERS).contains(this)) {
+                        closestRoomParent = _room;
                     }
                 }
             }
