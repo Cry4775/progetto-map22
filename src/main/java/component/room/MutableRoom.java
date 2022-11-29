@@ -67,12 +67,10 @@ public class MutableRoom extends PlayableRoom {
                         getObjects().addAll(tempList);
 
                         for (AbstractEntity obj : tempList) {
-                            obj.setClosestRoomParentId(getId());
                             obj.setClosestRoomParent(this);
 
                             if (obj instanceof AbstractContainer) {
                                 for (AbstractEntity insideObj : AbstractContainer.getAllObjectsInside(obj)) {
-                                    insideObj.setClosestRoomParentId(getId());
                                     insideObj.setClosestRoomParent(this);
                                 }
                             }

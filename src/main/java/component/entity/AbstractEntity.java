@@ -29,20 +29,17 @@ public abstract class AbstractEntity extends GameComponent {
 
     private Set<String> alias = new HashSet<>();
 
-    private boolean destroyFromInventory = false;
-
     private GameComponent parent;
-
     private PlayableRoom closestRoomParent;
-    private String closestRoomParentId;
 
     private List<ObjectEvent> events = new ArrayList<>();
 
     private List<String> requiredWearedItemsIdToInteract = new ArrayList<>();
-
     private List<IWearable> requiredWearedItemsToInteract = new ArrayList<>();
 
     private String failedInteractionMessage;
+
+    private boolean destroyFromInventory = false;
 
     protected AbstractEntity(ResultSet resultSet) throws SQLException {
         super(resultSet);
@@ -70,10 +67,6 @@ public abstract class AbstractEntity extends GameComponent {
         }
 
         stm.close();
-    }
-
-    public void setClosestRoomParentId(String closestRoomParentId) {
-        this.closestRoomParentId = closestRoomParentId;
     }
 
     protected String getFailedInteractionMessage() {
@@ -171,11 +164,14 @@ public abstract class AbstractEntity extends GameComponent {
                 if (parent == null)
                     parent = room;
 
-                for (PlayableRoom _room : Rooms.listCheckedRooms(PlayableRoom.class, Rooms.getAllRooms(room))) {
-                    if (_room.getObjects(Mode.UNPACK_CONTAINERS).contains(this)) {
-                        closestRoomParent = _room;
+                if (closestRoomParent == null) {
+                    for (PlayableRoom _room : Rooms.listCheckedRooms(PlayableRoom.class, Rooms.getAllRooms(room))) {
+                        if (_room.getObjects(Mode.UNPACK_CONTAINERS).contains(this)) {
+                            closestRoomParent = _room;
+                        }
                     }
                 }
+                return;
             }
         }
     }
@@ -266,10 +262,10 @@ public abstract class AbstractEntity extends GameComponent {
     public void loadObjEvents() throws SQLException {
         PreparedStatement stm;
 
-        if (closestRoomParentId != null) {
+        if (closestRoomParent != null) {
             stm = DBManager.getConnection()
                     .prepareStatement("SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId()
-                            + "' AND ROOMID = '" + closestRoomParentId + "'");
+                            + "' AND ROOMID = '" + closestRoomParent.getId() + "'");
         } else {
             stm = DBManager.getConnection()
                     .prepareStatement(
@@ -356,7 +352,7 @@ public abstract class AbstractEntity extends GameComponent {
             for (AbstractRoom room : allRooms) {
                 if (room.getId().equals(roomId)) {
                     PlayableRoom pRoom = (PlayableRoom) room;
-                    closestRoomParentId = roomId;
+                    closestRoomParent = pRoom;
 
                     if (containerId != null) {
                         AbstractContainer

@@ -700,7 +700,7 @@ public class DBManager {
             for (AbstractRoom room : allRooms) {
                 if (room.getId().equals(roomId)) {
                     PlayableRoom pRoom = (PlayableRoom) room;
-                    object.setClosestRoomParentId(roomId);
+                    object.setClosestRoomParent(pRoom);
 
                     if (containerId != null) {
                         AbstractContainer.addObjectToContainerId(

@@ -169,7 +169,7 @@ public abstract class AbstractContainer extends AbstractEntity {
             if (roomId.equals(room.getId())) {
                 PlayableRoom pRoom = (PlayableRoom) room;
 
-                setClosestRoomParentId(roomId);
+                setClosestRoomParent(pRoom);
 
                 pRoom.getObjects().add(this);
             }

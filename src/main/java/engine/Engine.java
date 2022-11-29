@@ -228,7 +228,6 @@ public class Engine {
 
                 case LOOK_AT: {
                     if (anyObj != null) {
-                        System.out.println(anyObj.toString());
                         anyObj.lookAt();
                     } else {
                         GUIManager.appendOutput("Non trovo cosa esaminare.");
