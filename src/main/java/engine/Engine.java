@@ -133,7 +133,7 @@ public class Engine {
 
         if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
             PlayableRoom currentRoom = (PlayableRoom) gameManager.getCurrentRoom();
-            GUIManager.appendOutput(currentRoom.processRoomEvent());
+            currentRoom.triggerEvent();
         }
 
         GUIManager.updateRoomInformations(gameManager.getCurrentRoom(), gameManager.getPreviousRoom());
@@ -507,7 +507,7 @@ public class Engine {
             return false;
         }
 
-        if (!currentRoom.isCurrentlyDark()) {
+        if (!currentRoom.isDark()) {
             if (requestedRoom != null) {
                 for (Door door : Entities.listCheckedEntities(Door.class, currentRoom.getObjects())) {
                     if (requestedRoom.equals(door.getBlockedRoom())) {

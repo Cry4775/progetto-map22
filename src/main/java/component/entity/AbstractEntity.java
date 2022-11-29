@@ -38,7 +38,6 @@ public abstract class AbstractEntity extends GameComponent {
     private List<IWearable> requiredWearedItemsToInteract = new ArrayList<>();
 
     private String failedInteractionMessage;
-
     private boolean destroyFromInventory = false;
 
     protected AbstractEntity(ResultSet resultSet) throws SQLException {
@@ -176,7 +175,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    private void processEventReferences(Multimap<String, AbstractEntity> objects,
+    private final void processEventReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (events != null) {
             for (ObjectEvent evt : events) {
@@ -259,7 +258,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void loadObjEvents() throws SQLException {
+    public final void loadObjEvents() throws SQLException {
         PreparedStatement stm;
 
         if (closestRoomParent != null) {
@@ -280,7 +279,7 @@ public abstract class AbstractEntity extends GameComponent {
         stm.close();
     }
 
-    private void saveEventsOnDB() throws SQLException {
+    private final void saveEventsOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement(
                         "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -300,7 +299,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    private void saveAliasesOnDB() throws SQLException {
+    private final void saveAliasesOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement("INSERT INTO SAVEDATA.Alias values (?, ?)");
 
@@ -313,7 +312,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    private void saveRequiredWearedItemsOnDB() throws SQLException {
+    private final void saveRequiredWearedItemsOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.RequiredWearedItem values (?, ?, ?)");
 
@@ -327,7 +326,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    protected void saveExternalsOnDB() throws SQLException {
+    protected final void saveExternalsOnDB() throws SQLException {
         saveAliasesOnDB();
         saveRequiredWearedItemsOnDB();
         saveEventsOnDB();

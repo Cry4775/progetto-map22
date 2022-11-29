@@ -55,7 +55,7 @@ public class GUIManager {
     public static void updateRoomInformations(AbstractRoom currentRoom, AbstractRoom previousRoom) {
         if (currentRoom instanceof PlayableRoom) {
             PlayableRoom pRoom = (PlayableRoom) currentRoom;
-            updateRoomInformations(currentRoom, previousRoom, pRoom.isCurrentlyDark() ? true : false);
+            updateRoomInformations(currentRoom, previousRoom, pRoom.isDark() ? true : false);
         } else {
             updateRoomInformations(currentRoom, previousRoom, false);
         }

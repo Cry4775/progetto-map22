@@ -15,6 +15,7 @@ import component.entity.interfaces.ILightSource;
 import component.event.RoomEvent;
 import engine.command.Command.Type;
 import engine.database.DBManager;
+import gui.GUIManager;
 
 public class PlayableRoom extends AbstractRoom {
     public PlayableRoom(ResultSet resultSet) throws SQLException {
@@ -66,25 +67,9 @@ public class PlayableRoom extends AbstractRoom {
 
     private RoomEvent event;
 
-    private boolean currentlyDark = false;
+    private boolean dark = false;
 
     private boolean darkByDefault = false;
-
-    public boolean isDarkByDefault() {
-        return darkByDefault;
-    }
-
-    public void setDarkByDefault(boolean darkByDefault) {
-        this.darkByDefault = darkByDefault;
-    }
-
-    public boolean isCurrentlyDark() {
-        return currentlyDark;
-    }
-
-    public void setCurrentlyDark(boolean currentlyDark) {
-        this.currentlyDark = currentlyDark;
-    }
 
     public AbstractRoom getSouth() {
         return south;
@@ -150,6 +135,22 @@ public class PlayableRoom extends AbstractRoom {
         this.northEast = northEast;
     }
 
+    public AbstractRoom getUp() {
+        return up;
+    }
+
+    public void setUp(AbstractRoom up) {
+        this.up = up;
+    }
+
+    public AbstractRoom getDown() {
+        return down;
+    }
+
+    public void setDown(AbstractRoom down) {
+        this.down = down;
+    }
+
     public String getSouthWestId() {
         return southWestId;
     }
@@ -182,45 +183,20 @@ public class PlayableRoom extends AbstractRoom {
         return eastId;
     }
 
-    public String processRoomEvent() {
-        if (currentlyDark)
-            return "";
-
-        RoomEvent evt = getEvent();
-        if (evt != null) {
-            if (!evt.isTriggered()) {
-                StringBuilder outString = new StringBuilder();
-
-                if (evt.getText() != null && !evt.getText().isEmpty()) {
-                    outString.append("\n\n" + evt.getText());
-                }
-
-                evt.setTriggered(true);
-
-                return outString.toString();
-            }
-        }
-        return "";
+    public String getUpId() {
+        return upId;
     }
 
-    public void processRoomLighting(List<AbstractEntity> inventory) {
-        List<ILightSource> invLightSources = Entities
-                .listCheckedInterfaceEntities(ILightSource.class, inventory);
+    public String getDownId() {
+        return downId;
+    }
 
-        if (darkByDefault) {
-            for (ILightSource lightSource : invLightSources) {
-                if (currentlyDark) {
-                    if (lightSource.isOn()) {
-                        setCurrentlyDark(false);
-                        break;
-                    }
-                } else {
-                    if (!lightSource.isOn()) {
-                        setCurrentlyDark(true);
-                    }
-                }
-            }
-        }
+    protected boolean isDarkByDefault() {
+        return darkByDefault;
+    }
+
+    public boolean isDark() {
+        return dark;
     }
 
     public enum Mode {
@@ -246,20 +222,13 @@ public class PlayableRoom extends AbstractRoom {
                 }
             }
         } else if (mode == Mode.INCLUDE_NEW_ROOMS) {
-            for (AbstractRoom room : Rooms.getAllRooms(this)) {
-                if (room instanceof PlayableRoom) {
-                    result.addAll(((PlayableRoom) room).getObjects());
-                }
+            for (PlayableRoom room : Rooms.listCheckedRooms(PlayableRoom.class, Rooms.getAllRooms(this))) {
+                result.addAll(room.getObjects());
             }
-
         } else if (mode == Mode.INCLUDE_EVERYTHING) {
-            List<AbstractEntity> buffer = new ArrayList<>();
+            result.addAll(getObjects(Mode.INCLUDE_NEW_ROOMS));
 
-            for (AbstractRoom room : Rooms.getAllRooms(this)) {
-                if (room instanceof PlayableRoom) {
-                    result.addAll(((PlayableRoom) room).getObjects());
-                }
-            }
+            List<AbstractEntity> buffer = new ArrayList<>();
 
             for (AbstractEntity obj : result) {
                 buffer.addAll(AbstractContainer.getAllObjectsInside(obj));
@@ -281,71 +250,7 @@ public class PlayableRoom extends AbstractRoom {
         return result;
     }
 
-    public AbstractRoom getUp() {
-        return up;
-    }
-
-    public String getUpId() {
-        return upId;
-    }
-
-    public AbstractRoom getDown() {
-        return down;
-    }
-
-    public String getDownId() {
-        return downId;
-    }
-
-    public void setUp(AbstractRoom up) {
-        this.up = up;
-    }
-
-    public void setDown(AbstractRoom down) {
-        this.down = down;
-    }
-
-    public void setSouthId(String southId) {
-        this.southId = southId;
-    }
-
-    public void setNorthId(String northId) {
-        this.northId = northId;
-    }
-
-    public void setSouthWestId(String southWestId) {
-        this.southWestId = southWestId;
-    }
-
-    public void setNorthWestId(String northWestId) {
-        this.northWestId = northWestId;
-    }
-
-    public void setSouthEastId(String southEastId) {
-        this.southEastId = southEastId;
-    }
-
-    public void setNorthEastId(String northEastId) {
-        this.northEastId = northEastId;
-    }
-
-    public void setEastId(String eastId) {
-        this.eastId = eastId;
-    }
-
-    public void setWestId(String westId) {
-        this.westId = westId;
-    }
-
-    public void setUpId(String upId) {
-        this.upId = upId;
-    }
-
-    public void setDownId(String downId) {
-        this.downId = downId;
-    }
-
-    public RoomEvent getEvent() {
+    protected RoomEvent getEvent() {
         return event;
     }
 
@@ -394,6 +299,36 @@ public class PlayableRoom extends AbstractRoom {
                 return down;
             default:
                 return null;
+        }
+    }
+
+    public void triggerEvent() {
+        if (dark)
+            return;
+
+        if (event != null) {
+            GUIManager.appendOutput(event.getText());
+            event = null;
+        }
+    }
+
+    public void processRoomLighting(List<AbstractEntity> inventory) {
+        List<ILightSource> invLightSources = Entities
+                .listCheckedInterfaceEntities(ILightSource.class, inventory);
+
+        if (darkByDefault) {
+            for (ILightSource lightSource : invLightSources) {
+                if (dark) {
+                    if (lightSource.isOn()) {
+                        dark = false;
+                        break;
+                    }
+                } else {
+                    if (!lightSource.isOn()) {
+                        dark = true;
+                    }
+                }
+            }
         }
     }
 

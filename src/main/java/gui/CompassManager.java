@@ -103,7 +103,7 @@ public class CompassManager {
         if (currentRoom instanceof PlayableRoom) {
             PlayableRoom currentPRoom = (PlayableRoom) currentRoom;
 
-            if (!currentPRoom.isCurrentlyDark()) {
+            if (!currentPRoom.isDark()) {
                 updateCompassLabel(currentPRoom.getNorth(), northLbl);
                 updateCompassLabel(currentPRoom.getSouth(), southLbl);
                 updateCompassLabel(currentPRoom.getWest(), westLbl);
