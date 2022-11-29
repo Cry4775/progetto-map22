@@ -10,7 +10,7 @@ public abstract class AbstractEvent {
 
     private boolean triggered;
 
-    public AbstractEvent(ResultSet resultSet) throws SQLException {
+    protected AbstractEvent(ResultSet resultSet) throws SQLException {
         eventType = EventType.valueOf(resultSet.getString(3));
         text = resultSet.getString(4);
     }
@@ -19,16 +19,8 @@ public abstract class AbstractEvent {
         return eventType;
     }
 
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
-    }
-
     public String getText() {
         return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public boolean isTriggered() {

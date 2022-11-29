@@ -8,7 +8,7 @@ public abstract class AbstractRoom extends GameComponent {
 
     private String imgPath;
 
-    public AbstractRoom(ResultSet resultSet) throws SQLException {
+    protected AbstractRoom(ResultSet resultSet) throws SQLException {
         super(resultSet);
         imgPath = resultSet.getString(4);
     }
@@ -17,11 +17,7 @@ public abstract class AbstractRoom extends GameComponent {
         return imgPath;
     }
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
-    public void setSecondaryId(char value) {
+    protected void setSecondaryId(char value) {
         setId(getId() + Character.toString(value));
     }
 }

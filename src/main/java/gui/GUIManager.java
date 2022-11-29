@@ -66,11 +66,11 @@ public class GUIManager {
         String description;
         if (dark) {
             CompassManager.updateCompass(currentRoom, previousRoom);
-            updateRoomInformations("Buio", "resources/img/buio.jpg");
+            updateRoomLabels("Buio", "resources/img/buio.jpg");
             description = "È completamente buio e non riesci a vedere niente.";
         } else {
             CompassManager.updateCompass(currentRoom, previousRoom);
-            updateRoomInformations(currentRoom.getName(), currentRoom.getImgPath());
+            updateRoomLabels(currentRoom.getName(), currentRoom.getImgPath());
             description = currentRoom.getDescription();
         }
 
@@ -82,7 +82,7 @@ public class GUIManager {
         printOutput();
     }
 
-    private static void updateRoomInformations(String roomName, String imageURL) {
+    private static void updateRoomLabels(String roomName, String imageURL) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 gui.getLblRoomName().setText(roomName);
@@ -93,10 +93,10 @@ public class GUIManager {
     }
 
     public static void showFatalError(String message) {
-        gui.showFatalError(message);
+        gui.createFatalErrorDialog(message);
     }
 
-    public static int askLoadingConfirmation() {
+    public static int showLoadingConfirmation() {
         AtomicInteger chosenOption = new AtomicInteger();
 
         try {

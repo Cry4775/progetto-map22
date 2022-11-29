@@ -66,7 +66,7 @@ public class Engine {
 
             DBManager.createDB();
             gameManager = GameManager.getInstance();
-            gameManager.initialize(GUIManager::askLoadingConfirmation);
+            gameManager.initialize(GUIManager::showLoadingConfirmation);
 
             Set<String> stopwords = Utils.loadFileListInSet(new File("resources/stopwords"));
             parser = new Parser(stopwords, gameManager.getCommands());
@@ -228,6 +228,7 @@ public class Engine {
 
                 case LOOK_AT: {
                     if (anyObj != null) {
+                        System.out.println(anyObj.toString());
                         anyObj.lookAt();
                     } else {
                         GUIManager.appendOutput("Non trovo cosa esaminare.");

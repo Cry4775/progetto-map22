@@ -44,13 +44,11 @@ public abstract class AbstractEntity extends GameComponent {
 
     private String failedInteractionMessage;
 
-    public AbstractEntity(ResultSet resultSet) throws SQLException {
+    protected AbstractEntity(ResultSet resultSet) throws SQLException {
         super(resultSet);
 
-        PreparedStatement stm =
-                DBManager.getConnection()
-                        .prepareStatement(
-                                "SELECT * FROM SAVEDATA.RequiredWearedItem WHERE ID = " + getId());
+        PreparedStatement stm = DBManager.getConnection().prepareStatement(
+                "SELECT * FROM SAVEDATA.RequiredWearedItem WHERE ID = " + getId());
         ResultSet rs = stm.executeQuery();
 
         while (rs.next()) {
@@ -63,8 +61,8 @@ public abstract class AbstractEntity extends GameComponent {
 
         stm.close();
 
-        stm = DBManager.getConnection()
-                .prepareStatement("SELECT * FROM SAVEDATA.Alias WHERE ID = " + getId());
+        stm = DBManager.getConnection().prepareStatement(
+                "SELECT * FROM SAVEDATA.Alias WHERE ID = " + getId());
         rs = stm.executeQuery();
 
         while (rs.next()) {
@@ -78,7 +76,7 @@ public abstract class AbstractEntity extends GameComponent {
         this.closestRoomParentId = closestRoomParentId;
     }
 
-    public String getFailedInteractionMessage() {
+    protected String getFailedInteractionMessage() {
         return failedInteractionMessage;
     }
 
@@ -118,15 +116,15 @@ public abstract class AbstractEntity extends GameComponent {
         this.parent = parent;
     }
 
-    public List<String> getRequiredWearedItemsIdToInteract() {
+    protected List<String> getRequiredWearedItemsIdToInteract() {
         return requiredWearedItemsIdToInteract;
     }
 
-    public List<IWearable> getRequiredWearedItemsToInteract() {
+    protected List<IWearable> getRequiredWearedItemsToInteract() {
         return requiredWearedItemsToInteract;
     }
 
-    public void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
+    protected void setRequiredWearedItemsToInteract(List<IWearable> requiredWearedItemsToInteract) {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
@@ -140,14 +138,14 @@ public abstract class AbstractEntity extends GameComponent {
         triggerEvent(EventType.LOOK_AT);
     }
 
-    public void triggerEvent(EventType type) {
+    protected void triggerEvent(EventType type) {
         ObjectEvent evt = ObjectEvent.getEvent(events, type);
 
         if (evt != null)
             evt.trigger(this);
     }
 
-    public boolean canInteract() {
+    protected boolean canInteract() {
         if (getRequiredWearedItemsToInteract() != null) {
             for (IWearable wearable : getRequiredWearedItemsToInteract()) {
                 if (!wearable.isWorn()) {
@@ -166,7 +164,7 @@ public abstract class AbstractEntity extends GameComponent {
         processEventReferences(objects, rooms);
     }
 
-    public void processRoomParent(List<AbstractRoom> rooms) {
+    private void processRoomParent(List<AbstractRoom> rooms) {
 
         for (PlayableRoom room : Rooms.listCheckedRooms(PlayableRoom.class, rooms)) {
             if (room.getObjects(Mode.INCLUDE_EVERYTHING).contains(this)) {
@@ -182,7 +180,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void processEventReferences(Multimap<String, AbstractEntity> objects,
+    private void processEventReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (events != null) {
             for (ObjectEvent evt : events) {
@@ -191,16 +189,16 @@ public abstract class AbstractEntity extends GameComponent {
                 boolean teleportRoomDone = false;
 
                 if (evt.isUpdatingParentRoom()) {
-                    if (parent instanceof PlayableRoom) {
-                        if (parent instanceof MutableRoom) {
-                            evt.setParentRoom((MutableRoom) parent);
-                            parentRoomDone = true;
-                        } else {
-                            throw new Error("Cannot link " + getName() + " ("
-                                    + getId()
-                                    + ") object event reference. It asks to update its parent room, but it's not a MutableRoom. Check the JSON file.");
-                        }
+                    if (closestRoomParent instanceof MutableRoom) {
+                        evt.setParentRoom((MutableRoom) closestRoomParent);
+                        parentRoomDone = true;
+                    } else {
+                        throw new Error("Cannot link " + this + " object event reference. "
+                                + "It asks to update its parent room " + closestRoomParent
+                                + ", but it's not a MutableRoom. Check the JSON file.");
                     }
+                } else {
+                    parentRoomDone = true;
                 }
 
                 for (AbstractRoom room : rooms) {
@@ -211,34 +209,13 @@ public abstract class AbstractEntity extends GameComponent {
                                     evt.setUpdateTargetRoom((MutableRoom) room);
                                     targetRoomDone = true;
                                 } else {
-                                    throw new Error("Cannot link " + getName() + " ("
-                                            + getId()
-                                            + ") object event reference. It asks to update a target room, but it's not a MutableRoom. Check the JSON file.");
+                                    throw new Error("Cannot link " + this + " object event reference. "
+                                            + "It asks to update a target room " + room
+                                            + ", but it's not a MutableRoom. Check the JSON file.");
                                 }
                             }
                         } else {
                             targetRoomDone = true;
-                        }
-                    }
-
-                    if (!parentRoomDone) {
-                        if (evt.isUpdatingParentRoom()) {
-                            if (room instanceof MutableRoom) {
-                                MutableRoom mRoom = (MutableRoom) room;
-                                if (mRoom.getObjects(Mode.INCLUDE_EVERYTHING).contains(this)) {
-                                    evt.setParentRoom(mRoom);
-                                    parentRoomDone = true;
-                                }
-                            } else if (room instanceof PlayableRoom) {
-                                PlayableRoom pRoom = (PlayableRoom) room;
-                                if (pRoom.getObjects().contains(this)) {
-                                    throw new Error("Cannot link " + getName() + " ("
-                                            + getId()
-                                            + ") object event reference. It asks to update its parent room, but it's not a MutableRoom. Check the JSON file.");
-                                }
-                            }
-                        } else {
-                            parentRoomDone = true;
                         }
                     }
 
@@ -260,17 +237,14 @@ public abstract class AbstractEntity extends GameComponent {
 
                 if (!targetRoomDone) {
                     throw new Error(
-                            "Couldn't find the requested \"updateTargetRoom\" event on " + getName()
-                                    + " (" + getId()
-                                    + "). Check the JSON file for correct room IDs.");
+                            "Couldn't process the requested \"updateTargetRoom\" event on " + this
+                                    + ". Check the JSON file for correct room IDs.");
                 }
 
                 if (!teleportRoomDone) {
                     throw new Error(
-                            "Couldn't find the requested \"teleportsPlayerToRoom\" event on "
-                                    + getName()
-                                    + " (" + getId()
-                                    + "). Check the JSON file for correct room IDs.");
+                            "Couldn't process the requested \"teleportsPlayerToRoom\" event on " + this
+                                    + ". Check the JSON file for correct room IDs.");
                 }
             }
         }
@@ -310,7 +284,7 @@ public abstract class AbstractEntity extends GameComponent {
         stm.close();
     }
 
-    public void saveEventsOnDB() throws SQLException {
+    private void saveEventsOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement(
                         "INSERT INTO SAVEDATA.ObjectEvent values (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -330,7 +304,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void saveAliasesOnDB() throws SQLException {
+    private void saveAliasesOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement("INSERT INTO SAVEDATA.Alias values (?, ?)");
 
@@ -343,7 +317,7 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void saveRequiredWearedItemsOnDB() throws SQLException {
+    private void saveRequiredWearedItemsOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.RequiredWearedItem values (?, ?, ?)");
 
@@ -357,20 +331,20 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
-    public void saveExternalsOnDB() throws SQLException {
+    protected void saveExternalsOnDB() throws SQLException {
         saveAliasesOnDB();
         saveRequiredWearedItemsOnDB();
         saveEventsOnDB();
     }
 
     @Override
-    public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
+    protected void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
         super.setKnownValuesOnStatement(stm);
         stm.setString(4, getClosestRoomParent() != null ? getClosestRoomParent().getId() : null);
         stm.setString(5, getParent() instanceof AbstractContainer ? getParent().getId() : null);
     }
 
-    public void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms, Inventory inventory)
+    protected void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms, Inventory inventory)
             throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
         String containerId = resultSet.getString(DB_CONTAINER_ID_COLUMN);

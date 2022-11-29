@@ -176,7 +176,7 @@ public class MainFrame extends JFrame {
             lblCompassSouthWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_07.png"));
             lblCompassSouthEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
         } catch (IOException e) {
-            showFatalError("Error occurred on loading of compass images. Details: " + e.getMessage());
+            createFatalErrorDialog("Error occurred on loading of compass images. Details: " + e.getMessage());
         }
 
         gridBagConstraints = new GridBagConstraints();
@@ -322,7 +322,7 @@ public class MainFrame extends JFrame {
             lblCompassSouthEastText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
             lblCompassSouthWestText.setFont(compassFont.deriveFont(Font.PLAIN, 15f));
         } catch (Exception e) {
-            showFatalError(e.getMessage());
+            createFatalErrorDialog(e.getMessage());
         }
 
         lypRoomImage.add(noisePanel, new Integer(1));
@@ -357,7 +357,7 @@ public class MainFrame extends JFrame {
         return new ImageIcon(ImageIO.read(inputStream));
     }
 
-    protected void showFatalError(String message) {
+    protected void createFatalErrorDialog(String message) {
         WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 
         SwingUtilities.invokeLater(new Runnable() {

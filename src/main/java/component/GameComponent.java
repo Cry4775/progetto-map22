@@ -11,7 +11,7 @@ public abstract class GameComponent {
 
     private String description;
 
-    public GameComponent(ResultSet resultSet) throws SQLException {
+    protected GameComponent(ResultSet resultSet) throws SQLException {
         id = resultSet.getString(1);
         name = resultSet.getString(2);
         description = resultSet.getString(3);
@@ -29,21 +29,13 @@ public abstract class GameComponent {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public abstract void saveOnDB() throws SQLException;
 
-    public void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
+    protected void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
         stm.setString(1, getId());
         stm.setString(2, getName());
         stm.setString(3, getDescription());
@@ -84,6 +76,11 @@ public abstract class GameComponent {
         } else if (!description.equals(other.description))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + getClass().getSimpleName() + " [id=" + id + ", name=" + name + "])";
     }
 
 }
