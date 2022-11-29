@@ -332,6 +332,7 @@ public class MainFrame extends JFrame {
         txtInput.requestFocus();
         txtInput.setCaretPosition(txtInput.getText().length());
         txtPane.setCaretPosition(txtPane.getDocument().getLength());
+        txtPane.setFocusable(false);
 
         ((DefaultCaret) txtPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         scrOutput.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {

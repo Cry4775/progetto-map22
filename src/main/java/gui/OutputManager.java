@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 public class OutputManager {
@@ -95,7 +98,18 @@ public class OutputManager {
             public void run() {
                 try {
                     if (inputText) {
-                        doc.insertString(doc.getLength(), String.format("\n\n>%s", text), null);
+                        if (txtPane.getStyle("InputBracket") == null) {
+                            Style style = txtPane.addStyle("InputBracket", null);
+                            StyleConstants.setForeground(style, Color.GREEN);
+                        }
+
+                        if (txtPane.getStyle("InputText") == null) {
+                            Style style = txtPane.addStyle("InputText", null);
+                            StyleConstants.setForeground(style, new Color(0, 128, 6));
+                        }
+
+                        doc.insertString(doc.getLength(), "\n\n> ", txtPane.getStyle("InputBracket"));
+                        doc.insertString(doc.getLength(), text, txtPane.getStyle("InputText"));
                     } else {
                         printSlowly(text, 15);
                     }
@@ -138,6 +152,22 @@ public class OutputManager {
                     doc.insertString(doc.getLength(), String.valueOf(message.charAt(counter.getAndIncrement())), null);
                 } catch (BadLocationException ex) {
                     ex.printStackTrace();
+                }
+
+                if (counter.get() > 1) {
+                    try {
+                        if (message.substring(counter.get() - 2, counter.get()).equals(". ")
+                                || message.substring(counter.get() - 2, counter.get()).equals(".\n")) {
+                            Thread.sleep(300);
+                        } else if (message.substring(counter.get() - 2, counter.get()).equals(": ")
+                                || message.substring(counter.get() - 2, counter.get()).equals("..")) {
+                            Thread.sleep(200);
+                        } else if (message.substring(counter.get() - 2, counter.get()).equals("- ")) {
+                            Thread.sleep(100);
+                        }
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 txtPane.setCaretPosition(txtPane.getDocument().getLength());
                 if (counter.get() >= message.length()) {
