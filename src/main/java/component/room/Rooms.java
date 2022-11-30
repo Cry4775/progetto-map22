@@ -2,6 +2,8 @@ package component.room;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import utility.Utils;
 
 public class Rooms {
@@ -34,4 +36,25 @@ public class Rooms {
             List<AbstractRoom> list) {
         return Utils.listCheckedObjects(clazz, list);
     }
+
+    public static <T extends AbstractRoom> void loadDirections(List<AbstractRoom> rooms,
+            Function<T, String> directionIdGetter,
+            BiConsumer<T, AbstractRoom> directionSetter, Class<T> clazz) {
+        Rooms.listCheckedRooms(clazz, rooms)
+                .stream()
+                .filter(room -> directionIdGetter.apply(room) != null)
+                .forEach(room -> {
+                    for (AbstractRoom linkedRoom : rooms) {
+                        if (directionIdGetter.apply(room).equals(linkedRoom.getId())) {
+                            directionSetter.accept(room, linkedRoom);
+                            return;
+                        }
+                    }
+
+                    throw new Error(
+                            "Couldn't link the room (" + room.getId()
+                                    + ") directions. Check the JSON file for correct room directions IDs.\nRemember to not use ID: 0");
+                });
+    }
+
 }

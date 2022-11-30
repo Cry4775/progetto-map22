@@ -42,11 +42,11 @@ public class GameManager {
         if (loadDataDialog == null)
             throw new IllegalArgumentException("Invalid IntSupplier for the loading savedata confirmation dialog.");
 
-        CommandsLoader commandsLoader = new CommandsLoader(commands);
+        Runnable commandsLoader = new CommandsLoader(commands);
         Thread tCommands = new Thread(commandsLoader, "CommandsLoader");
         tCommands.start();
 
-        RoomsLoader roomsLoader;
+        Runnable roomsLoader;
 
         if (DBManager.existsSaving()) {
             roomsLoader =

@@ -17,10 +17,11 @@ import component.entity.AbstractEntity;
 import component.room.AbstractRoom;
 import component.room.CutsceneRoom;
 import component.room.PlayableRoom;
+import component.room.Rooms;
 import engine.GameManager;
 import engine.database.DBManager;
-import engine.loader.json.TypeAdapterHolder;
-import engine.loader.json.TypeAdapterHolder.AdapterType;
+import engine.loader.json.LoaderTypeAdapterHolder;
+import engine.loader.json.LoaderTypeAdapterHolder.AdapterType;
 
 public class RoomsLoader implements Runnable {
 
@@ -61,9 +62,9 @@ public class RoomsLoader implements Runnable {
                     return false;
                 }
             })
-                    .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ENTITIES))
-                    .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.ROOMS))
-                    .registerTypeAdapterFactory(TypeAdapterHolder.get(AdapterType.EVENTS))
+                    .registerTypeAdapterFactory(LoaderTypeAdapterHolder.get(AdapterType.ENTITIES))
+                    .registerTypeAdapterFactory(LoaderTypeAdapterHolder.get(AdapterType.ROOMS))
+                    .registerTypeAdapterFactory(LoaderTypeAdapterHolder.get(AdapterType.EVENTS))
                     .create();
             Type roomsType = new TypeToken<List<AbstractRoom>>() {}.getType();
 
@@ -122,33 +123,39 @@ public class RoomsLoader implements Runnable {
     private void linkRooms() {
         List<AbstractRoom> allRooms = gameManager.listAllRooms();
 
-        Thread east = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getEastId, PlayableRoom::setEast,
-                PlayableRoom.class));
-        Thread west = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getWestId, PlayableRoom::setWest,
-                PlayableRoom.class));
-        Thread north = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getNorthId, PlayableRoom::setNorth,
-                PlayableRoom.class));
-        Thread south = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getSouthId, PlayableRoom::setSouth,
-                PlayableRoom.class));
+        Thread east = new Thread(
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getEastId, PlayableRoom::setEast,
+                        PlayableRoom.class));
+        Thread west = new Thread(
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getWestId, PlayableRoom::setWest,
+                        PlayableRoom.class));
+        Thread north = new Thread(
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getNorthId, PlayableRoom::setNorth,
+                        PlayableRoom.class));
+        Thread south = new Thread(
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getSouthId, PlayableRoom::setSouth,
+                        PlayableRoom.class));
         Thread northEast = new Thread(
-                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getNorthEastId, PlayableRoom::setNorthEast,
                         PlayableRoom.class));
         Thread northWest = new Thread(
-                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getNorthWestId, PlayableRoom::setNorthWest,
                         PlayableRoom.class));
         Thread southEast = new Thread(
-                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getSouthEastId, PlayableRoom::setSouthEast,
                         PlayableRoom.class));
         Thread southWest = new Thread(
-                new RoomsDirectionSetter<>(allRooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getSouthWestId, PlayableRoom::setSouthWest,
                         PlayableRoom.class));
-        Thread up = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getUpId, PlayableRoom::setUp,
-                PlayableRoom.class));
-        Thread down = new Thread(new RoomsDirectionSetter<>(allRooms, PlayableRoom::getDownId, PlayableRoom::setDown,
-                PlayableRoom.class));
+        Thread up = new Thread(
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getUpId, PlayableRoom::setUp,
+                        PlayableRoom.class));
+        Thread down = new Thread(
+                () -> Rooms.loadDirections(allRooms, PlayableRoom::getDownId, PlayableRoom::setDown,
+                        PlayableRoom.class));
 
-        Thread nextRoom =
-                new Thread(new RoomsDirectionSetter<>(allRooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
+        Thread nextRoom = new Thread(
+                () -> Rooms.loadDirections(allRooms, CutsceneRoom::getNextRoomId, CutsceneRoom::setNextRoom,
                         CutsceneRoom.class));
 
         workers.add(east);

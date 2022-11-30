@@ -28,7 +28,7 @@ import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
 
-public class TypeAdapterHolder {
+public class LoaderTypeAdapterHolder {
     private static final RuntimeTypeAdapterFactory<AbstractEntity> typeAdapterEntities;
     private static final RuntimeTypeAdapterFactory<AbstractRoom> typeAdapterRooms;
     private static final RuntimeTypeAdapterFactory<AbstractEvent> typeAdapterEvents;
