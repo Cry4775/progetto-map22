@@ -7,6 +7,7 @@ package engine.parser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import component.entity.AbstractEntity;
 import component.entity.container.AbstractContainer;
 import component.entity.interfaces.IFillable;
@@ -136,12 +137,11 @@ public class Parser {
     }
 
     private boolean equalsObjectName(String token, AbstractEntity obj) {
-        // Object name must be lower-case
         if (obj != null && token != null) {
-            if (token.equals(obj.getName()) || (obj.getAlias() != null && obj.getAlias().contains(token))) {
+            Stream<String> aliases = obj.getAlias() != null ? obj.getAlias().stream() : Stream.empty();
+            if (token.equalsIgnoreCase(obj.getName()) || aliases.anyMatch(alias -> alias.equalsIgnoreCase(token))) {
                 return true;
             }
-
             return false;
         } else {
             throw new IllegalArgumentException("Invalid argument, token and obj can't be null.");
