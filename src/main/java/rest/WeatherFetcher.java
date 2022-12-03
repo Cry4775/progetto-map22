@@ -97,9 +97,8 @@ public class WeatherFetcher {
             }
         }
 
-        state = State.DONE;
         latestFetchTime = System.currentTimeMillis();
-
+        state = State.DONE;
         return latestFetchRaining;
     }
 

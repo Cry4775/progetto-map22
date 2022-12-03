@@ -12,6 +12,7 @@ import engine.Inventory;
 import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
+import sound.SoundManager;
 
 public class PullableObject extends AbstractEntity implements IPullable {
 
@@ -40,6 +41,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
 
             pulled = true;
 
+            SoundManager.playWav(SoundManager.PULL_SOUND_PATH, SoundManager.Mode.SOUND);
             GUIManager.appendOutput("Hai tirato: " + getName());
             triggerEvent(EventType.PULL);
             return ActionState.NORMAL_ACTION;

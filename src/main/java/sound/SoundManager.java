@@ -17,8 +17,9 @@ public class SoundManager {
     public static final String PICKUP_SOUND_PATH = "/resources/sound/pickUp.wav";
     public static final String DOOR_CLOSE_SOUND_PATH = "/resources/sound/closeDoor.wav";
     public static final String DOOR_OPEN_SOUND_PATH = "/resources/sound/openDoor.wav";
-    public static final String DOOR_UNLOCK_OPEN_SOUND_PATH =
-            "/resources/sound/unlockingAndOpeningDoor.wav";
+    public static final String DOOR_UNLOCK_OPEN_SOUND_PATH = "/resources/sound/unlockingAndOpeningDoor.wav";
+    public static final String PULL_SOUND_PATH = "/resources/sound/leverPull.wav";
+    public static final String INVENTORY_SOUND_PATH = "/resources/sound/inventory.wav";
 
     private static String currentMusicPath;
 
@@ -37,19 +38,19 @@ public class SoundManager {
         defaultSounds = new HashMap<>();
         Map<String, InputStream> temp = new HashMap<>();
 
-        temp.put(PICKUP_SOUND_PATH,
-                SoundManager.class.getResourceAsStream(PICKUP_SOUND_PATH));
-        temp.put(DOOR_CLOSE_SOUND_PATH,
-                SoundManager.class.getResourceAsStream(DOOR_CLOSE_SOUND_PATH));
-        temp.put(DOOR_OPEN_SOUND_PATH,
-                SoundManager.class.getResourceAsStream(DOOR_OPEN_SOUND_PATH));
-        temp.put(DOOR_UNLOCK_OPEN_SOUND_PATH,
-                SoundManager.class.getResourceAsStream(DOOR_UNLOCK_OPEN_SOUND_PATH));
+        temp.put(PICKUP_SOUND_PATH, SoundManager.class.getResourceAsStream(PICKUP_SOUND_PATH));
+        temp.put(DOOR_CLOSE_SOUND_PATH, SoundManager.class.getResourceAsStream(DOOR_CLOSE_SOUND_PATH));
+        temp.put(DOOR_OPEN_SOUND_PATH, SoundManager.class.getResourceAsStream(DOOR_OPEN_SOUND_PATH));
+        temp.put(DOOR_UNLOCK_OPEN_SOUND_PATH, SoundManager.class.getResourceAsStream(DOOR_UNLOCK_OPEN_SOUND_PATH));
+        temp.put(PULL_SOUND_PATH, SoundManager.class.getResourceAsStream(PULL_SOUND_PATH));
+        temp.put(INVENTORY_SOUND_PATH, SoundManager.class.getResourceAsStream(INVENTORY_SOUND_PATH));
 
         defaultSounds.put(PICKUP_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_CLOSE_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_OPEN_SOUND_PATH, new Wrapper<Clip>(null));
         defaultSounds.put(DOOR_UNLOCK_OPEN_SOUND_PATH, new Wrapper<Clip>(null));
+        defaultSounds.put(PULL_SOUND_PATH, new Wrapper<Clip>(null));
+        defaultSounds.put(INVENTORY_SOUND_PATH, new Wrapper<Clip>(null));
 
         for (String key : defaultSounds.keySet()) {
             openWav(temp.get(key), defaultSounds.get(key));

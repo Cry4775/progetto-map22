@@ -206,6 +206,7 @@ public class Engine {
                     break;
                 }
                 case INVENTORY: {
+                    SoundManager.playWav(SoundManager.INVENTORY_SOUND_PATH, Mode.SOUND);
                     if (!gameManager.getInventory().isEmpty()) {
                         StringBuilder stringBuilder = new StringBuilder("Nel tuo inventario ci sono:");
 
@@ -217,7 +218,6 @@ public class Engine {
                                 stringBuilder.append(wearable.isWorn() ? " (INDOSSATO)" : "");
                             }
                         }
-
                         GUIManager.appendOutput(stringBuilder);
                     } else {
                         GUIManager.appendOutput("Il tuo inventario è vuoto.");

@@ -98,18 +98,12 @@ public class OutputManager {
             public void run() {
                 try {
                     if (inputText) {
-                        if (txtPane.getStyle("InputBracket") == null) {
-                            Style style = txtPane.addStyle("InputBracket", null);
-                            StyleConstants.setForeground(style, Color.GREEN);
-                        }
-
                         if (txtPane.getStyle("InputText") == null) {
                             Style style = txtPane.addStyle("InputText", null);
-                            StyleConstants.setForeground(style, new Color(0, 128, 6));
+                            StyleConstants.setForeground(style, Color.GRAY);
                         }
 
-                        doc.insertString(doc.getLength(), "\n\n> ", txtPane.getStyle("InputBracket"));
-                        doc.insertString(doc.getLength(), text, txtPane.getStyle("InputText"));
+                        doc.insertString(doc.getLength(), "\n\n> " + text, txtPane.getStyle("InputText"));
                     } else {
                         printSlowly(text, 15);
                     }
