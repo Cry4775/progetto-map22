@@ -33,8 +33,6 @@ public class MoveInformations {
     }
 
     public void setState(ActionState actionState, MovementState movementState) {
-        reset();
-
         if (actionState == null && movementState == null) {
             throw new IllegalArgumentException("Move state can't be null for both action & movement.");
         }

@@ -18,7 +18,6 @@ public class ObjectEvent extends AbstractEvent {
     private MutableRoom updateTargetRoom;
 
     private boolean updatingParentRoom;
-    private MutableRoom parentRoom;
 
     private String teleportsPlayerToRoomId;
     private AbstractRoom teleportsPlayerToRoom;
@@ -39,14 +38,6 @@ public class ObjectEvent extends AbstractEvent {
 
     public void setDestroyOnTrigger(boolean destroyOnTrigger) {
         this.destroyOnTrigger = destroyOnTrigger;
-    }
-
-    public MutableRoom getParentRoom() {
-        return parentRoom;
-    }
-
-    public void setParentRoom(MutableRoom parentRoom) {
-        this.parentRoom = parentRoom;
     }
 
     public String getUpdateTargetRoomId() {
@@ -91,6 +82,7 @@ public class ObjectEvent extends AbstractEvent {
 
     public void trigger(AbstractEntity obj) {
         if (updatingParentRoom) {
+            MutableRoom parentRoom = (MutableRoom) obj.getClosestRoomParent();
             parentRoom.updateToNewRoom();
         }
 

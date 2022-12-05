@@ -113,7 +113,7 @@ public class Engine {
                 // should update infos when position changes. It could happen even when position doesn't change.
                 updateRoomInformations();
 
-                if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
+                while (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
                     CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
                     processCutscene(currentRoom);
                 }
@@ -474,6 +474,8 @@ public class Engine {
                 default:
                     break;
             }
+
+            gameManager.processCurrentLighting();
         }
 
         MoveInformations moveInfos = gameManager.getCurrentMoveInfos();

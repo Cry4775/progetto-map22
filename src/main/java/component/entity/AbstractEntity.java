@@ -185,7 +185,6 @@ public abstract class AbstractEntity extends GameComponent {
 
                 if (evt.isUpdatingParentRoom()) {
                     if (closestRoomParent instanceof MutableRoom) {
-                        evt.setParentRoom((MutableRoom) closestRoomParent);
                         parentRoomDone = true;
                     } else {
                         throw new Error("Cannot link " + this + " object event reference. "

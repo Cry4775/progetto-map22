@@ -137,11 +137,15 @@ public class GameManager {
             setPreviousRoom(currentRoom);
             setCurrentRoom(room);
 
-            if (room instanceof PlayableRoom) {
-                PlayableRoom pRoom = (PlayableRoom) room;
-                pRoom.processRoomLighting(getInventory().getObjects());
-            }
+            processCurrentLighting();
             currentMoveInfos.setState(currentMoveInfos.getActionState(), MovementState.POSITION_CHANGED);
+        }
+    }
+
+    protected void processCurrentLighting() {
+        if (currentRoom instanceof PlayableRoom) {
+            PlayableRoom pRoom = (PlayableRoom) currentRoom;
+            pRoom.processRoomLighting(getInventory().getObjects());
         }
     }
 

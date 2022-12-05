@@ -715,6 +715,10 @@
                 "type": "Human",
                 "id": "44",
                 "name": "strega",
+                "alias": [
+                    "donna",
+                    "spettro"
+                ],
                 "description": "Non è priva di una certa terribile bellezza. Osservandola ti rendi conto che puoi vederle attraverso. In un certo senso pare proiettata dal braciere, quasi fosse solo un'ombra sulla parete.",
                 "events": [
                     {

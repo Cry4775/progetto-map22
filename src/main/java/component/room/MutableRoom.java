@@ -94,6 +94,7 @@ public class MutableRoom extends PlayableRoom {
     }
 
     public void updateToNewRoom() {
+
         if (newRoom != null) {
             updateFields(newRoom);
         }
