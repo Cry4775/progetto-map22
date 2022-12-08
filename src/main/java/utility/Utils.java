@@ -4,14 +4,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import gui.MainFrame;
 
 public class Utils {
 
@@ -81,6 +85,17 @@ public class Utils {
         }
 
         return result;
+    }
+
+    /**
+     * @param path
+     * @return ImageIcon
+     * @throws IOException
+     */
+    public static ImageIcon getResourceAsImageIcon(String path) throws IOException {
+        InputStream inputStream = MainFrame.class.getResourceAsStream(path);
+
+        return new ImageIcon(ImageIO.read(inputStream));
     }
 
 }

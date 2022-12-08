@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this
- * license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gui;
 
 import java.awt.Graphics;
@@ -16,21 +11,23 @@ import java.awt.image.WritableRaster;
 import java.util.Random;
 import javax.swing.JComponent;
 
+/**
+ * Renders black and white pixels (60fps) randomly on the screen.
+ * Tries to replicate the effect of an old analog TV. <br>
+ * <br>
+ * It runs on a dedicated thread.
+ */
 public class NoiseFXPanel extends JComponent implements Runnable {
     private byte[] data;
-
     private BufferedImage image;
-
     private Random random;
-
-    Thread thread;
 
     @Override
     public boolean isOptimizedDrawingEnabled() {
         return false;
     }
 
-    public void initialize() {
+    private void initialize() {
         int w = getSize().width, h = getSize().height;
         int length = ((w + 7) * h) / 8;
         data = new byte[length];
@@ -43,8 +40,9 @@ public class NoiseFXPanel extends JComponent implements Runnable {
                 new byte[] {(byte) 20, (byte) 10}); // A
         image = new BufferedImage(cm, wr, false, null);
         random = new Random();
-        thread = new Thread(this, "GUI-NoiseEffect");
-        thread.start();
+
+        // Start thread
+        new Thread(this, "GUI-NoiseEffect").start();
     }
 
     @Override
@@ -53,7 +51,7 @@ public class NoiseFXPanel extends JComponent implements Runnable {
             random.nextBytes(data);
             repaint();
             try {
-                Thread.sleep(30);
+                Thread.sleep(17);
             } catch (InterruptedException e) { /* die */
             }
         }

@@ -36,7 +36,10 @@ public class CompassManager {
         southWestLbl = mainFrame.getLblCompassSouthWestText();
     }
 
-    private static void requireNonNullLabels() {
+    /**
+     * @throws NullPointerException if any of the GUI direction labels is set to null
+     */
+    private static void requireNonNullLabels() throws NullPointerException {
         Objects.requireNonNull(northLbl);
         Objects.requireNonNull(southLbl);
         Objects.requireNonNull(eastLbl);
@@ -47,6 +50,13 @@ public class CompassManager {
         Objects.requireNonNull(southWestLbl);
     }
 
+    /**
+     * Creates a SwingWorker thread that processes the requested room and updates the requested
+     * direction JLabel
+     * 
+     * @param roomToCheck the room to process at the requested direction
+     * @param directionLbl the correspondent JLabel to update
+     */
     private static void updateCompassLabel(AbstractRoom roomToCheck, JLabel directionLbl) {
         new SwingWorker<Color, Void>() {
             @Override
@@ -82,6 +92,9 @@ public class CompassManager {
         }.execute();
     }
 
+    /**
+     * Resets all the compass labels to red (no room)
+     */
     private static void resetCompass() {
         requireNonNullLabels();
 
@@ -95,6 +108,12 @@ public class CompassManager {
         updateCompassLabel(null, northWestLbl);
     }
 
+    /**
+     * Updates all the compass directions labels
+     * 
+     * @param currentRoom the current room the player's at
+     * @param previousRoom the previous room the player's been at
+     */
     protected static void updateCompass(AbstractRoom currentRoom, AbstractRoom previousRoom) {
         requireNonNullLabels();
         CompassManager.currentRoom = currentRoom;

@@ -37,10 +37,16 @@ public class OutputManager {
         txtInput = mainFrame.getTxtInput();
     }
 
+    /**
+     * @return {@code true} if the current output string is empty, {@code false} otherwise.
+     */
     protected static boolean isOutputEmpty() {
         return output.toString().isEmpty() ? true : false;
     }
 
+    /**
+     * @param string the string to append to the current output string.
+     */
     protected static void append(String string) {
         if (string != null && !string.isEmpty()) {
             if (output.length() > 0) {
@@ -68,15 +74,23 @@ public class OutputManager {
         }
     }
 
+    /**
+     * @param string the string to clean.
+     * @return the string trimmed of whitespace and ending newlines.
+     */
     private static String getCleanString(String string) {
         for (int i = 0; i < string.length(); i++) {
             if (string.charAt(i) != '\n') {
-                return string.substring(i, string.length());
+                return string.substring(i, string.length()).trim();
             }
         }
         return string;
     }
 
+    /**
+     * Requests to print the current saved output string in "Output" format,
+     * which is black and with nothing added to it.
+     */
     protected static void printAsOutput() {
         Objects.requireNonNull(gui);
 
@@ -85,6 +99,12 @@ public class OutputManager {
         reset();
     }
 
+    /**
+     * Requests to print the string in "Input" format,
+     * which is gray and with a ">" before the string.
+     * 
+     * @param text the string to print
+     */
     protected static void printAsInput(String text) {
         Objects.requireNonNull(gui);
 
@@ -92,6 +112,14 @@ public class OutputManager {
 
     }
 
+    /**
+     * Prints the requested text, in the desired format.
+     * It prints one character at time, with a delay of 15ms, if it's output,
+     * prints instantly otherwise.
+     * 
+     * @param text the string to print.
+     * @param inputText {@code true} if it's an Input, {@code false} otherwise.
+     */
     private static void write(String text, boolean inputText) {
         StyledDocument doc = txtPane.getStyledDocument();
 
@@ -126,6 +154,14 @@ public class OutputManager {
         }
     }
 
+    /**
+     * Prints the string one character at time at the desired rate.
+     * Gives chance to skip the animation by pressing ENTER key.
+     * 
+     * @param message the string to print.
+     * @param millisPerChar milliseconds to wait for each character.
+     * @throws BadLocationException
+     */
     private static void printSlowly(String message, int millisPerChar) throws BadLocationException {
         if (message == null || message.isEmpty())
             return;
@@ -218,6 +254,10 @@ public class OutputManager {
 
     }
 
+    /**
+     * When invoked, the execution stops until ENTER key is pressed.
+     * Waiting is done on a dedicated thread.
+     */
     protected static void waitForEnterKey() {
         Thread thread = new Thread("WaitForInputThread") {
             public void run() {
@@ -270,6 +310,7 @@ public class OutputManager {
         }
     }
 
+    /** Empty the current output string. */
     private static void reset() {
         output.setLength(0);
     }

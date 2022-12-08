@@ -17,7 +17,6 @@ import rest.WeatherFetcher;
 
 public class GUIManager {
     private static MainFrame gui;
-
     private static String lastDescription;
 
     protected static void registerGUI(MainFrame mainFrame) {

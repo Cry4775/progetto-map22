@@ -15,11 +15,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -36,7 +33,11 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.text.DefaultCaret;
 import engine.Engine;
+import utility.Utils;
 
+/**
+ * The game JFrame composed of all its components.
+ */
 public class MainFrame extends JFrame {
     private NoiseFXPanel noisePanel = new NoiseFXPanel();
     private JTextPane txtPane = new JTextPane();
@@ -166,15 +167,15 @@ public class MainFrame extends JFrame {
         pnlCompass.setLayout(new GridBagLayout());
 
         try {
-            lblCompassNorthImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_02.png"));
-            lblCompassWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_04.png"));
-            lblCompassCenterImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_05.png"));
-            lblCompassEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_06.png"));
-            lblCompassSouthImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_08.png"));
-            lblCompassNorthWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_01.png"));
-            lblCompassNorthEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_03.png"));
-            lblCompassSouthWestImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_07.png"));
-            lblCompassSouthEastImage.setIcon(getResourceAsImageIcon("/resources/img/bussola_09.png"));
+            lblCompassNorthImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_02.png"));
+            lblCompassWestImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_04.png"));
+            lblCompassCenterImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_05.png"));
+            lblCompassEastImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_06.png"));
+            lblCompassSouthImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_08.png"));
+            lblCompassNorthWestImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_01.png"));
+            lblCompassNorthEastImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_03.png"));
+            lblCompassSouthWestImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_07.png"));
+            lblCompassSouthEastImage.setIcon(Utils.getResourceAsImageIcon("/resources/img/bussola_09.png"));
         } catch (IOException e) {
             createFatalErrorDialog("Error occurred on loading of compass images. Details: " + e.getMessage());
         }
@@ -352,12 +353,11 @@ public class MainFrame extends JFrame {
         pack();
     }
 
-    private static ImageIcon getResourceAsImageIcon(String path) throws IOException {
-        InputStream inputStream = MainFrame.class.getResourceAsStream(path);
-
-        return new ImageIcon(ImageIO.read(inputStream));
-    }
-
+    /**
+     * Instantiates and shows a fatal error dialog that closes the application once closed.
+     * 
+     * @param message the message to show
+     */
     protected void createFatalErrorDialog(String message) {
         WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 
