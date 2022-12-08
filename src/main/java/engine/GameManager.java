@@ -137,8 +137,7 @@ public class GameManager {
             setPreviousRoom(currentRoom);
             setCurrentRoom(room);
 
-            processCurrentLighting();
-            currentMoveInfos.setState(currentMoveInfos.getActionState(), MovementState.POSITION_CHANGED);
+            currentMoveInfos.setState(MovementState.POSITION_CHANGED);
         }
     }
 

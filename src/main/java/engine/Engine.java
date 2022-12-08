@@ -474,14 +474,13 @@ public class Engine {
                 default:
                     break;
             }
-
-            gameManager.processCurrentLighting();
         }
 
-        MoveInformations moveInfos = gameManager.getCurrentMoveInfos();
+        gameManager.processCurrentLighting();
 
+        MoveInformations moveInfos = gameManager.getCurrentMoveInfos();
         if (actionState != null)
-            moveInfos.setState(actionState, moveInfos.getMovementState());
+            moveInfos.setState(actionState);
 
         if (MovementState.TELEPORT == moveInfos.getMovementState()) {
             gameManager.moveTo(moveInfos.getTeleportDestination());
@@ -504,7 +503,7 @@ public class Engine {
 
         InvisibleWall wall = currentRoom.getMagicWall(direction);
         if (wall != null) {
-            status.setState(status.getActionState(), MovementState.BLOCKED_WALL);
+            status.setState(MovementState.BLOCKED_WALL);
             status.setWall(wall);
             return false;
         }
@@ -516,7 +515,7 @@ public class Engine {
                         if (door.isOpen()) {
                             return true;
                         } else {
-                            status.setState(status.getActionState(), MovementState.BLOCKED_DOOR);
+                            status.setState(MovementState.BLOCKED_DOOR);
                             return false;
                         }
                     }
@@ -524,19 +523,14 @@ public class Engine {
 
                 return true;
             } else {
-                status.setState(status.getActionState(), MovementState.NO_ROOM);
+                status.setState(MovementState.NO_ROOM);
                 return false;
             }
         } else {
-            if (requestedRoom != null) {
-                if (requestedRoom.equals(gameManager.getPreviousRoom())) {
-                    return true;
-                } else {
-                    status.setState(status.getActionState(), MovementState.DARK_ROOM);
-                    return false;
-                }
+            if (gameManager.getPreviousRoom().equals(requestedRoom)) {
+                return true;
             } else {
-                status.setState(status.getActionState(), MovementState.NO_ROOM);
+                status.setState(MovementState.DARK_ROOM);
                 return false;
             }
         }

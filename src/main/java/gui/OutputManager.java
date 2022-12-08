@@ -26,6 +26,8 @@ public class OutputManager {
     private static JTextField txtInput;
 
     private static boolean currentlyPrinting = false;
+    private static long currentTime = 0;
+    private static long startTime = 0;
 
     protected static void registerGUI(MainFrame mainFrame) {
         Objects.requireNonNull(mainFrame);
@@ -142,27 +144,20 @@ public class OutputManager {
         timer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                currentTime = System.currentTimeMillis();
+
                 try {
-                    doc.insertString(doc.getLength(), String.valueOf(message.charAt(counter.getAndIncrement())), null);
+                    if ((currentTime - startTime) >= getWaitTime()) {
+                        doc.insertString(doc.getLength(), String.valueOf(message.charAt(counter.getAndIncrement())),
+                                null);
+                        startTime = System.currentTimeMillis();
+                    } else {
+                        return;
+                    }
                 } catch (BadLocationException ex) {
                     ex.printStackTrace();
                 }
 
-                if (counter.get() > 1) {
-                    try {
-                        if (message.substring(counter.get() - 2, counter.get()).equals(". ")
-                                || message.substring(counter.get() - 2, counter.get()).equals(".\n")) {
-                            Thread.sleep(300);
-                        } else if (message.substring(counter.get() - 2, counter.get()).equals(": ")
-                                || message.substring(counter.get() - 2, counter.get()).equals("..")) {
-                            Thread.sleep(200);
-                        } else if (message.substring(counter.get() - 2, counter.get()).equals("- ")) {
-                            Thread.sleep(100);
-                        }
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
                 txtPane.setCaretPosition(txtPane.getDocument().getLength());
                 if (counter.get() >= message.length()) {
                     timer.stop();
@@ -172,8 +167,25 @@ public class OutputManager {
                     currentlyPrinting = false;
                 }
             }
+
+            private int getWaitTime() {
+                if (counter.get() > 1) {
+                    if (message.substring(counter.get() - 2, counter.get()).equals(". ")
+                            || message.substring(counter.get() - 2, counter.get()).equals(".\n")) {
+                        return 300;
+                    } else if (message.substring(counter.get() - 2, counter.get()).equals(": ")
+                            || message.substring(counter.get() - 2, counter.get()).equals("..")) {
+                        return 200;
+                    } else if (message.substring(counter.get() - 2, counter.get()).equals("- ")) {
+                        return 100;
+                    }
+                }
+
+                return 0;
+            }
         });
 
+        startTime = System.currentTimeMillis();
         timer.start();
 
         // Skip writing animation

@@ -126,19 +126,19 @@ public class MainFrame extends JFrame {
         txtPane.setEditable(false);
         txtPane.setBackground(bgColor);
         txtPane.setMargin(new Insets(2, 2, 2, 2));
-        txtPane.setFont(new Font("Serif", 0, 16));
+        txtPane.setFont(new Font("Serif", 0, 18));
         scrOutput.setViewportView(txtPane);
 
         pnlInOut.add(scrOutput, BorderLayout.CENTER);
 
         pnlInput.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 0));
 
-        lblInput.setFont(new Font("Segoe UI", 0, 18));
+        lblInput.setFont(new Font("Serif", 0, 18));
         lblInput.setText(">");
         pnlInput.add(lblInput);
 
         txtInput.setBackground(Color.decode("#d6d9df"));
-        txtInput.setFont(new Font("Segoe UI", 0, 18));
+        txtInput.setFont(new Font("Serif", 0, 18));
         txtInput.setText("");
         txtInput.setBorder(null);
         txtInput.setCaret(new CustomCaret());

@@ -32,13 +32,12 @@ public class MoveInformations {
         teleportDestination = null;
     }
 
-    public void setState(ActionState actionState, MovementState movementState) {
-        if (actionState == null && movementState == null) {
-            throw new IllegalArgumentException("Move state can't be null for both action & movement.");
+    public void setState(ActionState actionState) {
+        if (actionState == null) {
+            throw new IllegalArgumentException("Argument (actionState) can't be null.");
         }
 
         this.actionState = actionState;
-        this.movementState = movementState;
 
         if (actionState != null) {
             switch (actionState) {
@@ -49,6 +48,14 @@ public class MoveInformations {
                     break;
             }
         }
+    }
+
+    public void setState(MovementState movementState) {
+        if (movementState == null) {
+            throw new IllegalArgumentException("Argument (movementState) can't be null.");
+        }
+
+        this.movementState = movementState;
 
         if (movementState != null) {
             switch (movementState) {
