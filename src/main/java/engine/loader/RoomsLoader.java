@@ -23,18 +23,17 @@ import engine.database.DBManager;
 import engine.loader.json.LoaderTypeAdapterHolder;
 import engine.loader.json.LoaderTypeAdapterHolder.AdapterType;
 
+/** Runnable that loads the rooms from either the DB or the JSON file. */
 public class RoomsLoader implements Runnable {
-
     private GameManager gameManager;
     private boolean exceptionThrown = false;
     private Mode mode;
+    private List<Thread> workers = new ArrayList<>();
 
     public enum Mode {
         JSON,
         DB
     }
-
-    private List<Thread> workers = new ArrayList<>();
 
     public boolean isExceptionThrown() {
         return exceptionThrown;
@@ -120,6 +119,13 @@ public class RoomsLoader implements Runnable {
         }
     }
 
+    /**
+     * <p>
+     * Links the rooms to each other through 10 threads, one for each direction,
+     * and 1 thread for the cutscenes.
+     * </p>
+     * Waits for all the threads to end before returning.
+     */
     private void linkRooms() {
         List<AbstractRoom> allRooms = gameManager.listAllRooms();
 

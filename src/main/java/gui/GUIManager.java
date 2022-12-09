@@ -155,7 +155,7 @@ public class GUIManager {
         new SwingWorker<Void, Boolean>() {
             private void cycle(int sleepTime, int maxPercentage, WeatherFetcher.State currentState)
                     throws InterruptedException {
-                while (WeatherFetcher.getState().equals(currentState)) {
+                while (WeatherFetcher.getCurrentState().equals(currentState)) {
                     if (progress.get() == 0) {
                         for (int i = 0; i < maxPercentage; i++) {
                             if (monitor.isCanceled())
@@ -165,7 +165,7 @@ public class GUIManager {
                             publish(true);
                             progress.incrementAndGet();
 
-                            if (!WeatherFetcher.getState().equals(currentState)) {
+                            if (!WeatherFetcher.getCurrentState().equals(currentState)) {
                                 return;
                             }
                         }
@@ -180,7 +180,7 @@ public class GUIManager {
                                 publish(true);
                                 progress.incrementAndGet();
 
-                                if (!WeatherFetcher.getState().equals(currentState)) {
+                                if (!WeatherFetcher.getCurrentState().equals(currentState)) {
                                     return;
                                 }
                             }

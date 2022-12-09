@@ -19,15 +19,16 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+/** Manages the Output text pane and Input text field. */
 public class OutputManager {
     private static MainFrame gui;
-    private static StringBuilder output = new StringBuilder();
     private static JTextPane txtPane;
     private static JTextField txtInput;
 
+    private static StringBuilder output = new StringBuilder();
     private static boolean currentlyPrinting = false;
-    private static long currentTime = 0;
     private static long startTime = 0;
+    private static long currentTime = 0;
 
     protected static void registerGUI(MainFrame mainFrame) {
         Objects.requireNonNull(mainFrame);
@@ -75,8 +76,8 @@ public class OutputManager {
     }
 
     /**
-     * @param string the string to clean.
-     * @return the string trimmed of whitespace and ending newlines.
+     * @param string the string to clean up.
+     * @return the string trimmed of starting whitespaces and ending newlines.
      */
     private static String getCleanString(String string) {
         for (int i = 0; i < string.length(); i++) {

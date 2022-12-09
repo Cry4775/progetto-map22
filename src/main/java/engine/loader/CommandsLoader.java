@@ -4,6 +4,7 @@ import java.util.List;
 import engine.command.Command;
 import engine.command.Command.Type;
 
+/** Runnable that loads all the possible game commands. */
 public class CommandsLoader implements Runnable {
     List<Command> commands;
 

@@ -16,7 +16,7 @@ import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import sound.SoundManager;
-import sound.SoundManager.Mode;
+import sound.SoundManager.Channel;
 
 public class BasicItem extends AbstractEntity implements IPickupable {
 
@@ -51,7 +51,7 @@ public class BasicItem extends AbstractEntity implements IPickupable {
             }
 
             inventory.addObject(this);
-            SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Mode.SOUND);
+            SoundManager.playWav(SoundManager.PICKUP_SOUND_PATH, Channel.EFFECTS);
             pickedUp = true;
 
             GUIManager.appendOutput("Hai raccolto: " + getName());

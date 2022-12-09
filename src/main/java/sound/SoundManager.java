@@ -13,6 +13,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import utility.Wrapper;
 
+/** Allows control of sounds. */
 public class SoundManager {
     public static final String PICKUP_SOUND_PATH = "/resources/sound/pickUp.wav";
     public static final String DOOR_CLOSE_SOUND_PATH = "/resources/sound/closeDoor.wav";
@@ -20,17 +21,10 @@ public class SoundManager {
     public static final String DOOR_UNLOCK_OPEN_SOUND_PATH = "/resources/sound/unlockingAndOpeningDoor.wav";
     public static final String PULL_SOUND_PATH = "/resources/sound/leverPull.wav";
     public static final String INVENTORY_SOUND_PATH = "/resources/sound/inventory.wav";
-
     private static String currentMusicPath;
 
     private static final Map<String, Wrapper<Clip>> defaultSounds;
-
     private static Wrapper<Clip> musicClip;
-
-    public enum Mode {
-        MUSIC,
-        SOUND
-    }
 
     static {
         musicClip = new Wrapper<Clip>(null);
@@ -57,15 +51,26 @@ public class SoundManager {
         }
     }
 
-    public static void playWav(String path, Mode mode) {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(mode);
+    public enum Channel {
+        MUSIC,
+        EFFECTS
+    }
 
-        switch (mode) {
+    /**
+     * Plays a {@code wav} file.
+     * 
+     * @param path the path of the wav file.
+     * @param channel the channel the wav file should be played on.
+     */
+    public static void playWav(String path, Channel channel) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(channel);
+
+        switch (channel) {
             case MUSIC:
                 playMusic(path);
                 break;
-            case SOUND:
+            case EFFECTS:
                 playSound(path);
                 break;
             default:
@@ -73,6 +78,11 @@ public class SoundManager {
         }
     }
 
+    /**
+     * Plays the wav file on {@code MUSIC} channel.
+     * 
+     * @param path the path of the wav file.
+     */
     private static void playMusic(String path) {
         if (currentMusicPath != null && currentMusicPath.equals(path))
             return;
@@ -91,6 +101,11 @@ public class SoundManager {
         musicClip.getObj().loop(Clip.LOOP_CONTINUOUSLY);
     }
 
+    /**
+     * Plays the wav file on {@code EFFECTS} channel.
+     * 
+     * @param wavPath the path of the wav file.
+     */
     private static void playSound(String wavPath) {
         if (defaultSounds.containsKey(wavPath)) {
             Clip defaultSoundClip = defaultSounds.get(wavPath).getObj();
@@ -111,6 +126,12 @@ public class SoundManager {
         }
     }
 
+    /**
+     * Opens the {@code wav} file on the specified {@link javax.sound.sampled.Clip Clip}.
+     * 
+     * @param path the path of the wav file.
+     * @param target the clip where the wav file gets opened.
+     */
     private static void openWav(String path, Wrapper<Clip> target) {
         try {
             File file = new File(path);
@@ -123,6 +144,13 @@ public class SoundManager {
         }
     }
 
+    /**
+     * /**
+     * Opens the {@code wav} file on the specified {@link javax.sound.sampled.Clip Clip}.
+     * 
+     * @param inputStream the input stream of the wav file.
+     * @param target the clip where the wav file gets opened.
+     */
     private static void openWav(InputStream inputStream, Wrapper<Clip> target) {
         try {
             InputStream bufferedIn = new BufferedInputStream(inputStream);
@@ -131,7 +159,7 @@ public class SoundManager {
             target.setObj((Clip) AudioSystem.getLine(info));
             target.getObj().open(audioStream);
         } catch (Exception e) {
-            throw new Error("An error has occurred on opening of default sound.");
+            throw new Error("An error has occurred upon opening of default sound.");
         }
     }
 }

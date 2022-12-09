@@ -8,7 +8,7 @@ public class RotatedJLabel extends JLabel {
     private double theta;
 
     /**
-     * @param theta the angle of rotation in radians
+     * @param theta the angle of rotation in radians.
      */
     public RotatedJLabel(double theta) {
         super();

@@ -10,6 +10,7 @@ import component.entity.doorlike.Door;
 import component.room.AbstractRoom;
 import component.room.PlayableRoom;
 
+/** Manages the compass labels colors. */
 public class CompassManager {
     private static JLabel northLbl;
     private static JLabel southLbl;
@@ -37,7 +38,9 @@ public class CompassManager {
     }
 
     /**
-     * @throws NullPointerException if any of the GUI direction labels is set to null
+     * Checks that this manager objects references are not null.
+     * 
+     * @throws NullPointerException if any of the GUI direction labels is {@code null}.
      */
     private static void requireNonNullLabels() throws NullPointerException {
         Objects.requireNonNull(northLbl);
@@ -52,10 +55,10 @@ public class CompassManager {
 
     /**
      * Creates a SwingWorker thread that processes the requested room and updates the requested
-     * direction JLabel
+     * direction JLabel.
      * 
-     * @param roomToCheck the room to process at the requested direction
-     * @param directionLbl the correspondent JLabel to update
+     * @param roomToCheck the room to process at the requested direction.
+     * @param directionLbl the correspondent JLabel to update.
      */
     private static void updateCompassLabel(AbstractRoom roomToCheck, JLabel directionLbl) {
         new SwingWorker<Color, Void>() {
@@ -92,9 +95,7 @@ public class CompassManager {
         }.execute();
     }
 
-    /**
-     * Resets all the compass labels to red (no room)
-     */
+    /** Resets all the compass labels to red (no room). */
     private static void resetCompass() {
         requireNonNullLabels();
 
@@ -109,10 +110,10 @@ public class CompassManager {
     }
 
     /**
-     * Updates all the compass directions labels
+     * Updates all the compass directions labels.
      * 
-     * @param currentRoom the current room the player's at
-     * @param previousRoom the previous room the player's been at
+     * @param currentRoom the current room the player's at.
+     * @param previousRoom the previous room the player's been at.
      */
     protected static void updateCompass(AbstractRoom currentRoom, AbstractRoom previousRoom) {
         requireNonNullLabels();

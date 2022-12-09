@@ -35,7 +35,7 @@ import gui.GUIManager;
 import gui.MainFrame;
 import rest.WeatherFetcher;
 import sound.SoundManager;
-import sound.SoundManager.Mode;
+import sound.SoundManager.Channel;
 import utility.Utils;
 
 public class Engine {
@@ -126,9 +126,9 @@ public class Engine {
         gameManager.requireInitialization();
 
         if (!WeatherFetcher.isRaining()) {
-            SoundManager.playWav("resources/sound/ambience.wav", Mode.MUSIC);
+            SoundManager.playWav("resources/sound/ambience.wav", Channel.MUSIC);
         } else {
-            SoundManager.playWav("resources/sound/rainAmbience.wav", Mode.MUSIC);
+            SoundManager.playWav("resources/sound/rainAmbience.wav", Channel.MUSIC);
         }
 
         if (gameManager.getCurrentRoom() instanceof PlayableRoom) {
@@ -206,7 +206,7 @@ public class Engine {
                     break;
                 }
                 case INVENTORY: {
-                    SoundManager.playWav(SoundManager.INVENTORY_SOUND_PATH, Mode.SOUND);
+                    SoundManager.playWav(SoundManager.INVENTORY_SOUND_PATH, Channel.EFFECTS);
                     if (!gameManager.getInventory().isEmpty()) {
                         StringBuilder stringBuilder = new StringBuilder("Nel tuo inventario ci sono:");
 

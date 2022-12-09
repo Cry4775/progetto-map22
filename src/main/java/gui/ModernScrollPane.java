@@ -5,8 +5,6 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
 public class ModernScrollPane extends JScrollPane {
-    private static final long serialVersionUID = 8607734981506765935L;
-
     private static final int SCROLL_BAR_ALPHA_ROLLOVER = 100;
     private static final int SCROLL_BAR_ALPHA = 50;
     private static final int THUMB_SIZE = 8;

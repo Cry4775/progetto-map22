@@ -16,7 +16,7 @@ import engine.MoveInformations.ActionState;
 import engine.database.DBManager;
 import gui.GUIManager;
 import sound.SoundManager;
-import sound.SoundManager.Mode;
+import sound.SoundManager.Channel;
 
 public class Door extends AbstractEntity implements IOpenable {
 
@@ -105,7 +105,7 @@ public class Door extends AbstractEntity implements IOpenable {
         if (!open) {
             open = true;
             SoundManager.playWav(unlocked ? SoundManager.DOOR_UNLOCK_OPEN_SOUND_PATH
-                    : SoundManager.DOOR_OPEN_SOUND_PATH, Mode.SOUND);
+                    : SoundManager.DOOR_OPEN_SOUND_PATH, Channel.EFFECTS);
 
             GUIManager.appendOutput("Hai aperto: " + getName());
             triggerEvent(EventType.OPEN_UNLOCKED);

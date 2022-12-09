@@ -28,34 +28,36 @@ import component.room.CutsceneRoom;
 import component.room.MutableRoom;
 import component.room.PlayableRoom;
 
+/**
+ * Holds all the {@link RuntimeTypeAdapterFactory} that are needed for loading a JSON for the game.
+ */
 public class LoaderTypeAdapterHolder {
     private static final RuntimeTypeAdapterFactory<AbstractEntity> typeAdapterEntities;
     private static final RuntimeTypeAdapterFactory<AbstractRoom> typeAdapterRooms;
     private static final RuntimeTypeAdapterFactory<AbstractEvent> typeAdapterEvents;
 
     static {
-        typeAdapterEntities =
-                RuntimeTypeAdapterFactory
-                        .of(AbstractEntity.class)
-                        .registerSubtype(BasicObject.class)
-                        .registerSubtype(BasicItem.class)
-                        .registerSubtype(BasicContainer.class)
-                        .registerSubtype(WearableContainer.class)
-                        .registerSubtype(ChestlikeContainer.class)
-                        .registerSubtype(SocketlikeContainer.class)
-                        .registerSubtype(UnopenableDoor.class)
-                        .registerSubtype(Door.class)
-                        .registerSubtype(InvisibleWall.class)
-                        .registerSubtype(WearableItem.class)
-                        .registerSubtype(FillableItem.class)
-                        .registerSubtype(ReadableItem.class)
-                        .registerSubtype(LightSourceItem.class)
-                        .registerSubtype(MovableObject.class)
-                        .registerSubtype(PullableObject.class)
-                        .registerSubtype(PushableObject.class)
-                        .registerSubtype(FireObject.class)
-                        .registerSubtype(FluidItem.class)
-                        .registerSubtype(Human.class);
+        typeAdapterEntities = RuntimeTypeAdapterFactory
+                .of(AbstractEntity.class)
+                .registerSubtype(BasicObject.class)
+                .registerSubtype(BasicItem.class)
+                .registerSubtype(BasicContainer.class)
+                .registerSubtype(WearableContainer.class)
+                .registerSubtype(ChestlikeContainer.class)
+                .registerSubtype(SocketlikeContainer.class)
+                .registerSubtype(UnopenableDoor.class)
+                .registerSubtype(Door.class)
+                .registerSubtype(InvisibleWall.class)
+                .registerSubtype(WearableItem.class)
+                .registerSubtype(FillableItem.class)
+                .registerSubtype(ReadableItem.class)
+                .registerSubtype(LightSourceItem.class)
+                .registerSubtype(MovableObject.class)
+                .registerSubtype(PullableObject.class)
+                .registerSubtype(PushableObject.class)
+                .registerSubtype(FireObject.class)
+                .registerSubtype(FluidItem.class)
+                .registerSubtype(Human.class);
 
         typeAdapterRooms = RuntimeTypeAdapterFactory
                 .of(AbstractRoom.class)
@@ -63,11 +65,10 @@ public class LoaderTypeAdapterHolder {
                 .registerSubtype(MutableRoom.class)
                 .registerSubtype(CutsceneRoom.class);
 
-        typeAdapterEvents =
-                RuntimeTypeAdapterFactory
-                        .of(AbstractEvent.class)
-                        .registerSubtype(ObjectEvent.class)
-                        .registerSubtype(RoomEvent.class);
+        typeAdapterEvents = RuntimeTypeAdapterFactory
+                .of(AbstractEvent.class)
+                .registerSubtype(ObjectEvent.class)
+                .registerSubtype(RoomEvent.class);
     }
 
     public enum AdapterType {

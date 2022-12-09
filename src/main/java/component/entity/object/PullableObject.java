@@ -41,7 +41,7 @@ public class PullableObject extends AbstractEntity implements IPullable {
 
             pulled = true;
 
-            SoundManager.playWav(SoundManager.PULL_SOUND_PATH, SoundManager.Mode.SOUND);
+            SoundManager.playWav(SoundManager.PULL_SOUND_PATH, SoundManager.Channel.EFFECTS);
             GUIManager.appendOutput("Hai tirato: " + getName());
             triggerEvent(EventType.PULL);
             return ActionState.NORMAL_ACTION;
