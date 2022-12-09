@@ -17,8 +17,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import gui.MainFrame;
 
+/** Utility class that holds possibly useful and methods. */
 public class Utils {
 
+    /**
+     * Loads a list of words in a file as a set of strings.
+     * 
+     * @param file the file to read.
+     * @return the words in a set (no duplicates).
+     * @throws IOException if file reading problems occur.
+     */
     public static Set<String> loadFileListInSet(File file) throws IOException {
         Set<String> set = new HashSet<>();
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -29,7 +37,15 @@ public class Utils {
         return set;
     }
 
-    public static Field getField(Class<?> clazz, String fieldName) {
+    /**
+     * Gets the requested field of a class by the field name.
+     * 
+     * @param clazz the class where the field is.
+     * @param fieldName the name of the field.
+     * @return the {@link java.lang.reflect.Field Field} object if exists.
+     * @throws NoSuchFieldException if the field doesn't exist within the provided class.
+     */
+    public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
         Class<?> tmpClass = clazz;
         do {
             try {
@@ -41,24 +57,40 @@ public class Utils {
             }
         } while (tmpClass != null);
 
-        throw new Error("Field '" + fieldName
+        throw new NoSuchFieldException("Field '" + fieldName
                 + "' not found on class " + clazz);
     }
 
-    public static List<Field> getInheritedPrivateFields(Class<?> type) {
+    /**
+     * Gets all the fields (inherited and private too) of a requested class.
+     * 
+     * @param clazz the class to get the fields from.
+     * @return a list of {@link java.lang.reflect.Field Field} objects.
+     */
+    public static List<Field> getFields(Class<?> clazz) {
         List<Field> result = new ArrayList<Field>();
 
-        Class<?> i = type;
+        Class<?> i = clazz;
         while (i != null && i != Object.class) {
             Collections.addAll(result, i.getDeclaredFields());
             i = i.getSuperclass();
         }
+
         for (Field field : result) {
             field.setAccessible(true);
         }
+
         return result;
     }
 
+    /**
+     * Gets the requested field in a JSON by the field name.
+     * 
+     * @param json the JSON string.
+     * @param fieldName the field name.
+     * @return the requested {@link com.google.gson.JsonElement JsonElement} if exists,
+     *         {@code null} otherwise.
+     */
     public static JsonElement getJsonField(String json, String fieldName) {
         JsonElement element = JsonParser.parseString(json);
 
@@ -72,6 +104,15 @@ public class Utils {
         return null;
     }
 
+    /**
+     * Checks for requested class objects in the given list and lists
+     * them casted in a list as result.
+     * 
+     * @param <T> the class you want to check for.
+     * @param clazz the class object you want to check for.
+     * @param list the general list to check from.
+     * @return a list of the requested class objects retrieved from the source list.
+     */
     public static <T> List<T> listCheckedObjects(Class<T> clazz,
             List<?> list) {
         List<T> result = new ArrayList<>();
@@ -88,9 +129,9 @@ public class Utils {
     }
 
     /**
-     * @param path
-     * @return ImageIcon
-     * @throws IOException
+     * @param path the path of the resource.
+     * @return the requested {@link javax.swing.ImageIcon ImageIcon}.
+     * @throws IOException if file reading problems occur.
      */
     public static ImageIcon getResourceAsImageIcon(String path) throws IOException {
         InputStream inputStream = MainFrame.class.getResourceAsStream(path);

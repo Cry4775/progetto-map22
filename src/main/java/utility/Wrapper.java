@@ -1,5 +1,6 @@
 package utility;
 
+/** Allows to wrap an object. */
 public class Wrapper<T> {
     T obj;
 

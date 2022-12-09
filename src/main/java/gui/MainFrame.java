@@ -142,7 +142,7 @@ public class MainFrame extends JFrame {
         txtInput.setFont(new Font("Serif", 0, 18));
         txtInput.setText("");
         txtInput.setBorder(null);
-        txtInput.setCaret(new CustomCaret());
+        txtInput.setCaret(new CustomCaret("_"));
         txtInput.setPreferredSize(new Dimension(840, 25));
         txtInput.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent evt) {

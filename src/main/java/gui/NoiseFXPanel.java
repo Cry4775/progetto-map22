@@ -13,7 +13,8 @@ import javax.swing.JComponent;
 
 /**
  * Renders black and white pixels (60fps) randomly on the screen.
- * Tries to replicate the effect of an old analog TV. <br>
+ * Tries to replicate the effect of an old analog TV.
+ * <br>
  * <br>
  * It runs on a dedicated thread.
  */

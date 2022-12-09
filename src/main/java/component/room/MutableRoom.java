@@ -36,7 +36,7 @@ public class MutableRoom extends PlayableRoom {
     }
 
     private void updateFields(AbstractRoom newRoom) {
-        for (Field f : Utils.getInheritedPrivateFields(newRoom.getClass())) {
+        for (Field f : Utils.getFields(newRoom.getClass())) {
             try {
                 if (f.get(newRoom) != null
                         && !f.getName().equals("id")) {
@@ -80,7 +80,7 @@ public class MutableRoom extends PlayableRoom {
                     }
                 }
             } catch (IllegalArgumentException | IllegalAccessException
-                    | SecurityException e) {
+                    | SecurityException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
         }

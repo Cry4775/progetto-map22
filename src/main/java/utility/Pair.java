@@ -1,5 +1,6 @@
 package utility;
 
+/** Utility class that can hold two user-defined objects. */
 public class Pair<X, Y> {
     private X first;
     private Y second;

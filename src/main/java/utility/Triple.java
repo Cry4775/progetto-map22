@@ -1,9 +1,10 @@
 package utility;
 
+/** Utility class that can hold three user-defined objects. */
 public class Triple<X, Y, Z> {
-    X first;
-    Y second;
-    Z third;
+    private X first;
+    private Y second;
+    private Z third;
 
     public Triple(X first, Y second, Z third) {
         this.first = first;

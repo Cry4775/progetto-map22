@@ -8,12 +8,32 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
+/**
+ * Allows customization of a caret.
+ */
 public class CustomCaret extends DefaultCaret {
+    private String mark;
 
-    private String mark = "_";
-
-    public CustomCaret() {
+    /**
+     * Instantiates a caret with the requested mark and with a default blink rate of {@code 300}.
+     * 
+     * @param mark the string to display as caret
+     */
+    public CustomCaret(String mark) {
+        this.mark = mark;
         setBlinkRate(300);
+    }
+
+    /**
+     * Instantiates a caret with the requested mark and with the requested blink rate.
+     * 
+     * @param mark the string to display as caret
+     * @param blinkRate the rate (in milliseconds) at which the caret blinks.
+     *        {@code 0} means it doesn't blink.
+     */
+    public CustomCaret(String mark, int blinkRate) {
+        this.mark = mark;
+        setBlinkRate(blinkRate);
     }
 
     @Override
