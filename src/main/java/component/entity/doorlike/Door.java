@@ -157,6 +157,13 @@ public class Door extends AbstractEntity implements IOpenable {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all door objects from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()

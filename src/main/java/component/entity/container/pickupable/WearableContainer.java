@@ -170,11 +170,18 @@ public class WearableContainer extends AbstractContainer implements IWearable {
         stm.setBoolean(6, pickedUp);
     }
 
+    /**
+     * Loads all wearable containers from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @param pendingList the list of not loaded yet containers.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory,
             List<Triple<AbstractEntity, String, String>> pendingList) throws SQLException {
-        PreparedStatement stm =
-                DBManager.getConnection()
-                        .prepareStatement("SELECT * FROM SAVEDATA.WearableContainer");
+        PreparedStatement stm = DBManager.getConnection()
+                .prepareStatement("SELECT * FROM SAVEDATA.WearableContainer");
         ResultSet resultSet = stm.executeQuery();
 
         while (resultSet.next()) {

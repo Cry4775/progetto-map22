@@ -76,6 +76,13 @@ public class WearableItem extends BasicItem implements IWearable {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all wearable items from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()

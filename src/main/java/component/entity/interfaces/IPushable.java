@@ -7,5 +7,10 @@ public interface IPushable extends IInteractable {
 
     public void setPushed(boolean pushed);
 
+    /**
+     * Executes the "Push" action.
+     * 
+     * @return the action state.
+     */
     public ActionState push();
 }

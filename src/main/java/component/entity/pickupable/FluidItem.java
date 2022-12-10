@@ -84,6 +84,13 @@ public class FluidItem extends BasicItem implements IFluid {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all fluid items from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()

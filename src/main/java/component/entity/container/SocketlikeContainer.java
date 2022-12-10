@@ -107,6 +107,13 @@ public class SocketlikeContainer extends AbstractContainer {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all socketlike containers from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param pendingList the list of not loaded yet containers.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms,
             List<Triple<AbstractEntity, String, String>> pendingList) throws SQLException {
         PreparedStatement stm =

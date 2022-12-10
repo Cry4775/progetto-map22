@@ -86,6 +86,13 @@ public class BasicItem extends AbstractEntity implements IPickupable {
         stm.setBoolean(6, pickedUp);
     }
 
+    /**
+     * Loads all basic items from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()

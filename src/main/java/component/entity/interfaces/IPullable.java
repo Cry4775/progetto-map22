@@ -7,5 +7,10 @@ public interface IPullable extends IInteractable {
 
     public void setPulled(boolean pulled);
 
+    /**
+     * Executes the "Pull" action.
+     * 
+     * @return the action state.
+     */
     public ActionState pull();
 }

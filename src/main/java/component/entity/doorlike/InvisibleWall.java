@@ -79,6 +79,7 @@ public class InvisibleWall extends AbstractEntity {
         }
     }
 
+    /** Checks if the wall must be unlocked or not with the current weared items. */
     public void processRequirements() {
         if (locked) {
             if (getRequiredWearedItemsToInteract() != null && !getRequiredWearedItemsToInteract().isEmpty()) {
@@ -101,6 +102,11 @@ public class InvisibleWall extends AbstractEntity {
         }
     }
 
+    /**
+     * @param direction the parsed direction command to check.
+     * @return {@code true} if the wall's blocking the requested direction,
+     *         {@code false} otherwise.
+     */
     public boolean isBlocking(Type direction) {
         PlayableRoom parentRoom = (PlayableRoom) getParent();
         AbstractRoom nextRoom = parentRoom.getRoomAt(direction);
@@ -167,6 +173,13 @@ public class InvisibleWall extends AbstractEntity {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all invisible wall objects from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
         PreparedStatement stm =
                 DBManager.getConnection()

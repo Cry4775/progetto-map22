@@ -22,9 +22,7 @@ import utility.Triple;
 public abstract class AbstractContainer extends AbstractEntity {
 
     protected boolean contentRevealed = false;
-
     private List<AbstractEntity> list = new ArrayList<>();
-
     private boolean forFluids;
 
     public AbstractContainer(ResultSet resultSet) throws SQLException {
@@ -64,6 +62,9 @@ public abstract class AbstractContainer extends AbstractEntity {
         GUIManager.appendOutput(getContentString());
     }
 
+    /**
+     * @return a string representing the content of this container.
+     */
     public StringBuilder getContentString() {
         if (!contentRevealed) {
             contentRevealed = true;
@@ -83,6 +84,13 @@ public abstract class AbstractContainer extends AbstractEntity {
         return new StringBuilder();
     }
 
+    /**
+     * Executes the "Insert" command.
+     * 
+     * @param obj the object to insert.
+     * @param inventory the inventory reference.
+     * @return the action state.
+     */
     public ActionState insert(AbstractEntity obj, Inventory inventory) {
         if (!canInteract())
             return ActionState.NO_MOVE;
@@ -156,6 +164,13 @@ public abstract class AbstractContainer extends AbstractEntity {
         }
     }
 
+    /**
+     * Loads this object's room location from DB.
+     * 
+     * @param resultSet the query result set of this class objects.
+     * @param allRooms all the possible rooms list.
+     * @throws SQLException
+     */
     public Triple<AbstractEntity, String, String> loadRoomLocation(ResultSet resultSet,
             List<AbstractRoom> allRooms) throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);
@@ -178,6 +193,10 @@ public abstract class AbstractContainer extends AbstractEntity {
         return null;
     }
 
+    /**
+     * @param obj the object you want to check.
+     * @return a list of objects inside the requested object.
+     */
     public static List<AbstractEntity> getAllObjectsInside(AbstractEntity obj) {
         List<AbstractEntity> result = new ArrayList<>();
 
@@ -195,6 +214,13 @@ public abstract class AbstractContainer extends AbstractEntity {
         return result;
     }
 
+    /**
+     * Adds the object to the requested container ID.
+     * 
+     * @param object the object to add.
+     * @param list the list of objects where the container is located.
+     * @param id the container ID you wish to add the object to.
+     */
     public static void addObjectToContainerId(AbstractEntity object, List<AbstractEntity> list, String id) {
         for (AbstractContainer container : Entities.listCheckedEntities(AbstractContainer.class, list)) {
             if (container.getId().equals(id)) {

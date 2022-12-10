@@ -34,10 +34,16 @@ public class UnopenableDoor extends AbstractEntity {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all unopenable door objects from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms, Inventory inventory) throws SQLException {
-        PreparedStatement stm =
-                DBManager.getConnection()
-                        .prepareStatement("SELECT * FROM SAVEDATA.UnopenableDoor");
+        PreparedStatement stm = DBManager.getConnection()
+                .prepareStatement("SELECT * FROM SAVEDATA.UnopenableDoor");
         ResultSet resultSet = stm.executeQuery();
 
         while (resultSet.next()) {

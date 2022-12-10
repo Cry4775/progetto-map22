@@ -23,7 +23,6 @@ import engine.database.DBManager;
 import gui.GUIManager;
 
 public abstract class AbstractEntity extends GameComponent {
-
     protected static int DB_ROOM_ID_COLUMN = 4;
     protected static int DB_CONTAINER_ID_COLUMN = 5;
 
@@ -120,6 +119,7 @@ public abstract class AbstractEntity extends GameComponent {
         this.requiredWearedItemsToInteract = requiredWearedItemsToInteract;
     }
 
+    /** Executes the "Examine" action. */
     public void lookAt() {
         GUIManager.appendOutput(getDescription());
 
@@ -130,6 +130,11 @@ public abstract class AbstractEntity extends GameComponent {
         triggerEvent(EventType.LOOK_AT);
     }
 
+    /**
+     * Triggers the event.
+     * 
+     * @param type the event type to trigger.
+     */
     protected void triggerEvent(EventType type) {
         ObjectEvent evt = ObjectEvent.getEvent(events, type);
 
@@ -137,6 +142,10 @@ public abstract class AbstractEntity extends GameComponent {
             evt.trigger(this);
     }
 
+    /**
+     * @return {@code true} if the object is currently interactable (checks for wearables),
+     *         {@code false} otherwise.
+     */
     protected boolean canInteract() {
         if (getRequiredWearedItemsToInteract() != null) {
             for (IWearable wearable : getRequiredWearedItemsToInteract()) {
@@ -150,12 +159,23 @@ public abstract class AbstractEntity extends GameComponent {
         return true;
     }
 
+    /**
+     * Processes this class references (links the IDs to the correspondant objects).
+     * 
+     * @param objects all the objects multimap.
+     * @param rooms the rooms list.
+     */
     public void processReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         processRoomParent(rooms);
         processEventReferences(objects, rooms);
     }
 
+    /**
+     * Links this object's parent and closest room parent if it's inside a inner mutable room.
+     * 
+     * @param rooms the rooms list.
+     */
     private void processRoomParent(List<AbstractRoom> rooms) {
 
         for (PlayableRoom room : Rooms.listCheckedRooms(PlayableRoom.class, rooms)) {
@@ -175,6 +195,12 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
+    /**
+     * Processes this object's events references (links the IDs to the correspondant objects).
+     * 
+     * @param objects all the objects multimap.
+     * @param rooms the rooms list.
+     */
     private final void processEventReferences(Multimap<String, AbstractEntity> objects,
             List<AbstractRoom> rooms) {
         if (events != null) {
@@ -257,6 +283,11 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
+    /**
+     * Loads this object's events from DB.
+     * 
+     * @throws SQLException
+     */
     public final void loadObjEvents() throws SQLException {
         PreparedStatement stm;
 
@@ -269,6 +300,7 @@ public abstract class AbstractEntity extends GameComponent {
                     .prepareStatement(
                             "SELECT * FROM SAVEDATA.ObjectEvent WHERE OBJID = '" + getId() + "'");
         }
+
         ResultSet rs = stm.executeQuery();
 
         while (rs.next()) {
@@ -278,6 +310,11 @@ public abstract class AbstractEntity extends GameComponent {
         stm.close();
     }
 
+    /**
+     * Saves this object's events on DB.
+     * 
+     * @throws SQLException
+     */
     private final void saveEventsOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement(
@@ -298,6 +335,11 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
+    /**
+     * Saves this object's aliases on DB.
+     * 
+     * @throws SQLException
+     */
     private final void saveAliasesOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection()
                 .prepareStatement("INSERT INTO SAVEDATA.Alias values (?, ?)");
@@ -311,6 +353,11 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
+    /**
+     * Saves the weared items requirements on DB.
+     * 
+     * @throws SQLException
+     */
     private final void saveRequiredWearedItemsOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection().prepareStatement(
                 "INSERT INTO SAVEDATA.RequiredWearedItem values (?, ?, ?)");
@@ -325,6 +372,11 @@ public abstract class AbstractEntity extends GameComponent {
         }
     }
 
+    /**
+     * Saves this object's aliases, wearable requirements and events on DB.
+     * 
+     * @throws SQLException
+     */
     protected final void saveExternalsOnDB() throws SQLException {
         saveAliasesOnDB();
         saveRequiredWearedItemsOnDB();
@@ -338,6 +390,14 @@ public abstract class AbstractEntity extends GameComponent {
         stm.setString(5, getParent() instanceof AbstractContainer ? getParent().getId() : null);
     }
 
+    /**
+     * Loads this object's correct location (room or inventory).
+     * 
+     * @param resultSet the query result set of this object table.
+     * @param allRooms all the possible rooms list.
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     protected void loadLocation(ResultSet resultSet, List<AbstractRoom> allRooms, Inventory inventory)
             throws SQLException {
         String roomId = resultSet.getString(DB_ROOM_ID_COLUMN);

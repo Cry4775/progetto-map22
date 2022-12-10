@@ -15,6 +15,12 @@ public interface IOpenable extends IInteractable {
 
     public String getUnlockedWithItemId();
 
+    /**
+     * Executes the action "Open".
+     * 
+     * @param key the parsed inventory object that should represent the key. Can be {@code null}.
+     * @return the action state.
+     */
     public ActionState open(AbstractEntity key);
 
     public default void lookAt() {

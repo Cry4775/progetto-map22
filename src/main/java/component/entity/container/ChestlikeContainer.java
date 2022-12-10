@@ -132,6 +132,13 @@ public class ChestlikeContainer extends AbstractContainer implements IOpenable {
         saveExternalsOnDB();
     }
 
+    /**
+     * Loads all chestlike containers from DB.
+     * 
+     * @param allRooms all the possible rooms list.
+     * @param pendingList the list of not loaded yet containers.
+     * @throws SQLException
+     */
     public static void loadFromDB(List<AbstractRoom> allRooms,
             List<Triple<AbstractEntity, String, String>> pendingList) throws SQLException {
         PreparedStatement stm =

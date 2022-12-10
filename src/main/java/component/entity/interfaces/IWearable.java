@@ -7,7 +7,17 @@ public interface IWearable extends IPickupable {
 
     public void setWorn(boolean worn);
 
+    /**
+     * Executes the "Wear" action.
+     * 
+     * @return the action state.
+     */
     public ActionState wear();
 
+    /**
+     * Executes the "Unwear" action.
+     * 
+     * @return the action state.
+     */
     public ActionState unwear();
 }

@@ -7,5 +7,10 @@ public interface IMovable extends IInteractable {
 
     public void setMoved(boolean moved);
 
+    /**
+     * Executes the action "Move".
+     * 
+     * @return the action state.
+     */
     public ActionState move();
 }

@@ -7,7 +7,17 @@ public interface ISwitch extends IInteractable {
 
     public void setOn(boolean on);
 
+    /**
+     * Executes the "Turn on" action.
+     * 
+     * @return the action state.
+     */
     public ActionState turnOn();
 
+    /**
+     * Executes the "Turn off" action.
+     * 
+     * @return the action state.
+     */
     public ActionState turnOff();
 }
