@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 public abstract class AbstractEvent {
     private EventType eventType;
-
     private String text;
 
     protected AbstractEvent(ResultSet resultSet) throws SQLException {

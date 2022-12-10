@@ -32,20 +32,16 @@ public class ObjectEvent extends AbstractEvent {
         destroyOnTrigger = resultSet.getBoolean(8);
     }
 
+    /**
+     * @return {@code true} if the parent (object) must be destroyed on trigger of the event,
+     *         {@code false} otherwise.
+     */
     public boolean mustDestroyOnTrigger() {
         return destroyOnTrigger;
     }
 
-    public void setDestroyOnTrigger(boolean destroyOnTrigger) {
-        this.destroyOnTrigger = destroyOnTrigger;
-    }
-
     public String getUpdateTargetRoomId() {
         return updateTargetRoomId;
-    }
-
-    public void setUpdateTargetRoomId(String updateTargetRoomId) {
-        this.updateTargetRoomId = updateTargetRoomId;
     }
 
     public MutableRoom getUpdateTargetRoom() {
@@ -60,16 +56,8 @@ public class ObjectEvent extends AbstractEvent {
         return updatingParentRoom;
     }
 
-    public void setUpdatingParentRoom(boolean updatingParentRoom) {
-        this.updatingParentRoom = updatingParentRoom;
-    }
-
     public String getTeleportsPlayerToRoomId() {
         return teleportsPlayerToRoomId;
-    }
-
-    public void setTeleportsPlayerToRoomId(String teleportsPlayerToRoomId) {
-        this.teleportsPlayerToRoomId = teleportsPlayerToRoomId;
     }
 
     public AbstractRoom getTeleportsPlayerToRoom() {
@@ -80,6 +68,11 @@ public class ObjectEvent extends AbstractEvent {
         this.teleportsPlayerToRoom = teleportsPlayerToRoom;
     }
 
+    /**
+     * Triggers the event.
+     * 
+     * @param obj the event parent object.
+     */
     public void trigger(AbstractEntity obj) {
         if (updatingParentRoom) {
             MutableRoom parentRoom = (MutableRoom) obj.getClosestRoomParent();
@@ -117,6 +110,11 @@ public class ObjectEvent extends AbstractEvent {
         obj.getEvents().remove(this);
     }
 
+    /**
+     * @param events the list of object events.
+     * @param type the event type.
+     * @return the requested event, if any.
+     */
     public static ObjectEvent getEvent(List<ObjectEvent> events, EventType type) {
         if (events != null) {
             for (ObjectEvent evt : events) {
