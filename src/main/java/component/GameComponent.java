@@ -4,11 +4,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/** Base class of all the game components (rooms and objects). */
 public abstract class GameComponent {
     private String id;
-
     private String name;
-
     private String description;
 
     protected GameComponent(ResultSet resultSet) throws SQLException {
@@ -35,6 +34,12 @@ public abstract class GameComponent {
 
     public abstract void saveOnDB() throws SQLException;
 
+    /**
+     * Sets the class specific variables on the statement.
+     * 
+     * @param stm the statement you want to save the object on.
+     * @throws SQLException
+     */
     protected void setKnownValuesOnStatement(PreparedStatement stm) throws SQLException {
         stm.setString(1, getId());
         stm.setString(2, getName());

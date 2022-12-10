@@ -13,13 +13,24 @@ import engine.database.DBManager;
 import utility.Utils;
 
 public class MutableRoom extends PlayableRoom {
-
     private MutableRoom newRoom;
 
     public MutableRoom(ResultSet resultSet) throws SQLException {
         super(resultSet);
     }
 
+    public MutableRoom getNewRoom() {
+        return newRoom;
+    }
+
+    public void setNewRoom(MutableRoom newRoom) {
+        this.newRoom = newRoom;
+    }
+
+    /**
+     * @return a list of all this room children and itself.
+     *         Children rooms are identified with alphabet letters in their IDs.
+     */
     public List<AbstractRoom> getAllRooms() {
         List<AbstractRoom> result = new ArrayList<>();
 
@@ -35,7 +46,14 @@ public class MutableRoom extends PlayableRoom {
         return result;
     }
 
-    private void updateFields(AbstractRoom newRoom) {
+    /**
+     * Updates this room fields with the new room's defined fields.
+     * <p>
+     * Objects defined in the new rooms will get added if they have a different ID,
+     * while they replace the already present ones if they have the same ID.
+     * </p>
+     */
+    private void updateFields() {
         for (Field f : Utils.getFields(newRoom.getClass())) {
             try {
                 if (f.get(newRoom) != null
@@ -93,10 +111,11 @@ public class MutableRoom extends PlayableRoom {
         }
     }
 
+    /** Requests the update to the new room. */
     public void updateToNewRoom() {
 
         if (newRoom != null) {
-            updateFields(newRoom);
+            updateFields();
         }
     }
 
@@ -130,14 +149,6 @@ public class MutableRoom extends PlayableRoom {
             evtStm.setString(3, getEvent().getText());
             evtStm.executeUpdate();
         }
-    }
-
-    public MutableRoom getNewRoom() {
-        return newRoom;
-    }
-
-    public void setNewRoom(MutableRoom newRoom) {
-        this.newRoom = newRoom;
     }
 
 }

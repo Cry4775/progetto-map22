@@ -31,10 +31,6 @@ public class Inventory {
         return objects;
     }
 
-    /**
-     * @param mode the desired mode.
-     * @return the list of objects in the desired state.
-     */
     public List<AbstractEntity> getObjects(Mode mode) {
         switch (mode) {
             case NORMAL:

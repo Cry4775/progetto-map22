@@ -6,10 +6,8 @@ import java.sql.SQLException;
 import engine.database.DBManager;
 
 public class CutsceneRoom extends AbstractRoom {
-
     private AbstractRoom nextRoom;
     private String nextRoomId;
-
     private boolean finalRoom = false;
 
     public CutsceneRoom(ResultSet resultSet) throws SQLException {
@@ -33,7 +31,7 @@ public class CutsceneRoom extends AbstractRoom {
     public String getNextRoomId() {
         return nextRoomId;
     }
-
+    
     @Override
     public void saveOnDB() throws SQLException {
         PreparedStatement stm = DBManager.getConnection().prepareStatement(

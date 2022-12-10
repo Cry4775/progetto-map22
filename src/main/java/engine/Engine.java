@@ -537,7 +537,7 @@ public class Engine {
         AbstractRoom requestedRoom = currentRoom.getRoomAt(direction);
         MoveInformations status = gameManager.getCurrentMoveInfos();
 
-        InvisibleWall wall = currentRoom.getMagicWall(direction);
+        InvisibleWall wall = currentRoom.getInvisibleWall(direction);
         if (wall != null) {
             status.setState(MovementState.BLOCKED_WALL);
             status.setWall(wall);

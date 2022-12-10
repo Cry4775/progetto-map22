@@ -18,6 +18,34 @@ import engine.database.DBManager;
 import gui.GUIManager;
 
 public class PlayableRoom extends AbstractRoom {
+
+    private AbstractRoom south;
+    private String southId;
+    private AbstractRoom north;
+    private String northId;
+    private AbstractRoom southWest;
+    private String southWestId;
+    private AbstractRoom northWest;
+    private String northWestId;
+    private AbstractRoom southEast;
+    private String southEastId;
+    private AbstractRoom northEast;
+    private String northEastId;
+    private AbstractRoom east;
+    private String eastId;
+    private AbstractRoom west;
+    private String westId;
+    private AbstractRoom up;
+    private String upId;
+    private AbstractRoom down;
+    private String downId;
+
+    private List<AbstractEntity> objects = new ArrayList<>();
+    private RoomEvent event;
+
+    private boolean dark = false;
+    private boolean darkByDefault = false;
+
     public PlayableRoom(ResultSet resultSet) throws SQLException {
         super(resultSet);
         southId = resultSet.getString(7);
@@ -32,44 +60,6 @@ public class PlayableRoom extends AbstractRoom {
         downId = resultSet.getString(16);
         darkByDefault = resultSet.getBoolean(17);
     }
-
-    private AbstractRoom south;
-    private String southId;
-
-    private AbstractRoom north;
-    private String northId;
-
-    private AbstractRoom southWest;
-    private String southWestId;
-
-    private AbstractRoom northWest;
-    private String northWestId;
-
-    private AbstractRoom southEast;
-    private String southEastId;
-
-    private AbstractRoom northEast;
-    private String northEastId;
-
-    private AbstractRoom east;
-    private String eastId;
-
-    private AbstractRoom west;
-    private String westId;
-
-    private AbstractRoom up;
-    private String upId;
-
-    private AbstractRoom down;
-    private String downId;
-
-    private List<AbstractEntity> objects = new ArrayList<>();
-
-    private RoomEvent event;
-
-    private boolean dark = false;
-
-    private boolean darkByDefault = false;
 
     public AbstractRoom getSouth() {
         return south;
@@ -191,14 +181,33 @@ public class PlayableRoom extends AbstractRoom {
         return downId;
     }
 
+    /**
+     * @return {@code true} if the room must be dark if there's no light source on,
+     *         {@code false} otherwise.
+     */
     protected boolean isDarkByDefault() {
         return darkByDefault;
     }
 
+    /**
+     * @return {@code true} if the room is currently dark,
+     *         {@code false} otherwise.
+     */
     public boolean isDark() {
         return dark;
     }
 
+    /**
+     * Getter modes:
+     * <ul>
+     * <li><b>UNPACK_CONTAINERS</b>: gets the list of objects including eventual
+     * objects in all the containers.</li>
+     * <li><b>INCLUDE_NEW_ROOMS</b>: gets the list of objects including eventual
+     * objects in all the child rooms (doesn't unpack containers).</li>
+     * <li><b>INCLUDE_EVERYTHING</b>: gets the list of objects including eventual
+     * objects in all the child rooms and containers.</li>
+     * </ul>
+     */
     public enum Mode {
         UNPACK_CONTAINERS,
         INCLUDE_NEW_ROOMS,
@@ -240,6 +249,10 @@ public class PlayableRoom extends AbstractRoom {
         return result;
     }
 
+    /**
+     * @param mode the desired mode for getter.
+     * @return a multimap (the same key can contain more values) of all the desired objects.
+     */
     public Multimap<String, AbstractEntity> getObjectsAsMap(Mode mode) {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
 
@@ -264,7 +277,11 @@ public class PlayableRoom extends AbstractRoom {
         obj.setClosestRoomParent(null);
     }
 
-    public InvisibleWall getMagicWall(Type direction) {
+    /**
+     * @param direction the parsed direction command.
+     * @return the invisible wall blocking the way, if there's one, {@code null} otherwise.
+     */
+    public InvisibleWall getInvisibleWall(Type direction) {
         if (objects != null) {
             for (InvisibleWall wall : Entities.listCheckedEntities(InvisibleWall.class, objects)) {
                 if (wall.isBlocking(direction)) {
@@ -275,6 +292,10 @@ public class PlayableRoom extends AbstractRoom {
         return null;
     }
 
+    /**
+     * @param direction the parsed direction command.
+     * @return the room at the requested direction, if exists.
+     */
     public AbstractRoom getRoomAt(Type direction) {
         switch (direction) {
             case NORTH:
@@ -302,6 +323,7 @@ public class PlayableRoom extends AbstractRoom {
         }
     }
 
+    /** Triggers the room event, if it's not dark. */
     public void triggerEvent() {
         if (dark)
             return;
@@ -312,6 +334,13 @@ public class PlayableRoom extends AbstractRoom {
         }
     }
 
+    /**
+     * Processes the current lighting.
+     * Checks if this room is dark by default and if it is,
+     * searchs the inventory for active light sources.
+     * 
+     * @param inventory the inventory objects list.
+     */
     public void processRoomLighting(List<AbstractEntity> inventory) {
         List<ILightSource> invLightSources = Entities
                 .listCheckedInterfaceEntities(ILightSource.class, inventory);
