@@ -25,7 +25,6 @@ public class GameManager {
     private final List<AbstractRoom> rooms = new ArrayList<>();
     private final List<Command> commands = new ArrayList<>();
     private final Inventory inventory = new Inventory();
-
     private AbstractRoom currentRoom;
     private AbstractRoom previousRoom;
 
@@ -119,6 +118,7 @@ public class GameManager {
         return inventory;
     }
 
+    /** ONLY FOR CUTSCENES. */
     protected void proceedToNextRoom() {
         if (getCurrentRoom() instanceof CutsceneRoom) {
             CutsceneRoom currentRoom = (CutsceneRoom) getCurrentRoom();
@@ -132,6 +132,16 @@ public class GameManager {
         }
     }
 
+    /**
+     * Changes current room to the requested room and
+     * updates the previous room.
+     * <p>
+     * Updates the {@link engine.MoveInformations.MovementState MovementState} to
+     * POSITION_CHANGED
+     * </p>
+     * 
+     * @param room the room you want to change to.
+     */
     protected void moveTo(AbstractRoom room) {
         if (room != null) {
             setPreviousRoom(currentRoom);
@@ -141,6 +151,7 @@ public class GameManager {
         }
     }
 
+    /** Processes the current lighting if the current room is a playable room. */
     protected void processCurrentLighting() {
         if (currentRoom instanceof PlayableRoom) {
             PlayableRoom pRoom = (PlayableRoom) currentRoom;
@@ -148,6 +159,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * @return a list of all the rooms, including the inner mutable ones.
+     */
     public List<AbstractRoom> listAllRooms() {
         List<AbstractRoom> result = new ArrayList<>();
         result.addAll(Rooms.listAllRooms(rooms));
@@ -155,6 +169,10 @@ public class GameManager {
         return result;
     }
 
+    /**
+     * @return a multimap (the same key can contain more values) of all the objects
+     *         contained in all the rooms (including the inner mutable ones).
+     */
     public Multimap<String, AbstractEntity> mapAllRoomsObjects() {
         Multimap<String, AbstractEntity> result = ArrayListMultimap.create();
         result.putAll(Entities.mapRoomsObjects(rooms));

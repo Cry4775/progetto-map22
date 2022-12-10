@@ -219,6 +219,10 @@ public class Parser {
             return command;
         }
 
+        /**
+         * Useful when you want to get any object with no distinction between room and inventory.
+         * Gets the room object first, then if it doesn't exist, tries for the inventory object.
+         */
         public AbstractEntity getObject() {
             if (roomObject != null) {
                 return roomObject;

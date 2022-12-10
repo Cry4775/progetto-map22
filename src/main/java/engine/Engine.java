@@ -79,7 +79,7 @@ public class Engine {
 
                         if (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
                             CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
-                            processCutscene(currentRoom);
+                            handleCutscene(currentRoom);
                         }
                     }
                 }.start();
@@ -91,6 +91,15 @@ public class Engine {
         }
     }
 
+    /**
+     * <p>
+     * Procedure called when a command (user input) has been sent.
+     * Sends the command to the parser and processes it.
+     * </p>
+     * Requires the engine to be initialized.
+     * 
+     * @param command string taken from user input.
+     */
     public static void commandPerformed(String command) {
         requireInitialization();
         gameManager.requireInitialization();
@@ -115,12 +124,17 @@ public class Engine {
 
                 while (gameManager.getCurrentRoom() instanceof CutsceneRoom) {
                     CutsceneRoom currentRoom = (CutsceneRoom) gameManager.getCurrentRoom();
-                    processCutscene(currentRoom);
+                    handleCutscene(currentRoom);
                 }
             }
         }.start();
     }
 
+    /**
+     * Updates the ambience sound if it just started raining,
+     * triggers the current room event if not already triggered and
+     * updates the GUI.
+     */
     private static void updateRoomInformations() {
         requireInitialization();
         gameManager.requireInitialization();
@@ -139,7 +153,17 @@ public class Engine {
         GUIManager.updateRoomInformations(gameManager.getCurrentRoom(), gameManager.getPreviousRoom());
     }
 
-    private static void processCutscene(CutsceneRoom cutscene) {
+    /**
+     * Handles the cutscene process:
+     * <ol>
+     * <li>Waits until ENTER key is pressed.</li>
+     * <li>Proceeds to the next room, if any, otherwise closes the game.</li>
+     * <li>Updates the GUI.</li>
+     * </ol>
+     * 
+     * @param cutscene
+     */
+    private static void handleCutscene(CutsceneRoom cutscene) {
         Objects.requireNonNull(cutscene);
 
         GUIManager.waitUntilEnterIsPressed();
@@ -154,6 +178,11 @@ public class Engine {
         updateRoomInformations();
     }
 
+    /**
+     * Handles and processes the playable room command.
+     *
+     * @param p the parser result.
+     */
     private static void processCommand(Result p) {
         requireInitialization();
         gameManager.requireInitialization();
@@ -494,6 +523,13 @@ public class Engine {
         moveInfos.reset();
     }
 
+    /**
+     * Checks wheter or not movement is possible towards the requested direction.
+     * 
+     * @param direction the parsed direction command.
+     * @return {@code true} if there are no walls (physical, magical or door) blocking the player,
+     *         {@code false} otherwise and if the room is dark.
+     */
     private static boolean isMovementGranted(Type direction) {
         requireInitialization();
         gameManager.requireInitialization();
@@ -536,6 +572,12 @@ public class Engine {
         }
     }
 
+    /**
+     * Checks if the parsed command is a movement (direction) command.
+     * 
+     * @param commandType the parsed command type.
+     * @return {@code true} if it's a movement command, {@code false} otherwise.
+     */
     private static boolean isMovementCommand(Type commandType) {
         switch (commandType) {
             case NORTH:

@@ -43,21 +43,25 @@ import utility.Triple;
 
 public class DBManager {
     private static Connection connection;
-
     private static final String DB_PATH = "jdbc:h2:./savedata";
-
     static List<AbstractRoom> loadedRooms = new ArrayList<>();
 
     public static Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Opens connection to {@value #DB_PATH}.
+     * 
+     * @throws SQLException
+     */
     private static void openConnection() throws SQLException {
         if (connection == null || !connection.isValid(0)) {
             connection = DriverManager.getConnection(DB_PATH, "user", "");
         }
     }
 
+    /** Closes the opened connection. */
     private static void closeConnection() {
         try {
             if (connection != null) {
@@ -70,9 +74,11 @@ public class DBManager {
         }
     }
 
+    /**
+     * @return {@code true} if a DB exists at {@value #DB_PATH}, {@code false} otherwise.
+     */
     private static boolean existsDB() {
         try {
-
             openConnection();
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet resultSet = databaseMetaData.getSchemas();
@@ -95,6 +101,7 @@ public class DBManager {
         }
     }
 
+    /** Creates the DB at {@value #DB_PATH} if it doesn't already exist. */
     public static void createDB() {
         try {
             openConnection();
@@ -450,6 +457,15 @@ public class DBManager {
         }
     }
 
+    /**
+     * Saves the current state of rooms on the DB.
+     * <p>
+     * Needs an opened connection.
+     * </p>
+     * 
+     * @param gameManager the game manager reference.
+     * @throws SQLException
+     */
     public static void saveRooms(GameManager gameManager) throws SQLException {
         for (AbstractRoom room : gameManager.listAllRooms()) {
             room.saveOnDB();
@@ -465,6 +481,15 @@ public class DBManager {
         stm.executeUpdate();
     }
 
+    /**
+     * Saves the current state of all the objects in all the rooms on the DB.
+     * <p>
+     * Needs an opened connection.
+     * </p>
+     * 
+     * @param gameManager the game manager reference.
+     * @throws SQLException
+     */
     public static void saveObjects(GameManager gameManager) throws SQLException {
         for (AbstractEntity obj : gameManager.mapAllRoomsObjects().values()) {
             obj.saveOnDB();
@@ -477,6 +502,14 @@ public class DBManager {
         }
     }
 
+    /**
+     * Deletes current savedata.
+     * <p>
+     * Needs an opened connection.
+     * </p>
+     * 
+     * @throws SQLException
+     */
     public static void wipeExistingDB() throws SQLException {
         PreparedStatement stm;
 
@@ -565,6 +598,9 @@ public class DBManager {
         stm.executeUpdate();
     }
 
+    /**
+     * @return {@code true} if savedata exists at {@value #DB_PATH}, {@code false} otherwise.
+     */
     public static boolean existsSaving() {
         try {
             openConnection();
@@ -593,6 +629,11 @@ public class DBManager {
         }
     }
 
+    /**
+     * Saves the current game state on the DB.
+     * 
+     * @param gameManager the game manager reference.
+     */
     public static void save(GameManager gameManager) {
         try {
             openConnection();
@@ -615,6 +656,12 @@ public class DBManager {
         }
     }
 
+    /**
+     * Loads the game state from the DB.
+     * 
+     * @param inventory the inventory reference.
+     * @return the list of rooms loaded from DB.
+     */
     public static List<AbstractRoom> load(Inventory inventory) {
         try {
             openConnection();
@@ -645,6 +692,9 @@ public class DBManager {
         }
     }
 
+    /**
+     * @return the current room id saved on the DB.
+     */
     public static String getCurrentRoomId() {
         try {
             PreparedStatement stm =
@@ -661,6 +711,9 @@ public class DBManager {
         return null;
     }
 
+    /**
+     * @return the previous room id saved on the DB.
+     */
     public static String getPreviousRoomId() {
         try {
             PreparedStatement stm =
@@ -677,6 +730,15 @@ public class DBManager {
         return null;
     }
 
+    /**
+     * Loads the state of all the objects in all the rooms from the DB.
+     * <p>
+     * Needs an opened connection.
+     * </p>
+     * 
+     * @param inventory the inventory reference.
+     * @throws SQLException
+     */
     private static void loadObjects(Inventory inventory) throws SQLException {
         List<Triple<AbstractEntity, String, String>> pendingList = new ArrayList<>();
         List<AbstractRoom> allRooms = Rooms.listAllRooms(loadedRooms);
@@ -731,6 +793,14 @@ public class DBManager {
         WearableItem.loadFromDB(allRooms, inventory);
     }
 
+    /**
+     * Loads all the rooms from the DB.
+     * <p>
+     * Needs an opened connection.
+     * </p>
+     * 
+     * @throws SQLException
+     */
     private static void loadRooms() throws SQLException {
         PreparedStatement stm = connection.prepareStatement("SELECT * FROM SAVEDATA.PlayableRoom");
         ResultSet resultSet = stm.executeQuery();
@@ -778,6 +848,17 @@ public class DBManager {
         }
     }
 
+    /**
+     * Inserts child room to the requested room.
+     * <p>
+     * Mutable rooms are saved sequentially, this means that once you find a room that is flagged as
+     * mutable, the next room you'll find on the result set, will be its "newRoom", and so on.
+     * </p>
+     * 
+     * @param resultSet the query result set for playable rooms
+     * @param parentRoom the parent room.
+     * @throws SQLException
+     */
     private static void insertNewRoom(ResultSet resultSet, MutableRoom parentRoom)
             throws SQLException {
         resultSet.next();

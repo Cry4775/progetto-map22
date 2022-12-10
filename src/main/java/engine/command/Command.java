@@ -16,9 +16,7 @@ public class Command {
     }
 
     private final Type type;
-
     private final String name;
-
     private Set<String> alias;
 
     public Command(Type type, String name) {
