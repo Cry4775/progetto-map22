@@ -161,7 +161,7 @@ public class Engine {
      * <li>Updates the GUI.</li>
      * </ol>
      * 
-     * @param cutscene
+     * @param cutscene the cutscene room.
      */
     private static void handleCutscene(CutsceneRoom cutscene) {
         Objects.requireNonNull(cutscene);

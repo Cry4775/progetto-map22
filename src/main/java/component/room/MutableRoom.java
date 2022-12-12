@@ -54,6 +54,7 @@ public class MutableRoom extends PlayableRoom {
      * </p>
      */
     private void updateFields() {
+        MutableRoom newRoom = this.newRoom;
         for (Field f : Utils.getFields(newRoom.getClass())) {
             try {
                 if (f.get(newRoom) != null
