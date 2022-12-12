@@ -21,7 +21,6 @@ import javax.swing.text.StyledDocument;
 
 /** Manages the Output text pane and Input text field. */
 public class OutputManager {
-    private static MainFrame gui;
     private static JTextPane txtPane;
     private static JTextField txtInput;
 
@@ -33,7 +32,6 @@ public class OutputManager {
     protected static void registerGUI(MainFrame mainFrame) {
         Objects.requireNonNull(mainFrame);
 
-        gui = mainFrame;
         txtPane = mainFrame.getTxtPane();
         txtInput = mainFrame.getTxtInput();
     }
@@ -93,7 +91,7 @@ public class OutputManager {
      * which is black and with nothing added to it.
      */
     protected static void printAsOutput() {
-        Objects.requireNonNull(gui);
+        Objects.requireNonNull(txtPane);
 
         write(output.toString(), false);
 
@@ -107,7 +105,7 @@ public class OutputManager {
      * @param text the string to print
      */
     protected static void printAsInput(String text) {
-        Objects.requireNonNull(gui);
+        Objects.requireNonNull(txtPane);
 
         write(text, true);
 
