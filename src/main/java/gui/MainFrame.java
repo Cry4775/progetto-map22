@@ -86,12 +86,10 @@ public class MainFrame extends JFrame {
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
-        setSize(new Dimension(583, 852));
 
         pnlHeader.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(0, 0, 0)),
                 BorderFactory.createEmptyBorder(0, 10, 0, 10)));
-        pnlHeader.setPreferredSize(new Dimension(583, 35));
         pnlHeader.setLayout(new BorderLayout());
 
         lblRoomName.setFont(new Font("Segoe UI", 0, 18));
@@ -113,7 +111,7 @@ public class MainFrame extends JFrame {
 
         getContentPane().add(pnlHeader, BorderLayout.NORTH);
 
-        pnlInOut.setPreferredSize(new Dimension(583, 517));
+        pnlInOut.setPreferredSize(new Dimension(0, 517));
         pnlInOut.setLayout(new BorderLayout());
 
         scrOutput.setBorder(null);

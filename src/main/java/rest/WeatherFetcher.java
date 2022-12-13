@@ -91,8 +91,6 @@ public class WeatherFetcher {
             try {
                 Response response = target.queryParam("apikey", API_KEY).queryParam("details", true)
                         .request(MediaType.APPLICATION_JSON).get();
-                target.queryParam("apikey", API_KEY).queryParam("details", true)
-                        .request(MediaType.APPLICATION_JSON).get();
 
                 if (response.getStatus() == 200) {
                     String json = response.readEntity(String.class);
