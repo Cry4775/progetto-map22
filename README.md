@@ -7,6 +7,7 @@
 2. Struttura fondamentale del software
 3. Requisiti richiesti
 4. Come impostare la propria storia
+5. Specifica algebrica
 
 # 1 Introduzione al progetto
 L'idea del progetto é quella di sviluppare un engine/framework con cui é possibile, attraverso l'ausilio di un file json, impostare la propria storia e renderla giocabile.<br>
@@ -536,3 +537,44 @@ Oggetto che rappresenta il liquido, puó essere preso nell'inventario attraverso
  - `READ`: comando "Leggi"
  - `TURN_ON`: comando "Accendi"
  - `TURN_OFF`: comando "Spegni"
+ 
+ ## 5 Specifica algebrica
+ Si riporta la specifica algebrica della struttura dati `Multimap` del package `com.google.common.collect`, utilizzata nella classe Entities per ricavare tutti i possibili oggetti contenuti in una stanza, anche quelli con lo stesso ID.
+ 
+ Le operazioni sono state adattate per semplificare la scrittura della specifica.
+ 
+ ### 5.1 Specifica sintattica
+ sorts: Multimap, AbstractEntity, String, boolean, Collection
+ 
+ Nota: é definita l'operazione getId(AbstractEntity) -> String
+ 
+ operations:
+ 
+ [COSTRUTTORI]
+ - create() -> Multimap
+ - put(Multimap, AbstractEntity) -> Multimap
+ 
+ [OSSERVATORI]
+ - get(Multimap, String) -> Collection
+ - remove(Multimap, String, AbstractEntity) -> Multimap
+ - removeAll(Multimap, String) -> Multimap
+ - containsKey(Multimap, String) -> boolean
+ - isEmpty(Multimap) -> boolean
+ 
+ ### 5.2 Specifica semantica
+ declare m: Multimap, e: AbstractEntity, c: Collection
+ 
+ Nota: la collection restituita dall'operazione get contiene tutte le coppie chiave-valore trovate
+ 
+ - get(put(m, e), getId(e)) = c
+ - remove(put(m,e), getId(e), e) = m
+ - removeAll(put(m,e), getId(e)) = m
+ - containsKey(put(m,e), getId(e)) = true
+ - containsKey(create(), getId(e)) = false
+ - isEmpty(put(m,e)) = false
+ - isEmpty(create()) = true 
+ 
+ ### 5.3 Specifica di restrizione
+ - get(create(), getId(e)) = ERRORE
+ - remove(create(), getId(e)) = ERRORE
+ - removeAll(create(), getId(e), e) = ERRORE
