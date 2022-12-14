@@ -1,7 +1,12 @@
 # Progetto esame "Metodi avanzati di programmazione" (UniBA)
-
-## Team: Pierdamiano Zagaria
+## di Pierdamiano Zagaria
 <br>
+
+# Indice
+1. Introduzione al progetto
+2. Struttura fondamentale del software
+3. Requisiti richiesti
+4. Come impostare la propria storia
 
 # 1 Introduzione al progetto
 L'idea del progetto é quella di sviluppare un engine/framework con cui é possibile, attraverso l'ausilio di un file json, impostare la propria storia e renderla giocabile.<br>
@@ -86,7 +91,7 @@ Adesso dobbiamo indossare l'anello che Valeria ci ha appena dato per poter oltre
 
 Una volta completate le cutscenes, il gioco sará completato e si chiuderá.
 
-# 2 Struttura del software
+# 2 Struttura fondamentale del software
 Piccola descrizione delle componenti fondamentali del software.
 
 ## 2.1 Engine
@@ -382,6 +387,7 @@ Stanza giocabile, eventualmente con degli oggetti e collegata ad altre stanze (1
 ### 4.1.2 MutableRoom
 Stanza giocabile, eredita dalla precedente tutte le variabili giá viste, in piú prevede la possibilitá di mutare in seguito ad un evento di un qualsiasi oggetto.
 - `newRoom`: la stanza in cui mutare, PlayableRoom/MutableRoom
+
 Nella `newRoom` al contrario delle altre occasioni, é necessario soltanto specificare le variabili di interesse, l'engine semplicemente aggiornerá la stanza principale con i nuovi valori specificati.
 
 In caso di aggiornamento della lista di oggetti, se si vuole sovrascrivere un oggetto giá presente, basterá usare lo stesso id, se invece si vuole semplicemente aggiungere un oggetto alla stanza basterá usare un id diverso.
@@ -463,11 +469,13 @@ Oggetto che rappresenta il liquido, puó essere preso nell'inventario attraverso
  - `northWestBlocked`: se la direzione nord-ovest é bloccata dal muro invisibile, booleano
  - `southEastBlocked`: se la direzione sud-est é bloccata dal muro invisibile, booleano
  - `southWestBlocked`: se la direzione sud-ovest é bloccata dal muro invisibile, booleano
+ 
  `blockedRoomId` va usato se esiste una stanza bloccata, mentre i flag sottostanti vanno usati se sono stanze false.
  
  ### 4.2.15 Human (*ITalkable*)
  Questa entitá rappresenta un umano a cui si puó parlare ("Parla").
  - `phrases`: coda di frasi che la persona dirá, coda di stringhe
+ 
  Una volta finite le frasi, il messaggio sará sempre "..."
  
  ### 4.2.16 BasicContainer
