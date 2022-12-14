@@ -576,5 +576,5 @@ Oggetto che rappresenta il liquido, puó essere preso nell'inventario attraverso
  
  ### 5.3 Specifica di restrizione
  - get(create(), getId(e)) = ERRORE
- - remove(create(), getId(e)) = ERRORE
- - removeAll(create(), getId(e), e) = ERRORE
+ - remove(create(), getId(e), e) = ERRORE
+ - removeAll(create(), getId(e)) = ERRORE
