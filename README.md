@@ -193,22 +193,6 @@ Specializzazioni:
 - ReadableItem (IReadable);
 - WearableItem (IWearable).
 
-### 2.2.10 AbstractEvent
-Non eredita da `GameComponent`. 
-Un evento é identificato da un tipo che identifica il momento in cui viene attivato ed é composto da un testo, stampato al trigger.
-
-### 2.2.11 RoomEvent
-Un `RoomEvent` viene attivato una sola volta e nel momento in cui il giocatore mette piede in una stanza.
-
-### 2.2.12 ObjectEvent
-Un `ObjectEvent` ha piú possibilitá di personalizzazione e contiene 2 flag:
-- `updatingParentRoom` se al trigger si dovrebbe mutare la stanza madre;
-- `destroyOnTrigger` se al trigger si dovrebbe distruggere l'oggetto padre dell'evento.
-
-Inoltre é possibile specificare:
-- `updatingTargetRoomId` per mutare una stanza che non é quella madre;
-- `teleportsPlayerToRoomId` per teletrasportare il giocatore in un'altra stanza.
-
 # 3 Requisiti richiesti
 I **thread** (Sezione 3.1.2) sono stati utilizzati per:
 - Inizializzazione e caricamento del gioco (`RoomsLoader`);
