@@ -1,5 +1,7 @@
 # Progetto esame "Metodi avanzati di programmazione" (UniBA)
+
 ## Team: Pierdamiano Zagaria
+<br>
 
 # 1 Introduzione al progetto
 L'idea del progetto é quella di sviluppare un engine/framework con cui é possibile, attraverso l'ausilio di un file json, impostare la propria storia e renderla giocabile.<br>
@@ -85,6 +87,8 @@ Adesso dobbiamo indossare l'anello che Valeria ci ha appena dato per poter oltre
 Una volta completate le cutscenes, il gioco sará completato e si chiuderá.
 
 # 2 Struttura del software
+Piccola descrizione delle componenti fondamentali del software.
+
 ## 2.1 Engine
 L'engine é la classe che si occupa di gestire tutti i componenti del software e che permette la comunicazione tra essi. 
 Contiene riferimenti dei componenti fondamentali (es. GUI) ed esegue il processing dei comandi dati in input.
@@ -332,3 +336,211 @@ Contiene diversi componenti organizzati su un `BorderLayout`:
 - `lypRoomImage`, pannello a livelli che contiene, in ordine
     - `noisePanel`, pannello per l'animazione simil-vecchia TV (top)
     - `lblRoomImage`, label per l'immagine della stanza (bottom)
+    
+# 4 Come impostare la propria storia
+Il file `rooms.json` nella cartella `resources` é ció che rende personalizzabile la storia.
+
+Il formato é piuttosto semplice:
+<pre>[
+    {
+        "type": "TipoStanza",
+        "id": "1",
+        "name": "nome"
+    },
+    {
+        "type": "TipoStanza",
+        "id": "2",
+        ...
+        "objects": 
+            [
+                {
+                    "type": "TipoOggetto",
+                    "id": "2",
+                    ...
+                }
+            ]
+    }
+]</pre>
+
+Per ogni oggetto o stanza é obbligatorio specificare il tipo (la classe) e l'id.
+La prima stanza impostata nella lista, sará quella di partenza del gioco.
+Se una variabile é una lista (a livello di classe) allora vengono usate le parentesi quadre e ogni elemento sará racchiuso da parentesi graffe.
+Se una variabile non viene impostata, verrá considerata automaticamente `null`.
+
+Variabili comuni a tutte le stanze ed entitá:
+- `type`: nome della classe (case-sensitive), stringa
+- `id`: identificatore, stringa
+- `name`: nome, stringa
+- `description`: descrizione stampata al momento dell'arrivo (se é una stanza), o all'esaminazione (se é un oggetto).
+
+Verranno illustrate di seguito tutte le possibili classi con descrizione esaustiva delle variabili e del loro uso.
+
+## 4.1 Stanze
+Variabili comuni a tutte le classi:
+- `imgPath`: percorso dell'immagine di riferimento, stringa
+
+### 4.1.1 PlayableRoom
+Stanza giocabile, eventualmente con degli oggetti e collegata ad altre stanze (10 direzioni).
+- `northId`: identificatore della stanza situata a nord, stringa
+- `southId`: identificatore della stanza situata a sud, stringa
+- `eastId`: identificatore della stanza situata a est, stringa
+- `westId`: identificatore della stanza situata a ovest, stringa
+- `northEastId`: identificatore della stanza situata a nord-est, stringa
+- `northWestId`: identificatore della stanza situata a nord-ovest, stringa
+- `southEastId`: identificatore della stanza situata a sud-est, stringa
+- `southWestId`: identificatore della stanza situata a sud-ovest, stringa
+- `upId`: identificatore della stanza situata al piano superiore, stringa
+- `downId`: identificatore della stanza situata al piano inferiore, stringa
+- `objects`: lista degli oggetti contenuti nella stanza, lista di entitá
+- `event`: evento da eseguire all'arrivo nella stanza, RoomEvent
+- `darkByDefault`: se la stanza dovrebbe essere buia senza una fonte di luce attiva, booleano
+
+### 4.1.2 MutableRoom
+Stanza giocabile, eredita dalla precedente tutte le variabili giá viste, in piú prevede la possibilitá di mutare in seguito ad un evento di un qualsiasi oggetto.
+- `newRoom`: la stanza in cui mutare, PlayableRoom/MutableRoom
+Nella `newRoom` al contrario delle altre occasioni, é necessario soltanto specificare le variabili di interesse, l'engine semplicemente aggiornerá la stanza principale con i nuovi valori specificati.
+
+In caso di aggiornamento della lista di oggetti, se si vuole sovrascrivere un oggetto giá presente, basterá usare lo stesso id, se invece si vuole semplicemente aggiungere un oggetto alla stanza basterá usare un id diverso.
+
+### 4.1.3 CutsceneRoom
+Stanza non giocabile, prevede un input del giocatore (INVIO) al termine dell'output della descrizione.
+- `nextRoomId`: l'identificatore della stanza successiva, stringa
+
+## 4.2 Entitá
+Variabili comuni a tutte le classi:
+- `alias`: lista di nomi alternativi, lista di stringhe
+- `events`: lista di eventi, lista di ObjectEvent
+- `requiredWearedItemsIdToInteract`: lista di indossabili richiesti per interagire (l'azione Esamina é l'unica possibile anche con i requisiti non soddisfatti), lista di IWearable
+- `failedInteractionMessage`: messaggio da stampare quando si interagisce ma non si hanno addosso gli indossabili richiesti, stringa
+
+### 4.2.1 BasicObject
+Oggetto la cui unica azione possibile é "Esamina".
+
+Non si puó prendere nell'inventario (tutte le entitá con "Object" nel nome indicano entitá che non si possono raccogliere).
+
+### 4.2.2 FireObject
+Oggetto che rappresenta delle fiamme e su cui é possibile eseguire l'azione "Versa" (es. "butta acqua sul fuoco").
+- `lit`: se di default il fuoco é acceso o meno, booleano
+
+### 4.2.3 MovableObject (*IMovable*)
+Oggetto che puó essere spostato ("Sposta).
+
+### 4.2.4 PullableObject (*IPullable*)
+Oggetto che puó essere tirato ("Tira").
+
+### 4.2.5 PushableObject (*IPushable*)
+Oggetto che puó essere premuto ("Premi").
+
+### 4.2.6 BasicItem
+Oggetto che puó essere preso nell'inventario ("Prendi").
+
+Tutte le entitá con "Item" nel nome indicano entitá che si possono raccogliere.
+
+### 4.2.7 FillableItem (*IFillable*)
+Oggetto che puó essere riempito ("Prendi liquido");
+- `eligibleItemId`: identificatore del liquido di cui l'oggetto si puó riempire, FluidItem
+- `filled`: se di default é giá pieno o meno, booleano
+
+### 4.2.8 FluidItem (*IFluid*)
+Oggetto che rappresenta il liquido, puó essere preso nell'inventario attraverso un FillableItem dedicato ("Prendi").
+
+### 4.2.9 LightSourceItem (*ISwitch*)
+ Oggetto che rappresenta una fonte di luce, puó essere acceso ("Accendi") e spento ("Spegni"), illumina le stanze buie.
+ - `requiredItemId`: l'eventuale oggetto nell'inventario che serve per accenderla, qualsiasi Item, stringa
+ 
+ ### 4.2.10 ReadableItem (*IReadable*)
+ Oggetto leggibile ("Leggi").
+ - `readText`: testo da stampare, stringa
+ 
+ ### 4.2.11 WearableItem (*IWearable*)
+ Oggetto indossabile ("Indossa").
+ 
+ ### 4.2.12 Door (*IOpenable*)
+ Oggetto rappresentante una porta che puó essere aperta ("Apri" e "Apri con chiave").
+ - `open`: se di default é aperta, booleano
+ - `locked`: se di default é chiusa a chiave, booleano
+ - `unlockedWithItemId`: in caso sia chiusa a chiave, con che item ID si dovrebbe sbloccare, stringa
+ - `blockedRoomId`: l'identificatore della stanza di cui blocca il passaggio, stringa
+ 
+ ### 4.2.13 UnopenableDoor (*IOpenable*)
+ Oggetto rappresentante una porta, ma che non puó essere aperta in alcun modo e stampa un messaggio personalizzato in caso l'utente provi ad aprirla.
+ - `openEventText`: messaggio da stampare in caso di prova di apertura, stringa
+ 
+ ### 4.2.14 InvisibleWall
+ Questa entitá é utilizzabile quando si vuole rendere una zona inaccessibile, con un messaggio personalizzato quando si prova ad oltrepassarla, e che eventualmente sia anche sbloccabile tramite indossabili (da usare in congiunzione con requiredWearedItemsIdToInteract).
+ - `locked`: se dovrebbe bloccare tentativi di movimento verso la direzione bloccata, booleano
+ - `trespassingWhenLockedText`: messaggio da stampare quando il tentativo di movimento fallisce, stringa
+ - `blockedRoomId`: identificatore della stanza bloccata dal muro invisibile
+ - `northBlocked`: se la direzione nord é bloccata dal muro invisibile, booleano
+ - `southBlocked`: se la direzione sud é bloccata dal muro invisibile, booleano
+ - `eastBlocked`: se la direzione est é bloccata dal muro invisibile, booleano
+ - `westBlocked`: se la direzione ovest é bloccata dal muro invisibile, booleano
+ - `northEastBlocked`: se la direzione nord-est é bloccata dal muro invisibile, booleano
+ - `northWestBlocked`: se la direzione nord-ovest é bloccata dal muro invisibile, booleano
+ - `southEastBlocked`: se la direzione sud-est é bloccata dal muro invisibile, booleano
+ - `southWestBlocked`: se la direzione sud-ovest é bloccata dal muro invisibile, booleano
+ `blockedRoomId` va usato se esiste una stanza bloccata, mentre i flag sottostanti vanno usati se sono stanze false.
+ 
+ ### 4.2.15 Human (*ITalkable*)
+ Questa entitá rappresenta un umano a cui si puó parlare ("Parla").
+ - `phrases`: coda di frasi che la persona dirá, coda di stringhe
+ Una volta finite le frasi, il messaggio sará sempre "..."
+ 
+ ### 4.2.16 BasicContainer
+ Oggetto la cui unica azione possibile é "Esamina" e che puó contenere a sua volta degli oggetti.
+ 
+ Tutte le entitá con "Container" nel nome indicano entitá che hanno un inventario al loro interno ed ereditano le seguenti variabili:
+ - `list`: oggetti al suo interno, lista di entitá
+ - `forFluids`: se é un contenitore riservato ai liquidi, booleano
+ 
+**N.B.** Gli oggetti possono anche essere inseriti dal giocatore al suo interno (es. da inventario a contenitore).
+ 
+ ### 4.2.17 ChestlikeContainer (*IOpenable*)
+ Contenitore che puó essere aperto come una cassa ("Apri").
+ - `open`: se di default é aperta, booleano
+ - `locked`: se di default é chiusa a chiave, booleano
+ - `unlockedWithItemId`: in caso sia chiusa a chiave, con che item ID si dovrebbe sbloccare, stringa
+ 
+ ### 4.2.18 SocketlikeContainer
+ Contenitore per un singolo oggetto definito a priori (come incastonatura).
+ - `eligibleItemId`: identificatore dell'oggetto che puó essere inserito, stringa
+ - `itemInside`: se l'oggetto é inserito di default, booleano.
+ 
+ ### 4.2.19 WearableContainer (*IWearable*)
+ Contenitore che si puó raccogliere e indossare.
+ - `maxSlots`: numero massimo di oggetti che puó contenere, intero
+ 
+ ## 4.3 Eventi
+ Variabili comuni a tutte le classi:
+ - `eventType`: quando é triggerabile, tipo di evento (EventType)
+ - `text`: messaggio da stampare quando viene eseguito, stringa
+ 
+ ### 4.3.1 RoomEvent
+ Evento della stanza, viene eseguito quando il giocatore giunge per la prima volta nella stanza.
+ 
+ Allo stato attuale `eventType` é inutile per questo evento.
+ 
+ ### 4.3.2 ObjectEvent
+ Evento dell'oggetto, viene eseguito nel momento specificato in `eventType`.
+ - `updatingParentRoom`: se deve mutare la stanza in cui l'oggetto é contenuto (assicurarsi che la stanza sia Mutable), booleano
+ - `updateTargetRoomId`: identificatore della stanza da mutare (assicurarsi che la stanza sia Mutable), se deve mutarla, stringa
+ - `teleportsPlayerToRoomId`: identificatore della stanza in cui teletrasportare il giocatore, se deve, stringa
+ - `destroyOnTrigger`: se deve distruggere l'oggetto dell'evento dopo che é stato eseguito, booleano
+ 
+ ### 4.3.3 EventType
+ - `LOOK_AT`: comando "Esamina"
+ - `PICK_UP`: comando "Prendi"
+ - `OPEN_CONTAINER`: comando "Apri" su una cassa (non chiusa a chiave)
+ - `OPEN_UNLOCKED`: comando "Apri" su una porta (non chiusa a chiave)
+ - `OPEN_LOCKED`: comando "Apri" su un qualsiasi IOpenable chiuso a chiave
+ - `PUSH`: comando "Premi"
+ - `PULL`: comando "Tira"
+ - `MOVE`: comando "Sposta"
+ - `INSERT`: comando "Inserisci" su un contenitore
+ - `EXTINGUISH`: comando "Versa" (es. "Butta acqua su fuoco")
+ - `TALK_WITH`: comando "Parla"
+ - `WEAR`: comando "Indossa"
+ - `UNWEAR`: comando "Togli"
+ - `READ`: comando "Leggi"
+ - `TURN_ON`: comando "Accendi"
+ - `TURN_OFF`: comando "Spegni"
