@@ -602,7 +602,7 @@ Si riportano il diagramma del package `component` e i relativi diagrammi delle c
 <img src="docs/img/diagrams/room.svg">
 </p>
 
-### 6.3 Diagrammi delle classi "event"
+### 6.4 Diagrammi delle classi "event"
 <p align="center">
 <img src="docs/img/diagrams/event.svg">
 </p>
