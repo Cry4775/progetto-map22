@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="312px" preserveAspectRatio="none" style="width:718px;height:312px;background:#FFFFFF;" version="1.1" viewBox="0 0 718 312" width="718px" zoomAndPan="magnify"><defs/><g><!--MD5=[ff658e621e4d039d232dc2816b4a8497]
+cluster component--><g id="cluster_component"><path d="M8.5,6 L98.5,6 A3.75,3.75 0 0 1 101,8.5 L108,28.2969 L708.5,28.2969 A2.5,2.5 0 0 1 711,30.7969 L711,302.5 A2.5,2.5 0 0 1 708.5,305 L8.5,305 A2.5,2.5 0 0 1 6,302.5 L6,8.5 A2.5,2.5 0 0 1 8.5,6 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="6" x2="108" y1="28.2969" y2="28.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="89" x="10" y="20.9951">component</text></g><!--MD5=[bc1b6a63fef26b0dbe93a6a9270e3b0e]
+cluster entity--><g id="cluster_entity"><path d="M238.5,49 L284.5,49 A3.75,3.75 0 0 1 287,51.5 L294,71.2969 L684.5,71.2969 A2.5,2.5 0 0 1 687,73.7969 L687,278.5 A2.5,2.5 0 0 1 684.5,281 L238.5,281 A2.5,2.5 0 0 1 236,278.5 L236,51.5 A2.5,2.5 0 0 1 238.5,49 " fill="#DDDDDD" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="236" x2="294" y1="71.2969" y2="71.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="45" x="240" y="63.9951">entity</text></g><!--MD5=[ce5ccd5b359d4259c2ab78015c688698]
+cluster container--><g id="cluster_container"><path d="M515.5,92 L591.5,92 A3.75,3.75 0 0 1 594,94.5 L601,114.2969 L660.5,114.2969 A2.5,2.5 0 0 1 663,116.7969 L663,179.5 A2.5,2.5 0 0 1 660.5,182 L515.5,182 A2.5,2.5 0 0 1 513,179.5 L513,94.5 A2.5,2.5 0 0 1 515.5,92 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="513" x2="601" y1="114.2969" y2="114.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="75" x="517" y="106.9951">container</text></g><!--MD5=[3158f9966ed01317d9e0f28e57cb2143]
+entity event--><g id="elem_event"><path d="M138,127 L190,127 A3.75,3.75 0 0 1 192.5,129.5 L199.5,149.2969 L214,149.2969 A2.5,2.5 0 0 1 216.5,151.7969 L216.5,163.7969 A2.5,2.5 0 0 1 214,166.2969 L138,166.2969 A2.5,2.5 0 0 1 135.5,163.7969 L135.5,129.5 A2.5,2.5 0 0 1 138,127 " fill="#DDDDDD" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="135.5" x2="199.5" y1="149.2969" y2="149.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="39" x="145.5" y="142.9951">event</text></g><!--MD5=[b02375f037bd0e8ff3ea926ab94d5ccc]
+entity room--><g id="elem_room"><path d="M24.5,127 L73.5,127 A3.75,3.75 0 0 1 76,129.5 L83,149.2969 L97.5,149.2969 A2.5,2.5 0 0 1 100,151.7969 L100,163.7969 A2.5,2.5 0 0 1 97.5,166.2969 L24.5,166.2969 A2.5,2.5 0 0 1 22,163.7969 L22,129.5 A2.5,2.5 0 0 1 24.5,127 " fill="#DDDDDD" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="22" x2="83" y1="149.2969" y2="149.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="36" x="32" y="142.9951">room</text></g><!--MD5=[9b90abb02cd9aa531f41aeb4b547c826]
+entity doorlike--><g id="elem_doorlike"><path d="M254,127 L322,127 A3.75,3.75 0 0 1 324.5,129.5 L331.5,149.2969 L346,149.2969 A2.5,2.5 0 0 1 348.5,151.7969 L348.5,163.7969 A2.5,2.5 0 0 1 346,166.2969 L254,166.2969 A2.5,2.5 0 0 1 251.5,163.7969 L251.5,129.5 A2.5,2.5 0 0 1 254,127 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="251.5" x2="331.5" y1="149.2969" y2="149.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="55" x="261.5" y="142.9951">doorlike</text></g><!--MD5=[2a6a19d073084cf9ca9713c1db2a855e]
+entity humanoid--><g id="elem_humanoid"><path d="M386,127 L468,127 A3.75,3.75 0 0 1 470.5,129.5 L477.5,149.2969 L492,149.2969 A2.5,2.5 0 0 1 494.5,151.7969 L494.5,163.7969 A2.5,2.5 0 0 1 492,166.2969 L386,166.2969 A2.5,2.5 0 0 1 383.5,163.7969 L383.5,129.5 A2.5,2.5 0 0 1 386,127 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="383.5" x2="477.5" y1="149.2969" y2="149.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="69" x="393.5" y="142.9951">humanoid</text></g><!--MD5=[6bf952069521877e9614e3a19551f3fb]
+entity interfaces--><g id="elem_interfaces"><path d="M254.5,226 L335.5,226 A3.75,3.75 0 0 1 338,228.5 L345,248.2969 L359.5,248.2969 A2.5,2.5 0 0 1 362,250.7969 L362,262.7969 A2.5,2.5 0 0 1 359.5,265.2969 L254.5,265.2969 A2.5,2.5 0 0 1 252,262.7969 L252,228.5 A2.5,2.5 0 0 1 254.5,226 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="252" x2="345" y1="248.2969" y2="248.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="68" x="262" y="241.9951">interfaces</text></g><!--MD5=[245cf0965ed6d73adfe1bc2307e7ad28]
+entity object--><g id="elem_object"><path d="M400,226 L456,226 A3.75,3.75 0 0 1 458.5,228.5 L465.5,248.2969 L480,248.2969 A2.5,2.5 0 0 1 482.5,250.7969 L482.5,262.7969 A2.5,2.5 0 0 1 480,265.2969 L400,265.2969 A2.5,2.5 0 0 1 397.5,262.7969 L397.5,228.5 A2.5,2.5 0 0 1 400,226 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="397.5" x2="465.5" y1="248.2969" y2="248.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="43" x="407.5" y="241.9951">object</text></g><!--MD5=[c950d3179ff177040009aa1bfbcd0e36]
+entity pickupable--><g id="elem_pickupable"><path d="M532,127 L620,127 A3.75,3.75 0 0 1 622.5,129.5 L629.5,149.2969 L644,149.2969 A2.5,2.5 0 0 1 646.5,151.7969 L646.5,163.7969 A2.5,2.5 0 0 1 644,166.2969 L532,166.2969 A2.5,2.5 0 0 1 529.5,163.7969 L529.5,129.5 A2.5,2.5 0 0 1 532,127 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="529.5" x2="629.5" y1="149.2969" y2="149.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="75" x="539.5" y="142.9951">pickupable</text></g><!--MD5=[761baedfce03668680b88c2a3dbaeee9]
+@startuml
+package component {
+    package entity #DDDDDD {
+        package container {
+            package pickupable #BDBDBD
+        }
+        package doorlike
+        package humanoid
+        package interfaces
+        package object
+        package pickupable
+    }
+    package event #DDDDDD
+    package room #DDDDDD
+}
+@enduml
+
+PlantUML version 1.2022.7(Mon Aug 22 19:01:30 CEST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: it
+Country: IT
+--></g></svg>

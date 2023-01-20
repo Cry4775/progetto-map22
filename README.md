@@ -8,6 +8,7 @@
 3. Requisiti richiesti
 4. Come impostare la propria storia
 5. Specifica algebrica
+6. Diagrammi UML
 
 # 1 Introduzione al progetto
 L'idea del progetto é quella di sviluppare un engine/framework con cui é possibile, attraverso l'ausilio di un file json, impostare la propria storia e renderla giocabile.<br>
@@ -578,3 +579,30 @@ Oggetto che rappresenta il liquido, puó essere preso nell'inventario attraverso
  - get(create(), getId(e)) = ERRORE
  - remove(create(), getId(e), e) = ERRORE
  - removeAll(create(), getId(e)) = ERRORE
+ 
+ ## 6. Diagrammi UML
+Si riportano il diagramma del package `component` e i relativi diagrammi delle classi.
+
+### 6.1 Diagramma del package
+<p align="center">
+<img src="docs/img/diagrams/PackageDiagramComponent.svg">
+</p>
+
+### 6.2 Diagrammi delle classi "entity"
+<p align="center">
+<img src="docs/img/diagrams/object.svg">
+<img src="docs/img/diagrams/pickupable.svg">
+<img src="docs/img/diagrams/humanoid.svg">
+<img src="docs/img/diagrams/doorlike.svg">
+<img src="docs/img/diagrams/container.svg">
+</p>
+
+### 6.3 Diagrammi delle classi "room"
+<p align="center">
+<img src="docs/img/diagrams/room.svg">
+</p>
+
+### 6.3 Diagrammi delle classi "event"
+<p align="center">
+<img src="docs/img/diagrams/event.svg">
+</p>

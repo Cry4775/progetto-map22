@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="530px" preserveAspectRatio="none" style="width:899px;height:530px;background:#FFFFFF;" version="1.1" viewBox="0 0 899 530" width="899px" zoomAndPan="magnify"><defs/><g><!--MD5=[2e31800f208179cab94650aeb782e4d8]
+cluster event--><g id="cluster_event"><path d="M8.5,6 L54.5,6 A3.75,3.75 0 0 1 57,8.5 L64,28.2969 L889.5,28.2969 A2.5,2.5 0 0 1 892,30.7969 L892,520.5 A2.5,2.5 0 0 1 889.5,523 L8.5,523 A2.5,2.5 0 0 1 6,520.5 L6,8.5 A2.5,2.5 0 0 1 8.5,6 " fill="#DDDDDD" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="6" x2="64" y1="28.2969" y2="28.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="45" x="10" y="20.9951">event</text></g><!--MD5=[51255159981deef4d2967e1585ccf960]
+class EventType--><g id="elem_EventType"><rect codeLine="2" fill="#F1F1F1" height="325.0469" id="EventType" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="164" x="22" y="182"/><ellipse cx="63.55" cy="198" fill="#EB937F" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M67.6594,204 L59.9406,204 L59.9406,191.6094 L67.6594,191.6094 L67.6594,193.7656 L62.3938,193.7656 L62.3938,196.4375 L67.1594,196.4375 L67.1594,198.5938 L62.3938,198.5938 L62.3938,201.8438 L67.6594,201.8438 L67.6594,204 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="73" x="83.45" y="202.8467">EventType</text><line style="stroke:#181818;stroke-width:0.5;" x1="23" x2="185" y1="214" y2="214"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="63" x="28" y="230.9951">LOOK_AT</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="127" x="28" y="247.292">OPEN_CONTAINER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57" x="28" y="263.5889">PICK_UP</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="33" x="28" y="279.8857">PULL</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="152" x="28" y="296.1826">AT_ROOM_ENTRANCE</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="123" x="28" y="312.4795">OPEN_UNLOCKED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="103" x="28" y="328.7764">OPEN_LOCKED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="38" x="28" y="345.0732">PUSH</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="41" x="28" y="361.3701">MOVE</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="50" x="28" y="377.667">INSERT</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="41" x="28" y="393.9639">WEAR</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="83" x="28" y="410.2607">EXTINGUISH</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="28" y="426.5576">TALK_WITH</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="61" x="28" y="442.8545">UNWEAR</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="39" x="28" y="459.1514">READ</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="67" x="28" y="475.4482">TURN_ON</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="73" x="28" y="491.7451">TURN_OFF</text><line style="stroke:#181818;stroke-width:0.5;" x1="23" x2="185" y1="499.0469" y2="499.0469"/></g><!--MD5=[817e5a70c6393d5f2dafdd1d81632e3c]
+class AbstractEvent--><g id="elem_AbstractEvent"><rect codeLine="22" fill="#F1F1F1" height="64.2969" id="AbstractEvent" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="129" x="398.5" y="41"/><ellipse cx="413.5" cy="57" fill="#A9DCDF" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M413.6094,52.3438 L412.4531,57.4219 L414.7813,57.4219 L413.6094,52.3438 Z M412.125,50.1094 L415.1094,50.1094 L418.4688,62.5 L416.0156,62.5 L415.25,59.4375 L411.9688,59.4375 L411.2188,62.5 L408.7813,62.5 L412.125,50.1094 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="97" x="427.5" y="61.8467">AbstractEvent</text><line style="stroke:#181818;stroke-width:0.5;" x1="399.5" x2="526.5" y1="73" y2="73"/><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="406.5" y="83.6484"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="70" x="418.5" y="89.9951">String text</text><line style="stroke:#181818;stroke-width:0.5;" x1="399.5" x2="526.5" y1="97.2969" y2="97.2969"/></g><!--MD5=[6b68982876ee98f296d2e7bc4d997e5e]
+class ObjectEvent--><g id="elem_ObjectEvent"><rect codeLine="29" fill="#F1F1F1" height="178.375" id="ObjectEvent" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="483" x="221.5" y="255.5"/><ellipse cx="416.75" cy="271.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M419.7188,277.1406 Q419.1406,277.4375 418.5,277.5781 Q417.8594,277.7344 417.1563,277.7344 Q414.6563,277.7344 413.3281,276.0938 Q412.0156,274.4375 412.0156,271.3125 Q412.0156,268.1875 413.3281,266.5313 Q414.6563,264.875 417.1563,264.875 Q417.8594,264.875 418.5,265.0313 Q419.1563,265.1875 419.7188,265.4844 L419.7188,268.2031 Q419.0938,267.625 418.5,267.3594 Q417.9063,267.0781 417.2813,267.0781 Q415.9375,267.0781 415.25,268.1563 Q414.5625,269.2188 414.5625,271.3125 Q414.5625,273.4063 415.25,274.4844 Q415.9375,275.5469 417.2813,275.5469 Q417.9063,275.5469 418.5,275.2813 Q419.0938,275 419.7188,274.4219 L419.7188,277.1406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="84" x="437.25" y="276.3467">ObjectEvent</text><line style="stroke:#181818;stroke-width:0.5;" x1="222.5" x2="703.5" y1="287.5" y2="287.5"/><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="229.5" y="298.1484"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="191" x="241.5" y="304.4951">String updateTargetRoomId</text><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="229.5" y="314.4453"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="235" x="241.5" y="320.792">MutableRoom updateTargetRoom</text><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="229.5" y="330.7422"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="207" x="241.5" y="337.0889">boolean updatingParentRoom</text><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="229.5" y="347.0391"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="218" x="241.5" y="353.3857">String teleportsPlayerToRoomId</text><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="229.5" y="363.3359"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="264" x="241.5" y="369.6826">AbstractRoom teleportsPlayerToRoom</text><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="229.5" y="379.6328"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="181" x="241.5" y="385.9795">boolean destroyOnTrigger</text><line style="stroke:#181818;stroke-width:0.5;" x1="222.5" x2="703.5" y1="393.2813" y2="393.2813"/><ellipse cx="232.5" cy="406.9297" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="207" x="241.5" y="410.2764">void trigger(AbstractEntity obj)</text><ellipse cx="232.5" cy="423.2266" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" text-decoration="underline" textLength="457" x="241.5" y="426.5732">ObjectEvent getEvent(List&lt;ObjectEvent&gt; events, EventType type)</text></g><!--MD5=[b18c14fdbec8475f2c56a445ad5e53bc]
+class RoomEvent--><g id="elem_RoomEvent"><rect codeLine="40" fill="#F1F1F1" height="48" id="RoomEvent" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="112" x="740" y="320.5"/><ellipse cx="755" cy="336.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M757.9688,342.1406 Q757.3906,342.4375 756.75,342.5781 Q756.1094,342.7344 755.4063,342.7344 Q752.9063,342.7344 751.5781,341.0938 Q750.2656,339.4375 750.2656,336.3125 Q750.2656,333.1875 751.5781,331.5313 Q752.9063,329.875 755.4063,329.875 Q756.1094,329.875 756.75,330.0313 Q757.4063,330.1875 757.9688,330.4844 L757.9688,333.2031 Q757.3438,332.625 756.75,332.3594 Q756.1563,332.0781 755.5313,332.0781 Q754.1875,332.0781 753.5,333.1563 Q752.8125,334.2188 752.8125,336.3125 Q752.8125,338.4063 753.5,339.4844 Q754.1875,340.5469 755.5313,340.5469 Q756.1563,340.5469 756.75,340.2813 Q757.3438,340 757.9688,339.4219 L757.9688,342.1406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80" x="769" y="341.3467">RoomEvent</text><line style="stroke:#181818;stroke-width:0.5;" x1="741" x2="851" y1="352.5" y2="352.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="741" x2="851" y1="360.5" y2="360.5"/></g><!--MD5=[396930395f39610ec2a203b84100590f]
+link AbstractEvent to EventType--><g id="link_AbstractEvent_EventType"><path codeLine="26" d="M398.26,89.18 C342.19,104.91 261.44,134.06 205,182 C199.78,186.44 194.74,191.21 189.89,196.24 " fill="none" id="AbstractEvent-to-EventType" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="186.22,200.14,195.3011,196.3277,189.6468,196.499,189.4755,190.8447,186.22,200.14" style="stroke:#181818;stroke-width:1.0;"/><rect fill="none" height="6" style="stroke:#C82930;stroke-width:1.0;" width="6" x="278" y="141.0664"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="66" x="288" y="148.0669">eventType</text></g><!--MD5=[97970b00b558af644b9412a12a37eb11]
+reverse link AbstractEvent to ObjectEvent--><g id="link_AbstractEvent_ObjectEvent"><path d="M463,125.31 C463,162 463,212.31 463,255.38 " fill="none" id="AbstractEvent-backto-ObjectEvent" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="456,125.18,463,105.18,470,125.18,456,125.18" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[6d564b37495db86dbb7c034d2980dcb1]
+reverse link AbstractEvent to RoomEvent--><g id="link_AbstractEvent_RoomEvent"><path d="M547.29,92.12 C602.8,107.81 673.86,135.5 722,182 C762.26,220.89 782.63,285.82 791.08,320.31 " fill="none" id="AbstractEvent-backto-RoomEvent" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="545.13,98.79,527.61,86.88,548.74,85.27,545.13,98.79" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[f1f7073c3a49586e21b9a2598bbf550b]
+@startuml
+package "event" #DDDDDD {
+    enum EventType {
+        LOOK_AT
+        OPEN_CONTAINER
+        PICK_UP
+        PULL
+        AT_ROOM_ENTRANCE
+        OPEN_UNLOCKED
+        OPEN_LOCKED
+        PUSH
+        MOVE
+        INSERT
+        WEAR
+        EXTINGUISH
+        TALK_WITH
+        UNWEAR
+        READ
+        TURN_ON
+        TURN_OFF
+    }
+    
+    abstract class AbstractEvent {
+        - String text
+    }
+    
+    AbstractEvent - -> EventType : - eventType
+    
+    together {
+        class ObjectEvent extends AbstractEvent {
+            - String updateTargetRoomId
+            - MutableRoom updateTargetRoom
+            - boolean updatingParentRoom
+            - String teleportsPlayerToRoomId
+            - AbstractRoom teleportsPlayerToRoom
+            - boolean destroyOnTrigger
+            + void trigger(AbstractEntity obj)
+            + {static} ObjectEvent getEvent(List<ObjectEvent> events, EventType type)
+        }
+        
+        class RoomEvent extends AbstractEvent {
+        }
+    }
+    
+    
+}
+@enduml
+
+PlantUML version 1.2022.7(Mon Aug 22 19:01:30 CEST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: it
+Country: IT
+--></g></svg>
